@@ -1,0 +1,113 @@
+
+body {
+    overflow: hidden;
+    background: whitesmoke;
+    font: caption; /* system font */
+}
+
+.bk-root .bk-slick-row{
+    font-size: 10px;
+}
+
+.bk-root .bk-slick-column-name{
+    font-size: 10px;
+}
+
+.bk-logo {
+    display: none !important;
+}
+
+.bk-bs-nav li a {
+    font-weight: bold !important;
+    text-decoration: none !important;
+    letter-spacing: 0.1em !important;
+    color: black;
+}
+
+.bk-bs-nav li.bk-bs-active a {
+    background-color: #337AB7 !important;
+    color: white !important;
+}
+
+.bk-bs-tab-content {
+    padding: 10px 0px 0px 0px !important;
+}
+
+.bridge_row {
+    display: none !important;
+}
+
+/* NEW ERA */
+
+.sample_div div div, .cur_stt div div  {
+    padding-left: 25px;
+    padding-top: 8px;
+}
+
+.flagger_bts .bk-widget-box {
+    margin-right: 5px;
+}
+
+/* TABS AND SIDEBAR */
+
+.o_tabs {
+    margin-right: 250px;
+    clear: both;
+    overflow: auto;
+    min-height: 600px;
+    height: 100vh;
+}
+
+.o_sidebar {
+    position: relative;
+    width: 250px;
+    margin-left: -250px;
+    float: right;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    min-height: 600px;
+    border-left-color: #d3d3d3;
+    border-left-width: 3px;
+    border-left-style: solid;
+    padding-left: 20px;
+    height: 100vh;
+}
+
+.wrapper {
+    margin: 0 auto;
+    position: relative;
+    padding: 0 9px;
+    min-height: 600px;
+}
+
+.content-wrapper {
+    float: left;
+    width: 100%;
+}
+
+/* CONTROLS */
+
+.flagger_select {
+    width: 200px;
+    margin-top: -10px !important;
+}
+
+.flags_control_col {
+    margin-left: -5px !important;
+    margin-top: -9px !important;
+}
+
+.sample_control {
+    height: 45px !important;
+    margin-left: -9px !important;
+}
+
+.prof_nav {
+    height: 40px !important;
+    margin-left: -9px !important;
+}
+
+.data_table {       /* this class is not added due to a bokeh bug */
+    width: 190px !important;
+    height: 125px !important;
+}

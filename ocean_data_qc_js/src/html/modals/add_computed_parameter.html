@@ -1,0 +1,53 @@
+
+<button id="modal_trigger_add_computed_parameter" type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#add_computed_parameter" style="display: none;">Open Modal</button>
+
+<div id="add_computed_parameter" class="modal fade modal-form" role="dialog" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">
+                    <span class="modal-title-icon"></span>
+                    <span class="modal-title-text">Calculated Parameters</span>
+                </h4>
+            </div>
+            <div class="modal-body">
+            <form id="add_computed_parameter" class="form-horizontal">
+                <div class="form-group">
+                    <div class="col-xs-12">                        
+                        <div class="row">
+                            <div class="col-xs-5">
+                                <label class="control-label row" for="added_computed_param">Current Calculated Parameters:</label>
+                                <select name="added_computed_param" size="12" class="form-control" />
+                            </div>
+                            
+                            <div class="col-xs-2">
+                                <button id="move_left"
+                                        type="button"
+                                        class="btn btn-primary btn-arrow-left">&nbsp;</button>
+                                
+                                <button id="move_right"
+                                        type="button"
+                                        class="btn btn-primary btn-arrow-right">&nbsp;</button>
+                            </div>
+
+                            <div class="col-xs-5">
+                                <label class="control-label row" for="available_computed_param">Available Calculated Parameters:</label>
+                                <select name="available_computed_param" size="10" class="form-control" />
+                                <div class="comp_param_buttons_proj">
+                                    <button id="add_new_computed_param" type="button" class="btn btn-primary">Manage Calculated Parameters</button>
+                                </div>
+                            </div>
+                        </div>     
+                        
+                    </div>             
+                </div>
+            </form> 
+            </div>
+            <div class="modal-footer">
+                <button id="discard_computed_parameters" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>

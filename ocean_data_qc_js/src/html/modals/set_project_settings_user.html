@@ -1,0 +1,87 @@
+
+<button id="modal_trigger_set_project_settings" type="button" class="btn btn-info btn-lg" 
+        data-toggle="modal" data-target="#set_project_settings" style="display: none;">Open Modal</button>
+
+
+<div id="set_project_settings" class="modal fade modal-form" role="dialog" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+
+        <div class="modal-content">
+            <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">
+                <span class="modal-title-icon"></span>
+                <span class="modal-title-text">Project Settings</span>
+            </h4>
+            </div>
+            <div class="modal-body">
+            <form id="set_project_settings" class="form-horizontal">
+                <div class="form-group">
+                    <div class="col-xs-12">
+                        <div class="row">
+                            <label class="control-label col-sm-2" for="project_name">Project name:</label>
+                            <div class="col-sm-8">
+                                <input id="project_name" class="form-control" type="text" placeholder="Enter project name">
+                                <small id="project_name_validate_msg" style="display: none; color: red;">The project name is required</small>            
+                            </div>
+                        </div>
+                    </div>
+                    <div id="qc_tabs_container" class="col-xs-12">
+                        <div class="row">
+                            <label class="control-label" style="text-align: left">The plots are going to be built with this data:</label>
+                        </div>
+                            
+                        <!-- table to clone -->
+                        <fieldset id="qc_tabs_table" style="display: none;">
+                            <div class="row">
+                                <label class="control-label col-sm-2" for="tab_title">Tab title:</label>
+                                <select class="form-control" name="tab_title" /><!-- width on css file -->
+                                <button type="button" class="delete_tab btn btn-danger col-sm-2 pull-right">Delete this tab</button>
+                            </div>
+                            <div class="row">                               
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Graph Title</th>
+                                            <th class="col-xs-4">x</th>
+                                            <th class="col-xs-4">y</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- row to clone -->
+                                        <tr class="qc_tabs_table_row" style="display: none;">
+                                            <td>
+                                                <input class="form-control" name="title" placeholder="Title" />
+                                            </td>
+                                            <td>
+                                                <select class="form-control" name="x_axis"/>
+                                            </td>
+                                            <td>
+                                                <select class="form-control" name="y_axis" />
+                                            </td>
+                                            <td>
+                                                <button class="delete_graph btn btn-danger glyphicon glyphicon-trash" type="button" />
+                                            </td>                                        
+                                        </tr>
+                                        <tr>
+                                            <td colspan="4"><a class="add_new_plot" href="#">Add new plot to the tab</a></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </fieldset>
+                    </div>
+
+                </div>
+            </form> 
+            </div>
+            <div class="modal-footer">
+                <button id="add_new_tab" type="button" class="btn btn-primary">Add new Tab</button>
+                <button id="accept_and_plot" type="button" class="btn btn-primary" data-dismiss="modal">Accept and Plot</button>
+                <button id="discard_plotting" type="button" class="btn btn-default" data-dismiss="modal">Discard</button>
+            </div>
+        </div>
+
+    </div>
+</div>

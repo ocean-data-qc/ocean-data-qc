@@ -1,0 +1,36 @@
+.vscode
+
+# ocean data qc files
+/bokeh
+/csv_examples
+/ocean_data_qc/files/tmp
+/env
+
+/ocean_data_qc_js/node_modules
+/ocean_data_qc_js/dist
+
+# folders for buildings
+/build
+/dist
+
+/pack_old
+/scripts
+/tests
+
+!/.gitignore
+
+# temp files
+*~
+.*~
+
+# compiled and compressed files
+*.egg-info
+*.pyc
+*.zip
+*.rar
+
+# log files
+*.log
+
+# locked files creted by yarn and npm
+*.lock

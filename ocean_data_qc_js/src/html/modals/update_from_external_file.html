@@ -1,0 +1,93 @@
+
+<button id="modal_trigger_update_from_external_file" type="button" class="btn btn-info btn-lg" 
+        data-toggle="modal" data-target="#update_from_external_file" style="display: none;">Open Modal</button>
+
+<div id="update_from_external_file" class="modal fade modal-form" role="dialog" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">
+                    <span class="modal-title-icon"></span>
+                    <span class="modal-title-text">Update current WHP?</span>
+                </h4>
+            </div>
+            <div class="modal-body">
+                <h5 class="comparison_title">Columns</h5>
+                <table class="table table-striped">
+                    <tbody>
+                        <tr>
+                            <td class="col-xs-5">New columns</td>
+                            <td class="col-xs-6" id="new_columns_value"></td>
+                            <td>
+                                <div class="form-check abc-checkbox abc-checkbox-primary">
+                                    <input id="new_columns_input" class="form-check-input" name="new_columns" type="checkbox" />
+                                    <label class="form-check-label" for="new_columns_input" />
+                                </div>                              
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-xs-5">Removed columns</td>
+                            <td class="col-xs-6" id="removed_columns_value"></td>
+                            <td>
+                                <div class="form-check abc-checkbox abc-checkbox-primary">
+                                    <input id="removed_columns_input" class="form-check-input" name="removed_columns" type="checkbox" />
+                                    <label class="form-check-label" for="removed_columns_input" />
+                                </div>                             
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h5 class="comparison_title">Rows</h5>
+                <table class="table table-striped">
+                    <tbody>
+                        <tr>
+                            <td class="col-xs-5">New rows</td>
+                            <td class="col-xs-6" id="new_rows_value"></td>
+                            <td>
+                                <div class="form-check abc-checkbox abc-checkbox-primary">
+                                    <input id="new_rows_input" class="form-check-input" name="new_rows" type="checkbox" />
+                                    <label class="form-check-label" for="new_rows_input" />
+                                </div>                             
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-xs-5">Removed rows</td>
+                            <td class="col-xs-6" id="removed_rows_value"></td>
+                            <td>
+                                <div class="form-check abc-checkbox abc-checkbox-primary">
+                                    <input id="removed_rows_input" class="form-check-input" name="removed_rows" type="checkbox" />
+                                    <label class="form-check-label" for="removed_rows_input" />
+                                </div>                            
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h5 class="comparison_title">Values</h5>
+                <table class="table table-striped">
+                    <tbody>
+                        <tr>
+                            <td class="col-xs-5">Values that have changed (accepted / total)</td>
+                            <td class="col-xs-3" id="different_values_number"></td>
+                            <td class="col-xs-3"><a id="update_values_by_station" href="#">Show details...</a></td>
+                            <td>
+                                <div class="form-check abc-checkbox abc-checkbox-primary">
+                                    <input id="different_values_number_input" class="form-check-input" name="different_values_number" type="checkbox" />
+                                    <label class="form-check-label" for="different_values_number_input" />
+                                </div>
+                            </td>
+                        </tr>
+                </table>
+
+            </div>
+            <div class="modal-footer">
+                <button id="modal_accept_all_changes" type="button" class="btn btn-primary" data-dismiss="modal">Accept all changes</button>
+                <button id="modal_accept_selected_changes" type="button" class="btn btn-primary" data-dismiss="modal">Accept checked changes</button>
+                <button id="modal_discard" type="button" class="btn btn-default" data-dismiss="modal">Discard</button>
+            </div>
+        </div>
+
+    </div>
+</div>

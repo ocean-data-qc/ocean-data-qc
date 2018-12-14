@@ -1,0 +1,356 @@
+
+body {
+    font: caption; /* system font */
+}
+
+h2 {
+    margin-bottom: 40px;
+}
+
+h5 {
+    font-weight: bold;
+    color: #337ab7;
+}
+
+.ml15 {
+    margin-left: 15px;
+}
+
+.jumbotron {
+    border: 2px solid #337ab7;
+    height: 300px;
+}
+
+.jumbotron>img {
+    display: none;  /* to make work the fade in animation */
+}
+
+#atlantos_img div img {
+    height: 164px;
+}
+
+#atlantos_img div {
+    height: 164px;
+}
+
+#atlantos_img {
+    display: none;  /* to make work the fade in animation */
+    float: right;
+    margin-right: 70px;
+}
+
+#ctd_img {
+    height: 192px;
+}
+
+/* MAIN FORM */
+
+#bokeh_info {
+    color: red;
+    margin-bottom: 10px;
+}
+
+.dev_mode {
+    color: #5cb85c !important;
+}
+
+#enable_dev_mode:hover, #enable_dev_mode:focus {
+    text-decoration: none;
+    color: #337ab7;
+}
+
+.container {
+    background-color: whitesmoke;
+}
+
+.update_done {
+    color: #5cb85c;
+}
+
+.update_error {
+    color: red;
+}
+
+.update_working {
+    color: #e07714;
+}
+
+/* MODAL WINDOW */
+
+.modal-title-text {
+    font-weight: bold;
+    margin-left: 5px;
+    font-size: 1.1em;
+}
+
+.modal-body {
+    margin: 0px 30px 0px 30px;
+}
+
+.modal-body p{
+    font-size: 1em;
+    margin: 20px 0px 20px 0px;
+}
+
+.modal-body label{
+    font-size: 1em;
+    text-align: left !important;
+    padding-left: 0px;
+}
+
+.modal-body input[type='text']{
+    /* min-width: 300px; not for everyone */
+    max-width: 500px;
+}
+
+.modal-body .row {
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+/* TITLE */
+
+#project_name.modified{
+    font-style: italic;
+}
+
+/* BOKEH IFRAME */
+
+html {
+    overflow: auto;
+}
+
+html, body, .bokeh_iframe {
+    overflow: hidden;
+    background: whitesmoke !important;
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
+    border: none;
+}
+
+.bokeh_iframe {
+    display: block;
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* SPIN LOADER */
+
+.loader_container {
+    width: 100vw;
+    height: 100vh;
+    cursor: wait;
+}
+
+.loader {
+    border: 16px solid #d7e9f9;
+    border-radius: 50%;
+    border-top: 16px solid #337ab7;
+    width: 120px;
+    height: 120px;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+    margin: 10% auto;
+}
+
+.mini_loader {
+    border: 4px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 4px solid #337ab7;
+    width: 20px;
+    height: 20px;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+    margin-left: 10px;
+}
+
+#loader_mask {
+    /* to block any action in the whole document */
+    cursor: wait;
+    z-index: 999;
+    height: 100vh;
+    width: 100vw;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+@-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* CODEMIRROR TEXTAREA, JSON EDITOR */
+
+.CodeMirror {
+    margin-top: 10px;
+    height: 500px !important;
+    /* with monokai theme this is not necessary */
+    /* border: 1px solid black;  */
+}
+
+/* SETTINGS MODAL FORM */
+
+fieldset table th {
+    background-color: #337ab7;
+    color: white;
+    border: 1px solid #337ab5 !important;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+fieldset table {
+    border: 1px solid #337ab5 !important;
+}
+
+fieldset a:hover{
+    text-decoration: none;
+}
+
+fieldset select[name='tab_title'] {
+    width: 40% !important;
+    float: left;
+}
+
+.layout_computed_param_column {
+    background-color: #5cb85c;
+    color: white;
+}
+
+/* UPDATE CRUISE DATA FORM */
+
+.comparison_title {
+    font-weight: bold;
+    color: #337ab7;
+}
+
+
+/* UPDATE VALUES BY STATION MODAL FORM */
+
+#accordion_stations .ui-state-active {
+    background: #337ab7 !important;
+}
+
+.no-padding-left {
+    padding-left: 0px !important;
+}
+
+/* add_computed_parameter form */
+
+select[name='added_computed_param'] { /* left select */
+    min-height: 273px;
+}
+
+#add_computed_parameter label {
+    margin-left: 0px;
+}
+
+#add_computed_parameter select {
+    padding: 0px;
+}
+
+#add_computed_parameter option {
+    padding: 3px;
+}
+
+.comp_param_buttons_proj {
+    margin-top: 10px;
+}
+
+#add_new_computed_param input[type='text'] {
+    min-width: 100px;
+}
+
+/* add_computed_parameter_expression form */
+
+input[name='expr_name'] {
+    width: 234px;
+}
+
+input[name='precision'] {
+    width: 70px;
+}
+
+input[name='units'] {
+    width: 128px;
+    margin-left: -25px;
+}
+
+#add_computed_parameter_expression select {
+    margin-left: -15px;
+    padding: 0px;
+}
+
+#add_computed_parameter_expression option {
+    padding: 3px;
+}
+
+.label_adjust {
+    margin-left: -15px;
+}
+
+textarea[name='equation'] {
+    margin: 0px;
+    width: 808px;
+    height: 91px;
+    font: 1em Courier;
+    font-weight: bold;
+}
+
+label[for='add_default_computed_parameter'] {
+    padding-left: 15px !important;
+    padding-top: 3px;
+}
+
+.comp_param_buttons {
+    margin: 10px 0px 0px -15px;
+}
+
+.btt_lst_span {
+    padding-left: 10px;
+}
+
+/* mark with a green gradient (bootstrap success color) the items that are in the default list */
+
+select[name='all_computed_param'] {
+    background: transparent;
+}
+
+.default_param {
+  position: relative;
+  overflow: hidden;
+}
+
+.default_param:before {
+  content: "";
+  position: absolute;
+  width: 900px;
+  height: 300px;
+  top: -50%;
+  left: -50%;
+  background-image: linear-gradient(#5cb85c, transparent);
+  transform: rotate(90deg);
+}
+
+.missing_param {
+    position: relative;
+    overflow: hidden;
+  }
+
+.missing_param:before {
+    content: "";
+    position: absolute;
+    width: 900px;
+    height: 300px;
+    top: -50%;
+    left: -50%;
+    background-image: linear-gradient(#d9534f, transparent);
+    transform: rotate(90deg);
+}

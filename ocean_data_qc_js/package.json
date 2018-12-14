@@ -1,0 +1,108 @@
+{
+    "name": "ocean-data-qc",
+    "description": "AtlantOS Ocean Data Quality Control",
+    "homepage": "https://www.atlantos-h2020.eu/",
+    "main": "main.js",
+    "version": "0.8.0",
+    "scripts": {
+        "start": "electron .",
+        "clean": "node ./src/scripts/clean.js",
+        "pack": "electron-builder --dir",
+        "dist": "electron-builder --win --x64"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/ocean-data-qc/ocean-data-qc"
+    },
+    "publish": {
+        "provider": "github"
+    },
+    "engines": {
+        "node": ">=10.2.0",
+        "npm": ">=5.6.0",
+        "yarn": ">=1.12.1"
+    },
+    "keywords": [
+        "atlantos",
+        "quality",
+        "whp-exchange",
+        "ocean",
+        "seawater",
+        "bokeh"
+    ],
+    "author": "CSIC",
+    "license": "CC0-1.0",
+    "dependencies": {
+        "app-module-path": "^2.2.0",
+        "awesome-bootstrap-checkbox": "^1.0.0",
+        "bootstrap": "3.3.7",
+        "codemirror": "^5.29.0",
+        "command-exists": "^1.2.8",
+        "cross-zip": "^2.1.5",
+        "dotenv": "^6.1.0",
+        "electron-is-dev": "^1.0.1",
+        "electron-updater": "^4.0.4",
+        "file-url": "^2.0.2",
+        "font-awesome": "^4.7.0",
+        "fs-extra": "^7.0.1",
+        "jquery": "3.2.1",
+        "mime-db": "^1.26.0",
+        "mime-type": "^3.0.5",
+        "node-csv": "^0.1.2",
+        "node-watch": "^0.5.4",
+        "portscanner": "^2.1.1",
+        "python-shell": "^0.4.0",
+        "request-promise": "^3.0.0",
+        "rimraf": "^2.6.1",
+        "url": "^0.11.0",
+        "winston": "^2.3.1"
+    },
+    "devDependencies": {
+        "devtron": "^1.4.0",
+        "electron": "^3.0.8",
+        "electron-builder": "^20.31.2",
+        "electron-debug": "^2.0.0"
+    },
+    "build": {
+        "appId": "atlantos.ocean.data.qc",
+        "productName": "ocean-data-qc",
+        "copyright": "Copyright © 2019 ${author}",
+        "files": [
+            "**/*",
+            "src/img/*",
+            "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}",
+            "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}",
+            "!**/node_modules/*.d.ts",
+            "!**/node_modules/.bin",
+            "!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}",
+            "!.editorconfig",
+            "!**/._*",
+            "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,.gitignore,.gitattributes}",
+            "!**/{__pycache__,thumbs.db,.flowconfig,.idea,.vs,.nyc_output}",
+            "!**/{appveyor.yml,.travis.yml,circle.yml}",
+            "!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json}"
+        ],
+        "extraResources": [
+            {
+                "from": "../env",
+                "to": "env",
+                "filter": [
+                    "**/*",
+                    "!*.pyc"
+                ]
+            }
+        ],
+        "directories": {
+            "buildResources": "src/img",
+            "output": "dist"
+        },
+        "fileAssociations": [
+            {
+                "ext": "aqc",
+                "name": "AtlantOS Ocean Data QC File",
+                "description": "AtlantOS Ocean Data QC File",
+                "icon": "icon.ico"
+            }
+        ]
+    }
+}

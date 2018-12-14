@@ -1,0 +1,88 @@
+
+/* --------- VISIBILITY BUTTONS ------------- */
+
+.eye_bt button, .eye_slash_bt button {
+    border: none !important;
+    background: transparent !important;
+    cursor: pointer !important;
+    position: relative;
+    outline: 0 !important;
+    padding-left: 0px !important;
+    padding-top: 9px !important;
+    min-width: 15px !important;
+}
+
+.eye_bt button:hover, .eye_slash_bt button:hover {
+    background-color: transparent !important;
+}
+
+.eye_bt button:active, .eye_slash_bt button:active {
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+}
+
+.eye_bt button:before {
+    content: "\f06e";
+    font-family: "Font Awesome 5 Free";
+    left: -5px;
+    position: absolute;
+    top: -2px;
+ }
+
+.eye_slash_bt button:before {
+    content: "\f070";
+    font-family: "Font Awesome 5 Free";
+    left: -5px;
+    position: absolute;
+    top: -2px;
+ }
+
+/* --------- EDIT BUTTONS ------------- */
+
+.edit_flag_bt button {
+    border: none !important;
+    background: transparent !important;
+    cursor: pointer !important;
+    position: relative;
+    outline: 0 !important;
+    padding-left: 0px !important;
+    padding-top: 9px !important;
+    min-width: 15px !important;
+    margin-left: 6px !important;
+}
+
+.edit_flag_bt button:hover {
+    background-color: transparent !important;
+}
+
+.edit_flag_bt button:active {
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+}
+
+.edit_flag_bt button:before {
+    content: "\f024";
+    font-family: "Font Awesome 5 Free";
+    left: -5px;
+    position: absolute;
+    top: -2px;
+ }
+
+.edit_flag_bt button.bk-bs-btn-default:hover,
+.eye_slash_bt button.bk-bs-btn-default:hover,
+.eye_bt button.bk-bs-btn-default:hover {
+    color: #337AB7;
+}
+
+.edit_flag_bt button.bk-bs-btn-default:active,
+.eye_slash_bt button.bk-bs-btn-default:active,
+.eye_bt button.bk-bs-btn-default:active {
+    color: #154f81;
+}
+
+/* --------- REST ---------------- */
+
+.fg_str_div div div {
+    padding-top: 1px;
+    padding-left: 10px;
+}

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>AtlantOS Ocean Data QC!</title> <!-- TODO: add the project name to the title -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' http://localhost:5006; img-src 'self' data:;">
+    <!-- NOTE: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/default-src
+               I could use 'nonce' as well for inline scripts, is it safer? -->
+
+    <!-- img-src directive and schemes, to make work base64 as images in this case:
+               https://stackoverflow.com/a/18449556/4891717 -->
+
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/arrows.css">
+    <link rel="stylesheet" href="../css/snackbar.css">
+
+    <!-- CODE MIRROR: JSON EDITOR -->
+    <script src="../../node_modules/codemirror/lib/codemirror.js"></script>
+    <script src="../../node_modules/codemirror/mode/javascript/javascript.js"></script>
+    <script src="../../node_modules/codemirror/addon/display/autorefresh.js"></script>
+    <link rel="stylesheet" href="../../node_modules/codemirror/lib/codemirror.css">
+    <link rel="stylesheet" href="../../node_modules/codemirror/theme/monokai.css">
+
+    <!-- EXTERNAL LIBRARIES -->
+    <link rel="stylesheet" href="../js/external_resources/jquery-ui.min.css">
+    <link rel="stylesheet" href="../../node_modules/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../node_modules/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css">
+    <link rel="stylesheet" href="../../node_modules/font-awesome/css/font-awesome.min.css">
+
+  </head>
+  <body >
+    <div class="loader_container hidden">
+      <div id="loader" class="loader" ></div>
+    </div>
+
+    <div id="loader_mask" class="hidden">
+      <!-- <div id="translucent_loader" class="loader hidden" ></div> -->
+    </div>
+
+    <div id="snackbar">Proyecto guardado correctamente..</div>
+
+    <iframe id="bokeh_iframe" class="hidden"
+            frameborder="0" marginheight="0" marginwidth="0"
+            width="100%" height="100%" scrolling="auto"></iframe>
+
+    <div class="welcome_container container theme-showcase">
+      <div id="page ">
+        <div class="jumbotron">
+          <div id="atlantos_img">
+            <div></div>
+            <p>Tool for 1st Quality Control on Hydrographic Cruise Data</p>
+          </div>
+        </div>
+
+        <!-- PORT MANAGING >> Load this to the modal form -->
+        <!-- TODO: remove this because if the port is busy it means that the python process should be killed -->
+
+        <div id="busy_port" style="display: none;" >
+          <h2>Port managing</h2>
+          <div id="busy_port_alert" class="alert alert-danger" role="alert">
+            <strong>ERROR, BUSY PORT!</strong> Bokeh uses the port 5006 to run, but it is busy by some other task. The Bokeh Server cannot be launched. Please, select one of the possible actions. If you want to change the port permanently do it on the settings page.
+          </div>
+
+          <form id="portForm" class="form-horizontal">
+            <div class="form-group">
+              <label class="control-label col-sm-2" for="new_port">Assign this new port:</label>
+              <div class="col-sm-10">
+                <input id="new_port" class="form-control" type="text" placeholder="Enter port" style="max-width: 200px;">
+                <small id="new_port_validate_msg" style="display: none; color: red;">The username is required</small>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-offset-2 col-sm-10">
+                <button id="assignPort" type="button" class="btn btn-primary">Assign new port</button>
+                or <button type="button" class="btn btn-danger">Terminate task by force [TO-DO]</button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div id="free_port" style="display: none;" >
+          <h2 class="mb-2">Port managing</h2>
+          <div id="free_port_alert" class="alert alert-success">
+            Bokeh serve will be listening to the port:
+          </div>
+          <div class="form-group">
+            <div>
+              <button id="goHome" type="button" class="btn btn-primary">Go to welcome page</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- WELCOME MENU PANELS -->
+
+        <div id="panels" class="row">
+          <div class="col-xs-4">
+            <div class="panel panel-primary">
+              <div class="panel-heading">
+                <h3 class="panel-title">Start</h3>
+              </div>
+              <div class="panel-body">
+                <p><a id="open_file" href="#">Open file...</a></p>
+                <p><a id="modify_settings" href="#">Set default layout</a></p>
+                <p><strong><a href="https://github.com/ocean-data-qc/ocean-data-qc">GitHub Repository</a></strong></p>
+                <p class="hidden"><strong><a href="#" id="enable_dev_mode">Enable developer mode</a></strong></p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xs-4">
+            <div class="panel panel-primary">
+              <div class="panel-heading">
+                <h3 class="panel-title">Recent files [TO-DO]</h3>
+              </div>
+              <div class="panel-body">
+                <p><a href="#">Open latest file [TO-DO]</a></p>
+                <p><a href="#">Restore not correctly closed session [TO-DO]</a></p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xs-4">
+            <div class="panel panel-primary">
+              <div class="panel-heading">
+                <h3 class="panel-title">Technologies</h3>
+              </div>
+              <div class="panel-body">
+                <div id="bokeh_info" class="clearfix">
+                  <div class="pull-left">
+                      <strong>Bokeh: </strong> <span id="bokeh_state">(loading)</span>
+                  </div>
+                  <div class="pull-left">
+                    <div id="bokeh_state_loader" class="mini_loader"></div>
+                  </div>
+                </div>
+                <p><strong>AtlantOS Ocean Data QC: </strong><script>
+                  const {app} = require('electron').remote;
+                  document.write(app.getVersion());
+                </script></p>
+                <p><strong>App Update: <span id="update_state" ></span></strong></p>
+                <p><strong>Node.js: </strong><script>document.write(process.versions.node)</script></p>
+                <p><strong>Chromium: </strong><script>document.write(process.versions.chrome)</script></p>
+                <p><strong>Electron: </strong><script>document.write(process.versions.electron)</script></p>
+                <p><strong>Octave: </strong><span id="octave_version"></span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div> <!-- page -->
+    </div> <!-- containter -->
+  </body>
+    <script>
+        window.$ = window.jQuery = require('jquery');
+
+        require('../../node_modules/bootstrap/dist/js/bootstrap.min.js');
+        require('../js/renderer_modules/main_renderer.js');
+        require('../js/renderer_modules/bokeh_renderer.js');
+        require('../js/renderer_modules/updater_renderer.js');
+        require('../js/external_resources/jquery-ui.min.js');  // jquery-ui: it is needed for the accordion widget
+    </script>
+</html>
