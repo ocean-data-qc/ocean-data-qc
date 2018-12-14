@@ -12,6 +12,7 @@
 # folders for buildings
 /build
 /dist
+/releases
 
 /pack_old
 /scripts
