@@ -2,7 +2,7 @@
 
 Tool for 1st Quality Control on Hydrographic Cruise Data. The CSV files must have the [WHP format](https://www.nodc.noaa.gov/woce/woce_v3/wocedata_1/whp/exchange/exchange_format_desc.htm)
 
-![flagging_example](ocean_data_js/src/img/update_flag_values.gif)
+![](https://github.com/ocean-data-qc/ocean-data-qc/blob/master/ocean_data_qc_js/src/img/update_flag_values.gif?raw=true)
 
 ## Manual Installation
 
