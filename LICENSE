@@ -5,10 +5,11 @@
 #     AtlantOS QC - Software for helping in quality control of hydrographic cruises   #
 #     H2020 grant agreement No 633211                                                 #
 #                                                                                     #
-#     @CSIC: jcacabelos - jcacabelos@iim.csic.es                                      #
-#     @CSIC: avelo - avelo@iim.csic.es                                                #
-#     @GEOMAR: ttanhua - ttanhua@geomar.de                                            #
-#     @CSIC: ffperez - fiz.perez@iim.csic.es                                          #
+#     @CSIC: Jesús Cacabelos <jcacabelos@iim.csic.es>                                 #
+#     @CSIC: Antón Velo <avelo@iim.csic.es>                                           #
+#     @CSIC: Fiz F. Pérez <fiz.perez@iim.csic.es>                                     #
+#     @GEOMAR: Toste Tanhua <ttanhua@geomar.de>                                       #
+#     @GEOMAR: Nico Lange <nlange@geomar.de>                                          #
 #                                                                                     #
 #######################################################################################
 
