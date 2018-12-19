@@ -4,9 +4,6 @@
 #    LICENSE file at the root folder of this application.      #
 ################################################################
 
-import shutil
-import sys
-import os
 from bokeh.palettes import Blues8, Reds3
 from os import path, getenv
 from bokeh.util.logconfig import bokeh_logger as lg
@@ -78,15 +75,3 @@ ORIGINAL_CSV = path.join(TMP, 'original.csv')
 DATA_CSV = path.join(TMP, 'data.csv')
 UPDATE_CSV = path.join(TMP, 'new.csv')
 MOVES_CSV = path.join(TMP, 'moves.csv')
-
-OCTAVE_EXECUTABLE = shutil.which('octave')
-if sys.platform == 'win32':
-    if not shutil.which('octave.exe') and not shutil.which('octave-cli.exe'):
-        base_octave = r'C:\Octave'
-        if os.path.isdir(base_octave):
-            try:
-                vdir = os.listdir(base_octave)[0]
-                if os.path.isfile(os.path.join(base_octave,vdir,'bin','octave-cli.exe')):
-                    OCTAVE_EXECUTABLE = os.path.join(base_octave,vdir,'bin','octave-cli.exe')
-            except:
-                pass

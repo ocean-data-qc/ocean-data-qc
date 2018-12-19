@@ -10,6 +10,7 @@ import numpy as np
 import seawater as sw
 from bokeh.util.logconfig import bokeh_logger as lg
 from ocean_data_qc.constants import *
+from ocean_data_qc.octave.octave import OCTAVE_EXECUTABLE
 from datetime import datetime
 
 os.environ['OCTAVE_EXECUTABLE'] = OCTAVE_EXECUTABLE

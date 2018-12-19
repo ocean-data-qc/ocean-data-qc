@@ -6,6 +6,7 @@
 
 from bokeh.util.logconfig import bokeh_logger as lg
 from ocean_data_qc.constants import *
+from ocean_data_qc.octave.octave import OCTAVE_EXECUTABLE
 from ocean_data_qc.data_models.exceptions import ValidationError
 
 import json
