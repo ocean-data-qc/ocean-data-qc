@@ -17,7 +17,6 @@ from oct2py import Oct2Py
 oc = Oct2Py()
 oc.addpath('octave')
 oc.addpath('octave/CANYON-B')
-oc.addpath('octave/CO2SYS-MATLAB/src')
 
 def pressure_combined(CTDPRS, DEPTH, LATITUDE):
     pressure = -1 * CTDPRS
