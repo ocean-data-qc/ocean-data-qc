@@ -1,10 +1,19 @@
+# -*- coding: utf-8 -*-
+################################################################
+#    License, author and contributors information in:          #
+#    LICENSE file at the root folder of this application.      #
+################################################################
+
+import os
 import pandas as pd
 import numpy as np
 import seawater as sw
-from oct2py import Oct2Py
 from bokeh.util.logconfig import bokeh_logger as lg
+from ocean_data_qc.constants import *
 from datetime import datetime
 
+os.environ['OCTAVE_EXECUTABLE'] = OCTAVE_EXECUTABLE
+from oct2py import Oct2Py
 oc = Oct2Py()
 oc.addpath('octave')
 oc.addpath('octave/CANYON-B')

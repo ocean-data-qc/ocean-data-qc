@@ -18,8 +18,7 @@ import subprocess as sbp
 
 # NOTE: check octave availability againg here because if we check shared_data maybe
 #       the value is not updated due to asyncronous matters
-oc_output = sbp.getstatusoutput('octave --eval "OCTAVE_VERSION"')
-oc_output[0] == 0
+oc_output = sbp.getstatusoutput('%s --eval "OCTAVE_VERSION"'%(OCTAVE_EXECUTABLE))
 if oc_output[0] == 0:
     lg.info('>> OCTAVE DETECTED FROM PYTHON, VERSION: {}'.format(
         oc_output[1].split('=')[1].strip())
