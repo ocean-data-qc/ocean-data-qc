@@ -117,13 +117,13 @@ module.exports = {
             pythonPath: self.python_path,
         };
         self.shell = python_shell.run(path.join(loc.scripts, 'get_module_path.py'), py_options, function (err, results) {
-            lg.warn('-- GET MODULE PATH EXECUTED');
             if (err) {
                 lg.error('Error running get_module_path.py: ' + err);
             }
             if (typeof(results) !== 'undefined') {
                 self.ocean_data_qc_path = results[0];    // what is the returned value if it is not found?
-                lg.warn('>> PATH RETURNED + CONVERTED: ' + results[0]);
+                self.ocean_data_qc_path = self.ocean_data_qc_path.replace(/[\n\r]+/g, '');
+                self.ocean_data_qc_path = self.ocean_data_qc_path.replace(/\\/g, '\\\\');
                 self.set_python_shell_options();
                 self.run_bokeh();
             } else {
@@ -140,7 +140,7 @@ module.exports = {
         var dev_mode = data.get('dev_mode', loc.shared_data);
         var user_options = [
             '-m', 'bokeh', 'serve',
-            '--port', self.bokeh_port,
+            '--port', self.bokeh_port
         ]
         var dev_options = [
             '--log-format', '"%(asctime)s %(levelname)s %(message)s"',       // not working??
@@ -169,27 +169,30 @@ module.exports = {
     run_bokeh: function() {
         lg.warn('-- RUN BOKEH')
         var self = this;
-        var aux_folder = process.cwd();
-        lg.info('>> OCEAN DATA QC PATH: ' + self.ocean_data_qc_path);
-        process.chdir(self.ocean_data_qc_path);
-
-        lg.info('>> SELF.PYTHON OPTIONS: ' + JSON.stringify(self.python_options, null, 4));
-        self.shell = python_shell.run('', self.python_options, function (err, results) {
-            lg.info('>> BOKEH RETURNS ANYTHING TO PYTHON SHELL');
-            if (err) {
-                lg.error(`>> ERROR RUNNING BOKEH: ${err}`);
-            }
-            // results is an array consisting of messages collected during execution
-            if (typeof(results) !== 'undefined') {
-                lg.info('>> OCEAN_DATA_QC RETURNS: ' + results[0]);
-            } else {
-                self.web_contents.send('show-modal', {
-                    'type': 'ERROR',
-                    'msg': 'Something was wrong intializing bokeh server' + err
+        lg.warn('>> OCEAN DATA QC PATH: ' + self.ocean_data_qc_path);
+        var _check_path_state = setInterval(function() {
+            if (self.ocean_data_qc_path != '') {
+                clearInterval(_check_path_state);
+                process.chdir(path.join(self.ocean_data_qc_path, ''));
+                self.shell = python_shell.run('', self.python_options, function (err, results) {
+                    lg.info('>> BOKEH RETURNS ANYTHING TO PYTHON SHELL');
+                    if (err) {
+                        lg.error(`>> ERROR RUNNING BOKEH: ${err}`);
+                    }
+                    // results is an array consisting of messages collected during execution
+                    if (typeof(results) !== 'undefined') {
+                        lg.info('>> OCEAN_DATA_QC RETURNS: ' + results[0]);
+                    } else {
+                        self.web_contents.send('show-modal', {
+                            'type': 'ERROR',
+                            'msg': 'Something was wrong intializing bokeh server' + err
+                        });
+                    }
                 });
             }
-        });
-        process.chdir(aux_folder);
+        }, 100);
+
+
     },
 
     /**
