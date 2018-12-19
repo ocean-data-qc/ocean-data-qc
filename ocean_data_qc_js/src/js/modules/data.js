@@ -175,7 +175,7 @@ module.exports = {
         var self = this;
         if (!fs.existsSync(loc.files)) {
             fs_extra.copySync(
-                loc.default_files,
+                loc.default_files,  // TOCHECK: does it work within the asar file?
                 loc.files
             )
         }

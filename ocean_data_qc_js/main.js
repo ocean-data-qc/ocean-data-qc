@@ -63,7 +63,7 @@ app.on('ready', function() {
     })
     main_window.maximize();
     var web_contents = main_window.webContents;          // TODO: avoid globals
-    // web_contents.openDevTools();     // TODO: "chromium DevTools" >> add this options to development menu (toggle)
+    web_contents.openDevTools();     // TODO: "chromium DevTools" >> add this options to development menu (toggle)
 
     menu_actions.init(web_contents, server);
     menu.init(web_contents, menu_actions, server);
