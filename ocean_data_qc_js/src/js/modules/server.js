@@ -20,6 +20,7 @@ const {app} = require('electron');
 const loc = require('locations');
 const lg = require('logging');
 const data = require('data');
+const tools = require('../renderer_modules/tools');
 
 module.exports = {
     init: function(web_contents, menu) {
@@ -62,7 +63,6 @@ module.exports = {
                             } catch(err) {
                                 reject('Version could not be parsed');
                             }
-                            lg.warn('>> PYTHON VERSION: ' + v);
                             if (v == 3) {
                                 self.python_path = 'python';  // TODO: check python3 alias???
                                 resolve(true)
@@ -103,37 +103,39 @@ module.exports = {
         lg.info('-- SET OCEAN DATA QC PATH');
         var self = this;
 
-        // if (is_dev) {   // TODO: check where ocean_data_qc is installed in a better way?
-        //     lg.warn('>> BEFORE SELF.OCEAN_DATA_QC_PATH: ' + self.ocean_data_qc_path);
-        //     if (!fs.existsSync(self.ocean_data_qc_path)) {      // then set the development path
-        //         self.ocean_data_qc_path = path.join(loc.ocean_data_qc_js, '../ocean_data_qc');
-        //         lg.warn('>> AFTER SELF.OCEAN_DATA_QC_PATH: ' + self.ocean_data_qc_path);
-        //     }
-        //     self.set_python_shell_options();
-        //     self.run_bokeh();
-        // } else {
-
         var py_options = {
             mode: 'text',
             pythonPath: self.python_path,
             scriptPath: loc.scripts
         };
         self.shell = python_shell.run('get_module_path.py', py_options, function (err, results) {
-            if (err) {
-                lg.error('Error running get_module_path.py: ' + err);
+            if (err || typeof(results) == 'undefined') {  // The script get_module_path.py did not return the correct path
+                lg.error(
+                    'Error running get_module_path.py. ' +
+                    'Make sure you have installed the ocean_data_package: ' + err
+                );
+
+                // NOTE: If an ImportError (or any other error) is got >>
+                //       ocean_data_module is posibly not installed.
+                //       Then look for the sibling folder of ocean_data_qc_js
+                //       to make this work the environment should exists
+                //       its dependencies should be installed as well
+
+                if (fs.existsSync(loc.ocean_data_qc_dev)) {
+                    self.ocean_data_qc_path = loc.ocean_data_qc_dev;
+                    self.set_python_shell_options();
+                    self.run_bokeh();
+                }
             }
             if (typeof(results) !== 'undefined') {
-                self.ocean_data_qc_path = results[0];    // what is the returned value if it is not found?
-                self.ocean_data_qc_path = self.ocean_data_qc_path.replace(/[\n\r]+/g, '');
-                self.ocean_data_qc_path = self.ocean_data_qc_path.replace(/\\/g, '\\\\');
+                // TODO: what is the returned value if it is not found without any error?
+
+                var p = results[0].replace(/[\n\r]+/g, '');
+                self.ocean_data_qc_path = tools.file_to_path(p);
                 self.set_python_shell_options();
                 self.run_bokeh();
-            } else {
-                lg.error('>> The script get_module_path.py did not return the correct path')
             }
         });
-
-        // }
     },
 
     set_python_shell_options: function() {
@@ -148,17 +150,12 @@ module.exports = {
             '--log-format', '"%(asctime)s %(levelname)s %(message)s"',       // not working??
             '--log-file', loc.log_python
         ]
-
-        var aux_options = '';
+        var aux_options = user_options;
         if (dev_mode) {
             aux_options = user_options.concat(dev_options);
-        } else {
-            aux_options = user_options;
         }
         self.python_options = {
-            mode: 'text',               // the python script should return text
-                                        // but I do not need to return anything,
-                                        // so I do not mind with mode is used here
+            mode: 'text',               // actually I do not need to return anything,
             pythonPath: self.python_path,
             pythonOptions: aux_options,
         };
@@ -169,32 +166,20 @@ module.exports = {
      * The bokeh process is bound to the node process.
      */
     run_bokeh: function() {
-        lg.warn('-- RUN BOKEH')
+        lg.info('-- RUN BOKEH')
         var self = this;
-        lg.warn('>> OCEAN DATA QC PATH: ' + self.ocean_data_qc_path);
-        var _check_path_state = setInterval(function() {
-            if (self.ocean_data_qc_path != '') {
-                clearInterval(_check_path_state);
-                process.chdir(path.join(self.ocean_data_qc_path, ''));
-                self.shell = python_shell.run('', self.python_options, function (err, results) {
-                    lg.info('>> BOKEH RETURNS ANYTHING TO PYTHON SHELL');
-                    if (err) {
+        if (self.ocean_data_qc_path != '') {
+            self.shell = python_shell.run(
+                self.ocean_data_qc_path, self.python_options, (err, results) => {
+                    if (err || typeof(results) !== 'undefined') {
                         lg.error(`>> ERROR RUNNING BOKEH: ${err}`);
                     }
-                    // results is an array consisting of messages collected during execution
-                    if (typeof(results) !== 'undefined') {
+                    if (typeof(results) !== 'undefined') {  // actually nothing is returned
                         lg.info('>> OCEAN_DATA_QC RETURNS: ' + results[0]);
-                    } else {
-                        self.web_contents.send('show-modal', {
-                            'type': 'ERROR',
-                            'msg': 'Something was wrong intializing bokeh server' + err
-                        });
                     }
-                });
-            }
-        }, 100);
-
-
+                }
+            );
+        }
     },
 
     /**

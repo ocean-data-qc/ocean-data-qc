@@ -199,7 +199,6 @@ class ElectronBokehBridge(Environment):
         """ The Process ID is saved in the shared_data.json file """
 
         lg.info('-- SAVE PYTHON PID')
-        lg.warning('>> SHARED DATA PATH: {}'.format(SHARED_DATA))
         with open(SHARED_DATA, 'r') as shared_data_read:
             json_config = json.load(shared_data_read)
         json_config['python_pid'] = int(os.getpid())

@@ -71,8 +71,6 @@ if not APPDATA:
 FILES = path.join(APPDATA, 'ocean-data-qc', 'files')
 TMP = path.join(APPDATA, 'ocean-data-qc', 'files', 'tmp')
 
-lg.warning('>> APP DATA PATH: {}'.format(TMP))
-
 PROJ_SETTINGS = path.join(TMP, 'settings.json')
 CUSTOM_SETTINGS = path.join(FILES, 'custom_settings.json')
 DEFAULT_SETTINGS = path.join(FILES, 'default_settings.json')

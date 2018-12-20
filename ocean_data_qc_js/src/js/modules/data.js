@@ -9,8 +9,6 @@ const fs = require('fs')
 const fs_extra = require('fs-extra')
 const loc = require('locations');
 const lg = require('logging');
-const path = require('path');
-const python_shell = require('python-shell')
 
 module.exports = {
     load: function(path){

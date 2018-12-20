@@ -22,6 +22,7 @@ const __user_data = app.getPath('userData');
 const locations = {
     // GENERAL FOLDERS
     'ocean_data_qc_js': __ocean_data_qc_js,
+    'ocean_data_qc_dev': path.join(__ocean_data_qc_js, '../ocean_data_qc'),
     'user_data': __user_data,
     'files': path.join(__user_data, 'files'),
     'default_files': path.join(__ocean_data_qc_js, 'src/files'),

@@ -278,8 +278,6 @@ function show_reopen_session_modal(arg) {
 function load_images() {
     // TODO: the window should be shown when all the images are completely loaded.
     //       or save some space to avoid the strange change of size behaviour
-    lg.info('-- LOAD IMAGES')
-    lg.warn('>> MAIN ICON: ' + path.join(loc.img, 'icon.png'));
     fs.readFile(path.join(loc.img, 'icon.png'), {encoding: 'base64'}, function(err, data) {
         if (err) {
             lg.error('ERROR LOADING ICON.PNG: ' + err)
@@ -292,7 +290,6 @@ function load_images() {
         }
     });
 
-    lg.warn('>> ATLANTOS LOGO: ' + path.join(loc.img, 'atlantos_logo.svg'));
     fs.readFile(path.join(loc.img, 'atlantos_logo.svg'), {encoding: 'base64'}, function(err, data) {
         if (err) {
             lg.error('ERROR LOADING ATLANTOS_LOGO.SVG: ' + err)
