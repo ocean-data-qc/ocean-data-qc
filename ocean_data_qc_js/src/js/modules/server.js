@@ -50,8 +50,9 @@ module.exports = {
                 var py_options = {
                     mode: 'text',
                     pythonPath: 'python',
+                    scriptPath: loc.scripts
                 };
-                python_shell.run(path.join(loc.scripts, 'get_python_version.py'), py_options, function (err, results) {
+                python_shell.run('get_python_version.py', py_options, function (err, results) {
                     if (err) {
                         reject('>> Error running script: ' + err);
                     } else {
@@ -115,8 +116,9 @@ module.exports = {
         var py_options = {
             mode: 'text',
             pythonPath: self.python_path,
+            scriptPath: loc.scripts
         };
-        self.shell = python_shell.run(path.join(loc.scripts, 'get_module_path.py'), py_options, function (err, results) {
+        self.shell = python_shell.run('get_module_path.py', py_options, function (err, results) {
             if (err) {
                 lg.error('Error running get_module_path.py: ' + err);
             }
