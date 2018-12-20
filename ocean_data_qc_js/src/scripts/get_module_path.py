@@ -1,9 +1,13 @@
-# print('holaaaaaaaas')
-
-# print('../env/win/Lib/site-packages/ocean_data_qc-0.8-py3.6.egg/ocean_data_qc')
-
-import ocean_data_qc
-print(ocean_data_qc.__path__.__dict__["_path"][0])
+try:
+    import ocean_data_qc
+    print(ocean_data_qc.__path__.__dict__["_path"][0])
+except ImportError:
+    import os
+    #os.chdir('../../..')
+    import sys
+    #sys.path.append(os.path.abspath('../../../'))
+    # import ocean_data_qc
+    print(os.path.abspath('../../../'))
 
 # NOTE: This should work, in fact, it worked once:
 # import importlib
