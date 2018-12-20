@@ -59,9 +59,17 @@ OCEAN_DATA_QC = path.realpath(                   # ocean_data_qc_folder
         path.abspath(__file__)
     ),
 )
+APPDATA = getenv('APPDATA')
+if not APPDATA:
+    if path.isdir(path.join(getenv('HOME'), 'Library', 'Application Support')):
+        APPDATA = path.join(getenv('HOME'), 'Library', 'Application Support')
+    elif path.isdir(path.join(getenv('HOME'), '.config')):
+        APPDATA = path.join(getenv('HOME'), '.config')
+    else:
+        APPDATA = OCEAN_DATA_QC
 
-FILES = path.join(getenv('APPDATA'), 'ocean-data-qc', 'files')
-TMP = path.join(getenv('APPDATA'), 'ocean-data-qc', 'files', 'tmp')
+FILES = path.join(APPDATA, 'ocean-data-qc', 'files')
+TMP = path.join(APPDATA, 'ocean-data-qc', 'files', 'tmp')
 
 lg.warning('>> APP DATA PATH: {}'.format(TMP))
 
