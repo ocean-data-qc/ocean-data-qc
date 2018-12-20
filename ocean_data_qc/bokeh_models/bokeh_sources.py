@@ -11,7 +11,6 @@ from bokeh.util.logconfig import bokeh_logger as lg
 from bokeh.models.sources import ColumnDataSource, CDSView
 from bokeh.models.filters import IndexFilter
 from bokeh.palettes import Reds3
-from pyproj import Proj, transform
 
 from ocean_data_qc.data_models import CruiseData
 from ocean_data_qc.env import Environment
@@ -50,10 +49,13 @@ class BokehSources(Environment):
         self.env.cds_df['INDEX'] = index                               # NOTE: the index will coincide with the row position
         self.env.cds_df = self.env.cds_df.set_index(['INDEX'])          #       so .iloc can be used in order to get the rows
 
+    def _epsg4326_to_epsg3857(self, lon, lat):
+        x = lon * 20037508.34 / 180
+        y = np.log(np.tan((90 + lat) * np.pi / 360)) / (np.pi / 180) * 20037508.34 / 180
+        return(x, y)
+
     def _init_bathymetric_map_data(self):
-        x_wm, y_wm = transform(
-            Proj(init="epsg:4326"),
-            Proj(init="epsg:3857"),
+        x_wm, y_wm = self._epsg4326_to_epsg3857(
             self.env.cds_df.LONGITUDE.as_matrix(),
             self.env.cds_df.LATITUDE.as_matrix()
         )
