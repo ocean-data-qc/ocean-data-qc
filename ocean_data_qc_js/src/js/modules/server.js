@@ -139,7 +139,7 @@ module.exports = {
     },
 
     set_python_shell_options: function() {
-        lg.info('-- GET PYTHON SHELL OPTIONS')
+        lg.info('-- SET PYTHON SHELL OPTIONS')
         var self = this;
         var dev_mode = data.get('dev_mode', loc.shared_data);
         var user_options = [
@@ -158,6 +158,7 @@ module.exports = {
             mode: 'text',               // actually I do not need to return anything,
             pythonPath: self.python_path,
             pythonOptions: aux_options,
+            scriptPath: self.ocean_data_qc_path
         };
     },
 
@@ -170,7 +171,7 @@ module.exports = {
         var self = this;
         if (self.ocean_data_qc_path != '') {
             self.shell = python_shell.run(
-                self.ocean_data_qc_path, self.python_options, (err, results) => {
+                '', self.python_options, (err, results) => {
                     if (err || typeof(results) !== 'undefined') {
                         lg.error(`>> ERROR RUNNING BOKEH: ${err}`);
                     }
