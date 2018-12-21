@@ -16,6 +16,8 @@ Tool for 1st Quality Control on Hydrographic Cruise Data. The CSV files must hav
 3. Install the python `ocean_data_qc` package and its dependencies in your python setup (if you have installed python through miniconda/anaconda and is not in PATH, you have to use Anaconda Prompt as command shell):
 
         python setup.py develop
+            or for non-root install in Linux:
+        python setup.py develop --user 
 
 3. Install the node dependencies in the `ocean_data_qc_js` folder
 

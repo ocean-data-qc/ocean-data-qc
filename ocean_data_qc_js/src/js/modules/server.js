@@ -67,7 +67,12 @@ module.exports = {
                                 self.python_path = 'python';  // TODO: check python3 alias???
                                 resolve(true)
                             } else {
-                                reject('Wrong python version');
+                                if (command_exists_sync('python3')) {
+                                    self.python_path = 'python3';
+                                    resolve(true);
+                                } else {
+                                    reject('Wrong python version');                                    
+                                }   
                             }
                         }
                     }
