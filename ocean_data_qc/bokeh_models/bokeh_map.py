@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-################################################################
-#    License, author and contributors information in:          #
-#    LICENSE file at the root folder of this application.      #
-################################################################
+#########################################################################
+#    License, authors, contributors and copyright information at:       #
+#    AUTHORS and LICENSE files at the root folder of this application   #
+#########################################################################
 
 from bokeh.models import ColumnDataSource, Range1d, Circle, CustomJSHover
 from bokeh.models.tiles import WMTSTileSource

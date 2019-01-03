@@ -1,7 +1,7 @@
-////////////////////////////////////////////////////////////////
-//    License, author and contributors information in the     //
-//    LICENSE file at the root folder of this application.    //
-////////////////////////////////////////////////////////////////
+// //////////////////////////////////////////////////////////////////////
+//  License, authors, contributors and copyright information at:       //
+//  AUTHORS and LICENSE files at the root folder of this application   //
+// //////////////////////////////////////////////////////////////////////
 
 "use strict";
 
@@ -321,4 +321,16 @@ module.exports = {
         lg.info('>> SET CURSOR STYLE TO DEFAULT');
         $('#loader_mask').addClass('hidden');
     },
+
+    /** Convert a url "file:///C/..." to a path "C:/..." */
+    file_to_path: function(fileUrl=false) {
+        var p = new URL(fileUrl).pathname;
+        if (process.platform === 'win32') {
+            if (p.charAt(0) === '/') {  // TODO: check if this is necessary on linux and mac
+                p = p.substr(1);
+            }
+        }
+        p = path.join(p, '');
+        return p;
+    }
 }

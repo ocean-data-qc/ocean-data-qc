@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
-################################################################
-#    License, author and contributors information in:          #
-#    LICENSE file at the root folder of this application.      #
-################################################################
+#########################################################################
+#    License, authors, contributors and copyright information at:       #
+#    AUTHORS and LICENSE files at the root folder of this application   #
+#########################################################################
 
 from bokeh.util.logconfig import bokeh_logger as lg
 from ocean_data_qc.constants import *
+from ocean_data_qc.octave.octave import OCTAVE_EXECUTABLE
 from ocean_data_qc.data_models.exceptions import ValidationError
 
 import json
@@ -18,8 +19,7 @@ import subprocess as sbp
 
 # NOTE: check octave availability againg here because if we check shared_data maybe
 #       the value is not updated due to asyncronous matters
-oc_output = sbp.getstatusoutput('octave --eval "OCTAVE_VERSION"')
-oc_output[0] == 0
+oc_output = sbp.getstatusoutput('%s --eval "OCTAVE_VERSION"'%(OCTAVE_EXECUTABLE))
 if oc_output[0] == 0:
     lg.info('>> OCTAVE DETECTED FROM PYTHON, VERSION: {}'.format(
         oc_output[1].split('=')[1].strip())

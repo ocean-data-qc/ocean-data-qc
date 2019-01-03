@@ -1,7 +1,7 @@
-////////////////////////////////////////////////////////////////
-//    License, author and contributors information in the     //
-//    LICENSE file at the root folder of this application.    //
-////////////////////////////////////////////////////////////////
+// //////////////////////////////////////////////////////////////////////
+//  License, authors, contributors and copyright information at:       //
+//  AUTHORS and LICENSE files at the root folder of this application   //
+// //////////////////////////////////////////////////////////////////////
 
 'use strict';
 
@@ -11,6 +11,8 @@ const python_shell = require('python-shell');
 const portscanner = require('portscanner');
 const rmdir = require('rimraf');
 const url = require('url');
+const command_exists_sync = require('command-exists').sync;
+const is_dev = require('electron-is-dev');
 
 const {dialog} = require('electron');
 const {app} = require('electron');
@@ -18,6 +20,7 @@ const {app} = require('electron');
 const loc = require('locations');
 const lg = require('logging');
 const data = require('data');
+const tools = require('../renderer_modules/tools');
 
 module.exports = {
     init: function(web_contents, menu) {
@@ -27,6 +30,8 @@ module.exports = {
         self.bokeh_port = data.get('bokeh_port', loc.shared_data);
         self.shell = null;
         self.python_options = {};
+        self.python_path = 'python';
+        self.ocean_data_qc_path = '';
     },
 
     /**
@@ -36,73 +41,130 @@ module.exports = {
     launch_bokeh: function() {
         var self = this;
         lg.info('-- LAUNCHING BOKEH');
-        self.set_python_shell_options();
-        self.run_bokeh();
+        self.set_python_path();
+    },
+
+    get_python_version: function() {
+        var self = this;
+        return new Promise((resolve, reject) => {
+            if (command_exists_sync('python')) {
+                var py_options = {
+                    mode: 'text',
+                    pythonPath: 'python',
+                    scriptPath: loc.scripts
+                };
+                python_shell.run('get_python_version.py', py_options, function (err, results) {
+                    if (err) {
+                        reject('>> Error running script: ' + err);
+                    } else {
+                        if (typeof(results) !== 'undefined') {
+                            try {
+                                var v = parseInt(results[0].split('.')[0])
+                            } catch(err) {
+                                reject('Version could not be parsed');
+                            }
+                            if (v == 3) {
+                                self.python_path = 'python';  // TODO: check python3 alias???
+                                resolve(true)
+                            } else {
+                                if (command_exists_sync('python3')) {
+                                    self.python_path = 'python3';
+                                    resolve(true);
+                                } else {
+                                    reject('Wrong python version');                                    
+                                }   
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    },
+
+    set_python_path: function() {
+        lg.info('-- SET PYTHON PATH');
+        var self = this;
+        self.get_python_version().then(() => {
+            self.set_ocean_data_qc_path();
+        }).catch((err) => {                         // look for python manually
+            lg.error(err)
+
+            if (process.platform === 'win32' && fs.existsSync(loc.python_win)) {
+                self.python_path = loc.python_win;
+            } else if (process.platform === 'darwin' && fs.existsSync(loc.python_mac)) {
+                self.python_path = loc.python_mac;
+            } else if (process.platform === 'linux' && fs.existsSync(loc.python_lin)) {
+                self.python_path = loc.python_lin;
+            }
+            if (self.python_path != 'python') {    // it was set manually with one of the previous paths
+                                                   // if there is environment we assume that python has the correct version
+                self.set_ocean_data_qc_path()
+            }
+        })
+        lg.info('>> PYTHON PATH USED: ' + self.python_path);
+    },
+
+    set_ocean_data_qc_path: function() {
+        lg.info('-- SET OCEAN DATA QC PATH');
+        var self = this;
+
+        var py_options = {
+            mode: 'text',
+            pythonPath: self.python_path,
+            scriptPath: loc.scripts
+        };
+        self.shell = python_shell.run('get_module_path.py', py_options, function (err, results) {
+            if (err || typeof(results) == 'undefined') {  // The script get_module_path.py did not return the correct path
+                lg.error(
+                    'Error running get_module_path.py. ' +
+                    'Make sure you have installed the ocean_data_package: ' + err
+                );
+
+                // NOTE: If an ImportError (or any other error) is got >>
+                //       ocean_data_module is posibly not installed.
+                //       Then look for the sibling folder of ocean_data_qc_js
+                //       to make this work the environment should exists
+                //       its dependencies should be installed as well
+
+                if (fs.existsSync(loc.ocean_data_qc_dev)) {
+                    self.ocean_data_qc_path = loc.ocean_data_qc_dev;
+                    self.set_python_shell_options();
+                    self.run_bokeh();
+                }
+            }
+            if (typeof(results) !== 'undefined') {
+                // TODO: what is the returned value if it is not found without any error?
+
+                var p = results[0].replace(/[\n\r]+/g, '');
+                self.ocean_data_qc_path = tools.file_to_path(p);
+                self.set_python_shell_options();
+                self.run_bokeh();
+            }
+        });
     },
 
     set_python_shell_options: function() {
-        lg.info('-- GET PYTHON SHELL OPTIONS')
+        lg.info('-- SET PYTHON SHELL OPTIONS')
         var self = this;
-        var aux_options = '';
-
         var dev_mode = data.get('dev_mode', loc.shared_data);
         var user_options = [
             '-m', 'bokeh', 'serve',
-            '--port', self.bokeh_port,
+            '--port', self.bokeh_port
         ]
-        if (process.platform === 'win32') {
-            var dev_options = [
-                '--log-format', '"%(asctime)s %(levelname)s %(message)s"',       // not working??
-                '--log-file', loc.log_python
-            ]
-            if (dev_mode) {
-                aux_options = user_options.concat(dev_options);
-            } else {
-                aux_options = user_options;
-            }
-
-            self.python_options = {
-                mode: 'text',               // the python script should return text
-                                            // but I do not need to return anything,
-                                            // so I do not mind with mode is used here
-                pythonPath: loc.python_win,
-                pythonOptions: aux_options,
-            };
-        } else if (process.platform == 'linux') {
-            var dev_options = [
-                '--log-format', '"%(asctime)s %(levelname)s %(message)s"',       // not working??
-                '--log-file', loc.log_python
-            ]
-            if (dev_mode) {
-                aux_options = user_options.concat(dev_options);
-            } else {
-                aux_options = user_options;
-            }
-
-            self.python_options = {
-                mode: 'text',
-                pythonPath: loc.spawn_python_lin,
-                pythonOptions: aux_options,
-            };
-        } else if (process.platform == 'darwin') {
-            var dev_options = [
-                '--log-format', '"%(asctime)s %(levelname)s %(message)s"',       // not working??
-                '--log-file', loc.log_python
-            ]
-            if (dev_mode) {
-                aux_options = user_options.concat(dev_options);
-            } else {
-                aux_options = user_options;
-            }
-
-            self.python_options = {
-                mode: 'text',
-                pythonPath: loc.spawn_python_mac,
-                pythonOptions: aux_options,
-            };
-        } else {
-            lg.error('NON SUPPORTED OS');
+        var dev_options = [
+            '--log-format', '"%(asctime)s %(levelname)s %(message)s"',       // not working??
+            '--log-file', loc.log_python
+        ]
+        var aux_options = user_options;
+        if (dev_mode) {
+            aux_options = user_options.concat(dev_options);
         }
+        self.python_options = {
+            mode: 'text',               // actually I do not need to return anything,
+            pythonPath: self.python_path,
+            pythonOptions: aux_options,
+            scriptPath: self.ocean_data_qc_path
+        };
     },
 
     /**
@@ -110,28 +172,20 @@ module.exports = {
      * The bokeh process is bound to the node process.
      */
     run_bokeh: function() {
+        lg.info('-- RUN BOKEH')
         var self = this;
-        var aux_folder = process.cwd();
-        process.chdir(loc.ocean_data_qc_win);
-
-        // TODO: check if this works on Mac and Windows
-        // lg.info('>> SELF.PYTHON OPTIONS: ' + JSON.stringify(self.python_options, null, 4));
-        self.shell = python_shell.run('', self.python_options, function (err, results) {
-            lg.info('>> BOKEH RETURNS ANYTHING TO PYTHON SHELL');
-            if (err) {
-                lg.error(`>> ERROR RUNNING BOKEH: ${err}`);
-            }
-            // results is an array consisting of messages collected during execution
-            if (typeof(results) !== 'undefined') {
-                lg.info('>> OCEAN_DATA_QC RETURNS: ' + results[0]);
-            } else {
-                self.web_contents.send('show-modal', {
-                    'type': 'ERROR',
-                    'msg': 'Something was wrong intializing bokeh server' + err
-                });
-            }
-        });
-        process.chdir(aux_folder);
+        if (self.ocean_data_qc_path != '') {
+            self.shell = python_shell.run(
+                '', self.python_options, (err, results) => {
+                    if (err || typeof(results) !== 'undefined') {
+                        lg.error(`>> ERROR RUNNING BOKEH: ${err}`);
+                    }
+                    if (typeof(results) !== 'undefined') {  // actually nothing is returned
+                        lg.info('>> OCEAN_DATA_QC RETURNS: ' + results[0]);
+                    }
+                }
+            );
+        }
     },
 
     /**

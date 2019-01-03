@@ -1,7 +1,7 @@
-////////////////////////////////////////////////////////////////
-//    License, author and contributors information in the     //
-//    LICENSE file at the root folder of this application.    //
-////////////////////////////////////////////////////////////////
+// //////////////////////////////////////////////////////////////////////
+//  License, authors, contributors and copyright information at:       //
+//  AUTHORS and LICENSE files at the root folder of this application   //
+// //////////////////////////////////////////////////////////////////////
 
 "use strict";
 
@@ -9,8 +9,6 @@ const fs = require('fs')
 const fs_extra = require('fs-extra')
 const loc = require('locations');
 const lg = require('logging');
-const path = require('path');
-const python_shell = require('python-shell')
 
 module.exports = {
     load: function(path){
@@ -175,7 +173,7 @@ module.exports = {
         var self = this;
         if (!fs.existsSync(loc.files)) {
             fs_extra.copySync(
-                loc.default_files,
+                loc.default_files,  // TOCHECK: does it work within the asar file?
                 loc.files
             )
         }

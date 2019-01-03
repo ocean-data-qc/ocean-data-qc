@@ -1,7 +1,7 @@
-////////////////////////////////////////////////////////////////
-//    License, author and contributors information in the     //
-//    LICENSE file at the root folder of this application.    //
-////////////////////////////////////////////////////////////////
+// //////////////////////////////////////////////////////////////////////
+//  License, authors, contributors and copyright information at:       //
+//  AUTHORS and LICENSE files at the root folder of this application   //
+// //////////////////////////////////////////////////////////////////////
 
 "use strict";
 
@@ -19,6 +19,8 @@ const rmdir = require('rimraf')
 const loc = require('locations');
 const lg = require('logging');
 const data = require('data');
+
+const tools = require('../renderer_modules/tools');
 
 
 module.exports = {
@@ -135,25 +137,13 @@ module.exports = {
         }
     },
 
-    file_to_path: function(fileUrl=false) {
-        var self = this;
-        // Convert a url "file:///C/..." to a path "C:/..."
-        var path = new URL(fileUrl).pathname;
-        if (process.platform === 'win32') {
-            if(path.charAt(0) === '/') {  // TODO: check if this is necessary on linux and mac
-                path = path.substr(1);
-            }
-        }
-        return path;
-    },
-
     save_file: function() {
         var self = this;
         return new Promise((resolve, reject) => {
             var project_file = data.get('project_file', loc.proj_settings);
             var file_path = false;
             if (project_file != false) {
-                file_path = self.file_to_path(project_file);
+                file_path = tools.file_to_path(project_file);
             }
             lg.info('>> URL PROJECT FILE: ' + file_path);
             if (file_path != false && fs.existsSync(file_path)) {

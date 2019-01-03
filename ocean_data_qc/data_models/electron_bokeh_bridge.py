@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-################################################################
-#    License, author and contributors information in:          #
-#    LICENSE file at the root folder of this application.      #
-################################################################
+#########################################################################
+#    License, authors, contributors and copyright information at:       #
+#    AUTHORS and LICENSE files at the root folder of this application   #
+#########################################################################
 
 from bokeh.util.logconfig import bokeh_logger as lg
 from ocean_data_qc.data_models.exceptions import ValidationError
@@ -199,7 +199,6 @@ class ElectronBokehBridge(Environment):
         """ The Process ID is saved in the shared_data.json file """
 
         lg.info('-- SAVE PYTHON PID')
-        lg.warning('>> SHARED DATA PATH: {}'.format(SHARED_DATA))
         with open(SHARED_DATA, 'r') as shared_data_read:
             json_config = json.load(shared_data_read)
         json_config['python_pid'] = int(os.getpid())

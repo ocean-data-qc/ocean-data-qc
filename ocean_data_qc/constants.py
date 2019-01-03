@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-################################################################
-#    License, author and contributors information in:          #
-#    LICENSE file at the root folder of this application.      #
-################################################################
+#########################################################################
+#    License, authors, contributors and copyright information at:       #
+#    AUTHORS and LICENSE files at the root folder of this application   #
+#########################################################################
 
 from bokeh.palettes import Blues8, Reds3
 from os import path, getenv
@@ -59,11 +59,17 @@ OCEAN_DATA_QC = path.realpath(                   # ocean_data_qc_folder
         path.abspath(__file__)
     ),
 )
+APPDATA = getenv('APPDATA')
+if not APPDATA:
+    if path.isdir(path.join(getenv('HOME'), 'Library', 'Application Support')):
+        APPDATA = path.join(getenv('HOME'), 'Library', 'Application Support')
+    elif path.isdir(path.join(getenv('HOME'), '.config')):
+        APPDATA = path.join(getenv('HOME'), '.config')
+    else:
+        APPDATA = OCEAN_DATA_QC
 
-FILES = path.join(getenv('APPDATA'), 'ocean-data-qc', 'files')
-TMP = path.join(getenv('APPDATA'), 'ocean-data-qc', 'files', 'tmp')
-
-lg.warning('>> APP DATA PATH: {}'.format(TMP))
+FILES = path.join(APPDATA, 'ocean-data-qc', 'files')
+TMP = path.join(APPDATA, 'ocean-data-qc', 'files', 'tmp')
 
 PROJ_SETTINGS = path.join(TMP, 'settings.json')
 CUSTOM_SETTINGS = path.join(FILES, 'custom_settings.json')

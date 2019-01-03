@@ -1,14 +1,23 @@
+# -*- coding: utf-8 -*-
+#########################################################################
+#    License, authors, contributors and copyright information at:       #
+#    AUTHORS and LICENSE files at the root folder of this application   #
+#########################################################################
+
+import os
 import pandas as pd
 import numpy as np
 import seawater as sw
-from oct2py import Oct2Py
 from bokeh.util.logconfig import bokeh_logger as lg
+from ocean_data_qc.constants import *
+from ocean_data_qc.octave.octave import OCTAVE_EXECUTABLE
 from datetime import datetime
 
+os.environ['OCTAVE_EXECUTABLE'] = OCTAVE_EXECUTABLE
+from oct2py import Oct2Py
 oc = Oct2Py()
 oc.addpath('octave')
 oc.addpath('octave/CANYON-B')
-oc.addpath('octave/CO2SYS-MATLAB/src')
 
 def pressure_combined(CTDPRS, DEPTH, LATITUDE):
     pressure = -1 * CTDPRS
