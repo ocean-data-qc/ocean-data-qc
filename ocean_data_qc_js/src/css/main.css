@@ -45,9 +45,50 @@ h5 {
 
 /* MAIN FORM */
 
+#panels {
+    min-height: 270px;
+    height: 300px
+}
+
+.card {
+    border: 0px !important;
+}
+
+.card .card-title {
+    font-size: 1.1em;
+    font-weight: bold;
+
+    /* FIXME: This is not going to work on the asar file */
+    /* background-image: url(../img/background.png);  */
+
+    background-size: cover;
+    background-color: #337ab7;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    border: 1px solid  #337ab7;
+    border-radius: 0px;
+}
+
+.card .card-body {
+    font-size: 0.9em;
+    border: 3px solid  #337ab7;
+}
+
+.card .card-body p {
+    margin-bottom: 0.3rem;
+}
+
+.card a {
+    color: #337ab7;
+}
+
+.card-title .fa {
+    margin: 4px;
+}
+
 #bokeh_info {
     color: red;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
 
 .dev_mode {
