@@ -62,7 +62,7 @@ window.onmessage = function(e){
         lg.info('-- BOKEH LOADED');
         $('#bokeh_info').css('color', 'green');
         $('#bokeh_state').text(bokeh_iframe.contentWindow.Bokeh.version + ' (loaded)');
-        $('#bokeh_state_loader').addClass('hidden');
+        $('#bokeh_state_loader').attr('hidden', '');
         $('body').data('bokeh_state','ready');
     }
 
@@ -90,7 +90,7 @@ if (dev_mode == true) {
     $('#enable_dev_mode').text('Enable developer mode');
     $('#enable_dev_mode').removeClass('dev_mode');
 }
-$('#enable_dev_mode').closest('p').removeClass('hidden');
+$('#enable_dev_mode').closest('p').removeAttr('hidden');
 
 $('#enable_dev_mode').click(function() {
     if ($('#enable_dev_mode').hasClass('dev_mode')) {
@@ -175,6 +175,7 @@ function check_port() {
 
 function check_octave() {
     command_exists('octave').then(function(command){
+        lg.warn('>> Octave found in the PATH environment variable');
         const octave = spawn(
             'octave',                           // command
             ['--eval', '"OCTAVE_VERSION"'],     // args

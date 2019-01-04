@@ -181,8 +181,8 @@ module.exports = {
             }
         } else {
             $('div.modal-body').text('No changes have been found');
-            $('#modal_accept_all_changes').addClass('hidden');
-            $('#modal_accept_selected_changes').addClass('hidden');
+            $('#modal_accept_all_changes').attr('hidden', '');
+            $('#modal_accept_selected_changes').attr('hidden', '');
         }
     },
 

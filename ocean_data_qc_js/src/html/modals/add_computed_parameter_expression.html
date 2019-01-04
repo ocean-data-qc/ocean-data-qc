@@ -24,54 +24,54 @@
                                 <div class="col-xs-4">
                                     <input name="expr_name" class="form-control" type="text" placeholder="Enter expression name" />
                                 </div>
-                                
+
                                 <label class="control-label col-xs-1" for="units">Units:</label>
                                 <div class="col-xs-2">
                                     <input name="units" class="form-control" type="text" placeholder="Enter units" />
                                 </div>
-                                
+
                                 <label class="control-label col-xs-1" for="precision">Precision:</label>
                                 <div class="col-xs-2">
                                     <input name="precision" class="form-control" type="number" />
-                                </div>                        
+                                </div>
                             </div>
-                            
+
                             <div class="row">
                                 <div class="col-xs-6">
                                     <label class="control-label label_adjust" for="current_column_params">Current Columns:</label>
                                     <select name="current_column_params" size="10" class="form-control" />
                                 </div>
-                                
+
                                 <div class="col-xs-6">
                                     <!-- computed params by default (or customized) + new creations -->
                                     <label class="control-label label_adjust" for="all_computed_param">Available Calculated Parameters (Ctrl + left click to edit):</label>
                                     <select name="all_computed_param" size="8" class="form-control" />
                                     <div class="comp_param_buttons">
                                         <button id="reset_defaults" type="button" class="btn btn-default">Reset All</button>
-                                        <button id="add_default_param" type="button" class="btn btn-success hidden" >
+                                        <button id="add_default_param" type="button" class="btn btn-success" hidden>
                                             <i class="fa fa-plus" aria-hidden="true"></i><span class="btt_lst_span">Set default</span>
                                         </button>
-                                        <button id="set_non_default_param" type="button" class="btn btn-danger hidden">
+                                        <button id="set_non_default_param" type="button" class="btn btn-danger" hidden>
                                             <i class="fa fa-minus" aria-hidden="true"></i><span class="btt_lst_span">Set non-default</span>
                                         </button>
-                                        <button id="del_comp_param" type="button" class="btn btn-danger hidden">
+                                        <button id="del_comp_param" type="button" class="btn btn-danger" hidden>
                                             <i class="fa fa-trash-o" aria-hidden="true"></i><span class="btt_lst_span">Remove</span>
                                         </button>
                                     </div>
                                 </div>
-                            </div>                        
-                            
+                            </div>
+
                             <div class="row">
                                 <label class="control-label col-xs-12" for="equation">Equation (case sensitive, double click on the lists to add an element):</label>
                                 <textarea class="form-control" style="resize: vertical;" name="equation"></textarea>
                             </div>
                         </div>
                     </div>
-                </form> 
+                </form>
             </div>
             <div class="modal-footer">
                 <button id="help_expression" type="button" class="btn btn-info pull-left ml15">Help</button>
-                <button id="save_expr" type="button" class="btn btn-primary">Save</button>                
+                <button id="save_expr" type="button" class="btn btn-primary">Save</button>
                 <button id="discard_expression" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>

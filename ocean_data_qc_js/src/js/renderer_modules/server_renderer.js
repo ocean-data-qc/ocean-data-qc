@@ -24,7 +24,7 @@ module.exports = {
     go_to_bokeh: function() {
         lg.info('-- GO TO BOKEH');
         var self = this;
-        if ($('.loader_container').hasClass('hidden')) {
+        if (typeof($('.loader_container').attr('hidden')) !== 'undefined') {
             self.show_loader();
         }
         var _checkBokehSate = setInterval(function() {
@@ -49,20 +49,20 @@ module.exports = {
     },
 
     show_loader: function() {
-        $('#welcome_container').addClass('hidden');
-        $('#bokeh_iframe').addClass('hidden');
-        $('.loader_container').removeClass('hidden');
+        $('#welcome_container').attr('hidden', '');
+        $('#bokeh_iframe').attr('hidden', '');
+        $('.loader_container').removeAttr('hidden');
     },
 
     hide_loader: function() {
-        $('#bokeh_iframe').removeClass('hidden');
-        $('.loader_container').addClass('hidden');
+        $('#bokeh_iframe').removeAttr('hidden');
+        $('.loader_container').attr('hidden', '');
     },
 
     go_to_welcome: function() {
         // the loader is not needed here, very fast transition
-        $('#bokeh_iframe').addClass('hidden');
-        $('#welcome_container').removeClass('hidden');
+        $('#bokeh_iframe').attr('hidden', '');
+        $('#welcome_container').removeAttr('hidden');
     },
 
     reset_bokeh: function() {

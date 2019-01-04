@@ -32,7 +32,7 @@ module.exports = {
             self.precision.val(5);
             self.comp_param_name = $('input[name=expr_name]');
             self.current_columns = [];
-           
+
             $('#save_expr').prop('disabled', true);
 
             self.load_data();
@@ -53,17 +53,17 @@ module.exports = {
             }
 
             self.current_columns.forEach(function (column) {
-                self.current_column_params_list.append($('<option>', { 
+                self.current_column_params_list.append($('<option>', {
                     value: column,
                     text : column
                 }));
             });
             self.sort_select_list(self.current_column_params_list);
-            
+
             var custom_cps = data.get('computed_params', loc.custom_settings);
             var proj_cps = data.get('computed_params', loc.proj_settings);
             proj_cps.forEach(function (column) {
-                self.all_computed_params_list.append($('<option>', { 
+                self.all_computed_params_list.append($('<option>', {
                     value: column.param_name,
                     text : column.param_name,
                     class: self.get_default_class(custom_cps, column),
@@ -100,7 +100,7 @@ module.exports = {
             self.equation_text.val(new_text_val);
             self.equation_text.focus();
         });
-        
+
         self.all_computed_params_list.dblclick(() => {
             var value = ' ${' + self.all_computed_params_list.find('option:selected').val() + '} ';
             var cur_pos = self.equation_text.prop("selectionStart");
@@ -114,19 +114,19 @@ module.exports = {
         self.all_computed_params_list.click(() => {
             var selected_opt = self.all_computed_params_list.find('option:selected')
             if (selected_opt.hasClass('default_param')) {
-                $('#add_default_param').addClass('hidden');
-                $('#del_comp_param').addClass('hidden');
-                $('#set_non_default_param').removeClass('hidden');
+                $('#add_default_param').attr('hidden', '');
+                $('#del_comp_param').attr('hidden', '');
+                $('#set_non_default_param').removeAttr('hidden');
             }
             if (selected_opt.hasClass('missing_param')) {
-                $('#add_default_param').addClass('hidden');
-                $('#del_comp_param').removeClass('hidden');
-                $('#set_non_default_param').addClass('hidden');
+                $('#add_default_param').attr('hidden', '');
+                $('#del_comp_param').removeAttr('hidden');
+                $('#set_non_default_param').attr('hidden', '');
             }
             if (!selected_opt.hasClass('missing_param') && !selected_opt.hasClass('default_param')) {
-                $('#add_default_param').removeClass('hidden');                
-                $('#del_comp_param').removeClass('hidden');
-                $('#set_non_default_param').addClass('hidden');
+                $('#add_default_param').removeAttr('hidden');
+                $('#del_comp_param').removeAttr('hidden');
+                $('#set_non_default_param').attr('hidden', '');
             }
         });
 
@@ -154,22 +154,22 @@ module.exports = {
 
                 var selected_opt = self.all_computed_params_list.find('option:selected')
                 if (selected_opt.hasClass('default_param')) {
-                    $('#add_default_param').addClass('hidden');
-                    $('#del_comp_param').addClass('hidden');
-                    $('#set_non_default_param').removeClass('hidden');
+                    $('#add_default_param').attr('hidden', '');
+                    $('#del_comp_param').attr('hidden', '');
+                    $('#set_non_default_param').removeAttr('hidden');
                 }
                 if (selected_opt.hasClass('missing_param')) {
-                    $('#add_default_param').removeClass('hidden');
-                    $('#del_comp_param').addClass('hidden');
-                    $('#set_non_default_param').removeClass('hidden');
+                    $('#add_default_param').removeAttr('hidden');
+                    $('#del_comp_param').attr('hidden', '');
+                    $('#set_non_default_param').removeAttr('hidden');
                 }
                 if (!selected_opt.hasClass('missing_param') && !selected_opt.hasClass('default_param')) {
-                    $('#add_default_param').removeClass('hidden');                
-                    $('#del_comp_param').removeClass('hidden');
-                    $('#set_non_default_param').addClass('hidden');
+                    $('#add_default_param').removeAttr('hidden');
+                    $('#del_comp_param').removeAttr('hidden');
+                    $('#set_non_default_param').attr('hidden', '');
                 }
             }
-        });        
+        });
 
         $('#save_expr').click(() => {
             var self = this;
@@ -179,12 +179,12 @@ module.exports = {
             }
 
             var cps = self.all_computed_params_list.find('option').map(function() {
-                return $(this).val(); 
+                return $(this).val();
             }).get();
             if (cps.includes(expr_name)) {
                 var args = {
                     'title': 'Overwrite this parameter?',
-                    'msg': 'A computer parameter already exists with that name. Would you like to overwrite it?' + 
+                    'msg': 'A computer parameter already exists with that name. Would you like to overwrite it?' +
                            ' If it is a default computed parameter, it will be ovewritten as well.',
                     'callback_yes': self.compute_cp,
                     'self': self,        // callback argument >> TODO: try to do this better,
@@ -200,15 +200,15 @@ module.exports = {
         $('#del_comp_param').click(function() {
             logger.info('-- DEL COMP PARAM')
             var value = self.all_computed_params_list.val();
-            
+
             // check if it is an added parameter
             var added_cps = self.added_computed_param.find('option').map(function() {
-                return $(this).val(); 
+                return $(this).val();
             }).get();
             if (added_cps.includes(value)) {
                 tools.showModal(
                     'WARNING',
-                    'The column that you want to remove is added to the current project. ' + 
+                    'The column that you want to remove is added to the current project. ' +
                     'You must remove it from the project first'
                 );
                 return;
@@ -229,7 +229,7 @@ module.exports = {
                 return true;
             });
             data.set({'computed_params': cps }, loc.proj_settings);
-            
+
             // remove from custom_settings.json if it is a default cp
             var custom_cps = data.get('computed_params', loc.custom_settings);
             var new_custom_cps = [];
@@ -239,7 +239,7 @@ module.exports = {
                 }
             });
             data.set({'computed_params': new_custom_cps }, loc.custom_settings);
-            
+
             self.all_computed_params_list.find('option:selected').remove();
             if (self.all_computed_params_list.find('option').length > 0) {
                 logger.info('-- CLICKING ON THE FIRST ELEMENT');
@@ -258,9 +258,9 @@ module.exports = {
                     default_cp.splice(index, 1);
                     data.set({'computed_params': default_cp }, loc.custom_settings);
                     self.all_computed_params_list.find('option:selected').removeClass('default_param');
-                    $('#set_non_default_param').addClass('hidden');
-                    $('#del_comp_param').removeClass('hidden');
-                    $('#add_default_param').removeClass('hidden');
+                    $('#set_non_default_param').attr('hidden', '');
+                    $('#del_comp_param').removeAttr('hidden');
+                    $('#add_default_param').removeAttr('hidden');
                     return false;
                 }
                 return true;
@@ -277,9 +277,9 @@ module.exports = {
                         default_cp.push(current_cp);
                         data.set({'computed_params': default_cp }, loc.custom_settings);
                         self.all_computed_params_list.find('option:selected').addClass('default_param');
-                        $('#set_non_default_param').removeClass('hidden');
-                        $('#del_comp_param').addClass('hidden');
-                        $('#add_default_param').addClass('hidden');                      
+                        $('#set_non_default_param').removeAttr('hidden');
+                        $('#del_comp_param').attr('hidden', '');
+                        $('#add_default_param').attr('hidden', '');
                         return false;
                     }
                     return true;
@@ -294,7 +294,7 @@ module.exports = {
             data.set({'computed_params': default_cp }, loc.custom_settings);
             data.set({'computed_params': default_cp }, loc.proj_settings);
             var custom_cps = data.get('computed_params', loc.custom_settings);  // TODO: is this needed?
-            
+
             self.all_computed_params_list.text('');
             default_cp.forEach(function (column) {
                 self.all_computed_params_list.append($('<option>', {
@@ -357,7 +357,7 @@ module.exports = {
     },
 
     sort_select_list: function(list) {
-        var options = list.find('option');                    
+        var options = list.find('option');
         options.sort(function(a,b) {
             a = a.text.toLowerCase()
             b = b.text.toLowerCase()
@@ -407,7 +407,7 @@ module.exports = {
             return false;
         }
         return true
-    }, 
+    },
 
     compute_cp: function(self=false) {
         logger.info('-- COMPUTE CP');
@@ -447,14 +447,14 @@ module.exports = {
                     tools.showModal('ERROR', result.msg, 'Validation Error', false, result.error);
                 }
             }
-        });        
+        });
     },
 
     update_computed_params: function(expr_name) {
         var self = this;
         var new_cp = true;
         var cps = self.all_computed_params_list.find('option').map(function() {
-            return $(this).val(); 
+            return $(this).val();
         }).get();
         if (cps.includes(expr_name)) {
             new_cp = false;
@@ -500,18 +500,18 @@ module.exports = {
         data.set({'computed_params': comp_params }, loc.proj_settings);
 
         if (new_cp) {
-            self.all_computed_params_list.append($('<option>', { 
+            self.all_computed_params_list.append($('<option>', {
                 value: self.comp_param_name.val(),
                 text: self.comp_param_name.val()
             }));
             self.sort_select_list(self.all_computed_params_list);
 
             // update the list behind
-            self.available_computed_param.append($('<option>', { 
+            self.available_computed_param.append($('<option>', {
                 value: self.comp_param_name.val(),
                 text: self.comp_param_name.val()
             }));
             self.sort_select_list(self.available_computed_param);
         }
-    },    
+    },
 }
