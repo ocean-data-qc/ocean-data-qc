@@ -257,7 +257,7 @@ module.exports = {
     loadDeleteTabButtons: function() {
         $('.delete_tab').on('click', function() {
             if ($('#qc_tabs_table-1').length != 0) {
-                $(this).parent().parent().slideUp('slow', function() {
+                $(this).parent().parent().slideUp('fast', function() {
                     $(this).remove();
                     // reindex fieldsets
                     var index = 0;
