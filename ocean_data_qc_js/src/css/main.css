@@ -49,6 +49,11 @@ h5 {
     height: 192px;
 }
 
+.btn-primary {
+    background-color: #337ab5 !important;
+    border-color: #337ab5 !important;
+}
+
 /* MAIN FORM */
 
 #panels {
@@ -125,6 +130,11 @@ h5 {
 
 .modal-body {
     margin: 0px 30px 0px 30px;
+}
+
+.modal-content {
+    border-radius: 0.0 !important;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5) !important;
 }
 
 .table th, .table td {
@@ -327,8 +337,8 @@ select[name='added_computed_param'] { /* left select */
 
 /* add_computed_parameter_expression form */
 
-input[name='expr_name'] {
-    width: 234px;
+.expr_form_fields label {
+    padding-top: 7px;
 }
 
 input[name='precision'] {
@@ -336,7 +346,7 @@ input[name='precision'] {
 }
 
 input[name='units'] {
-    width: 128px;
+    width: 110px;
     margin-left: -25px;
 }
 

@@ -8,41 +8,38 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
+                <h6 class="modal-title">Computed Parameter Expression</h6>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">
-                    <span class="modal-title-icon"></span>
-                    <span class="modal-title-text">Computed Parameter Expression</span>
-                </h4>
             </div>
             <div class="modal-body">
                 <form id="add_computed_parameter_expression" class="form-horizontal">
                     <div class="form-group">
-                        <div class="col-xs-12">
+                        <div class="col-12">
 
-                            <div class="row">
-                                <label class="control-label col-xs-2" for="project_name">Expression name:</label>
-                                <div class="col-xs-4">
-                                    <input name="expr_name" class="form-control" type="text" placeholder="Enter expression name" />
+                            <div class="row expr_form_fields">
+                                <label class="control-label" for="project_name">Expression name:</label>
+                                <div class="col-4">
+                                    <input name="expr_name" class="form-control form-control-sm" type="text" placeholder="Enter expression name" />
                                 </div>
 
-                                <label class="control-label col-xs-1" for="units">Units:</label>
-                                <div class="col-xs-2">
-                                    <input name="units" class="form-control" type="text" placeholder="Enter units" />
+                                <label class="control-label col-1" for="units">Units:</label>
+                                <div class="col-2">
+                                    <input name="units" class="form-control form-control-sm" type="text" placeholder="Enter units" />
                                 </div>
 
-                                <label class="control-label col-xs-1" for="precision">Precision:</label>
-                                <div class="col-xs-2">
-                                    <input name="precision" class="form-control" type="number" />
+                                <label class="control-label col-1" for="precision">Precision:</label>
+                                <div class="col-2">
+                                    <input name="precision" class="form-control form-control-sm" type="number" />
                                 </div>
                             </div>
 
                             <div class="row">
-                                <div class="col-xs-6">
+                                <div class="col-6">
                                     <label class="control-label label_adjust" for="current_column_params">Current Columns:</label>
                                     <select name="current_column_params" size="10" class="form-control" />
                                 </div>
 
-                                <div class="col-xs-6">
+                                <div class="col-6">
                                     <!-- computed params by default (or customized) + new creations -->
                                     <label class="control-label label_adjust" for="all_computed_param">Available Calculated Parameters (Ctrl + left click to edit):</label>
                                     <select name="all_computed_param" size="8" class="form-control" />
@@ -62,7 +59,7 @@
                             </div>
 
                             <div class="row">
-                                <label class="control-label col-xs-12" for="equation">Equation (case sensitive, double click on the lists to add an element):</label>
+                                <label class="control-label col-12" for="equation">Equation (case sensitive, double click on the lists to add an element):</label>
                                 <textarea class="form-control" style="resize: vertical;" name="equation"></textarea>
                             </div>
                         </div>

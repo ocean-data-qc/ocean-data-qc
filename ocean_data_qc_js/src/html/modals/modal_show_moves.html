@@ -1,31 +1,28 @@
 
-<button id="modal_trigger_show_moves" type="button" class="btn btn-info btn-lg" 
+<button id="modal_trigger_show_moves" type="button" class="btn btn-info btn-lg"
         data-toggle="modal" data-target="#set_project_name" style="display: none;">Open Modal</button>
 
 <div id="set_project_name" class="modal fade modal-form" role="dialog" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">
-                <span class="modal-title-icon"></span>
-                <span class="modal-title-text">Actions history</span>
-            </h4>
+                <h6 class="modal-title">Actions history</h6>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
 
             <!-- Table of movements -->
-            <div id="div_table_moves">     
+            <div id="div_table_moves">
                 <table id="table_moves" class="table table-striped">
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th class="col-xs-3">Date</th>
-                            <th class="col-xs-2">Action</th>
+                            <th class="col-3">Date</th>
+                            <th class="col-2">Action</th>
                             <th>Description</th>
                         </tr>
                     </thead>
-                    <tbody />           
+                    <tbody />
                 </table>
             </div>
 
