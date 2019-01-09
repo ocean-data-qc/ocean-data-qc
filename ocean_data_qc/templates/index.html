@@ -4,10 +4,16 @@
 
     <!-- TODO: try to use only one static folder for common resources at least -->
     <!-- <link href="../../../electron-launcher/node_modules/bootstrap/dist/css/bootstrap.css" rel="stylesheet"> -->
-    <link href="/ocean_data_qc/static/font-awesome-v5.3.1/css/all.min.css" rel="stylesheet" type="text/css" />
+
+    <script src="/ocean_data_qc/static/js/jquery-v3.3.1.js"></script>
+
     <link href="/ocean_data_qc/static/css/bootstrap.css" rel="stylesheet" type="text/css" />
     <link href="/ocean_data_qc/static/css/custom.css" rel="stylesheet" type="text/css" />
     <link href="/ocean_data_qc/static/css/flags_control.css" rel="stylesheet" type="text/css" />
+
+    <link href="/ocean_data_qc/static/font-awesome-v5.3.1/css/all.min.css" rel="stylesheet" type="text/css" />
+    <link href="/ocean_data_qc/static/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <link href="/ocean_data_qc/static/css/awesome-bootstrap-checkbox.css" rel="stylesheet" type="text/css" />
 
 {% endblock %}
 
@@ -59,6 +65,68 @@
                         input_bridge_text.value = JSON.stringify(e.data.message_data);
                         var button = document.getElementsByClassName('bridge_button')[0].firstChild;
                         button.click();
+                } else if (e.data.signal == 'on-ready') {
+                    console.log('ON READY')
+
+                    // ------ FIXED PROFILES ------
+
+                    var new_fp_cb = $('<div>', {
+                        class: 'abc-checkbox abc-checkbox-primary bk-fixed-profiles-cb',
+                    });
+                    new_fp_cb.append(
+                        $('<input>', {
+                            id: 'id_fixed_profiles_cb',
+                            type: 'checkbox'
+                        })
+                    );
+                    new_fp_cb.append(
+                        $('<label>', {
+                            for: 'id_fixed_profiles_cb',
+                            text: 'Fixed profiles'
+                        })
+                    );
+                    $('.fixed_profiles_cb').before(new_fp_cb);
+
+                    $('#id_fixed_profiles_cb').change(function() {
+                        if(this.checked) {
+                            $('.fixed_profiles_cb input').click();
+                        } else {
+                            $('.fixed_profiles_cb input').click();
+                        }
+                    });
+
+                    // ------ SHOW NEARBY STATION -----
+
+                    var new_sns_cb = $('<div>', {
+                        class: 'abc-checkbox abc-checkbox-primary bk-show-nearby-station-cb',
+                    });
+                    new_sns_cb.append(
+                        $('<input>', {
+                            id: 'id_show_nearby_station_cb',
+                            type: 'checkbox'
+                        })
+                    );
+                    new_sns_cb.append(
+                        $('<label>', {
+                            for: 'id_show_nearby_station_cb',
+                            text: 'Show nearby station'
+                        })
+                    );
+                    $('.show_nearby_station_cb').before(new_sns_cb);
+
+                    $('#id_show_nearby_station_cb').change(function() {
+                        if(this.checked) {
+                            $('.show_nearby_station_cb input').click();
+                        } else {
+                            $('.show_nearby_station_cb input').click();
+                        }
+                    });
+
+
+                    window.top.postMessage({
+                        'signal': 'on-ready',
+                        'params': 'continue',
+                    }, '*');                        // to main_renderer.js
                 }
             }
 

@@ -322,15 +322,17 @@ module.exports = {
         $('#loader_mask').attr('hidden', '');
     },
 
-    /** Convert a url "file:///C/..." to a path "C:/..." */
+    /** Convert a url "file:///C/..." to the path syntax "C:/..." */
     file_to_path: function(fileUrl=false) {
+        // TODO: check if some modification is necessary on linux and mac
+
         var p = new URL(fileUrl).pathname;
         if (process.platform === 'win32') {
-            if (p.charAt(0) === '/') {  // TODO: check if this is necessary on linux and mac
+            if (p.charAt(0) === '/') {
                 p = p.substr(1);
             }
         }
         p = path.join(p, '');
         return p;
-    }
+    },
 }

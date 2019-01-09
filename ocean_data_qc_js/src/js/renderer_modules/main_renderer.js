@@ -34,7 +34,7 @@ $('body').data('bokeh_state','not-ready');
 tools.multi_modal_fix();
 
 load_images();
-// check_extension();  TODO: I need to find a way to create the association first
+// check_extension();  TODO: I need to find a way to create the association first, I would need elevated priviledges
 check_port();    // TODO: move function into tools module
 check_octave();
 check_previous_session();
@@ -75,6 +75,8 @@ window.onmessage = function(e){
         }
         if (e.data.signal == 'js-call') {
             tools.js_call(e.data.params);
+        } else if (e.data.signal == 'on-ready') {
+            server_renderer.run_on_ready_final_step();
         }
     }
 

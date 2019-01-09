@@ -132,6 +132,7 @@ class BokehEvents(Environment):
             width=200, height=10,
             labels=['Fixed profiles'],  # Plot invisible points on profiles
             active=[],
+            css_classes=['fixed_profiles_cb', 'bokeh_hidden']
         )
         self.cb_prof_invsbl_points.on_click(on_click_cb_prof_invsbl_points)
 
@@ -216,6 +217,7 @@ class BokehEvents(Environment):
             width=200, height=20,
             labels=['Show nearby station'],
             active=[],
+            css_classes=['show_nearby_station_cb', 'bokeh_hidden']
         )
         self.nearby_prof_cb.on_click(on_click_nearby_prof)
 

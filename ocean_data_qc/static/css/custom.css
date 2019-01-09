@@ -33,11 +33,13 @@ body {
     padding: 10px 0px 0px 0px !important;
 }
 
+.bokeh_hidden {
+    display: none;
+}
+
 .bridge_row {
     display: none !important;
 }
-
-/* NEW ERA */
 
 .sample_div div div, .cur_stt div div  {
     padding-left: 25px;
@@ -110,4 +112,17 @@ body {
 .data_table {       /* this class is not added due to a bokeh bug */
     width: 190px !important;
     height: 125px !important;
+}
+
+.bk-fixed-profiles-cb {
+    margin-top: 15px;
+    margin-left: 3px;
+}
+
+.bk-show-nearby-station-cb {
+    margin-left: 3px;
+}
+
+.bk-fixed-profiles-cb label, .bk-show-nearby-station-cb label {
+    padding-top: 2px;
 }

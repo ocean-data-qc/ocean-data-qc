@@ -13,11 +13,11 @@ app_module_path.addPath(__dirname);
 
 const { ipcRenderer } = require('electron');
 
-const loc = require('locations');
 const lg = require('logging');
-const data = require('data');
+const loc = require('locations');
 const tools = require('tools');
 const watcher = require('watcher_renderer');
+const data = require('data');
 
 
 module.exports = {
@@ -36,13 +36,7 @@ module.exports = {
                     'method': 'init_bokeh',
                 }
                 tools.call_promise(call_params).then((result) => {
-                    lg.info('-- INIATILIZING BOKEH');
-                    ipcRenderer.send('set-bokeh-menu');
-
-                    var project_state = data.get('project_state', loc.shared_data);
-                    watcher.enable_watcher(project_state);
-                    tools.show_default_cursor();
-                    self.hide_loader();
+                    self.run_on_ready();
                 });
             }
         }, 100);
@@ -92,5 +86,29 @@ module.exports = {
                 callback();
             }
         });
+    },
+
+    run_on_ready: function() {
+        var self = this;
+        lg.info('-- RUN ON READY');
+        // lg.warn('>> CHECKBOX OBJECT: ' + JSON.stringify($('.fixed_profiles_cb'), null, 4));
+        // $('.fixed_profiles_cb').before('<p>Test</p>');  // this has to be run inside the iframe
+
+        document.getElementById('bokeh_iframe').contentWindow.postMessage({
+            'signal': 'on-ready',
+            'message_data': 'continue'
+        } , '*');  // to index.html
+
+        // This waits for the back signal 'on-ready' in the main_renderer.js file
+    },
+
+    run_on_ready_final_step: function() {
+        var self = this;
+        lg.warn('>> ON-READY SIGNAL, FINAL STEP');
+        ipcRenderer.send('set-bokeh-menu');
+        var project_state = data.get('project_state', loc.shared_data);
+        watcher.enable_watcher(project_state);
+        tools.show_default_cursor();
+        self.hide_loader();
     }
 }

@@ -23,7 +23,7 @@ from bokeh.models.layouts import Spacer
 
 
 class BokehLoader(Environment):
-    ''' This class is used for: 
+    ''' This class is used for:
             * load the bokeh form for the first time
             * reload the bokeh form
             * reload parts of the bokeh form
