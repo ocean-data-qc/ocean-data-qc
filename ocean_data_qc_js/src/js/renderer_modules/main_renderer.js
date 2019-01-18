@@ -14,8 +14,6 @@ app_module_path.addPath(__dirname);
 const { ipcRenderer } = require('electron');
 const portscanner = require('portscanner')
 const rmdir = require('rimraf');
-const { spawn } = require('child_process');
-const command_exists = require('command-exists');
 const fs = require('fs');
 const is_dev = require('electron-is-dev');
 
@@ -36,7 +34,7 @@ tools.multi_modal_fix();
 load_images();
 // check_extension();  TODO: I need to find a way to create the association first, I would need elevated priviledges
 check_port();    // TODO: move function into tools module
-check_octave();
+server_renderer.check_octave();
 check_previous_session();
 
 $(document).ready(function() {
@@ -172,39 +170,6 @@ function check_port() {
         }else {
             $('#panels').show();
         }
-    });
-}
-
-function check_octave() {
-    command_exists('octave').then(function(command){
-        lg.warn('>> Octave found in the PATH environment variable');
-        const octave = spawn(
-            'octave',                           // command
-            ['--eval', '"OCTAVE_VERSION"'],     // args
-            {'shell': true }                    // options
-        );
-        octave.stdout.on('data', (buffer) => {
-            var version = buffer.toString('utf8');
-            if (version.indexOf('=') > -1) {
-                version = version.split('=')[1].trim();         // FIXME: Sometimes trim says there is nothing to trim.
-                data.set({'octave': true }, loc.shared_data);
-                $('#octave_version').text(version);
-            }
-        });
-
-        octave.stderr.on('data', (data) => {
-            lg.error(`stderr: ${data}`);
-        });
-
-        // octave.on('close', (code) => {
-        //     lg.info(`child process exited with code ${code}`);
-        // });
-    }).catch(function(){
-        lg.warn('>> Octave was not foundon the PATH environment variable');
-        data.set({'octave': false }, loc.shared_data);
-        $('#octave_version').text('Undetected in PATH');
-        $('#octave_version').css('color', 'red');
-        $('#octave_version').css('font-weight', 'bold');
     });
 }
 
