@@ -30,15 +30,15 @@ module.exports = {
             switch (type) {
                 case 'ERROR':
                     modal.find('.modal-title').css('color', '#a94442');   // TODO: assign a class and set the color in the class
-                    modal.find('.modal-title-icon').removeClass().addClass('glyphicon glyphicon-exclamation-sign');
+                    modal.find('.modal-title-icon').removeClass().addClass('fa fa-exclamation-triangle');
                     break;
                 case 'INFO':
                     modal.find('.modal-title').css('color', '#5FBA7D');
-                    modal.find('.modal-title-icon').removeClass().addClass('glyphicon glyphicon-info-sign');
+                    modal.find('.modal-title-icon').removeClass().addClass('fa fa-info-circle');
                     break;
                 case 'WARNING':
-                    modal.find('.modal-title').css('color', '#8a6d3b');
-                    modal.find('.modal-title-icon').removeClass().addClass('glyphicon glyphicon-exclamation-sign');
+                    modal.find('.modal-title').css('color', '#fd7e14');
+                    modal.find('.modal-title-icon').removeClass().addClass('fa fa-exclamation-triangle');
                     break;
                 }
 
@@ -105,15 +105,15 @@ module.exports = {
             switch (type) {
                 case 'ERROR':
                     modal.find('.modal-title').css('color', '#a94442');   // TODO: assign a class and set the color in the class
-                    modal.find('.modal-title-icon').removeClass().addClass('glyphicon glyphicon-exclamation-sign');
+                    modal.find('.modal-title-icon').removeClass().addClass('fa fa-exclamation-triangle');
                     break;
                 case 'INFO':
                     modal.find('.modal-title').css('color', '#5FBA7D');
-                    modal.find('.modal-title-icon').removeClass().addClass('glyphicon glyphicon-info-sign');
+                    modal.find('.modal-title-icon').removeClass().addClass('fa fa-info-circle');
                     break;
                 case 'WARNING':
-                    modal.find('.modal-title').css('color', '#8a6d3b');
-                    modal.find('.modal-title-icon').removeClass().addClass('glyphicon glyphicon-exclamation-sign');
+                    modal.find('.modal-title').css('color', '#fd7e14');
+                    modal.find('.modal-title-icon').removeClass().addClass('fa fa-exclamation-triangle');
                     break;
                 }
 
@@ -250,7 +250,7 @@ module.exports = {
 
             // ICON
             $('#modal_question .modal-title').css('color', '#f0ad4e');
-            $('#modal_question .modal-title-icon').removeClass().addClass('glyphicon glyphicon-question-sign');
+            $('#modal_question .modal-title-icon').removeClass().addClass('fa fa-question-circle');
 
             // INFO
             $('#modal_question_content').html(args.msg);

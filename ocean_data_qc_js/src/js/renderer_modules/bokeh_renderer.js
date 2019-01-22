@@ -61,8 +61,8 @@ ipcRenderer.on('show-modal-close-project-form', (event, arg) => {
     var url = path.join(loc.modals, 'modal_question.html');
     tools.load_modal(url, () => {
         // ICON
-        $('#modal_question .modal-title').css('color', '#8A6D3B');
-        $('#modal_question .modal-title-icon').removeClass().addClass('glyphicon glyphicon-question-sign');
+        $('#modal_question .modal-title').css('color', '#fd7e14');
+        $('#modal_question .modal-title-icon').removeClass().addClass('fa fa-question-circle');
 
         // INFO
         $('#modal_question_content').html(arg.msg);

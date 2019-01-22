@@ -182,8 +182,8 @@ function check_previous_session() {
         lg.info('-- PENDING PREVIOUS SESSION');
 
         var question = '<p>A previous session was not closed correctly. ' +
-                       'Would you like to reopen it? ' +
-                       'If you press "No" the changes will be lost.</p>'
+                       'Would you like to reopen it?</p>' +
+                       '<p>If you press "No", or you close this dialog the changes will be lost.</p>'
 
         if (file_to_open != false) {
             question += '<p>Also, the file you are actually opening is going to be processed instead: </p>' +
@@ -223,8 +223,8 @@ function show_reopen_session_modal(arg) {
 
     tools.load_modal(arg['url'], () => {
         // ICON
-        $('#modal_question .modal-title').css('color', '#8A6D3B');
-        $('#modal_question .modal-title-icon').removeClass().addClass('glyphicon glyphicon-question-sign');
+        $('#modal_question .modal-title').css('color', '#fd7e14');
+        $('#modal_question .modal-title-icon').removeClass().addClass('fa fa-question-circle');
 
         // INFO
         $('#modal_question_content').html(arg['question']);
@@ -234,6 +234,9 @@ function show_reopen_session_modal(arg) {
             yes_callback();
         });
         $('#modal_no').on('click', function() {
+            no_callback();
+        });
+        $('#modal_question .close').on('click', function() {
             no_callback();
         });
         $('#modal_trigger_modal_question_form').click();

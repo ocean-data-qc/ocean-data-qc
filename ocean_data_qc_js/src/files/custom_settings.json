@@ -3,10 +3,10 @@
     "project_file": false,
     "layout": {
         "plots_per_row": 3,
-        "plots_width": 300,
-        "plots_height": 200,
+        "plots_width": 400,
+        "plots_height": 400,
         "titles":false
-    },    
+    },
     "default_columns": [
         "EXPOCODE",
         "SECT",
@@ -96,7 +96,7 @@
             "equation": "@nitrate_combined(NITRAT, NITRIT, NO2_NO3)",
             "units": false,
             "precision": "2"
-        },        
+        },
         {
             "param_name": "SAL",
             "equation": "@salinity_combined(CTDSAL, CTDSAL_FLAG_W, SALNTY, SALNTY_FLAG_W)",
@@ -204,7 +204,7 @@
             "equation": "@alk_nnw3rmse_bro18(LONGITUDE, LATITUDE, DPTH, _THETA, SAL, _NITRAT, PHSPHT, SILCAT, OXY)",
             "units": false,
             "precision": "3"
-        },        
+        },
         {
             "param_name": "ALK_NNCANYONB_BIT18",
             "equation": "@alk_nncanyonb_bit18(DATE, LATITUDE, LONGITUDE, PRES, CTDTMP, SAL, OXY)",
@@ -228,19 +228,19 @@
             "equation": "@nitrat_nncanyonb_bit18(DATE, LATITUDE, LONGITUDE, PRES, CTDTMP, SAL, OXY)",
             "units": false,
             "precision": "5"
-        },  
+        },
         {
             "param_name": "PHSPHT_NNCANYONB_BIT18",
             "equation": "@phspht_nncanyonb_bit18(DATE, LATITUDE, LONGITUDE, PRES, CTDTMP, SAL, OXY)",
             "units": false,
             "precision": "5"
-        },  
+        },
         {
             "param_name": "SILCAT_NNCANYONB_BIT18",
             "equation": "@silcat_nncanyonb_bit18(DATE, LATITUDE, LONGITUDE, PRES, CTDTMP, SAL, OXY)",
             "units": false,
             "precision": "5"
-        },                                                
+        },
         {
             "param_name": "TCARBN_CALCULATED_SWS",
             "equation": "@tcarbon_from_alk_phsws25p0(ALKALI, PH_SWS, SAL, SILCAT, PHSPHT)",
@@ -264,14 +264,14 @@
             "equation": "PH_TOT - PHTS25P0_CALCULATED",
             "units": false,
             "precision": "5"
-        },        
+        },
         {
             "param_name": "AT_DIFF",
             "equation": " ALK_NN3WRMSE_BRO18 - ALKALI ",
             "units": false,
             "precision": "5"
         },
-        {            
+        {
             "param_name": "OXY_DIFF",
             "equation": " CTDOXY - OXYGEN ",
             "units": false,
@@ -354,7 +354,7 @@
                 "title": "",
                 "x": "NITRAT",
                 "y": "NITRAT_NNCANYONB_BIT18"
-            }            
+            }
         ],
         "NO2_NO3": [
             {
@@ -372,7 +372,7 @@
                 "x": "NO2_NO3",
                 "y": "AOU"
             }
-        ],        
+        ],
         "PHSPHT": [
             {
                 "title": "Phosphate profiles",
@@ -388,7 +388,7 @@
                 "title": "",
                 "x": "PHSPHT",
                 "y": "PHSPHT_NNCANYONB_BIT18"
-            }             
+            }
         ],
         "SILCAT": [
             {
@@ -400,7 +400,7 @@
                 "title": "",
                 "x": "SILCAT",
                 "y": "SILCAT_NNCANYONB_BIT18"
-            }              
+            }
         ],
         "ALKALI": [
             {
@@ -427,7 +427,7 @@
                 "title": "",
                 "x": "ALKALI",
                 "y": "ALK_NNCANYONB_BIT18"
-            }                
+            }
         ],
         "TCARBN": [
             {
@@ -449,7 +449,7 @@
                 "title": "",
                 "x": "TCARBN",
                 "y": "TCARBN_NNCANYONB_BIT18"
-            }                          
+            }
         ],
         "PH_TOT": [
             {
@@ -481,7 +481,7 @@
                 "title": "",
                 "x": "PH_TOT",
                 "y": "DELTA_PH"
-            }                          
+            }
         ],
         "PH_SWS": [
             {
@@ -534,7 +534,7 @@
                 "title": "",
                 "x": "CFC_11",
                 "y": "CFC_12"
-            },            
+            },
             {
                 "title": "",
                 "x": "CFC_11",
@@ -544,7 +544,7 @@
                 "title": "",
                 "x": "CFC_11",
                 "y": "CCL4"
-            }               
+            }
         ],
         "CFC_12": [
             {
@@ -556,7 +556,7 @@
                 "title": "",
                 "x": "CFC_12",
                 "y": "CFC_11"
-            }              
+            }
         ],
         "CFC113": [
             {
@@ -571,20 +571,20 @@
                 "x": "CCL4",
                 "y": "PRES"
             }
-        ],               
+        ],
         "SF6": [
             {
                 "title": "profiles",
                 "x": "SF6",
                 "y": "PRES"
             }
-        ], 
+        ],
         "CH4": [
             {
                 "title": "profiles",
                 "x": "CH4",
                 "y": "PRES"
             }
-        ]                        
+        ]
     }
 }
