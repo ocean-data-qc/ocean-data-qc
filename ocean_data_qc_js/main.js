@@ -108,14 +108,14 @@ app.on('activate', function () {
 // ------------- RECEIVED SIGNALS FROM main_renderer.js ----------------- //
 
 ipcMain.on('save-file', (event, arg) => {
-    menu_actions.save_file().then((value) => {
+    menu_actions.save_file(arg).then((value) => {
         event.returnValue = value;
     });
 })
 
 ipcMain.on('save-file-as', (event, arg) => {
     lg.info('-- SAVE FILE AS (MAIN.JS)')
-    menu_actions.save_file_as().then((value) => {
+    menu_actions.save_file_as(arg).then((value) => {
         event.returnValue = value;
     }).catch(() => {
         lg.warn('Save file as Promise Rejected');
@@ -153,5 +153,10 @@ ipcMain.on('set-main-menu', function(){
 ipcMain.on('enable-watcher', function(event, args){
     var web_contents = main_window.webContents;
     web_contents.send('enable-watcher', {'mark': args.mark});
+})
+
+ipcMain.on('disable-watcher', function(event, args){
+    var web_contents = main_window.webContents;
+    web_contents.send('disable-watcher');
 })
 

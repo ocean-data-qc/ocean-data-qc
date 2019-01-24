@@ -135,8 +135,11 @@ module.exports = {
         }
     },
 
-    save_file: function() {
+    save_file: function(arg) {
         var self = this;
+        if ('save_from' in arg) {
+            self.save_from = arg.save_from;
+        }
         return new Promise((resolve, reject) => {
             var project_file = data.get('project_file', loc.proj_settings);
             var file_path = false;
@@ -148,7 +151,11 @@ module.exports = {
                 try {
                     zip.zipSync(loc.proj_files, file_path);
                     self.web_contents.send('enable-watcher', { 'mark': 'saved' });
-                    self.web_contents.send('show-snackbar', {'msg': 'The project was correctly saved.'})
+                    if (typeof(self.save_from) !== 'undefined' && self.save_from != 'closing_process') {
+                        self.web_contents.send('show-snackbar', {'msg': 'The project was saved correctly' });
+                    } else {
+                        self.web_contents.send('show-project-saved-dialog')
+                    }
                 } catch(err) {
                     self.web_contents.send('show-modal', {
                         'type': 'ERROR',
@@ -162,10 +169,13 @@ module.exports = {
         });
     },
 
-    save_file_as: function() {
+    save_file_as: function(arg) {
+        lg.info('-- SAVE FILE AS');
         var self = this;
+        if ('save_from' in arg) {
+            self.save_from = arg.save_from;
+        }
         return new Promise((resolve, reject) => {
-            lg.info('-- SAVE FILE AS');
             var settings = data.load(loc.proj_settings);  // use settings only to read
             dialog.showSaveDialog({
                     title: 'Save Project',
@@ -183,9 +193,13 @@ module.exports = {
                                 // https://blog.risingstack.com/mastering-async-await-in-nodejs/
                                 if (value == true) {  // if everything was OK >> di this with reject and catch(err)...
                                     self.web_contents.send('enable-watcher', {'mark': 'saved'});
-                                    self.web_contents.send('show-snackbar', {
-                                        'msg': 'The project was saved correctly'
-                                    });
+                                    if (typeof(self.save_from) !== 'undefined' && self.save_from != 'closing_process') {
+                                        self.web_contents.send('show-snackbar', {
+                                            'msg': 'The project was saved correctly'
+                                        });
+                                    } else {
+                                        self.web_contents.send('show-project-saved-dialog')
+                                    }
                                 }
                             });
                         } catch(err) {

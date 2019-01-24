@@ -222,7 +222,7 @@ html, body, .bokeh_iframe {
 #loader_mask {
     /* to block any action in the whole document */
     cursor: wait;
-    z-index: 999;
+    z-index: 9999;
     height: 100vh;
     width: 100vw;
     position: fixed;

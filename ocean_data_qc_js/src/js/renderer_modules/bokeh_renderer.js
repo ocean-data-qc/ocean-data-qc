@@ -13,7 +13,6 @@ app_module_path.addPath(__dirname);
 
 const {ipcRenderer} = require('electron');
 const fs = require('fs');
-const rmdir = require('rimraf')
 const csv = require('node-csv').createParser();
 
 // ---------------------------- REQUIRE OWN MODULES ------------------------------------------------ //
@@ -34,25 +33,6 @@ require('set_project_settings_json').init();
 require('set_project_settings_bokeh').init();
 require('add_computed_parameter').init();
 
-// ---------------------------- FUNCTIONS --------------------------------------------- //
-
-function comeBackToWelcome() {
-    lg.warn('-- COME BACK TO WELCOME --');
-    document.title = 'AtlantOS Ocean Data QC!';
-    watcher.disable_watcher();
-    rmdir(loc.proj_files, function (err) {
-        if (err) {
-            tools.showModal(
-                'ERROR',
-                'Something was wrong deleting temporal files:<br />' + err
-            );
-            return;
-        }
-        lg.warn('Project files deleted');
-        server_renderer.reset_bokeh();
-    });
-}
-
 // ------------------------------- IPC SIGNAL RECEIVERS ----------------------------------------- //
 
 ipcRenderer.on('show-modal-close-project-form', (event, arg) => {
@@ -68,32 +48,24 @@ ipcRenderer.on('show-modal-close-project-form', (event, arg) => {
         $('#modal_question_content').html(arg.msg);
         $('#modal_question .modal-title-text').text(arg.title);
 
+        $('#modal_yes').removeAttr('data-dismiss');  // NOTE: I close manually with $('.close').click();
+                                                     //       I need to do it to make the wait cursor appear
+
         $('#modal_yes').on('click', function() {
+            tools.show_wait_cursor();
             var proj_settings = data.load(loc.proj_settings);
             if (proj_settings.project_file == false) {
-                ipcRenderer.sendSync('save-file-as');
-                lg.info('-- AFTER SAVED IPC RENDERER CALL --');
-                tools.showModal(
-                    'INFO',
-                    'Project saved. Press "Close" in order to come back to the welcome screen',
-                    null,
-                    comeBackToWelcome       // it removes temp files and redirects to the welcome folder
-                );
+                ipcRenderer.send('save-file-as', {'save_from': 'closing_process'});
             } else {
-                ipcRenderer.sendSync('save-file');
-                tools.showModal(
-                    'INFO',
-                    'Project saved. Press OK in order to come back to the welcome screen',
-                    null,
-                    comeBackToWelcome
-                );
-
+                ipcRenderer.send('save-file', {'save_from': 'closing_process'});
             }
+            $('.close').click();
+            tools.show_default_cursor();
         });
 
         $('#modal_no').on('click', function() {
             data.set({'project_state': 'saved'}, loc.shared_data);
-            comeBackToWelcome();
+            server_renderer.come_back_to_welcome();
         });
         $('#modal_trigger_modal_question_form').click();
     });
@@ -178,3 +150,12 @@ ipcRenderer.on('reset-bokeh', function() {
     lg.info('-- CALLING TO RESET BOKEH')
     server_renderer.reset_bokeh();
 });
+
+ipcRenderer.on('show-project-saved-dialog', function() {
+    tools.showModal( // send signal
+        'INFO',
+        'Project saved. Press "Close" in order to come back to the welcome screen',
+        null,
+        function() {server_renderer.come_back_to_welcome(); }
+    );
+})

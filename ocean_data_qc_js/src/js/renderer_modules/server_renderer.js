@@ -14,11 +14,11 @@ app_module_path.addPath(__dirname);
 const { ipcRenderer } = require('electron');
 const { spawn } = require('child_process');
 const command_exists = require('command-exists');
+const rmdir = require('rimraf')
 
 const lg = require('logging');
 const loc = require('locations');
 const tools = require('tools');
-const watcher = require('watcher_renderer');
 const data = require('data');
 
 
@@ -93,9 +93,6 @@ module.exports = {
     run_on_ready: function() {
         var self = this;
         lg.info('-- RUN ON READY');
-        // lg.warn('>> CHECKBOX OBJECT: ' + JSON.stringify($('.fixed_profiles_cb'), null, 4));
-        // $('.fixed_profiles_cb').before('<p>Test</p>');  // this has to be run inside the iframe
-
         document.getElementById('bokeh_iframe').contentWindow.postMessage({
             'signal': 'on-ready',
             'message_data': 'continue'
@@ -155,6 +152,24 @@ module.exports = {
             $('#octave_version').text('Undetected in PATH');
             $('#octave_version').css('color', 'red');
             $('#octave_version').css('font-weight', 'bold');
+        });
+    },
+
+    come_back_to_welcome: function() {
+        lg.info('-- COME BACK TO WELCOME --');
+        var self = this;
+        document.title = 'AtlantOS Ocean Data QC!';
+        ipcRenderer.send('disable-watcher');
+        rmdir(loc.proj_files, function (err) {
+            if (err) {
+                tools.showModal(
+                    'ERROR',
+                    'Something was wrong deleting temporal files:<br />' + err
+                );
+                return;
+            }
+            lg.info('Project files deleted');
+            self.reset_bokeh();
         });
     }
 }
