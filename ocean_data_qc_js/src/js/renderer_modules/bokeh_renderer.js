@@ -37,7 +37,7 @@ require('add_computed_parameter').init();
 // ---------------------------- FUNCTIONS --------------------------------------------- //
 
 function comeBackToWelcome() {
-    lg.info('-- COME BACK TO WELCOME --');
+    lg.warn('-- COME BACK TO WELCOME --');
     document.title = 'AtlantOS Ocean Data QC!';
     watcher.disable_watcher();
     rmdir(loc.proj_files, function (err) {
@@ -48,7 +48,7 @@ function comeBackToWelcome() {
             );
             return;
         }
-        lg.info('Deleting project files...');
+        lg.warn('Project files deleted');
         server_renderer.reset_bokeh();
     });
 }
@@ -56,7 +56,7 @@ function comeBackToWelcome() {
 // ------------------------------- IPC SIGNAL RECEIVERS ----------------------------------------- //
 
 ipcRenderer.on('show-modal-close-project-form', (event, arg) => {
-    lg.info('Closing with changes not saved: +')
+    lg.info('Closing with changes not saved')
 
     var url = path.join(loc.modals, 'modal_question.html');
     tools.load_modal(url, () => {

@@ -111,11 +111,10 @@ module.exports = {
             }
             lg.info('>> outPath: ' + outPath);
             try {
-                zip.unzipSync(file_path, outPath)         // dangerous if the content is other, how to check it?
+                zip.unzipSync(file_path, outPath)         // TODO: dangerous if the content is other, how to check it?
+                                                          //       check file names and file types (sha1 algorithm?)
                 var project_file = file_url(file_path)
-                data.set({'project_state': 'saved'}, loc.shared_data);
                 data.set({'project_file': project_file, }, loc.proj_settings);
-                self.web_contents.send('enable-watcher', {'mark': 'saved'});
             } catch(err) {                               // we must trust the user
                 self.web_contents.send('show-modal', {
                     'type': 'ERROR',
@@ -125,7 +124,6 @@ module.exports = {
             }
             self.web_contents.send('go-to-bokeh');
         }else if (mime.lookup(file_path) == 'text/csv') {  // how to check if it is a CSV file??
-            data.set({'project_state': 'modified'}, loc.shared_data);
             self.web_contents.send('project-settings-user', {
                 'csv_file': file_path
             });
@@ -177,6 +175,7 @@ module.exports = {
                     lg.info('Saving project at: ' + fileLocation);
                     if (typeof(fileLocation) !== 'undefined') {
                         try {
+                            // data.set({'project_state': 'saved', }, loc.proj_settings);
                             zip.zipSync(loc.proj_files, fileLocation);
                             fileLocation = file_url(fileLocation);
                             self.web_contents.send('disable-watcher');  // I do not why, but this is necessary

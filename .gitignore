@@ -35,3 +35,6 @@
 
 # locked files creted by yarn and npm
 *.lock
+
+# links
+*.lnk

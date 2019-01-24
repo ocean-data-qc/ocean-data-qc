@@ -150,3 +150,8 @@ ipcMain.on('set-main-menu', function(){
     menu.set_main_menu();
 })
 
+ipcMain.on('enable-watcher', function(event, args){
+    var web_contents = main_window.webContents;
+    web_contents.send('enable-watcher', {'mark': args.mark});
+})
+
