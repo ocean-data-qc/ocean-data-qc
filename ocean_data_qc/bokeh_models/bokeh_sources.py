@@ -12,7 +12,6 @@ from bokeh.models.sources import ColumnDataSource, CDSView
 from bokeh.models.filters import IndexFilter
 from bokeh.palettes import Reds3
 
-from ocean_data_qc.data_models import CruiseData
 from ocean_data_qc.env import Environment
 from ocean_data_qc.constants import *
 from ocean_data_qc.data_models.files_handler import FilesHandler

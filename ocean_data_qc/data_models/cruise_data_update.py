@@ -7,7 +7,7 @@
 from bokeh.util.logconfig import bokeh_logger as lg
 from ocean_data_qc.constants import *
 from ocean_data_qc.data_models.exceptions import ValidationError
-from ocean_data_qc.data_models.cruise_data import CruiseData
+from ocean_data_qc.data_models.cruise_data_parent import CruiseDataParent
 from ocean_data_qc.data_models.computed_parameter import ComputedParameter
 
 from datetime import datetime
@@ -19,10 +19,10 @@ import numpy as np
 from os import path
 from six.moves import cStringIO as StringIO
 
-class CruiseDataUpdate(CruiseData):
-    """ This class creates objects used to update data.csv 
+class CruiseDataUpdate(CruiseDataParent):
+    """ This class creates objects used to update data.csv
         with new columns, values or rows. Before that we should process
-        the new original.csv and if there is any error, all the actions are resetted 
+        the new original.csv and if there is any error, all the actions are resetted
     """
 
     def __init__(self, old_data=False):
@@ -65,14 +65,14 @@ class CruiseDataUpdate(CruiseData):
             engine='c',                 # engine='python' is more versatile, 'c' is faster
             dtype=str,                  # useful to make some replacements before casting to numeric values
             skiprows=skiprows,
-            # verbose=False             # indicates the number of NA values placed in non-numeric columns 
+            # verbose=False             # indicates the number of NA values placed in non-numeric columns
         )
         self.df.replace('\s', '', regex=True, inplace=True)  # cleans spaces: \r and \n are managed by read_csv
         self.df.columns = self._sanitize(self.df.columns)    # remove spaces from columns
 
     def _compute_comparison(self):
         """ compare the new original.csv with the old one
-            the results are showed to the user 
+            the results are showed to the user
             in order to ask for the confirmation """
         # new object attributes to check modifications
         self.modified = False
@@ -93,7 +93,7 @@ class CruiseDataUpdate(CruiseData):
             if self.new_columns or self.removed_columns or self.new_rows or self.removed_rows or self.different_values_number:
                 self.modified = True
                 lg.info('>> THERE ARE CHANGES!!')
-        
+
     def _compute_columns_comparison(self):
         new_cols = self.get_plotable_non_computed_params()
         old_data_cols = self.old_data.get_plotable_non_computed_params()
@@ -154,7 +154,7 @@ class CruiseDataUpdate(CruiseData):
                         nan_different = True
                     if isinstance(new_scalar, str) and not isinstance(old_scalar, str):
                         nan_different = True
-                elif ((not np.isnan(new_scalar) and np.isnan(old_scalar)) or (np.isnan(new_scalar) and not np.isnan(old_scalar))):  
+                elif ((not np.isnan(new_scalar) and np.isnan(old_scalar)) or (np.isnan(new_scalar) and not np.isnan(old_scalar))):
                     nan_different = True
 
                 if not self._are_equal(new_scalar, old_scalar):
@@ -217,7 +217,7 @@ class CruiseDataUpdate(CruiseData):
                     'stt': [
                         {
                             'hash': '...',
-                            'flag': 
+                            'flag':
                             'old_param_value':
                             'new_param_value':
                             'old_flag_value':
@@ -230,7 +230,7 @@ class CruiseDataUpdate(CruiseData):
                     ]
                 }
             }
-        """    
+        """
         lg.info('-- GET DIFFERENT VALUES')
         HASH = 0
         COL = 1
@@ -318,7 +318,7 @@ class CruiseDataUpdate(CruiseData):
             }
         """
         lg.info('-- UPDATE DATA FROM CSV --')
-        
+
         if params != {}:
             self._update_rows(
                 new_rows_checked=params['new_rows'],
@@ -416,31 +416,31 @@ class CruiseDataUpdate(CruiseData):
             action = '[ADD] Columns'
             description = 'Added columns: {}'.format(self.new_columns)
             self.old_data.add_moves_element(action, description)
-        
+
         if len(self.removed_columns) > 0:
             action = '[DEL] Columns'
             description = 'Deleted columns: {}'.format(self.removed_columns)
-            self.old_data.add_moves_element(action, description)            
+            self.old_data.add_moves_element(action, description)
 
         if self.new_rows > 0:
             action = '[ADD] Rows'
             description = 'Added rows: {}'.format(self.new_rows)
-            self.old_data.add_moves_element(action, description) 
+            self.old_data.add_moves_element(action, description)
 
         if self.removed_rows > 0:
             action = '[DEL] Rows'
             description = 'Deleted rows: {}'.format(self.removed_rows)
-            self.old_data.add_moves_element(action, description) 
+            self.old_data.add_moves_element(action, description)
 
         if self.different_values_number > 0:
             action = '[UPD] Values'
             description = 'Updated values: {}'.format(self.different_values_number)
-            self.old_data.add_moves_element(action, description)    
+            self.old_data.add_moves_element(action, description)
 
-            # self.different_values_pairs = [] 
-   
+            # self.different_values_pairs = []
+
     def _rename_files(self):
-        if self.modified is True:            
+        if self.modified is True:
             if path.isfile(path.join(TMP, 'original.old.csv')):
                 os.remove(path.join(TMP, 'original.old.csv'))
             os.rename(
@@ -450,9 +450,9 @@ class CruiseDataUpdate(CruiseData):
             os.rename(
                 path.join(TMP, 'new.csv'),
                 path.join(TMP, 'original.csv')
-            )           
+            )
         else:
             if path.isfile(path.join(TMP, 'new.csv')):
                 os.remove(path.join(TMP, 'new.csv'))
-        
+
         # TODO: raise error if the file is in use (windows) or wrong permissions (unix)

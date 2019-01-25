@@ -103,3 +103,5 @@ class Environment(object):
     bk_bridge = None                # Messages Bridge object
     sh_cruise_data = None           # Cruise Data object
     ob_files_handler = None         # Files handler (mainly to extract and update JSON files), tabs are managed here as well
+
+    cd_handler = None               # Cruise Data Handler

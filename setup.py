@@ -1,6 +1,7 @@
-from setuptools import setup
 import os
 from os.path import dirname, exists, join, realpath, relpath
+from setuptools import setup
+from sys import platform
 
 ROOT = dirname(realpath(__file__))
 
@@ -37,14 +38,19 @@ def get_package_data():
         # 'ocean_data_qc_js': get_file_paths('ocean_data_qc_js')
     }
 
-REQUIRES = [
+requires = [
     'bokeh >=0.13.0',
     'pandas >=0.23.4',
     'seawater >=3.3.4',
     'more_itertools >=4.3.0',
     'oct2py >=4.0.6',  # this should install scipy automatically
-    'scipy >=1.1.0'
+    'scipy >=1.1.0',
 ]
+
+if platform == "win32":
+    requires.append('python-magic-win64 >=0.4.13')  # depends on python-magic and adds the DLL libmagic library
+else:
+    requires.append('python-magic >=0.4.15')
 
 setup(
     name='ocean_data_qc',
@@ -57,7 +63,7 @@ setup(
     author='Jesus Cacabelos',
     author_email='jcacabelos@iim.csic.es',
     license='MIT',
-    install_requires=REQUIRES,
+    install_requires=requires,
     packages=[
         'ocean_data_qc',
         'ocean_data_qc.bokeh_models',

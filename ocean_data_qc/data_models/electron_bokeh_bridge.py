@@ -118,7 +118,7 @@ class ElectronBokehBridge(Environment):
         if obj == 'cruise.data':
             method = getattr(self.env.sh_cruise_data, method_str)
         if obj == 'cruise.data.handler':
-            method = getattr(self.env.sh_cruise_data_handler, method_str)
+            method = getattr(self.env.cd_handler, method_str)
         elif obj == 'bokeh.loader':
             method = getattr(self.env.bk_loader, method_str)
         elif obj == 'computed.parameter':

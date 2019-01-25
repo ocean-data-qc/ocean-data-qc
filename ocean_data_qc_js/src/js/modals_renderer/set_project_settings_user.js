@@ -91,7 +91,7 @@ module.exports = {
     init_form: function() {
         var self = this;
         var call_params = {
-            'object': 'cruise.data',
+            'object': 'cruise.data.handler',
             'method': 'get_initial_columns',
         }
         tools.call_promise(call_params).then((file_columns) => {

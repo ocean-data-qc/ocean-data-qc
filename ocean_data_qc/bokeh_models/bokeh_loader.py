@@ -14,7 +14,6 @@ from ocean_data_qc.bokeh_models.bokeh_events import BokehEvents
 from ocean_data_qc.bokeh_models.bokeh_map import BokehMap
 from ocean_data_qc.bokeh_models.bokeh_layout import BokehLayout
 
-from ocean_data_qc.data_models.cruise_data import CruiseData
 from ocean_data_qc.data_models.cruise_data_handler import CruiseDataHandler
 from ocean_data_qc.data_models.electron_bokeh_bridge import ElectronBokehBridge
 
@@ -114,7 +113,6 @@ class BokehLoader(Environment):
                 value = getattr(self.env, attr)
                 lg.info('ATTR: {} | VALUE: {}'.format(attr, value))
 
-        CruiseData()
         CruiseDataHandler()
 
     def reload_bokeh(self):

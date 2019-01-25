@@ -12,11 +12,12 @@ class ValidationError(Exception):
         print('CONSTRUCTOR EXECUTION')
         self.value = value
 
-        # send the message to the interface
+        # send the message to the interface through bokeh?
 
     def __str__(self):
         return repr(
-            'VALIDATION ERROR: {}'.format(self.value)
+            'VALIDATION_ERROR: {}'.format(self.value)  # TODO: extract the error in tools.js
+                                                       #       and show the traceback hidden with some button
         )
 
 class ManualException(Exception):
@@ -26,10 +27,10 @@ class ManualException(Exception):
 
     def __str__(self):
         return repr(
-            'MANUAL ERROR\n' + self.value
+            'MANUAL ERROR: {}'.format(self.value)
         )
 
- 
+
 
 # class OverridingException(Exception):
 #     def str_override(self):

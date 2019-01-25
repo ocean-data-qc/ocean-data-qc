@@ -100,7 +100,7 @@ module.exports = {
             }, mime.dupAppend
         );
 
-        if(mime.lookup(file_path) == 'application/aqc') {
+        if (mime.lookup(file_path) == 'application/aqc') {
             //var outPath = path.join(__dirname, '../tmp')    // It will extract the content to the "files" folder
             var outPath = path.join(loc.proj_files,'..');
             if (process.platform === 'win32') { // check if it is only in windows
@@ -123,11 +123,11 @@ module.exports = {
                 return false;
             }
             self.web_contents.send('go-to-bokeh');
-        }else if (mime.lookup(file_path) == 'text/csv') {  // how to check if it is a CSV file??
+        } else if (mime.lookup(file_path) == 'text/csv') {  // how to check if it is a CSV file??
             self.web_contents.send('project-settings-user', {
                 'csv_file': file_path
             });
-        }else{
+        } else {
             self.web_contents.send('show-modal', {   // it is impossible to get to here, because is out of domain ['csv', 'aqc']
                 'type': 'ERROR',
                 'msg': 'Wrong filetype!!<br />It must be an AQC or a CSV file'
