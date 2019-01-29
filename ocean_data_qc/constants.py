@@ -54,7 +54,7 @@ CIRCLE_COLORS = {
 
 # ----------------------- LOCATIONS ---------------------------------- #
 
-OCEAN_DATA_QC = path.realpath(                   # ocean_data_qc_folder
+OCEAN_DATA_QC = path.realpath(
     path.dirname(
         path.abspath(__file__)
     ),

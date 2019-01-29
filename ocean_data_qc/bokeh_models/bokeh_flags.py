@@ -42,7 +42,7 @@ class BokehFlags(Environment):
 
     def _init_flagger_select(self):
         lg.info('-- INIT FLAGGER SELECT')
-        options = self.env.sh_cruise_data.all_params_flags
+        options = self.env.cd_parent.all_params_flags
         options = sorted(options)
         self.env.flagger_select = Select(
             value=self.env.cur_flag,
@@ -71,7 +71,7 @@ class BokehFlags(Environment):
                 self.env.doc.hold('collect')
                 self.env.bk_plots_handler.replot_color_circles(only_cur_tab=True)
                 self.env.bk_sources.update_prof_sources()  # TODO: keep the selection as it is >> keep_selection = True
-                                                           #       I do this here because some point could be invisible for 
+                                                           #       I do this here because some point could be invisible for
                                                            #       other tab
                 self.env.doc.unhold()
                 self.env.bk_bridge.call_js({
@@ -252,7 +252,7 @@ class BokehFlags(Environment):
         if row_indexes == []:
             lg.error('>> NO row_indexes selected')
 
-        self.env.sh_cruise_data.update_flag_values(
+        self.env.cd_parent.update_flag_values(
             column=flag_to_update,
             new_flag_value=flag_value,
             row_indices=row_indexes,
@@ -284,12 +284,12 @@ class BokehFlags(Environment):
                 len(row_indexes),
                 flag_to_update,
                 flag_value,
-            )], 
+            )],
         })
 
     def _update_visible_flags(self, to_visible_flags=[]):
         ''' Makes visible the flags passed as argument, and make invisible the rest
-                @to_visible_flags: all the visible (or to make visible) flags indices 
+                @to_visible_flags: all the visible (or to make visible) flags indices
         '''
         lg.info('-- UPDATE VISIBLE FLAGS')
 

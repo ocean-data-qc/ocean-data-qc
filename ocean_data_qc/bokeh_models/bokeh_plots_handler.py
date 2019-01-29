@@ -97,8 +97,8 @@ class BokehPlotsHandler(Environment):
         # TODO: do no create axis for some parameters (if not needed)
 
         for col in self.env.cur_plotted_cols:
-            # gmax = self.env.sh_cruise_data.df[col].max()
-            # gmin = self.env.sh_cruise_data.df[col].min()
+            # gmax = self.env.cd_parent.df[col].max()
+            # gmin = self.env.cd_parent.df[col].min()
             # d = gmax - gmin
 
             range_padding = 0.25

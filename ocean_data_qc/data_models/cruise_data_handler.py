@@ -10,6 +10,8 @@ from ocean_data_qc.data_models.cruise_data_aqc import CruiseDataAQC
 from ocean_data_qc.data_models.cruise_data_csv import CruiseDataCSV
 from ocean_data_qc.data_models.cruise_data_whp import CruiseDataWHP
 from ocean_data_qc.data_models.cruise_data_update import CruiseDataUpdate
+from ocean_data_qc.data_models.computed_parameter import ComputedParameter
+from ocean_data_qc.data_models.exceptions import ValidationError
 from ocean_data_qc.env import Environment
 
 from os import path
@@ -17,6 +19,7 @@ try:
     import magic
 except Exception:
     from winmagic import magic  # TODO: is this working on linux/osx?
+                                #       because I would need only one import
 
 
 class CruiseDataHandler(Environment):
@@ -30,16 +33,9 @@ class CruiseDataHandler(Environment):
 
     def get_initial_columns(self):
         lg.info('-- GET INITIAL COLUMNS')
-        cd_ob = self._init_cruise_data_ob()
-
-        # TODO: I do not like setting the computed parameters like this, find another way?
-
-        result = self.cp.set_computed_parameters()
-        if result is False:
-            lg.warning('Some computed parameter could not be computed')  # TODO: build something to recover the current project
-        self.cp.add_all_possible_cps()
-
-        columns = cd_ob.get_plotable_columns()
+        self._init_cruise_data_ob()
+        ComputedParameter()
+        columns = self.env.cd_parent.get_plotable_columns()
         lg.warning(columns)
         return columns
 
@@ -63,9 +59,15 @@ class CruiseDataHandler(Environment):
                         lg.warning('>> CSV')
                         return CruiseDataCSV()  # the data.csv should be a copy of original.csv, at the beggining at least
             else:
-                raise Exception('The original.csv file should be plain text')
-
-
+                raise ValidationError(
+                    'The file to open should be a plain text file',
+                    rollback='cd_parent'
+                )
+        else:
+            raise ValidationError(
+                'The file could not be open',
+                rollback='cd_parent'
+            )
 
     def _is_plain_text(self, csv_path=''):
         ''' The original.csv file should be a normal raw csv file '''
@@ -95,7 +97,7 @@ class CruiseDataHandler(Environment):
 
     def compare_data(self):
         lg.info('-- COMPARE DATA')
-        self.new_data = CruiseDataUpdate(self.env.sh_cruise_data)
+        self.new_data = CruiseDataUpdate(self.env.cd_parent)
         comparison_data = {
             'new_columns': self.new_data.new_columns,
             'removed_columns': self.new_data.removed_columns,

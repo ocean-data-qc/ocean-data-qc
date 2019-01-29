@@ -76,7 +76,7 @@ module.exports = {
         //      * [callback]: callback function to run after the dialog is closed
 
         var self = this;
-        lg.info('-- SHOW MODAL >> PARAMS: ' + JSON.stringify(params, null, 4));
+        lg.info('-- NEW SHOW MODAL >> PARAMS: ' + JSON.stringify(params, null, 4));
 
         var type = '';
         if ('type' in params) {
@@ -102,8 +102,16 @@ module.exports = {
         var url = path.join(loc.modals, 'modal_message.html');
         self.load_modal(url, function() {
             var modal = $('#modal_message');
-            switch (type) {
+            switch (type.toUpperCase()) {
                 case 'ERROR':
+                    modal.find('.modal-title').css('color', '#a94442');   // TODO: assign a class and set the color in the class
+                    modal.find('.modal-title-icon').removeClass().addClass('fa fa-exclamation-triangle');
+                    break;
+                case 'UNCAUGHT EXCEPTION':
+                    modal.find('.modal-title').css('color', '#a94442');   // TODO: assign a class and set the color in the class
+                    modal.find('.modal-title-icon').removeClass().addClass('fa fa-exclamation-triangle');
+                    break;
+                case 'VALIDATION ERROR':
                     modal.find('.modal-title').css('color', '#a94442');   // TODO: assign a class and set the color in the class
                     modal.find('.modal-title-icon').removeClass().addClass('fa fa-exclamation-triangle');
                     break;

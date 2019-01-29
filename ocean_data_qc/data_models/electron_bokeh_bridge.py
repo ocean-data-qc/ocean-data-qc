@@ -116,13 +116,13 @@ class ElectronBokehBridge(Environment):
 
         # TODO: try to return the object directly with eval, instead of creating an elif for each model
         if obj == 'cruise.data':
-            method = getattr(self.env.sh_cruise_data, method_str)
+            method = getattr(self.env.cd_parent, method_str)
         if obj == 'cruise.data.handler':
             method = getattr(self.env.cd_handler, method_str)
         elif obj == 'bokeh.loader':
             method = getattr(self.env.bk_loader, method_str)
         elif obj == 'computed.parameter':
-            method = getattr(self.env.sh_cruise_data.cp, method_str)
+            method = getattr(self.env.cd_parent.cp, method_str)
         # elif obj == 'computed.parameter':
         #     method = getattr(self.plot.cruisedata.cp, method)
 
@@ -134,15 +134,14 @@ class ElectronBokehBridge(Environment):
                 result = method()
         except Exception as e:
             if isinstance(e, ValidationError):  # no traceback is needed
-                self.error_js(str(e)[1:-1])  # to remove the apostrophes on both sides
-                return
-            trace = traceback.format_exc()
-            lg.exception('')  # the traceback is printed here
-            self.run_js_code(
-                signal='python-error',
-                params=trace
-            )
-            return
+                self.error_js(str(e), err_type='Validation Error')  # to remove the apostrophes on both sides
+            else:
+                trace = traceback.format_exc()
+                lg.exception('')  # the traceback is printed here
+                self.run_js_code(
+                    signal='python-error',
+                    params=trace
+                )
         else:
             self.run_js_code(
                 signal='python-response',
@@ -185,12 +184,12 @@ class ElectronBokehBridge(Environment):
         self.bridge_plot_callback.code = js_code
         self.bridge_trigger.glyph.size += 1  # triggers the callback
 
-    def error_js(self, msg=''):
+    def error_js(self, msg='', err_type='Error'):
         self.call_js({
             'object': 'tools',
             'function': 'show_modal',
             'params': [{
-                'type': 'ERROR',
+                'type': err_type,
                 'msg': msg,
             }]
         })
@@ -209,3 +208,15 @@ class ElectronBokehBridge(Environment):
                 indent=4,
                 sort_keys=True
             )
+
+    def show_default_cursor(self):
+        self.call_js({
+            'object': 'tools',
+            'function': 'show_default_cursor',
+        })
+
+    def show_wait_cursor(self):
+        self.call_js({
+            'object': 'tools',
+            'function': 'show_wait_cursor',
+        })

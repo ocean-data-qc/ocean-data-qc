@@ -14,6 +14,7 @@ from more_itertools import unique_everseen
 from os import path
 import os
 import json
+import shutil
 
 
 class Graph():
@@ -55,6 +56,9 @@ class FilesHandler(Environment):
 
     def __init__(self):
         self.env.ob_files_handler = self
+
+    def load_data(self):
+        lg.info('-- LOAD DATA (FilesHandler class)')
         self._load_qc_plot_tabs()
         self._load_settings()
 
@@ -144,6 +148,10 @@ class FilesHandler(Environment):
                     ly = config.get('layout', False)
                     if ly is not False:
                         self.env.show_titles = ly.get('titles')
+
+    def remove_tmp_folder(self):
+        lg.warning('-- REMOVE TMP FOLDER')
+        shutil.rmtree(TMP)
 
     # TODO: test this method
     # def get(self, attr, f_path):

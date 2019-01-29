@@ -7,6 +7,7 @@
 from bokeh.util.logconfig import bokeh_logger as lg
 from ocean_data_qc.constants import *
 from ocean_data_qc.data_models.cruise_data_parent import CruiseDataParent
+from ocean_data_qc.data_models.exceptions import ValidationError
 
 import csv
 
@@ -34,9 +35,14 @@ class CruiseDataAQC(CruiseDataParent):
                     first_len = len(row)
                 else:
                     if first_len != len(row):
-                        raise Exception(
-                            'Invalid number of fields ({}), row: {} '
-                            '| Number of header columns fields: {}'.format(
+                        self.env.ob_files_handler.remove_tmp_folder()
+                        self.env.bk_bridge.call_js({
+                            'object': 'tools',
+                            'function': 'show_default_cursor',
+                        })
+                        raise ValidationError(
+                            'There is an invalid number of fields ({}) in the row: {}.'
+                            ' The number of header columns fields is: {}'.format(
                                 len(row), row_number, first_len
                             )
                         )

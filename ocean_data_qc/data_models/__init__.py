@@ -10,7 +10,9 @@
 
 from ocean_data_qc.data_models.cruise_data_handler import CruiseDataHandler
 from ocean_data_qc.data_models.electron_bokeh_bridge import ElectronBokehBridge
+from ocean_data_qc.data_models.files_handler import FilesHandler
 
 CruiseDataHandler()
 ElectronBokehBridge()
+FilesHandler()
 

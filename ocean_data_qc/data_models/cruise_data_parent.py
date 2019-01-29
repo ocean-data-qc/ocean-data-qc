@@ -28,29 +28,19 @@ class CruiseDataParent(Environment):
 
     def __init__(self, is_whp_format=False):
         lg.info('-- INIT CRUISE DATA PARENT')
-        self.env.sh_cruise_data = self              # self.env.cd_parent
+        self.env.cd_parent = self              # self.env.cd_parent
 
         if is_whp_format:
             self.original_type = 'whp'  # type of the original.csv file
         else:
             self.original_type = 'csv'
-        self._check_data_format(ORIGINAL_CSV)
+        self._validate_original_data()
 
-        self.is_whp_format = False
         self.df = None
         self.moves = None
         self.cp = ComputedParameter(self)
         self.format_is_valid = False
         self.cols = {}
-
-    def _rollback(self):
-        self.is_whp_format = False
-        self.df = None
-        self.moves = None
-        self.cp = ComputedParameter(self)
-        self.format_is_valid = False
-        self.cols = {}
-        self.original_type= ''  # 'whp', 'csv'
 
     def _load_from_scratch(self):
         lg.info('-- LOAD FROM SCRATCH')
@@ -352,12 +342,9 @@ class CruiseDataParent(Environment):
         if(not set(self.get_all_columns()).issuperset(REQUIRED_COLUMNS)):
             self.format_is_valid = False
             missing_columns = ', '.join(list(set(REQUIRED_COLUMNS) - set(self.get_all_columns())))
-            self._rollback()
-            # rmtree(TMP)  # TODO: only if we are not in the CruiseDataUpdate object
             raise ValidationError(
-                'Missing required columns in the file: [{}]'.format(
-                    missing_columns
-                )
+                'Missing required columns in the file: [{}]'.format(missing_columns),
+                rollback='cd_parent'
             )
 
     def save_data(self):
