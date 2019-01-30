@@ -18,7 +18,13 @@ class CruiseDataCSV(CruiseDataParent):
     '''
     env = CruiseDataParent.env
 
-    def _validate_original_data(self):               # TODO: this should be in each cruise data class
+    def __init__(self):
+        lg.warning('-- INIT CSV')
+        self.filepath_or_buffer = ORIGINAL_CSV
+        self.skiprows = 0
+        super(CruiseDataCSV, self).__init__(original_type='csv')
+
+    def _validate_original_data(self):
         ''' Checks if all the rows have the same number of elements '''
         lg.warning('-- CHECK DATA FORMAT (CSV)')
         with open(ORIGINAL_CSV, newline='') as csvfile:
@@ -37,11 +43,11 @@ class CruiseDataCSV(CruiseDataParent):
                             ' The number of header columns fields is: {}'.format(
                                 len(row), row_number, first_len
                             ),
-                            rollback='cd_parent'
+                            rollback='cruise_data'
                         )
                         break                               # interrupt for loop
 
     def load_file(self):
-        lg.warning('-- LOAD FILE AQC (cruise_data_aqc)')
+        lg.warning('-- LOAD FILE CSV (cruise_data_aqc)')
         self._set_moves()
         self._load_from_scratch()

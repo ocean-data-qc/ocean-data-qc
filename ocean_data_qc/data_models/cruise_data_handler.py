@@ -35,7 +35,10 @@ class CruiseDataHandler(Environment):
         lg.info('-- GET INITIAL COLUMNS')
         self._init_cruise_data_ob()
         ComputedParameter()
-        columns = self.env.cd_parent.get_plotable_columns()
+        columns = self.env.cd_parent.get_columns_by_type([
+            'computed', 'param', 'non_qc_param', 'param_flag',
+            'qc_param_flag', 'required'
+        ])
         lg.warning(columns)
         return columns
 
@@ -49,30 +52,30 @@ class CruiseDataHandler(Environment):
             if self._is_plain_text(ORIGINAL_CSV):
                 is_whp_format = self._is_whp_format(ORIGINAL_CSV)
                 if path.isfile(DATA_CSV):
-                    lg.warning('>> AQC')
-                    return CruiseDataAQC(is_whp_format)      # open files directly
+                    if is_whp_format:
+                        return CruiseDataAQC(original_type='whp')      # TODO: the original type should be saved in the setting.json somewhere
+                    else:
+                        return CruiseDataAQC(original_type='csv')
                 else:
                     if is_whp_format:
-                        lg.warning('>> WHP')
                         return CruiseDataWHP()  # generates data.csv from original.csv
                     else:
-                        lg.warning('>> CSV')
                         return CruiseDataCSV()  # the data.csv should be a copy of original.csv, at the beggining at least
             else:
                 raise ValidationError(
-                    'The file to open should be a plain text file',
-                    rollback='cd_parent'
+                    'The file to open should be a CSV file.'
+                    ' That is a plain text file with comma separate values.',
+                    rollback='cruise_data'
                 )
         else:
             raise ValidationError(
                 'The file could not be open',
-                rollback='cd_parent'
+                rollback='cruise_data'
             )
 
     def _is_plain_text(self, csv_path=''):
         ''' The original.csv file should be a normal raw csv file '''
         file_type = magic.from_file(csv_path, mime=True)
-        lg.warning(file_type)
         if file_type != 'text/plain':
             return False
         else:

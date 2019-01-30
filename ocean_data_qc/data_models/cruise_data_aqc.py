@@ -19,35 +19,43 @@ class CruiseDataAQC(CruiseDataParent):
     '''
     env = CruiseDataParent.env
 
-    def _check_data_format(self, csv_path=''):
+    def __init__(self, original_type=''):
+        lg.warning('-- INIT AQC')
+        self.filepath_or_buffer = DATA_CSV
+        self.skiprows = 0
+        super(CruiseDataWHP, self).__init__(original_type=original_type)
+
+    def _validate_original_data(self):
         ''' Checks if all the rows have the same number of elements
 
-            TODO: the original.csv of this class can be a raw csv file or a WHP
+            In this case there is no need to check the data because
+            was already checked when it was open the first time
         '''
         lg.warning('-- CHECK DATA FORMAT')
-        with open(csv_path, newline='') as csvfile:
-            spamreader = csv.reader(csvfile, delimiter=',', quotechar='"')
-            first_len = -1
-            row_number = 1
-            for row in spamreader:
-                row_number += 1
-                if first_len == -1:
-                    first_len = len(row)
-                else:
-                    if first_len != len(row):
-                        self.env.ob_files_handler.remove_tmp_folder()
-                        self.env.bk_bridge.call_js({
-                            'object': 'tools',
-                            'function': 'show_default_cursor',
-                        })
-                        raise ValidationError(
-                            'There is an invalid number of fields ({}) in the row: {}.'
-                            ' The number of header columns fields is: {}'.format(
-                                len(row), row_number, first_len
-                            )
-                        )
 
     def load_file(self):
         lg.warning('-- LOAD FILE AQC (cruise_data_aqc)')
         self._set_moves()
         self._load_from_files()
+
+
+        # filepath_or_buffer = ''
+        # skiprows = 0
+        # data_exists = path.isfile(path.join(TMP, 'data.csv'))
+        # lg.info('>> DATA EXISTS: {} | FROM SCRATCH: {} | IS WHP FORMAT: {}'.format(
+        #     data_exists, from_scratch, self.is_whp_format)
+        # )
+        # if (data_exists is False or from_scratch) and self.is_whp_format:  # WHP format
+        #     self.original_type= 'whp'
+        #     skiprows = 1
+        #     filepath_or_buffer = ORIGINAL_CSV
+        # else:
+        #     if data_exists is True and from_scratch is False:   # data.csv was previously saved
+        #         self.original_type= 'whp'                             # TODO: actually I do not know the format here,
+        #                                                         #       only that the project was open
+        #         filepath_or_buffer = DATA_CSV
+        #         skiprows = 0
+        #     else:
+        #         self.original_type= 'csv'                       # flat CSV format
+        #         filepath_or_buffer = ORIGINAL_CSV
+        #         skiprows = 0

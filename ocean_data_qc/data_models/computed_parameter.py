@@ -34,7 +34,7 @@ else:
 class ComputedParameter(Environment):
     env = Environment
 
-    def __init__(self, cruise_data):
+    def __init__(self):
         lg.info('-- INIT COMPUTED PARAMETER')
         self.env.cp_param = self
         self.sandbox_vars = None
@@ -142,6 +142,9 @@ class ComputedParameter(Environment):
             self.sandbox_funcs = self._get_sandbox_funcs(locals())
             self.sandbox_vars = self._get_sandbox_vars(globals())
         ids = self._get_eq_ids(eq)
+
+        lg.warning('>> CP >> SELF.ENV: {}'.format(self.env))
+        lg.warning('>> CP >> SELF.ENV.CD_PARENT: {}'.format(self.env.cd_parent))
 
         # check if all the identifiers are in the df
         for i in ids:

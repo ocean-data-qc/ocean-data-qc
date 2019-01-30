@@ -161,6 +161,18 @@ h5 {
     margin-bottom: 10px;
 }
 
+.modal-body pre {
+    background: #f4f4f4;
+    font: 13px Consolas,Monaco,Courier New,Courier,monospace;
+    line-height: 1.5;
+    margin-bottom: 1.625em;
+    overflow: auto;
+    padding: .8em 1em;
+    border: 1px solid #c1c1c1;
+    border-radius: 3px;
+    color: #111;
+}
+
 /* TITLE */
 
 #project_name.modified{

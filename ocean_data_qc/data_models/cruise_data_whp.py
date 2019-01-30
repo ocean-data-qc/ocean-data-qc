@@ -18,6 +18,12 @@ class CruiseDataWHP(CruiseDataParent):
     '''
     env = CruiseDataParent.env
 
+    def __init__(self):
+        lg.warning('-- INIT CD WHP')
+        self.filepath_or_buffer = ORIGINAL_CSV
+        self.skiprows = 1
+        super(CruiseDataWHP, self).__init__(original_type='whp')
+
     def _validate_original_data(self):               # TODO: this should be in each cruise data class
         ''' Checks if all the rows have the same number of elements '''
         lg.warning('-- CHECK DATA FORMAT (WHP)')
@@ -38,11 +44,11 @@ class CruiseDataWHP(CruiseDataParent):
                                 ' The number of header columns fields is: {}'.format(
                                     len(row), row_number, first_len
                                 ),
-                                rollback='cd_parent'
+                                rollback='cruise_data'
                             )
                             break                               # interrupt for loop
 
     def load_file(self):
-        lg.warning('-- LOAD FILE AQC (cruise_data_aqc)')
+        lg.warning('-- LOAD FILE WHP (cruise_data_aqc)')
         self._set_moves()
         self._load_from_scratch()

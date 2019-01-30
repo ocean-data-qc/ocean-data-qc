@@ -8,6 +8,7 @@ from bokeh.util.logconfig import bokeh_logger as lg
 from ocean_data_qc.constants import *
 from ocean_data_qc.env import Environment
 from ocean_data_qc.data_models.exceptions import ValidationError
+from ocean_data_qc.data_models.computed_parameter import ComputedParameter
 
 import csv
 import json
@@ -26,21 +27,17 @@ class CruiseDataParent(Environment):
     '''
     env = Environment
 
-    def __init__(self, is_whp_format=False):
-        lg.info('-- INIT CRUISE DATA PARENT')
-        self.env.cd_parent = self              # self.env.cd_parent
-
-        if is_whp_format:
-            self.original_type = 'whp'  # type of the original.csv file
-        else:
-            self.original_type = 'csv'
+    def __init__(self, original_type=''):
+        lg.warning('-- INIT CRUISE DATA PARENT')
+        self.env.cd_parent = self
+        self.original_type = original_type
         self._validate_original_data()
 
         self.df = None
         self.moves = None
-        self.cp = ComputedParameter(self)
-        self.format_is_valid = False
         self.cols = {}
+
+        self.load_file()
 
     def _load_from_scratch(self):
         lg.info('-- LOAD FROM SCRATCH')
@@ -83,7 +80,7 @@ class CruiseDataParent(Environment):
         """
         lg.info('-- SET ATTRIBUTES FROM SCRATCH --')
 
-        if self.is_whp_format:
+        if self.original_type == 'whp':
             units_list = self.df.iloc[0].values.tolist()  # TODO: how to detect if there are units or not?
                                                           #       how to fill the units fields then?
         else:
@@ -253,39 +250,14 @@ class CruiseDataParent(Environment):
             @from_scratch: boolean to force the loading from scratch
         """
         lg.info('-- SET DF')
-
-        filepath_or_buffer = ''
-        skiprows = 0
-        data_exists = path.isfile(path.join(TMP, 'data.csv'))
-        lg.info('>> DATA EXISTS: {} | FROM SCRATCH: {} | IS WHP FORMAT: {}'.format(
-            data_exists, from_scratch, self.is_whp_format)
-        )
-        if (data_exists is False or from_scratch) and self.is_whp_format:  # WHP format
-            self.original_type= 'whp'
-            skiprows = 1
-            filepath_or_buffer = ORIGINAL_CSV
-        else:
-            if data_exists is True and from_scratch is False:   # data.csv was previously saved
-                self.original_type= 'whp'                             # TODO: actually I do not know the format here,
-                                                                #       only that the project was open
-                filepath_or_buffer = DATA_CSV
-                skiprows = 0
-            else:
-                self.original_type= 'csv'                                     # flat CSV format
-                filepath_or_buffer = ORIGINAL_CSV
-                skiprows = 0
-
-                # TODO: I do not know if I should take into account the index column
-                #       and the units row?
-
         self.df = pd.read_csv(
-            filepath_or_buffer=filepath_or_buffer,
+            filepath_or_buffer=self.filepath_or_buffer,
             comment='#',
             delimiter=',',
             skip_blank_lines=True,
             engine='c',                 # engine='python' is more versatile, 'c' is faster
             dtype=str,                  # useful to make some replacements before casting to numeric values
-            skiprows=skiprows,
+            skiprows=self.skiprows,
             # verbose=False             # indicates the number of NA values placed in non-numeric columns
         )
         # lg.info('\n\n>> DF: \n\n{}'.format(self.df))
@@ -335,16 +307,13 @@ class CruiseDataParent(Environment):
         self.df = self.df.set_index(['HASH_ID'])
 
     def _validate_required_columns(self):
-        self.format_is_valid = True
-
-        # TODO: check if all the columns values are valid as well
-
+        lg.warning('-- VALIDATE REQUIRED COLUMNS')
+        lg.warning('>> ALL COLUMNS: {}'.format(self.get_all_columns()))
         if(not set(self.get_all_columns()).issuperset(REQUIRED_COLUMNS)):
-            self.format_is_valid = False
             missing_columns = ', '.join(list(set(REQUIRED_COLUMNS) - set(self.get_all_columns())))
             raise ValidationError(
                 'Missing required columns in the file: [{}]'.format(missing_columns),
-                rollback='cd_parent'
+                rollback='cruise_data'
             )
 
     def save_data(self):

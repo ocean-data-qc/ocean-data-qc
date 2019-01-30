@@ -14,7 +14,7 @@ class ValidationError(Exception, Environment):
     def __init__(self, value, rollback=False):
         lg.error('-- Validation error: {}'.format(value))
         self.value = value
-        if rollback == 'cd_parent':
+        if rollback == 'cruise_data':
             self._cruise_data_rollback()
 
     def _cruise_data_rollback(self):

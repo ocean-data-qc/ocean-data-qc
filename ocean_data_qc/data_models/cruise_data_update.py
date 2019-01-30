@@ -33,7 +33,6 @@ class CruiseDataUpdate(CruiseDataParent):
         self.is_whp_format = False
         self.df = None
         self.moves = None
-        self.format_is_valid = False
         self.cols = {}
 
         self.old_data = old_data
