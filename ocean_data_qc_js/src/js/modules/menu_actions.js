@@ -193,12 +193,13 @@ module.exports = {
                                 // https://blog.risingstack.com/mastering-async-await-in-nodejs/
                                 if (value == true) {  // if everything was OK >> di this with reject and catch(err)...
                                     self.web_contents.send('enable-watcher', {'mark': 'saved'});
-                                    if (typeof(self.save_from) !== 'undefined' && self.save_from != 'closing_process') {
+                                    lg.warn('>> SELF.SAVE_FROM: ' + self.save_from);
+                                    if (typeof(self.save_from) !== 'undefined' && self.save_from == 'closing_process') {
+                                        self.web_contents.send('show-project-saved-dialog')
+                                    } else {
                                         self.web_contents.send('show-snackbar', {
                                             'msg': 'The project was saved correctly'
                                         });
-                                    } else {
-                                        self.web_contents.send('show-project-saved-dialog')
                                     }
                                 }
                             });
