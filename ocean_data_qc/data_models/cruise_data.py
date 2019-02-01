@@ -21,7 +21,7 @@ from datetime import datetime
 from shutil import rmtree
 
 
-class CruiseDataParent(CruiseDataExport):
+class CruiseData(CruiseDataExport):
     ''' This class is gathering all the common methods needed to manage
         the aqc, csv and whp files
     '''
@@ -45,8 +45,8 @@ class CruiseDataParent(CruiseDataExport):
         self._set_attributes_from_scratch()  # the dataframe has to be created
         self._validate_required_columns()
         self._replace_missing_values()         # '-999' >> NaN
-        self._convert_data_to_number()
         self._init_early_calculated_params()
+        self._convert_data_to_number()
         self._set_hash_ids()
 
         # TODO: confusing methods names, options:
@@ -78,7 +78,6 @@ class CruiseDataParent(CruiseDataExport):
                 }
         """
         lg.info('-- SET ATTRIBUTES FROM SCRATCH --')
-
         if self.original_type == 'whp':
             units_list = self.df.iloc[0].values.tolist()  # TODO: how to detect if there are units or not?
                                                           #       how to fill the units fields then?
@@ -86,15 +85,32 @@ class CruiseDataParent(CruiseDataExport):
             units_list = []
         pos = 0
         column_list = self.df.columns.tolist()
-        flags_not_to_qc = [x + FLAG_END for x in NON_QC_PARAMS]
-        qc_column_exceptions = NON_QC_PARAMS + REQUIRED_COLUMNS
         for column in column_list:
-            self.cols[column] = {   # column intialization
+            self._add_column(column=column)
+            if units_list != []:
+                if str(units_list[pos]) == 'nan':
+                    self.cols[column]['unit'] = False
+                else:
+                    self.cols[column]['unit'] = units_list[pos]
+            pos += 1
+
+        # lg.info(json.dumps(self.cols, sort_keys=True, indent=4))
+
+        if self.original_type == 'whp':
+            self.df = self.df[1:-1].reset_index(drop=True)          # rewrite index column and remove the units row
+
+    def _add_column(self, column='', units=False):
+        ''' Adds a column to the self.cols dictionary
+            This dictionary is useful to select some columns by type
+        '''
+        if column not in self.get_columns_by_type(['all']):
+            self.cols[column] = {
                 'types': [],
-                'unit': False,  # TODO: if a non WHP CSV is open this should be NaN
+                'unit': units,
             }
-            if FLAG_END in column:
+            if column.endswith(FLAG_END):
                 self.cols[column]['types'] += ['param_flag']
+                flags_not_to_qc = [x + FLAG_END for x in NON_QC_PARAMS]
                 if column not in flags_not_to_qc:
                     self.cols[column]['types'] += ['qc_param_flag']
             else:
@@ -105,42 +121,30 @@ class CruiseDataParent(CruiseDataExport):
                 else:
                     self.cols[column]['types'] += ['non_qc_param']
 
+                qc_column_exceptions = NON_QC_PARAMS + REQUIRED_COLUMNS
                 flag = column + FLAG_END
+                column_list = self.df.columns.tolist()
                 if flag not in column_list and column not in qc_column_exceptions:
                     lg.info('>> ROWS LENGTH: {}'.format(len(self.df.index)))
                     lg.info('>> CREATING FLAG: {}'.format(flag))
-                    values = ['2'] * len(self.df.index)  # it should be still string here
+                    values = ['9'] * len(self.df.index)
                     self.df[flag] = values
-
                     self.cols[flag] = {
                         'types': ['param_flag', 'qc_param_flag'],
                         'unit': False,
                     }
 
-            if units_list != []:
-                if str(units_list[pos]) == 'nan':
-                    self.cols[column]['unit'] = False
-                else:
-                    self.cols[column]['unit'] = units_list[pos]
-            pos += 1
-
-        # lg.info(json.dumps(self.cols, sort_keys=True, indent=4))
-
-        if self.original_type== 'whp':
-            self.df = self.df[1:-1].reset_index(drop=True)          # rewrite index column and remove the units row
-
     def _init_early_calculated_params(self):
-        # init empty missing params
-        param_list = {'CTDSAL', 'SALNTY', 'CTDOXY', 'OXYGEN', 'CTDPRS', 'DEPTH',
-                      'NITRAT','PHSPHT','NITRIT','NO2_NO3',
-                      'CTDSAL_FLAG_W', 'SALNTY_FLAG_W', 'CTDOXY_FLAG_W', 'OXYGEN_FLAG_W',
-                      'NITRAT_FLAG_W','PHSPHT_FLAG_W','NITRIT_FLAG_W','NO2_NO3_FLAG_W'}
-        for pname in param_list:
-            if not pname in self.df.dtypes:
-                if pname.endswith('FLAG_W'):
-                    self.df[pname]=np.array([9]*self.df.index.size)
+        ''' Initializates the dataframe with the basic params that all csv files should have.
+            If some of them do not exist in the dataframe yet they are created with the default values
+        '''
+        for pname in BASIC_PARAMS:
+            if pname not in self.get_columns_by_type(['all']):
+                if pname.endswith(FLAG_END):
+                    self.df[pname] = np.array(['9'] * self.df.index.size)
                 else:
-                    self.df[pname]=np.array([np.nan]*self.df.index.size)
+                    self.df[pname] = np.array([np.nan] * self.df.index.size)
+                self._add_column(column=pname, units=False)
 
     def _set_attributes_from_json_file(self):
         """ The attributes (cols) are set directly from the attributes.json file """
@@ -190,12 +194,13 @@ class CruiseDataParent(CruiseDataExport):
         ''' Returns the useful columns that can be plotted,
             also discards columns that have all the values with NaN
         '''
-        plot_cols = [x for x in self.cols if 'param' in self.cols[x]['types'] or 'param_flag' in self.cols[x]['types'] or 'qc_param_flag' in self.cols[x]['types'] or 'computed' in self.cols[x]['types']]
+        plot_cols = self.get_columns_by_type(['param', 'param_flag', 'qc_param_flag', 'computed'])
+        final_cols = list(plot_cols)
         for c in plot_cols:
             if self.df[c].isnull().all():
-                plot_cols.remove(c)
-        plot_cols.sort()
-        return plot_cols
+                final_cols.remove(c)
+        final_cols.sort()
+        return final_cols
 
     def get_plot_cp_params(self):
         return {

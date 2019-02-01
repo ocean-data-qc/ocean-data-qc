@@ -155,7 +155,7 @@ class BokehFlags(Environment):
                 }
         '''
         lg.info('-- INIT FLAGS CONTROL TABLE')
-        lg.info('-- ALL FLAGS DICTIONARY: {}'.format(self.env.all_flags))
+        # lg.info('-- ALL FLAGS DICTIONARY: {}'.format(self.env.all_flags))
 
         for flag_index, str_value in self.env.all_flags.items():
 

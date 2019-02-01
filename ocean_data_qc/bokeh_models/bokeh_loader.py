@@ -15,7 +15,6 @@ from ocean_data_qc.bokeh_models.bokeh_map import BokehMap
 from ocean_data_qc.bokeh_models.bokeh_layout import BokehLayout
 
 from ocean_data_qc.data_models.cruise_data_handler import CruiseDataHandler
-from ocean_data_qc.data_models.electron_bokeh_bridge import ElectronBokehBridge
 
 from bokeh.layouts import column
 from bokeh.models.layouts import Spacer
@@ -84,7 +83,7 @@ class BokehLoader(Environment):
         lg.info('-- RESET ENVIRONMENT')
         do_not_reset = [
             'bk_loader', 'doc', 'tabs_widget', 'sidebar', 'bk_bridge',
-            'bridge_row'
+            'bridge_row', 'cruise_data', 'files_handler'
         ]
         for attr in dir(self.env):
             if attr[:2] != '__':  # to exclude special methods and attributes

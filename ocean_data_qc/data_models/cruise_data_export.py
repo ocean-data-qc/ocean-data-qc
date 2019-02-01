@@ -16,7 +16,7 @@ import numpy as np
 
 
 class CruiseDataExport(Environment):
-    ''' This class is gathering all the common methods needed to manage
+    ''' This class is gathering all the common methods needed to export and save
         the aqc, csv and whp files
     '''
     env = Environment

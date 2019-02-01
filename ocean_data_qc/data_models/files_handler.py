@@ -51,11 +51,10 @@ class FilesHandler(Environment):
         TODO: Move all the asyncronous tasks on Electron with files to this file if possible
         TODO: the config file could be here as well
     '''
-
     env = Environment
 
     def __init__(self):
-        self.env.ob_files_handler = self
+        self.env.files_handler = self
 
     def load_data(self):
         lg.info('-- LOAD DATA (FilesHandler class)')

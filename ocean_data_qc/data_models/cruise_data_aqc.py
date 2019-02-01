@@ -6,18 +6,18 @@
 
 from bokeh.util.logconfig import bokeh_logger as lg
 from ocean_data_qc.constants import *
-from ocean_data_qc.data_models.cruise_data_parent import CruiseDataParent
+from ocean_data_qc.data_models.cruise_data import CruiseData
 from ocean_data_qc.data_models.exceptions import ValidationError
 
 import csv
 
-class CruiseDataAQC(CruiseDataParent):
+class CruiseDataAQC(CruiseData):
     ''' This class use to manage the plain AQC files. This file can be come from
         csv file or whp csv file.
 
         TODO: Is this class really needed?
     '''
-    env = CruiseDataParent.env
+    env = CruiseData.env
 
     def __init__(self, original_type=''):
         lg.warning('-- INIT AQC')

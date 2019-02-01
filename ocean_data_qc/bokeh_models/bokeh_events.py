@@ -242,7 +242,7 @@ class BokehEvents(Environment):
     def _init_tabs(self):
         lg.info('-- INIT TABS')
         panel_list = []
-        lg.info('>> self.env.TABS_FLAGS_PLOTS: {}'.format(self.env.tabs_flags_plots))
+        # lg.info('>> self.env.TABS_FLAGS_PLOTS: {}'.format(self.env.tabs_flags_plots))
         SORT_TABS = False
         if SORT_TABS:
             ordered_tab_list = sorted(self.env.tabs_flags_plots)
@@ -251,7 +251,7 @@ class BokehEvents(Environment):
         self.env.cur_tab = ordered_tab_list[0]              # self.env.cur_tab initialization
         self.env.cur_flag = self.env.cur_tab + FLAG_END     # self.env.cur_tab initialization
 
-        ly_settings = self.env.ob_files_handler.get_layout_settings()
+        ly_settings = self.env.files_handler.get_layout_settings()
         for tab in ordered_tab_list:
             indices = self.env.tabs_flags_plots[tab]['plots']
             children = [x.plot for x in self.env.bk_plots if x.n_plot in indices]

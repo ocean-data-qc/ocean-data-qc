@@ -7,7 +7,7 @@
 from bokeh.util.logconfig import bokeh_logger as lg
 from ocean_data_qc.constants import *
 from ocean_data_qc.data_models.exceptions import ValidationError
-from ocean_data_qc.data_models.cruise_data_parent import CruiseDataParent
+from ocean_data_qc.data_models.cruise_data import CruiseData
 from ocean_data_qc.data_models.computed_parameter import ComputedParameter
 
 from datetime import datetime
@@ -19,7 +19,7 @@ import numpy as np
 from os import path
 from six.moves import cStringIO as StringIO
 
-class CruiseDataUpdate(CruiseDataParent):
+class CruiseDataUpdate(CruiseData):
     """ This class creates objects used to update data.csv
         with new columns, values or rows. Before that we should process
         the new original.csv and if there is any error, all the actions are resetted

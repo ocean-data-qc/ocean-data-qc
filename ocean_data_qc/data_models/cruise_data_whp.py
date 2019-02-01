@@ -6,17 +6,17 @@
 
 from bokeh.util.logconfig import bokeh_logger as lg
 from ocean_data_qc.constants import *
-from ocean_data_qc.data_models.cruise_data_parent import CruiseDataParent
+from ocean_data_qc.data_models.cruise_data import CruiseData
 from ocean_data_qc.data_models.exceptions import ValidationError
 from ocean_data_qc.env import Environment
 
 import csv
 
 
-class CruiseDataWHP(CruiseDataParent):
+class CruiseDataWHP(CruiseData):
     ''' This class use to manage the plain CSV files (with WHP format)
     '''
-    env = CruiseDataParent.env
+    env = CruiseData.env
 
     def __init__(self):
         lg.warning('-- INIT CD WHP')

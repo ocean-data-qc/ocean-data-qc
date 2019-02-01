@@ -67,8 +67,8 @@ class BokehPlotsHandler(Environment):
         self.env.bk_sources._init_prof_circles_sources()
         self.env.bk_sources._init_flag_views()
         self._init_ranges()
-        graphs = self.env.ob_files_handler.graphs_per_tab  # property of FilesHandler object
-        for tab in self.env.ob_files_handler.tab_list:
+        graphs = self.env.files_handler.graphs_per_tab  # property of FilesHandler object
+        for tab in self.env.files_handler.tab_list:
             tab_flag = tab + FLAG_END       # TODO: tabs titles cannot be flags?
                                             #       if there is not flag available choose the first in the dropdown
             self.env.tabs_flags_plots[tab] = {
@@ -90,7 +90,7 @@ class BokehPlotsHandler(Environment):
                 self.env.bk_plots.append(bp)
                 self.env.tabs_flags_plots[tab]['plots'].append(graph.pos)
 
-        lg.info('>> SELF.ENV.TABS_FLAGS_PLOTS: {}'.format(self.env.tabs_flags_plots))
+        # lg.info('>> SELF.ENV.TABS_FLAGS_PLOTS: {}'.format(self.env.tabs_flags_plots))
 
     def _init_ranges(self):
         lg.info('-- INIT RANGES')

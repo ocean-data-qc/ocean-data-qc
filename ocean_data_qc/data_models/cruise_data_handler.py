@@ -35,16 +35,12 @@ class CruiseDataHandler(Environment):
         lg.info('-- GET INITIAL COLUMNS')
         self._init_cruise_data_ob()
         ComputedParameter()
-        columns = self.env.cruise_data.get_columns_by_type([
-            'computed', 'param', 'non_qc_param', 'param_flag',
-            'qc_param_flag', 'required'
-        ])
-        return columns
+        return self.env.cruise_data.get_plotable_columns()
 
     def _init_cruise_data_ob(self):
         ''' Checks data type and instantiates the appropriate cruise data object
-                whp and raw_csv (csv) >> process file from scratch and validate data
-                aqc >> open directly
+                `whp` and `raw_csv` (csv) >> process file from scratch and validate data
+                `aqc` >> open directly
         '''
         lg.info('-- INIT CRUISE DATA OBJECT')
         if path.isfile(ORIGINAL_CSV):
@@ -52,7 +48,7 @@ class CruiseDataHandler(Environment):
                 is_whp_format = self._is_whp_format(ORIGINAL_CSV)
                 if path.isfile(DATA_CSV):
                     if is_whp_format:
-                        return CruiseDataAQC(original_type='whp')      # TODO: the original type should be saved in the setting.json somewhere
+                        return CruiseDataAQC(original_type='whp')    # TODO: the original type should be saved in the setting.json somewhere
                     else:
                         return CruiseDataAQC(original_type='csv')
                 else:

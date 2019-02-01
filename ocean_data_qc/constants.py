@@ -33,6 +33,11 @@ NON_QC_PARAMS = [                                # discovered by usage
     'SECT', 'SECT_ID', 'TIME', 'PH_TMP', 'SAMPNO'
 ]
 
+BASIC_PARAMS = [
+    'CTDSAL', 'SALNTY', 'CTDOXY', 'OXYGEN', 'CTDPRS', 'DEPTH',
+    'NITRAT','PHSPHT','NITRIT','NO2_NO3',
+]
+
 # --------------------- COLORS ---------------------------- #
 
 BLUES = Blues8[1:-1]  # len = 6, from dark to light blue
