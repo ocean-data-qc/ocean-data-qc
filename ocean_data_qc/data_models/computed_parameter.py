@@ -143,9 +143,6 @@ class ComputedParameter(Environment):
             self.sandbox_vars = self._get_sandbox_vars(globals())
         ids = self._get_eq_ids(eq)
 
-        lg.warning('>> CP >> SELF.ENV: {}'.format(self.env))
-        lg.warning('>> CP >> SELF.ENV.CRUISE_DATA: {}'.format(self.env.cruise_data))
-
         # check if all the identifiers are in the df
         for i in ids:
             if i not in self.env.cruise_data.df.columns:  # already calculated parameters also can be use as columns

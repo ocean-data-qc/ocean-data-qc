@@ -39,15 +39,14 @@ class CruiseDataHandler(Environment):
             'computed', 'param', 'non_qc_param', 'param_flag',
             'qc_param_flag', 'required'
         ])
-        lg.warning(columns)
         return columns
 
     def _init_cruise_data_ob(self):
-        lg.warning('-- INIT CRUISE DATA OBJECT')
-        ''' Check data type and instantiate the appropriate cruise data object
-                whp and raw_csv >> process file from scratch
+        ''' Checks data type and instantiates the appropriate cruise data object
+                whp and raw_csv (csv) >> process file from scratch and validate data
                 aqc >> open directly
         '''
+        lg.info('-- INIT CRUISE DATA OBJECT')
         if path.isfile(ORIGINAL_CSV):
             if self._is_plain_text(ORIGINAL_CSV):
                 is_whp_format = self._is_whp_format(ORIGINAL_CSV)

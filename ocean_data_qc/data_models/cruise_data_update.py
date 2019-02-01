@@ -336,10 +336,7 @@ class CruiseDataUpdate(CruiseDataParent):
         self.old_data._replace_missing_values()     # -999 >> NaN
 
         self._update_moves()
-        self.old_data.save_moves()
-        self.old_data.save_data()
-        self.old_data.save_attributes()
-        # self.old_data.save_metadata()    # not important
+        self.old_data.save_tmp_data()
         self._rename_files()
 
     def _update_rows(self, new_rows_checked=False, removed_rows_checked=False):

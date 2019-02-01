@@ -138,7 +138,6 @@ class BokehPlots(Environment):
                 * Selected points
                 * Non-selected points
         '''
-        lg.info('-- INIT PROFILE LINES CIRCLES')
         self.env.profile_colors = [BLUES[i] for i in range(NPROF - 1)]
         self.env.profile_colors.reverse()
         self.env.profile_colors = self.env.profile_colors + [RED]
