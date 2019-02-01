@@ -42,7 +42,7 @@ class BokehFlags(Environment):
 
     def _init_flagger_select(self):
         lg.info('-- INIT FLAGGER SELECT')
-        options = self.env.cd_parent.all_params_flags
+        options = self.env.cruise_data.get_columns_by_type(['param_flag', 'qc_param_flag'])
         options = sorted(options)
         self.env.flagger_select = Select(
             value=self.env.cur_flag,
@@ -252,7 +252,7 @@ class BokehFlags(Environment):
         if row_indexes == []:
             lg.error('>> NO row_indexes selected')
 
-        self.env.cd_parent.update_flag_values(
+        self.env.cruise_data.update_flag_values(
             column=flag_to_update,
             new_flag_value=flag_value,
             row_indices=row_indexes,

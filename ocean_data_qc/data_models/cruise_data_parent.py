@@ -29,7 +29,7 @@ class CruiseDataParent(Environment):
 
     def __init__(self, original_type=''):
         lg.warning('-- INIT CRUISE DATA PARENT')
-        self.env.cd_parent = self
+        self.env.cruise_data = self
         self.original_type = original_type
         self._validate_original_data()
 
@@ -160,6 +160,11 @@ class CruiseDataParent(Environment):
                 * qc_param_flag - flags that were created by the application with value 2
                 * required      - required columns
         '''
+        if len(column_types) == 1 and 'all' in column_types:
+            column_types = [
+                'computed', 'param', 'non_qc_param',
+                'param_flag', 'qc_param_flag', 'required'
+            ]
         res = []
         for t in column_types:
             for c in self.cols:
@@ -179,66 +184,28 @@ class CruiseDataParent(Environment):
     def stations(self):
         return list(self.df.drop_duplicates(STNNBR)[STNNBR])
 
-    # TODO: remove all these methods (with get_columns_by_type is enough and cleaner)
-
-    def get_all_columns(self):
-        """ Return a list of columns """
-        return [x for x in self.cols]
-
-    def get_params(self):
-        return [x for x in self.cols if 'param' in self.cols[x]['types']]
-
-    @property
-    def params(self):
-        return [x for x in self.cols if 'param' in self.cols[x]['types']]
-
-    def get_params_flags(self):
-        return [x for x in self.cols if 'param_flag' in self.cols[x]['types']]
-
-    @property
-    def all_params_flags(self):
-        return [x for x in self.cols if 'param_flag' in self.cols[x]['types'] or 'qc_param_flag' in self.cols[x]['types']]
-
-    def get_qc_params_flags(self):
-        return [x for x in self.cols if 'qc_param_flag' in self.cols[x]['types']]
-
     def get_units(self):
         return [self.cols[x]['unit'] for x in self.cols]
 
     def get_plotable_columns(self):
+        ''' Returns the useful columns that can be plotted,
+            also discards columns that have all the values with NaN
+        '''
         plot_cols = [x for x in self.cols if 'param' in self.cols[x]['types'] or 'param_flag' in self.cols[x]['types'] or 'qc_param_flag' in self.cols[x]['types'] or 'computed' in self.cols[x]['types']]
-
-        # Columns with all NaN values are not plotable neither
         for c in plot_cols:
             if self.df[c].isnull().all():
                 plot_cols.remove(c)
-
         plot_cols.sort()
         return plot_cols
-
-    def get_plotable_non_computed_params(self):
-        # TODO: remove this method, use the property instead
-        col = [x for x in self.cols if 'param' in self.cols[x]['types'] or 'param_flag' in self.cols[x]['types'] or 'qc_param_flag' in self.cols[x]['types'] and 'computed' not in self.cols[x]['types']]
-        col.sort()
-        return col
-
-    @property
-    def plotable_non_computed_params(self):
-        col = [x for x in self.cols if 'param' in self.cols[x]['types'] or 'param_flag' in self.cols[x]['types'] or 'qc_param_flag' in self.cols[x]['types'] and 'computed' not in self.cols[x]['types']]
-        col.sort()
-        return col
-
-    def get_computed_params(self):
-        return [x for x in self.cols if 'computed' in self.cols[x]['types']]
 
     def get_plot_cp_params(self):
         return {
             'plotable_columns': self.get_plotable_columns(),
-            'computed': self.get_computed_params()
+            'computed': self.get_columns_by_type(['computed'])
         }
 
     def is_flag(self, flag):
-        if flag[-7:] == FLAG_END and flag in self.all_params_flags:
+        if flag[-7:] == FLAG_END and flag in self.get_columns_by_type(['param_flag', 'qc_param_flag']):
             return True
         else:
             return False
@@ -308,9 +275,9 @@ class CruiseDataParent(Environment):
 
     def _validate_required_columns(self):
         lg.warning('-- VALIDATE REQUIRED COLUMNS')
-        lg.warning('>> ALL COLUMNS: {}'.format(self.get_all_columns()))
-        if(not set(self.get_all_columns()).issuperset(REQUIRED_COLUMNS)):
-            missing_columns = ', '.join(list(set(REQUIRED_COLUMNS) - set(self.get_all_columns())))
+        lg.warning('>> ALL COLUMNS: {}'.format(self.get_columns_by_type(['all'])))
+        if(not set(self.get_columns_by_type(['all'])).issuperset(REQUIRED_COLUMNS)):
+            missing_columns = ', '.join(list(set(REQUIRED_COLUMNS) - set(self.get_columns_by_type(['all']))))
             raise ValidationError(
                 'Missing required columns in the file: [{}]'.format(missing_columns),
                 rollback='cruise_data'

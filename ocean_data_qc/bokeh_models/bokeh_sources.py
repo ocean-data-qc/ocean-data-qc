@@ -29,7 +29,7 @@ class BokehSources(Environment):
         self.env.ob_files_handler.load_data()
         self._init_cds_df()
         self._init_bathymetric_map_data()
-        self.env.stations = self.env.cd_parent.stations
+        self.env.stations = self.env.cruise_data.stations
         self.env.source = ColumnDataSource(self.env.cds_df)
         self._init_prof_sources()
         self._init_asterisk_source()
@@ -40,11 +40,11 @@ class BokehSources(Environment):
             The main DF has hashs strings as indices, so we need to create a new index
             TODO: Should I create a multilevel index???
         '''
-        if self.env.cd_parent.df is None:
-            self.env.cd_parent.load_file()  # for AQC files
-        length = len(self.env.cd_parent.df.index)
+        if self.env.cruise_data.df is None:
+            self.env.cruise_data.load_file()  # for AQC files
+        length = len(self.env.cruise_data.df.index)
         index = np.array(np.array(list(range(0,length))))
-        self.env.cds_df = self.env.cd_parent.df.copy(deep=True)   # TODO: copy only the columns needed, not all of them??
+        self.env.cds_df = self.env.cruise_data.df.copy(deep=True)   # TODO: copy only the columns needed, not all of them??
         self.env.cds_df['INDEX'] = index                               # NOTE: the index will coincide with the row position
         self.env.cds_df = self.env.cds_df.set_index(['INDEX'])          #       so .iloc can be used in order to get the rows
 
@@ -179,7 +179,7 @@ class BokehSources(Environment):
                 ...
             }
         '''
-        cols = self.env.cd_parent.all_params_flags
+        cols = self.env.cruise_data.get_columns_by_type(['param_flag', 'qc_param_flag'])
         flag_vals = self.env.cds_df[cols].values.ravel('K')  # ravel('K') to flatten the multidimensional array
         flag_vals = flag_vals[~np.isnan(flag_vals)]          # remove nan
         flag_vals = np.unique(flag_vals)                     # select the unique values

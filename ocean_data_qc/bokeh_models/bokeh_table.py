@@ -161,7 +161,7 @@ class BokehDataTable(Environment):
         self.previous_bt.on_click(previous_sample)
 
     def update_params(self):
-        self.params = self.env.cd_parent.get_columns_by_type(['param'])
+        self.params = self.env.cruise_data.get_columns_by_type(['param'])
         self.params.insert(0, STNNBR)
 
     def update_dt_source(self):
@@ -170,7 +170,7 @@ class BokehDataTable(Environment):
         lg.info('-- UPDATE DATATABLE SOURCE')
         self.update_params()
         df = self.env.cds_df.iloc[self.env.selection]
-        df_filter = self.env.cd_parent.get_columns_by_type(['param', 'param_flag', 'qc_param_flag'])
+        df_filter = self.env.cruise_data.get_columns_by_type(['param', 'param_flag', 'qc_param_flag'])
         df_filter.insert(0, STNNBR)
         df = df.filter(df_filter)
         self.table_df = df                          # TODO: check if it has the same order as the selection)

@@ -94,8 +94,8 @@ class CruiseDataUpdate(CruiseDataParent):
                 lg.info('>> THERE ARE CHANGES!!')
 
     def _compute_columns_comparison(self):
-        new_cols = self.get_plotable_non_computed_params()
-        old_data_cols = self.old_data.get_plotable_non_computed_params()
+        new_cols = self.get_columns_by_type(['param', 'param_flag', 'qc_param_flag'])
+        old_data_cols = self.old_data.get_columns_by_type(['param', 'param_flag', 'qc_param_flag'])
         new_cols.sort()                # sort() order the list permanently
         old_data_cols.sort()
         if new_cols != old_data_cols:  # it compares order and values
@@ -135,7 +135,7 @@ class CruiseDataUpdate(CruiseDataParent):
             So I need the intersections of rows and columns to make sure that they exist in both df """
         lg.info('-- COMPUTE VALUES COMPARISON')
         RESET_FLAG_VALUE = 2
-        columns = list(frozenset(self.get_all_columns()).intersection(self.old_data.get_all_columns()))
+        columns = list(frozenset(self.get_columns_by_type(['all'])).intersection(self.old_data.get_columns_by_type(['all'])))
 
         new_hash_id_list = self.df.index.tolist()
         old_has_id_list = self.old_data.df.index.tolist()
@@ -167,11 +167,11 @@ class CruiseDataUpdate(CruiseDataParent):
 
                         # the column flag has to be reset by default
                         # unless the whole flag column was added or the flag cell was modified
-                        if column in self.old_data.get_params():
+                        if column in self.old_data.get_columns_by_type(['param']):
                             flag_column = column + '_FLAG_W'
-                            if flag_column in self.old_data.get_params_flags():
+                            if flag_column in self.old_data.get_columns_by_type(['param_flag']):
                                 if (hash_id, flag_column) not in self.different_values_pairs:
-                                    if flag_column in self.get_params_flags():
+                                    if flag_column in self.get_columns_by_type(['param_flag']):
                                         if flag_column not in self.new_columns:
                                             if self.df.loc[hash_id, flag_column] != RESET_FLAG_VALUE:
                                                 self.different_values_number += 1
@@ -346,7 +346,7 @@ class CruiseDataUpdate(CruiseDataParent):
         lg.info('-- Updating rows')
         if new_rows_checked is True and self.new_rows_hash_list != []:
             for hash_id in self.new_rows_hash_list:
-                columns = list(frozenset(self.get_all_columns()).intersection(self.old_data.get_all_columns()))
+                columns = list(frozenset(self.get_columns_by_type(['all'])).intersection(self.old_data.get_columns_by_type(['all'])))
                 self.old_data.df.loc[hash_id, columns] = self.df.loc[hash_id, columns].tolist()
             lg.info('>> Rows added: {}'.format(list(self.new_rows_hash_list)))
 
@@ -371,17 +371,17 @@ class CruiseDataUpdate(CruiseDataParent):
 
             if removed_columns_checked is True and self.removed_columns != []:
                 for column in self.removed_columns:
-                    if column in self.old_data.get_params():
+                    if column in self.old_data.get_columns_by_type(['param']):
                         column_flag = column + '_FLAG_W'
                         if column_flag not in self.removed_columns:
-                            if column_flag in self.old_data.get_params_flags():
+                            if column_flag in self.old_data.get_columns_by_type(['param_flag']):
                                 del self.old_data.cols[column_flag]  # if the param column is deleted, then the flag is also deleted
                                 del self.old_data.df[column_flag]    # if they are not in the removed columns
                         del self.old_data.cols[column]
                         del self.old_data.df[column]
-                    if column in self.old_data.get_params_flags():
+                    if column in self.old_data.get_columns_by_type(['param_flag']):
                         param = column[:-7]  # to delete '_FLAG_W'
-                        if param in self.old_data.get_params():
+                        if param in self.old_data.get_columns_by_type(['param']):
                             self.old_data.df[column] = 9  # resetting to 9 instead of deleting the flag column
                         else:
                             del self.old_data.cols[column]

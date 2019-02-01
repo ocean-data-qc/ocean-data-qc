@@ -88,14 +88,14 @@ class ComputedParameter(Environment):
                 }
                 result = self.compute_equation(new_cp)
 
-                # current_columns = self.env.cd_parent.get_all_columns()
+                # current_columns = self.env.cruise_data.get_columns_by_type(['all'])
                 if result.get('success', False):
-                    self.env.cd_parent.cols[val] = {
+                    self.env.cruise_data.cols[val] = {
                         'types': ['computed'],
                         'unit': cp.get('units', False),
                     }
                     if init is False:
-                        self.env.cd_parent.save_attributes()
+                        self.env.cruise_data.save_attributes()
                     lg.info('>> CP ADDED: {}'.format(val))
                 else:
                     lg.warning('>> CP NO ADDED: {}'.format(val))
@@ -144,11 +144,11 @@ class ComputedParameter(Environment):
         ids = self._get_eq_ids(eq)
 
         lg.warning('>> CP >> SELF.ENV: {}'.format(self.env))
-        lg.warning('>> CP >> SELF.ENV.CD_PARENT: {}'.format(self.env.cd_parent))
+        lg.warning('>> CP >> SELF.ENV.CRUISE_DATA: {}'.format(self.env.cruise_data))
 
         # check if all the identifiers are in the df
         for i in ids:
-            if i not in self.env.cd_parent.df.columns:  # already calculated parameters also can be use as columns
+            if i not in self.env.cruise_data.df.columns:  # already calculated parameters also can be use as columns
                 return {
                     'success': False,
                     'msg': 'Some identifiers do not exist in the current dataframe',
@@ -157,7 +157,7 @@ class ComputedParameter(Environment):
         eq = '{} = {}'.format(computed_param_name, eq)
         lg.info('>> EQUATION: {}'.format(eq))
         try:
-            self.env.cd_parent.df.eval(
+            self.env.cruise_data.df.eval(
                 expr=eq,
                 engine='python',                 # NOTE: numexpr does not support custom functions
                 inplace=True,
@@ -171,10 +171,10 @@ class ComputedParameter(Environment):
                 'msg': 'The equation could not be computed: {}'.format(eq),
                 'error': '{}'.format(e),
             }
-        if computed_param_name == 'AUX' and 'AUX' in self.env.cd_parent.df.columns:
-            del self.env.cd_parent.df['AUX']
+        if computed_param_name == 'AUX' and 'AUX' in self.env.cruise_data.df.columns:
+            del self.env.cruise_data.df['AUX']
         else:
-            self.env.cd_parent.df = self.env.cd_parent.df.round({computed_param_name: precision})
+            self.env.cruise_data.df = self.env.cruise_data.df.round({computed_param_name: precision})
 
         return {
             'success': True,
@@ -288,11 +288,11 @@ class ComputedParameter(Environment):
 
     def get_all_parameters(self):
         lg.info('-- GET ALL PARAMETERS')
-        cols = self.env.cd_parent.get_columns_by_type(
+        cols = self.env.cruise_data.get_columns_by_type(
             ['param', 'param_flag', 'qc_param_flag', 'non_qc_param', 'required']
         )
         deps = self.check_dependencies()
-        cp_cols = self.env.cd_parent.get_columns_by_type(['computed'])
+        cp_cols = self.env.cruise_data.get_columns_by_type(['computed'])
         return dict(
             columns=cols,
             dependencies=deps,
@@ -307,12 +307,12 @@ class ComputedParameter(Environment):
         '''
         lg.info('-- DELETE COMPUTED PARAMETER')
         value = args.get('value', False)
-        current_columns = self.env.cd_parent.get_all_columns()
+        current_columns = self.env.cruise_data.get_columns_by_type(['all'])
         if value in current_columns:
             try:
-                if value in self.env.cd_parent.df.columns:
-                    del self.env.cd_parent.df[value]
-                del self.env.cd_parent.cols[value]
+                if value in self.env.cruise_data.df.columns:
+                    del self.env.cruise_data.df[value]
+                del self.env.cruise_data.cols[value]
                 return {
                     'success': True,
                 }
@@ -327,7 +327,7 @@ class ComputedParameter(Environment):
 
     def set_computed_parameters(self):
         lg.info('-- SET COMPUTED PARAMETERS')
-        cps_list = self.env.cd_parent.get_computed_params()  # active cps in the attributes.json file
+        cps_list = self.env.cruise_data.get_columns_by_type(['computed'])  # active cps in the attributes.json file
         proj_settings = json.load(open(PROJ_SETTINGS))
         cp_settings = proj_settings['computed_params']
         for cp in cps_list:
@@ -352,4 +352,4 @@ class ComputedParameter(Environment):
                 'value':cp['param_name'],
                 'init': True  # to avoid save_attributes all the times, once is enough
             })
-        self.env.cd_parent.save_attributes()
+        self.env.cruise_data.save_attributes()

@@ -35,7 +35,7 @@ class CruiseDataHandler(Environment):
         lg.info('-- GET INITIAL COLUMNS')
         self._init_cruise_data_ob()
         ComputedParameter()
-        columns = self.env.cd_parent.get_columns_by_type([
+        columns = self.env.cruise_data.get_columns_by_type([
             'computed', 'param', 'non_qc_param', 'param_flag',
             'qc_param_flag', 'required'
         ])
@@ -100,7 +100,7 @@ class CruiseDataHandler(Environment):
 
     def compare_data(self):
         lg.info('-- COMPARE DATA')
-        self.new_data = CruiseDataUpdate(self.env.cd_parent)
+        self.new_data = CruiseDataUpdate(self.env.cruise_data)
         comparison_data = {
             'new_columns': self.new_data.new_columns,
             'removed_columns': self.new_data.removed_columns,
