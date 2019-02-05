@@ -6,6 +6,7 @@
     "version": "0.8.0",
     "scripts": {
         "start": "electron .",
+        "start_offline": "electron . --offline",
         "clean": "node ./src/scripts/clean.js",
         "pack": "electron-builder --dir",
         "dist": "electron-builder --win --x64"

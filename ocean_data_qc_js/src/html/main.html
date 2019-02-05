@@ -5,7 +5,8 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' http://localhost:5006; img-src 'self' data:;">
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src 'self' 'unsafe-inline' http://localhost:5006 https://server.arcgisonline.com; img-src 'self' data: https://server.arcgisonline.com;">
     <!-- NOTE: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/default-src
                I could use 'nonce' as well for inline scripts, is it safer? -->
 
@@ -118,7 +119,7 @@
           </div>
 
           <div class="card">
-            <div class="card-header card-title text-white">Technologies <div class="fa fa-bolt float-right"></div></div>
+            <div class="card-header card-title text-white">Resources <div class="fa fa-bolt float-right"></div></div>
             <div class="card-body">
               <div id="bokeh_info" class="clearfix">
                 <div class="pull-left">
@@ -136,7 +137,8 @@
               <p><strong>Node.js: </strong><script>document.write(process.versions.node)</script></p>
               <p><strong>Chromium: </strong><script>document.write(process.versions.chrome)</script></p>
               <p><strong>Electron: </strong><script>document.write(process.versions.electron)</script></p>
-              <p><strong>Octave: </strong><span id="octave_version"></span></p>
+              <p><strong>Octave: </strong><span id="octave_version">Checking...</span></p>
+              <p><strong>ArcGIS Tile Server Status: </strong><span id="argis_tile_server_state">Checking...</span></p>
             </div>
           </div>
         </div>

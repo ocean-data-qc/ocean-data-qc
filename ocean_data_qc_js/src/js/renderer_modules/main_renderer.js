@@ -62,6 +62,22 @@ window.onmessage = function(e){
         $('#bokeh_state').text(bokeh_iframe.contentWindow.Bokeh.version + ' (loaded)');
         $('#bokeh_state_loader').attr('hidden', '');
         $('body').data('bokeh_state','ready');
+
+        // check ArcGIS Tile Server State
+        var path = 'https://server.arcgisonline.com/arcgis/rest/services/Ocean/World_Ocean_Base/MapServer/tile/0/0/0';
+        $('<img src="' + path + '" />').load(path, function(response, status, xhr) {
+            if ( status == "error" ) {
+                $('#argis_tile_server_state').text('Offline');
+                $('#argis_tile_server_state').css('color', 'red');
+                lg.warn('Tile server offline, or there is no internet connection');
+                lg.warn(xhr.status + " " + xhr.statusText);
+            } else {
+                $('#argis_tile_server_state').text('Online');
+                $('#argis_tile_server_state').css('color', 'green');
+                lg.info('Tile server online');
+            }
+            $('#argis_tile_server_state').css('font-weight', 'bold');
+        });
     }
 
     if (typeof(e.data.signal) !== 'undefined') {

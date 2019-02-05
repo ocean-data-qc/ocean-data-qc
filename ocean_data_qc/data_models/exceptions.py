@@ -23,13 +23,13 @@ class ValidationError(Exception, Environment):
         self.env.files_handler.remove_tmp_folder()
         self.env.bk_bridge.show_default_cursor()
 
-# TODO: create a CruiseDataValidationError class with the rollback included?
 
-class ManualException(Exception):
+class UserError(Exception, Environment):
     def __init__(self, value):
+        lg.error('-- User error: {}'.format(value))
         self.value = value
 
     def __str__(self):
         return repr(
-            'MANUAL ERROR: {}'.format(self.value)
+            'USER ERROR: {}'.format(self.value)
         )
