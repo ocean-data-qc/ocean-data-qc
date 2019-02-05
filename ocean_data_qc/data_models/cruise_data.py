@@ -163,6 +163,8 @@ class CruiseData(CruiseDataExport):
                 * qc_param_flag - flags that were created by the application with value 2
                 * required      - required columns
         '''
+        if isinstance(column_types, str):
+            column_types = [column_types]
         if len(column_types) == 1 and 'all' in column_types:
             column_types = [
                 'computed', 'param', 'non_qc_param',

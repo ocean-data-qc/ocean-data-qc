@@ -48,7 +48,7 @@ module.exports = {
                     }));
                 });
                 new_fieldset.find('.add_new_plot').click(function() {
-                    var new_row = set_project_settings_user.getNewRow(self.file_columns);
+                    var new_row = set_project_settings_user.get_new_row(self.file_columns);
                     $(this).parent().parent().before(new_row);
                     $('.delete_graph').on('click', function() {
                         $(this).parent().parent().remove();    // TODO: use closest
@@ -67,7 +67,7 @@ module.exports = {
                         index++;
                     }
                 });
-                set_project_settings_user.loadDeleteTabButtons();
+                set_project_settings_user.load_delete_tab_buttons();
             });
 
             $('#save_settings').on('click', function() {
@@ -136,8 +136,8 @@ module.exports = {
         });
 
         // build the form with qc_plot_tabs_final
-        set_project_settings_user.createQCTabTables(qc_plot_tabs_final, self.file_columns);
-        set_project_settings_user.loadDeleteTabButtons();
+        set_project_settings_user.create_qc_tab_tables(qc_plot_tabs_final, self.file_columns);
+        set_project_settings_user.load_delete_tab_buttons();
     },
 
 }

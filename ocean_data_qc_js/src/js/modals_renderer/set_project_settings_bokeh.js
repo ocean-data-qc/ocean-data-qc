@@ -52,8 +52,8 @@ module.exports = {
                     });
 
                     // build the form with qc_plot_tabs_final
-                    set_project_settings_user.createQCTabTables(qc_plot_tabs_final, file_columns, computed);
-                    set_project_settings_user.loadDeleteTabButtons();
+                    set_project_settings_user.create_qc_tab_tables(qc_plot_tabs_final, file_columns, computed);
+                    set_project_settings_user.load_delete_tab_buttons();
 
                     $('.delete_graph').on('click', function() {
                         $(this).parent().parent().remove();
@@ -76,7 +76,7 @@ module.exports = {
                             }
                         });
                         new_fieldset.find('.add_new_plot').click(function() {
-                            var new_row = set_project_settings_user.getNewRow(file_columns, null, computed);
+                            var new_row = set_project_settings_user.get_new_row(file_columns, null, computed);
                             $(this).parent().parent().before(new_row);
                             $('.delete_graph').on('click', function() {
                                 $(this).parent().parent().remove();
@@ -95,7 +95,7 @@ module.exports = {
                                 index++;
                             }
                         });
-                        set_project_settings_user.loadDeleteTabButtons();
+                        set_project_settings_user.load_delete_tab_buttons();
                     });
 
                     $('#accept_and_plot').on('click', function() {

@@ -94,8 +94,9 @@ module.exports = {
             'object': 'cruise.data.handler',
             'method': 'get_initial_columns',
         }
-        tools.call_promise(call_params).then((file_columns) => {
-            lg.info('-- GET FILE COLUMNS');
+        tools.call_promise(call_params).then((cols_dict) => {
+            var file_columns = cols_dict['cols'];
+            var cps_columns = cols_dict['cps'];
             tools.show_default_cursor();
             var qc_plot_tabs = data.get('qc_plot_tabs', loc.custom_settings);
             var qc_plot_tabs_final = {};
@@ -112,10 +113,8 @@ module.exports = {
                     }
                 });
             });
-
-            // build the form with qc_plot_tabs_final
-            self.createQCTabTables(qc_plot_tabs_final, file_columns);
-            self.loadDeleteTabButtons();
+            self.create_qc_tab_tables(qc_plot_tabs_final, file_columns, cps_columns);
+            self.load_delete_tab_buttons();
 
             $('#discard_plotting, .close').on('click', function() {  // on unload
                 if (fs.existsSync(loc.proj_files)) {
@@ -131,13 +130,22 @@ module.exports = {
                 $('fieldset:last').after(new_fieldset);
                 new_fieldset.slideDown();
                 file_columns.forEach(function (column) {
-                    new_fieldset.find('select').append($('<option>', {
-                        value: column,
-                        text : column
-                    }));
+                    if (cps_columns.includes(column)) {
+                        lg.warn('>> ADDING COMPUTED CLASS')
+                        new_fieldset.find('select').append($('<option>', {
+                            value: column,
+                            text : column,
+                            class: 'layout_computed_param_column'
+                        }));
+                    } else {
+                        new_fieldset.find('select').append($('<option>', {
+                            value: column,
+                            text : column
+                        }));
+                    }
                 });
                 new_fieldset.find('.add_new_plot').click(function() {
-                    var new_row = self.getNewRow(file_columns);
+                    var new_row = self.get_new_row(file_columns);
                     $(this).parent().parent().before(new_row);
                     $('.delete_graph').on('click', function() {
                         $(this).parent().parent().remove();
@@ -156,7 +164,7 @@ module.exports = {
                         index++;
                     }
                 });
-                self.loadDeleteTabButtons();
+                self.load_delete_tab_buttons();
             });
 
             $('#accept_and_plot').on('click', function() {
@@ -211,7 +219,7 @@ module.exports = {
         });
     },
 
-    createQCTabTables: function(qc_plot_tabs={}, file_columns=[], computed=[]) {
+    create_qc_tab_tables: function(qc_plot_tabs={}, file_columns=[], computed=[]) {
         lg.info('-- CREATE QC TAB TABLES');
         var self = this;
         // lg.info('>> TABS: ' + JSON.stringify(qc_plot_tabs, null, 4));
@@ -228,7 +236,7 @@ module.exports = {
             var new_qc_tab_div = $("#qc_tabs_table").clone();
             new_qc_tab_div.attr('id', 'qc_tabs_table-' + index);
             new_qc_tab_div.find('.add_new_plot').click(function() {
-                var new_row = self.getNewRow(file_columns, null, computed);
+                var new_row = self.get_new_row(file_columns, null, computed);
                 $(this).parent().parent().before(new_row);
                 $('.delete_graph').on('click', function() {
                     $(this).parent().parent().remove();
@@ -245,7 +253,7 @@ module.exports = {
             new_qc_tab_div.find('select[name=tab_title]').val(tab);
 
             qc_plot_tabs[tab].forEach(function (graph) {
-                var new_row = self.getNewRow(file_columns, graph, computed);
+                var new_row = self.get_new_row(file_columns, graph, computed);
                 new_qc_tab_div.find('tbody tr:last-child').before(new_row);
             });
 
@@ -254,7 +262,7 @@ module.exports = {
         });
     },
 
-    loadDeleteTabButtons: function() {
+    load_delete_tab_buttons: function() {
         $('.delete_tab').on('click', function() {
             if ($('#qc_tabs_table-1').length != 0) {
                 $(this).parent().parent().slideUp('fast', function() {
@@ -284,7 +292,7 @@ module.exports = {
         });
     },
 
-    getNewRow: function(file_columns=[], graph=null, computed=[]) {
+    get_new_row: function(file_columns=[], graph=null, computed=[]) {
         var new_row = $('#qc_tabs_table .qc_tabs_table_row:first').clone();
         file_columns.forEach(function (column) {
             var option_attrs = {

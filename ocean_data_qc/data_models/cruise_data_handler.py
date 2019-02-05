@@ -35,7 +35,12 @@ class CruiseDataHandler(Environment):
         lg.info('-- GET INITIAL COLUMNS')
         self._init_cruise_data_ob()
         ComputedParameter()
-        return self.env.cruise_data.get_plotable_columns()
+        cps = self.env.cruise_data.get_columns_by_type('computed')
+        d = {
+            'cps': cps,
+            'cols': self.env.cruise_data.get_plotable_columns()  # computed also included here
+        }
+        return d
 
     def _init_cruise_data_ob(self):
         ''' Checks data type and instantiates the appropriate cruise data object

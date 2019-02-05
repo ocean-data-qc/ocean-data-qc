@@ -67,7 +67,7 @@ class ComputedParameter(Environment):
             Previously this method we had to check the dependencies and
             that all the columns needed are in the current dataframe
         '''
-        lg.info('-- ADD COMPUTED PARAMETER: {}'.format(arg))
+        lg.info('Assing computer parameter: {}'.format(arg['value']))
         val = arg.get('value', False)
         init = arg.get('init', False)
         if val is False:
@@ -80,15 +80,12 @@ class ComputedParameter(Environment):
         proj_cps = cps['proj_settings_cps']
         for cp in proj_cps:  # NOTE: list of dicts, I need to iterate over all the items to get the cp to add
             if cp['param_name'] == val:
-                # lg.info('>> CUR: {} | equation: {}'.format(cp, cp['equation']))
                 new_cp = {
                     'eq': cp['equation'],
                     'computed_param_name': cp['param_name'],
                     'precision': int(cp['precision']),
                 }
                 result = self.compute_equation(new_cp)
-
-                # current_columns = self.env.cruise_data.get_columns_by_type(['all'])
                 if result.get('success', False):
                     self.env.cruise_data.cols[val] = {
                         'types': ['computed'],
@@ -102,7 +99,6 @@ class ComputedParameter(Environment):
                 return result
 
     def compute_equation(self, args):
-        # lg.info('-- COMPUTE EQUATION')
         try:
             prec = int(args.get('precision', 5))
         except Exception:
@@ -197,9 +193,7 @@ class ComputedParameter(Environment):
 
         # remove numbers from the list
         ids = [x for x in ids if re.match(r'[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?', x) is None]
-
         return ids
-
 
     def _get_sandbox_funcs(self, loc_dict={}):
         local_dict = loc_dict.copy()        # deepcopy() > recursively  ???
@@ -260,7 +254,6 @@ class ComputedParameter(Environment):
                 'cp_param_2': False,                 # dependencies don't satisfied
             }
         '''
-        # lg.info('-- CHECK DEPENDENCIES')
         proj_settings = json.load(open(PROJ_SETTINGS))
         computed_params = proj_settings.get('computed_params', False)
         if computed_params is not False:
@@ -278,7 +271,6 @@ class ComputedParameter(Environment):
                     result.update({
                         cp.get('param_name'): False
                     })
-            # lg.info('>> CHECK DEPENDENCIES RESULT: {}'.format(result))
             return result
         else:
             return {}
@@ -346,7 +338,7 @@ class ComputedParameter(Environment):
         proj_cps = cps['proj_settings_cps']
         for cp in proj_cps:
             self.add_computed_parameter({
-                'value':cp['param_name'],
+                'value': cp['param_name'],
                 'init': True  # to avoid save_attributes all the times, once is enough
             })
         self.env.cruise_data.save_attributes()
