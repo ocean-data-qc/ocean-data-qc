@@ -35,10 +35,20 @@ class CruiseDataHandler(Environment):
         lg.info('-- GET INITIAL COLUMNS')
         self._init_cruise_data_ob()
         ComputedParameter()
-        cps = self.env.cruise_data.get_columns_by_type('computed')
+        params = self.env.cruise_data.get_columns_by_type('param', discard_nan=True)
+        if len(params) == 0:
+            raise ValidationError(
+                'There should be at least one parameter with data, '
+                'in addition to the required columns',
+                rollback='cruise_data'
+            )
         d = {
-            'cps': cps,
-            'cols': self.env.cruise_data.get_plotable_columns()  # computed also included here
+            'cps': self.env.cruise_data.get_columns_by_type('computed'),
+            'cols': self.env.cruise_data.get_columns_by_type(
+                ['param', 'param_flag', 'qc_param_flag', 'computed'],
+                discard_nan=True
+            ),
+            'params': params
         }
         return d
 

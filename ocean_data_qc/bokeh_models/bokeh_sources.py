@@ -86,8 +86,10 @@ class BokehSources(Environment):
             NOTE: self.env.all_flags and  self.env.tabs_flags_plots should be created beforehand
         '''
         lg.info('-- INIT FLAG VIEWS')
-        lg.info('>> SELF.ENV.ALL_FLAGS: {}'.format(self.env.all_flags))
-        lg.info('>> self.env.tabs_flags_plot: {}'.format(self.env.tabs_flags_plots))
+        # lg.info('>> SELF.ENV.ALL_FLAGS: {}'.format(self.env.all_flags))
+        # lg.info('>> self.env.tabs_flags_plot: {}'.format(self.env.tabs_flags_plots))
+        # lg.info('>> self.env.files_handler.tab_list: {}'.format(self.env.files_handler.tab_list))
+        # lg.info('>> self.env.source.data: {}'.format(self.env.source.data))
 
         # TODO: tabs with the same flag should share the views
 

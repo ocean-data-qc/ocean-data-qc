@@ -127,7 +127,7 @@ class CruiseData(CruiseDataExport):
                 if flag not in column_list and column not in qc_column_exceptions:
                     lg.info('>> ROWS LENGTH: {}'.format(len(self.df.index)))
                     lg.info('>> CREATING FLAG: {}'.format(flag))
-                    values = ['9'] * len(self.df.index)
+                    values = ['2'] * len(self.df.index)
                     self.df[flag] = values
                     self.cols[flag] = {
                         'types': ['param_flag', 'qc_param_flag'],
@@ -136,7 +136,7 @@ class CruiseData(CruiseDataExport):
 
     def _init_early_calculated_params(self):
         ''' Initializates the dataframe with the basic params that all csv files should have.
-            If some of them do not exist in the dataframe yet they are created with the default values
+            If some of them do not exist in the dataframe yet, they are created with the default values
         '''
         for pname in BASIC_PARAMS:
             if pname not in self.get_columns_by_type(['all']):
@@ -154,14 +154,16 @@ class CruiseData(CruiseDataExport):
                 attr = json.load(f)
             self.cols = attr
 
-    def get_columns_by_type(self, column_types=[]):
+    def get_columns_by_type(self, column_types=[], discard_nan=False):
         ''' Possible types:
                 * computed      - calculated parameters
                 * param         - parameters
                 * non_qc_param  - params without qc column
-                * param_flag    - params that have qc flag columns
+                * param_flag    - existing flags for the params that were loaded from the beginning
                 * qc_param_flag - flags that were created by the application with value 2
                 * required      - required columns
+
+            @discard_nan - discards columns with all the values = NaN
         '''
         if isinstance(column_types, str):
             column_types = [column_types]
@@ -183,7 +185,17 @@ class CruiseData(CruiseDataExport):
         prepaired_list = [(col_positions[x], x) for x in res]
         sorted_list = sorted(prepaired_list, key=lambda elem: elem[0])  # reordering
         final_list = [x[1] for x in sorted_list]
+        if discard_nan:
+            final_list = self._discard_nan_columns(final_list)
         return final_list
+
+    def _discard_nan_columns(self, col_list):
+        final_cols = list(col_list)
+        for c in col_list:
+            if self.df[c].isnull().all():
+                final_cols.remove(c)
+        final_cols.sort()
+        return final_cols
 
     @property
     def stations(self):
@@ -192,21 +204,12 @@ class CruiseData(CruiseDataExport):
     def get_units(self):
         return [self.cols[x]['unit'] for x in self.cols]
 
-    def get_plotable_columns(self):
-        ''' Returns the useful columns that can be plotted,
-            also discards columns that have all the values with NaN
-        '''
-        plot_cols = self.get_columns_by_type(['param', 'param_flag', 'qc_param_flag', 'computed'])
-        final_cols = list(plot_cols)
-        for c in plot_cols:
-            if self.df[c].isnull().all():
-                final_cols.remove(c)
-        final_cols.sort()
-        return final_cols
-
     def get_plot_cp_params(self):
         return {
-            'plotable_columns': self.get_plotable_columns(),
+            'plotable_columns': self.get_columns_by_type(
+                ['param', 'param_flag', 'qc_param_flag', 'computed'],
+                discard_nan=True
+            ),
             'computed': self.get_columns_by_type(['computed'])
         }
 

@@ -25,7 +25,7 @@ FLAG_END = '_FLAG_W'        # Flag distinctive
 NA_REGEX_LIST = [r'^-999(\.0*)?$']
 
 REQUIRED_COLUMNS = [
-    'EXPOCODE', 'STNNBR', 'CASTNO', 'DATE', 'LATITUDE', 'LONGITUDE'
+    'EXPOCODE', 'BTLNBR', 'STNNBR', 'CASTNO', 'DATE', 'LATITUDE', 'LONGITUDE'
 ]
 
 NON_QC_PARAMS = [                                # discovered by usage
@@ -34,8 +34,10 @@ NON_QC_PARAMS = [                                # discovered by usage
 ]
 
 BASIC_PARAMS = [
-    'CTDSAL', 'SALNTY', 'CTDOXY', 'OXYGEN', 'CTDPRS', 'DEPTH',
+    'CTDSAL', 'SALNTY', 'CTDOXY', 'OXYGEN',
     'NITRAT','PHSPHT','NITRIT','NO2_NO3',
+
+    'CTDPRS', 'DEPTH',
 ]
 
 # --------------------- COLORS ---------------------------- #

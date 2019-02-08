@@ -97,7 +97,9 @@ module.exports = {
         tools.call_promise(call_params).then((cols_dict) => {
             var file_columns = cols_dict['cols'];
             var cps_columns = cols_dict['cps'];
-            tools.show_default_cursor();
+            var params = cols_dict['params'];
+            lg.warn('>> PARAMS' + params);
+
             var qc_plot_tabs = data.get('qc_plot_tabs', loc.custom_settings);
             var qc_plot_tabs_final = {};
             Object.keys(qc_plot_tabs).forEach(function(tab) {
@@ -113,32 +115,28 @@ module.exports = {
                     }
                 });
             });
-            self.create_qc_tab_tables(qc_plot_tabs_final, file_columns, cps_columns);
-            self.load_delete_tab_buttons();
-
-            $('#discard_plotting, .close').on('click', function() {  // on unload
-                if (fs.existsSync(loc.proj_files)) {
-                    rmdir(loc.proj_files, function () {
-                        // TODO: if an error occur, then the window is shown again, or an error appears
-                        lg.info('~~ PROJECT DIRECTORY DELETED');
-                    });
-                }
-            });
+            self.create_qc_tab_tables(qc_plot_tabs_final, file_columns, cps_columns, params);
 
             $('#add_new_tab').on('click', function() {
                 var new_fieldset = $('fieldset:first').clone();
                 $('fieldset:last').after(new_fieldset);
                 new_fieldset.slideDown();
-                file_columns.forEach(function (column) {
+                params.forEach(function(column) {
+                    new_fieldset.find('select[name=tab_title]').append($('<option>', {
+                        value: column,
+                        text: column,
+                    }));
+                })
+                file_columns.forEach(function(column) {
                     if (cps_columns.includes(column)) {
                         lg.warn('>> ADDING COMPUTED CLASS')
-                        new_fieldset.find('select').append($('<option>', {
+                        new_fieldset.find('.qc_tabs_table_row select').append($('<option>', {
                             value: column,
                             text : column,
                             class: 'layout_computed_param_column'
                         }));
                     } else {
-                        new_fieldset.find('select').append($('<option>', {
+                        new_fieldset.find('.qc_tabs_table_row select').append($('<option>', {
                             value: column,
                             text : column
                         }));
@@ -164,15 +162,28 @@ module.exports = {
                         index++;
                     }
                 });
-                self.load_delete_tab_buttons();
+                self.load_delete_tab_buttons(new_fieldset);
             });
 
             $('#accept_and_plot').on('click', function() {
                 // validations
                 if($('#project_name').val() == '') {
-                    tools.showModal('ERROR', 'The project name field must be filled<br />It is a required field.');
+                    tools.show_modal({
+                        'msg_type': 'html',
+                        'type': 'VALIDATION ERROR',
+                        'msg': '<p>The project name field must be filled.</p> <p>It is a required field.</p>',
+                    });
                     return;
                 }
+                if ($('#qc_tabs_table-0').length == 0) {
+                    tools.show_modal({
+                        'type': 'VALIDATION ERROR',
+                        'msg': 'At least there should be one tab with plots filled.'
+                    });
+                    return;
+                }
+
+                // TODO: check also at least 1 element inside the tab
 
                 data.set({
                     'project_state': 'modified',                // because it is new, not saved yet
@@ -206,20 +217,30 @@ module.exports = {
                                     'y': y_axis
                                 });
                             }
-
                         })
                     }
                 });
                 data.set({'qc_plot_tabs': qc_plot_tabs }, loc.proj_settings);
                 lg.info('>> PROJECT SETTINGS: ' + JSON.stringify(loc.proj_settings, null, 4));
+                $('#dummy_close').click();
                 server_renderer.go_to_bokeh();
             });
 
+            $('#discard_plotting, .close').on('click', function() {  // on unload
+                if (fs.existsSync(loc.proj_files)) {
+                    rmdir(loc.proj_files, function () {
+                        // TODO: if an error occur, then the window is shown again, or an error appears
+                        lg.info('~~ PROJECT DIRECTORY DELETED');
+                    });
+                }
+            });
+
+            tools.show_default_cursor();
             $('#modal_trigger_set_project_settings').click();
         });
     },
 
-    create_qc_tab_tables: function(qc_plot_tabs={}, file_columns=[], computed=[]) {
+    create_qc_tab_tables: function(qc_plot_tabs={}, file_columns=[], computed=[], params=[]) {
         lg.info('-- CREATE QC TAB TABLES');
         var self = this;
         // lg.info('>> TABS: ' + JSON.stringify(qc_plot_tabs, null, 4));
@@ -242,13 +263,11 @@ module.exports = {
                     $(this).parent().parent().remove();
                 });
             });
-            file_columns.forEach(function (column) {
-                if (!computed.includes(column)) {
-                    new_qc_tab_div.find('select[name=tab_title]').append($('<option>', {
-                        value: column,
-                        text: column,
-                    }));
-                }
+            params.forEach(function (column) {
+                new_qc_tab_div.find('select[name=tab_title]').append($('<option>', {
+                    value: column,
+                    text: column,
+                }));
             });
             new_qc_tab_div.find('select[name=tab_title]').val(tab);
 
@@ -259,11 +278,12 @@ module.exports = {
 
             new_qc_tab_div.appendTo("#qc_tabs_container").css('display', 'block');
             index++;
+            self.load_delete_tab_buttons(new_qc_tab_div)
         });
     },
 
-    load_delete_tab_buttons: function() {
-        $('.delete_tab').on('click', function() {
+    load_delete_tab_buttons: function(fieldset) {
+        fieldset.find('.delete_tab').on('click', function() {
             if ($('#qc_tabs_table-1').length != 0) {
                 $(this).parent().parent().slideUp('fast', function() {
                     $(this).remove();

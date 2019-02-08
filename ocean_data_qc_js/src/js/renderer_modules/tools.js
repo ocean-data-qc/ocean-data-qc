@@ -98,6 +98,10 @@ module.exports = {
         if ('code' in params) {
             code = params['code'];
         }
+        var msg_type = ''
+        if ('msg_type' in params) {
+            msg_type = params['msg_type'];
+        }
 
         var url = path.join(loc.modals, 'modal_message.html');
         self.load_modal(url, function() {
@@ -129,13 +133,24 @@ module.exports = {
             if (title != '') {
                 modal.find('.modal-title-text').text(title);
             } else {
+                type = type.replace(/\w\S*/g,
+                    function(txt) {
+                        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+                    }
+                );
                 modal.find('.modal-title-text').text(type);
             }
 
-            if (msg != '') {
-                modal.find('.modal-body').append(
-                    $('<p>', { text : msg })
-                );
+            if (msg_type == 'html') {
+                if (msg != '') {
+                    modal.find('.modal-body').html(msg)
+                }
+            } else {
+                if (msg != '') {
+                    modal.find('.modal-body').append(
+                        $('<p>', { text : msg })
+                    );
+                }
             }
             if (code != '') {
                 modal.find('.modal-dialog').addClass('modal-lg');
