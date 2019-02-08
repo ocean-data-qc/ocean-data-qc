@@ -54,7 +54,7 @@ class BokehLoader(Environment):
 
     def init_bokeh(self):
         if self.env.cruise_data is None:
-            self.env.cd_handler._init_cruise_data_ob()
+            self.env.cd_handler._init_cruise_data()
         BokehSources()
         self.env.bk_sources.load_data()
         BokehPlotsHandler()

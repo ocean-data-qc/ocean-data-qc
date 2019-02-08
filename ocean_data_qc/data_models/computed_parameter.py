@@ -39,32 +39,23 @@ class ComputedParameter(Environment):
         self.env.cp_param = self
         self.sandbox_vars = None
         self.sandbox_funcs = None
-        self.set_computed_parameters()
-        self.add_all_possible_cps()
+        self._set_computed_parameters()
+        self._add_all_possible_cps()
 
-    def get_cps_from_json(self):
-        """ Get computed parameters from json files:
-            result = {
-                'custom': computed parameters (predefined by the user, or by default)
-                'current': computed parameters in this project
-            }
-        """
-        proj_settings = {}
-        custom_settings = {}
+    @property
+    def proj_settings_cps(self):
         try:
             proj_settings = json.load(open(PROJ_SETTINGS))
-            custom_settings = json.load(open(CUSTOM_SETTINGS))
+            return proj_settings['computed_params'] if 'computed_params' in proj_settings else {}
         except Exception:
-            lg.warning('JSON settings file could be opened in order to load .')
-        result = {
-            'custom_settings_cps': custom_settings['computed_params'] if 'computed_params' in custom_settings else {},
-            'proj_settings_cps': proj_settings['computed_params'] if 'computed_params' in proj_settings else {},
-        }
-        return result
+            raise ValidationError(
+                'Project JSON settings file could be opened to process the calculated parameters',
+                rollback='cruise_data'  # TODO: only if we are loading the files in the initialization
+            )
 
     def add_computed_parameter(self, arg):
-        ''' It adds the computed parameter to cols and to the project
-            Previously this method we had to check the dependencies and
+        ''' It adds the computed parameter to cols and to the project.
+            Previous to this method we had to check the dependencies and
             that all the columns needed are in the current dataframe
         '''
         val = arg.get('value', False)
@@ -75,9 +66,7 @@ class ComputedParameter(Environment):
                 'msg': 'value is mandatory',
             }
 
-        cps = self.get_cps_from_json()
-        proj_cps = cps['proj_settings_cps']
-        for cp in proj_cps:  # NOTE: list of dicts, I need to iterate over all the items to get the cp to add
+        for cp in self.proj_settings_cps:  # NOTE: list of dicts, I need to iterate over all the items to get the cp to add
             if cp['param_name'] == val:
                 new_cp = {
                     'eq': cp['equation'],
@@ -112,16 +101,12 @@ class ComputedParameter(Environment):
         if eq == '':
             lg.error('ERROR: Empty equation')
 
-        cps = self.get_cps_from_json()
-        proj_cps = cps['proj_settings_cps']
-        # lg.info('>> COMPUTED PARAMS LIST: {}'.format(proj_cps))
-
         def repl(match):
             """ This function is run for each found ocurrence """
             inner_word = match.group(0)
             new_var = False
             param_name = inner_word[2:-1]   # removin characters: ${PARAM} >> PARAM
-            for elem in proj_cps:
+            for elem in self.proj_settings_cps:
                 if elem['param_name'] == param_name:
                     new_var = '({})'.format(elem.get('equation', False))
 
@@ -133,8 +118,9 @@ class ComputedParameter(Environment):
         while re.search(r'\$\{[a-zA-Z0-9_]+\}', eq) is not None:
             eq = re.sub(r'\$\{[a-zA-Z0-9_]+\}', repl, eq)
 
-        if self.sandbox_funcs is None or self.sandbox_vars is None:
+        if self.sandbox_funcs is None:
             self.sandbox_funcs = self._get_sandbox_funcs(locals())
+        if self.sandbox_vars is None:
             self.sandbox_vars = self._get_sandbox_vars(globals())
         ids = self._get_eq_ids(eq)
 
@@ -280,7 +266,7 @@ class ComputedParameter(Environment):
             ['param', 'param_flag', 'qc_param_flag', 'non_qc_param', 'required']
         )
         deps = self.check_dependencies()
-        cp_cols = self.env.cruise_data.get_columns_by_type(['computed'])
+        cp_cols = self.env.cruise_data.get_columns_by_type('computed')
         return dict(
             columns=cols,
             dependencies=deps,
@@ -313,29 +299,36 @@ class ComputedParameter(Environment):
                 'success': False,
             }
 
-    def set_computed_parameters(self):
+    def _set_computed_parameters(self):
+        ''' Add all the calculated parameters to the DF
+            when the file is loaded in the application
+        '''
         lg.info('-- SET COMPUTED PARAMETERS')
-        cps_list = self.env.cruise_data.get_columns_by_type(['computed'])  # active cps in the attributes.json file
+        cps_list = self.env.cruise_data.get_columns_by_type('computed')  # active cps in the attributes.json file
         proj_settings = json.load(open(PROJ_SETTINGS))
         cp_settings = proj_settings['computed_params']
         for cp in cps_list:
             for c in cp_settings:
                 if c['param_name'] == cp:
                     cp_to_compute = {
-                        "computed_param_name": c['param_name'],
-                        "eq": c['equation'],
-                        "precision": c['precision'],
+                        'computed_param_name': c['param_name'],
+                        'eq': c['equation'],
+                        'precision': c['precision'],
                     }
                     lg.info('>> PARAM TO COMPUTE: {}'.format(cp_to_compute))
                     self.compute_equation(cp_to_compute)
 
-    def add_all_possible_cps(self):
+    def _add_all_possible_cps(self):
+        ''' This method is used when the file is open
+                * WHP or CSV: all the possible parameters are computed
+                * AQC: the computed parameters from the attributes.json should be computed
+
+                TODO: In AQC file is still trying to get all the possible parameters, fix it
+        '''
         lg.info('-- ADD ALL POSSIBLE COMPUTED PARAMS')
         # NOTE: When the file is open the cps are copied from `custom_settings.json`
         #       So we have all the CP we need in cps['proj_settings_cps']
-        cps = self.get_cps_from_json()
-        proj_cps = cps['proj_settings_cps']
-        for cp in proj_cps:
+        for cp in self.proj_settings_cps:
             self.add_computed_parameter({
                 'value': cp['param_name'],
                 'init': True  # to avoid save_attributes all the times, once is enough

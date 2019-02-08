@@ -32,8 +32,7 @@ class CruiseDataHandler(Environment):
 
     def get_initial_columns(self):
         lg.info('-- GET INITIAL COLUMNS')
-        self._init_cruise_data_ob()
-        ComputedParameter()
+        self._init_cruise_data()
         params = self.env.cruise_data.get_columns_by_type('param', discard_nan=True)
         if len(params) == 0:
             raise ValidationError(
@@ -52,7 +51,7 @@ class CruiseDataHandler(Environment):
         }
         return d
 
-    def _init_cruise_data_ob(self):
+    def _init_cruise_data(self):
         ''' Checks data type and instantiates the appropriate cruise data object
                 `whp` and `raw_csv` (csv) >> process file from scratch and validate data
                 `aqc` >> open directly
@@ -63,14 +62,15 @@ class CruiseDataHandler(Environment):
                 is_whp_format = self._is_whp_format(ORIGINAL_CSV)
                 if path.isfile(DATA_CSV):
                     if is_whp_format:
-                        return CruiseDataAQC(original_type='whp')    # TODO: the original type should be saved in the setting.json somewhere
+                        CruiseDataAQC(original_type='whp')    # TODO: the original type should be saved in the setting.json somewhere
                     else:
-                        return CruiseDataAQC(original_type='csv')
+                        CruiseDataAQC(original_type='csv')
                 else:
                     if is_whp_format:
-                        return CruiseDataWHP()  # generates data.csv from original.csv
+                        CruiseDataWHP()  # generates data.csv from original.csv
                     else:
-                        return CruiseDataCSV()  # the data.csv should be a copy of original.csv, at the beggining at least
+                        CruiseDataCSV()  # the data.csv should be a copy of original.csv, at the beggining at least
+                ComputedParameter()
             else:
                 raise ValidationError(
                     'The file to open should be a CSV file.'

@@ -32,7 +32,7 @@ class CruiseData(CruiseDataExport):
         self.env.cruise_data = self
         self.original_type = original_type
         self.df = None
-        self.moves = None       # TODO: add the actions that were made when the file was loaded in bokeh
+        self.moves = None
         self.cols = {}
 
         self._validate_original_data()
@@ -207,7 +207,7 @@ class CruiseData(CruiseDataExport):
                 ['param', 'param_flag', 'qc_param_flag', 'computed'],
                 discard_nan=True
             ),
-            'computed': self.get_columns_by_type(['computed'])
+            'computed': self.get_columns_by_type('computed')
         }
 
     def is_flag(self, flag):
