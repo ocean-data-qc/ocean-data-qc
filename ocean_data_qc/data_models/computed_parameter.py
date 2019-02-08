@@ -67,7 +67,6 @@ class ComputedParameter(Environment):
             Previously this method we had to check the dependencies and
             that all the columns needed are in the current dataframe
         '''
-        lg.info('Assing computer parameter: {}'.format(arg['value']))
         val = arg.get('value', False)
         init = arg.get('init', False)
         if val is False:
@@ -148,7 +147,7 @@ class ComputedParameter(Environment):
                 }
 
         eq = '{} = {}'.format(computed_param_name, eq)
-        lg.info('>> EQUATION: {}'.format(eq))
+        # lg.info('>> EQUATION: {}'.format(eq))
         try:
             self.env.cruise_data.df.eval(
                 expr=eq,

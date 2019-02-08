@@ -28,38 +28,17 @@ class CruiseData(CruiseDataExport):
     env = CruiseDataExport.env
 
     def __init__(self, original_type=''):
-        lg.warning('-- INIT CRUISE DATA PARENT')
+        lg.info('-- INIT CRUISE DATA PARENT')
         self.env.cruise_data = self
         self.original_type = original_type
-        self._validate_original_data()
-
         self.df = None
-        self.moves = None
+        self.moves = None       # TODO: add the actions that were made when the file was loaded in bokeh
         self.cols = {}
 
-        self.load_file()  # implemented in the children
-
-    def _load_from_scratch(self):
-        lg.info('-- LOAD FROM SCRATCH')
+        self._validate_original_data()
+        self._set_moves()
         self._set_df()
-        self._set_attributes_from_scratch()  # the dataframe has to be created
-        self._validate_required_columns()
-        self._replace_missing_values()         # '-999' >> NaN
-        self._init_early_calculated_params()
-        self._convert_data_to_number()
-        self._set_hash_ids()
-
-        # TODO: confusing methods names, options:
-        #       They are saved in the temporal folder instead of the aqc file
-        self.save_tmp_data()
-
-    def _load_from_files(self):
-        lg.info('-- LOAD FROM FILES')
-        self._set_df()
-        self._set_attributes_from_json_file()
-        self._replace_missing_values()         # '-999' >> NaN
-        self._convert_data_to_number()
-        self._set_hash_ids()
+        self.load_file()        # implemented in the children
 
     def _set_attributes_from_scratch(self):
         """ The main attributes of the object are filled:
@@ -103,7 +82,7 @@ class CruiseData(CruiseDataExport):
         ''' Adds a column to the self.cols dictionary
             This dictionary is useful to select some columns by type
         '''
-        if column not in self.get_columns_by_type(['all']):
+        if column not in self.get_columns_by_type('all'):
             self.cols[column] = {
                 'types': [],
                 'unit': units,
@@ -116,10 +95,10 @@ class CruiseData(CruiseDataExport):
             else:
                 if column in REQUIRED_COLUMNS:
                     self.cols[column]['types'] += ['required']
-                elif column not in NON_QC_PARAMS:
-                    self.cols[column]['types'] += ['param']
-                else:
+                elif column in NON_QC_PARAMS:
                     self.cols[column]['types'] += ['non_qc_param']
+                else:
+                    self.cols[column]['types'] += ['param']
 
                 qc_column_exceptions = NON_QC_PARAMS + REQUIRED_COLUMNS
                 flag = column + FLAG_END
@@ -133,17 +112,32 @@ class CruiseData(CruiseDataExport):
                         'types': ['param_flag', 'qc_param_flag'],
                         'unit': False,
                     }
+                    self.add_moves_element(
+                        'flag_column_added',
+                        'Flag column that was missing added to the project '
+                        'with default value "2" in all the rows: {}'.format(flag)
+                    )
 
     def _init_early_calculated_params(self):
         ''' Initializates the dataframe with the basic params that all csv files should have.
             If some of them do not exist in the dataframe yet, they are created with the default values
         '''
         for pname in BASIC_PARAMS:
-            if pname not in self.get_columns_by_type(['all']):
+            if pname not in self.get_columns_by_type('all'):
                 if pname.endswith(FLAG_END):
                     self.df[pname] = np.array(['9'] * self.df.index.size)
+                    self.add_moves_element(
+                        'flag_column_added',
+                        'Basic flag column added to the project '
+                        ' with default value "9" in all the rows: {}'.format(pname)
+                    )
                 else:
                     self.df[pname] = np.array([np.nan] * self.df.index.size)
+                    self.add_moves_element(
+                        'column_added',
+                        'Basic column added to the project'
+                        ' with default value "NaN" in all the rows: {}'.format(pname)
+                    )
                 self._add_column(column=pname, units=False)
 
     def _set_attributes_from_json_file(self):
@@ -164,6 +158,8 @@ class CruiseData(CruiseDataExport):
                 * required      - required columns
 
             @discard_nan - discards columns with all the values = NaN
+
+            NOTE: a flag param could have the types 'param_flag' and 'qc_param_flag' at the same time
         '''
         if isinstance(column_types, str):
             column_types = [column_types]
@@ -176,7 +172,8 @@ class CruiseData(CruiseDataExport):
         for t in column_types:
             for c in self.cols:
                 if t in self.cols[c]['types']:
-                    res.append(c)
+                    if c not in res:
+                        res.append(c)
         res = list(set(res))  # one column may have multiple types
         df_cols = list(self.df.columns)
         col_positions = dict(
@@ -219,7 +216,7 @@ class CruiseData(CruiseDataExport):
         else:
             return False
 
-    def _set_df(self, from_scratch=False):
+    def _set_df(self):
         """ it creates the self.df dataframe object
             taking into account if data.csv is created or not
 
@@ -273,10 +270,9 @@ class CruiseData(CruiseDataExport):
         self.df = self.df.set_index(['HASH_ID'])
 
     def _validate_required_columns(self):
-        lg.warning('-- VALIDATE REQUIRED COLUMNS')
-        lg.warning('>> ALL COLUMNS: {}'.format(self.get_columns_by_type(['all'])))
-        if(not set(self.get_columns_by_type(['all'])).issuperset(REQUIRED_COLUMNS)):
-            missing_columns = ', '.join(list(set(REQUIRED_COLUMNS) - set(self.get_columns_by_type(['all']))))
+        lg.info('-- VALIDATE REQUIRED COLUMNS')
+        if (not set(self.get_columns_by_type('all')).issuperset(REQUIRED_COLUMNS)):
+            missing_columns = ', '.join(list(set(REQUIRED_COLUMNS) - set(self.get_columns_by_type('all'))))
             raise ValidationError(
                 'Missing required columns in the file: [{}]'.format(missing_columns),
                 rollback='cruise_data'

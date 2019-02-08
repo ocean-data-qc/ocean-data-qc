@@ -26,18 +26,29 @@ class CruiseDataWHP(CruiseData):
 
     def _validate_original_data(self):               # TODO: this should be in each cruise data class
         ''' Checks if all the rows have the same number of elements '''
-        lg.warning('-- CHECK DATA FORMAT (WHP)')
+        lg.info('-- CHECK DATA FORMAT (WHP)')
         with open(ORIGINAL_CSV, newline='') as csvfile:
             spamreader = csv.reader(csvfile, delimiter=',', quotechar='"')          # TODO: ignore comments with #
             first_len = -1
             row_number = 1
+            header = True
             for row in spamreader:
-                row_number += 1
                 if not(row[0].startswith('BOTTLE') or row[0].startswith('END_DATA') or row[0].startswith('#')):
+                    if header is True and '' in row:
+                        csvfile.close()
+                        raise ValidationError(
+                            'Some header column name is missing: FILE ROW = {} | COL = {}'.format(
+                                row_number, row.index('') + 1
+                            ),
+                            rollback='cruise_data'
+                        )
+                        break                               # interrupt for loop
+                    if header is True:
+                        header = False
                     if first_len == -1:
                         first_len = len(row)
                     else:
-                        if first_len != len(row):
+                        if first_len != len(row):    # TODO: empty fields in the csv should be filled by NaN values
                             csvfile.close()
                             raise ValidationError(
                                 'There is an invalid number of fields ({}) in the row: {}.'
@@ -47,8 +58,15 @@ class CruiseDataWHP(CruiseData):
                                 rollback='cruise_data'
                             )
                             break                               # interrupt for loop
+                row_number += 1
 
     def load_file(self):
-        lg.warning('-- LOAD FILE WHP (cruise_data_aqc)')
-        self._set_moves()
-        self._load_from_scratch()
+        lg.info('-- LOAD FILE WHP >> FROM SCRATCH')
+        self._set_attributes_from_scratch()  # the dataframe has to be created
+        self._validate_required_columns()
+        self._replace_missing_values()         # '-999' >> NaN
+        self._init_early_calculated_params()
+        self._convert_data_to_number()
+        self._set_hash_ids()
+        self.save_tmp_data()
+

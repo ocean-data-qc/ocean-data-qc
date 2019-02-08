@@ -93,7 +93,7 @@ ipcRenderer.on('compare-data', function() {
 })
 
 ipcRenderer.on('show-moves', (event) => {
-    var url = path.join(loc.modals, 'modal_show_moves.html');
+    var url = path.join(loc.modals, 'modal_moves.html');
     tools.load_modal(url, () => {
         fs.stat(path.join(loc.proj_files, 'moves.csv'), function (err, stats) {
             if (stats.size != 0) {
@@ -114,11 +114,11 @@ ipcRenderer.on('show-moves', (event) => {
                         lg.info('FILA: ' + row.join(''));
                         $('#table_moves tbody').append(row.join(''));
                     }
-                    $('#modal_trigger_show_moves').click();
+                    $('#modal_trigger_moves').click();
                 });
             } else {
                 $('#div_table_moves').text('There is no changes to show');
-                $('#modal_trigger_show_moves').click();
+                $('#modal_trigger_moves').click();
             }
         });
     });

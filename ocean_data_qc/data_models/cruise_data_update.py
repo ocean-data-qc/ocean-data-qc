@@ -135,7 +135,7 @@ class CruiseDataUpdate(CruiseData):
             So I need the intersections of rows and columns to make sure that they exist in both df """
         lg.info('-- COMPUTE VALUES COMPARISON')
         RESET_FLAG_VALUE = 2
-        columns = list(frozenset(self.get_columns_by_type(['all'])).intersection(self.old_data.get_columns_by_type(['all'])))
+        columns = list(frozenset(self.get_columns_by_type('all')).intersection(self.old_data.get_columns_by_type(['all'])))
 
         new_hash_id_list = self.df.index.tolist()
         old_has_id_list = self.old_data.df.index.tolist()
@@ -343,7 +343,7 @@ class CruiseDataUpdate(CruiseData):
         lg.info('-- Updating rows')
         if new_rows_checked is True and self.new_rows_hash_list != []:
             for hash_id in self.new_rows_hash_list:
-                columns = list(frozenset(self.get_columns_by_type(['all'])).intersection(self.old_data.get_columns_by_type(['all'])))
+                columns = list(frozenset(self.get_columns_by_type('all')).intersection(self.old_data.get_columns_by_type(['all'])))
                 self.old_data.df.loc[hash_id, columns] = self.df.loc[hash_id, columns].tolist()
             lg.info('>> Rows added: {}'.format(list(self.new_rows_hash_list)))
 

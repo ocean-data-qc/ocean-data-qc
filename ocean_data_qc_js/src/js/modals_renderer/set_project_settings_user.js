@@ -98,8 +98,6 @@ module.exports = {
             var file_columns = cols_dict['cols'];
             var cps_columns = cols_dict['cps'];
             var params = cols_dict['params'];
-            lg.warn('>> PARAMS' + params);
-
             var qc_plot_tabs = data.get('qc_plot_tabs', loc.custom_settings);
             var qc_plot_tabs_final = {};
             Object.keys(qc_plot_tabs).forEach(function(tab) {

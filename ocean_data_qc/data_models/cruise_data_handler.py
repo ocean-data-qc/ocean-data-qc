@@ -27,7 +27,6 @@ class CruiseDataHandler(Environment):
 
     def __init__(self):
         self.env.cd_handler = self
-        lg.warning('-- INIT CRUISE DATA HANDLER')
 
         self.new_data = None
 
@@ -39,7 +38,8 @@ class CruiseDataHandler(Environment):
         if len(params) == 0:
             raise ValidationError(
                 'There should be at least one parameter with data, '
-                'in addition to the required columns',
+                'in addition to the required columns and the parameters that'
+                ' should not have a QC column associated.',
                 rollback='cruise_data'
             )
         d = {

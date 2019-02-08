@@ -117,7 +117,7 @@ class CruiseDataExport(Environment):
                                              # I am afraid the breaklines are not going to work well
 
     def save_tmp_data(self):
-        lg.warning('-- SAVE TMP DATA')
+        lg.info('-- SAVE TMP DATA')
         self.save_moves()
         self.save_csv_data()
         self.save_attributes()
