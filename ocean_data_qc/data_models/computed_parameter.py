@@ -59,7 +59,7 @@ class ComputedParameter(Environment):
             that all the columns needed are in the current dataframe
         '''
         val = arg.get('value', False)
-        init = arg.get('init', False)
+        prevent_save = arg.get('prevent_save', False)
         if val is False:
             return {
                 'success': False,
@@ -79,11 +79,9 @@ class ComputedParameter(Environment):
                         'types': ['computed'],
                         'unit': cp.get('units', False),
                     }
-                    if init is False:
+                    if prevent_save is False:
                         self.env.cruise_data.save_attributes()
                     lg.info('>> CP ADDED: {}'.format(val))
-                else:
-                    lg.warning('>> CP NO ADDED: {}'.format(val))
                 return result
 
     def compute_equation(self, args):
@@ -143,7 +141,7 @@ class ComputedParameter(Environment):
                 global_dict=self.sandbox_vars
             )
         except Exception as e:
-            lg.warning('The equation could not be computed: {}'.format(e))
+            lg.warning('>> THE CP COULD NOT BE CALCULATED: {}'.format(e))
             return {
                 'success': False,
                 'msg': 'The equation could not be computed: {}'.format(eq),
@@ -305,10 +303,9 @@ class ComputedParameter(Environment):
         '''
         lg.info('-- SET COMPUTED PARAMETERS')
         cps_list = self.env.cruise_data.get_columns_by_type('computed')  # active cps in the attributes.json file
-        proj_settings = json.load(open(PROJ_SETTINGS))
-        cp_settings = proj_settings['computed_params']
+        lg.warning('>> CP LIST: {}'.format(cps_list))
         for cp in cps_list:
-            for c in cp_settings:
+            for c in self.proj_settings_cps:
                 if c['param_name'] == cp:
                     cp_to_compute = {
                         'computed_param_name': c['param_name'],
@@ -323,14 +320,15 @@ class ComputedParameter(Environment):
                 * WHP or CSV: all the possible parameters are computed
                 * AQC: the computed parameters from the attributes.json should be computed
 
+                NOTE: When the file is open the cps are copied from `custom_settings.json`
+                    So we have all the CP we need in cps['proj_settings_cps']
+
                 TODO: In AQC file is still trying to get all the possible parameters, fix it
         '''
         lg.info('-- ADD ALL POSSIBLE COMPUTED PARAMS')
-        # NOTE: When the file is open the cps are copied from `custom_settings.json`
-        #       So we have all the CP we need in cps['proj_settings_cps']
         for cp in self.proj_settings_cps:
             self.add_computed_parameter({
                 'value': cp['param_name'],
-                'init': True  # to avoid save_attributes all the times, once is enough
+                'prevent_save': True  # to avoid save_attributes all the times, once is enough
             })
         self.env.cruise_data.save_attributes()
