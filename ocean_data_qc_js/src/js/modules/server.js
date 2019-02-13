@@ -16,6 +16,7 @@ const is_dev = require('electron-is-dev');
 
 const {dialog} = require('electron');
 const {app} = require('electron');
+const { spawn } = require('child_process');
 
 const loc = require('locations');
 const lg = require('logging');
@@ -32,6 +33,7 @@ module.exports = {
         self.python_options = {};
         self.python_path = 'python';
         self.ocean_data_qc_path = '';
+        self.octave_path = data.get('octave_path', loc.shared_data);
     },
 
     /**
@@ -78,7 +80,6 @@ module.exports = {
      *    2. If not it will use the local python instaled in the system
     */
     set_python_path: function() {
-        lg.info('-- SET PYTHON PATH');
         var self = this;
 
         if (process.platform === 'win32' && fs.existsSync(loc.python_win)) {
@@ -90,7 +91,6 @@ module.exports = {
         } else {
             self.python_path = 'python';
         }
-        lg.warn('>> CHECK PYTHON PATH: ' + self.python_path);
         self.check_python_version().then(() => {
             self.set_ocean_data_qc_path();
         }).catch((err) => {
@@ -119,9 +119,7 @@ module.exports = {
     },
 
     set_ocean_data_qc_path: function() {
-        lg.info('-- SET OCEAN DATA QC PATH');
         var self = this;
-
         var py_options = {
             mode: 'text',
             pythonPath: self.python_path,
@@ -296,4 +294,66 @@ module.exports = {
             self.close_app();
         }
     },
+
+    /* Check if the command Octave exists in the PATH environment variable
+    * If it does not exist, then Octave cannot be used
+    */
+    set_octave_path: function() {
+        var self = this;
+        if (self.octave_path == false) {
+            var py_options = {
+                mode: 'text',
+                pythonPath: self.python_path,
+                scriptPath: loc.scripts
+            };
+            python_shell.run('get_octave_path.py', py_options, function (err, results) {
+                if (err || typeof(results) === 'undefined') {
+                    lg.warn('>> The "octave" command was not found: ' + err.message);
+                    data.set({'octave_path': false }, loc.shared_data);
+                    self.web_contents.send(
+                        'set-octave-info',
+                        {'msg': 'Undetected in PATH' }
+                    );
+                } else {
+                    try {
+                        self.octave_path = results[0];
+                        data.set({'octave_path': self.octave_path }, loc.shared_data);
+                        self.set_octave_version()
+                    } catch (err) {
+                        lg.warn('>> OCTAVE ERROR CHECKING VERSION: ' + err)
+                        data.set({'octave_path': false }, loc.shared_data);
+                        self.web_contents.send(
+                            'set-octave-info',
+                            {'msg': 'Error checking version' }
+                        );
+                    }
+                }
+            })
+        }
+    },
+
+    set_octave_version() {
+        var self = this;
+        var full_str_version = '';
+        const octave = spawn(
+            self.octave_path,                   // command >> is this working on mac an linux?
+            ['--eval', '"OCTAVE_VERSION"'],     // args
+            {'shell': true }                    // options
+        );
+        octave.stdout.on('data', (buffer) => {
+            var version = buffer.toString('utf8');
+            lg.warn('>> ON DATA: ' + version)
+            full_str_version += version;
+            if (full_str_version.match(/ans = [0-9]\.[0-9]\.[0-9]/g) != null) {
+                // NOTE: When the expression is full (all buffers concatenated)
+                //       Expected answer: "ans = 4.1.4"
+                full_str_version = full_str_version.split('=')[1].trim();
+                data.set({'octave_version': full_str_version}, loc.shared_data);
+                self.web_contents.send('set-octave-info');
+            }
+        });
+        octave.stderr.on('data', (data) => {
+            lg.warn(`Error detecting Octave version: ${data}`);
+        });
+    }
 }

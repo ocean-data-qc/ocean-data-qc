@@ -9,7 +9,8 @@
         "start_offline": "electron . --offline",
         "clean": "node ./src/scripts/clean.js",
         "pack": "electron-builder --dir",
-        "dist": "electron-builder --macos"
+        "dist_mac": "electron-builder --macos",
+        "dist_win": "electron-builder --win --x64"
     },
     "repository": {
         "type": "git",

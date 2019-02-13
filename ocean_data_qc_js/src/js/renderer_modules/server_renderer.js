@@ -12,8 +12,6 @@ app_module_path.addPath(path.join(__dirname, '../modals_renderer'));
 app_module_path.addPath(__dirname);
 
 const { ipcRenderer } = require('electron');
-const { spawn } = require('child_process');
-const which = require('npm-which')(process.cwd())
 const rmdir = require('rimraf')
 
 const lg = require('logging');
@@ -120,42 +118,6 @@ module.exports = {
         ipcRenderer.send('enable-watcher', {'mark': project_state });
         tools.show_default_cursor();
         self.hide_loader();
-    },
-
-    /* Check if the command Octave exists in the PATH environment variable
-    * If it does not exist, then Octave cannot be used
-    */
-   check_octave: function() {
-        which('octave', function(err, path_to_octave) {
-            if (err) {
-                lg.warn('>> The "octave" command was not found: ' + err.message);
-                data.set({'octave': false }, loc.shared_data);
-                $('#octave_version').text('Undetected in PATH');
-                $('#octave_version').css('color', 'red');
-                $('#octave_version').css('font-weight', 'bold');
-            } else {
-                lg.info('>> OCTAVE FOUND IN: ' + path_to_octave);
-                var full_str_version = '';
-                const octave = spawn(
-                    'octave',                           // command
-                    ['--eval', '"OCTAVE_VERSION"'],     // args
-                    {'shell': true }                    // options
-                );
-                octave.stdout.on('data', (buffer) => {
-                    var version = buffer.toString('utf8');
-                    full_str_version += version;
-                    if (full_str_version.match(/ans = [0-9]\.[0-9]\.[0-9]/g) != null) {
-                        // when the expression is full (all buffers concatenated)
-                        full_str_version = full_str_version.split('=')[1].trim();
-                        data.set({'octave': true }, loc.shared_data);
-                        $('#octave_version').text(full_str_version);
-                    }
-                });
-                octave.stderr.on('data', (data) => {
-                    lg.error(`stderr: ${data}`);
-                });
-            }
-        })
     },
 
     come_back_to_welcome: function() {

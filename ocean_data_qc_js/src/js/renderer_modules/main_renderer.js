@@ -28,13 +28,10 @@ require('set_project_settings_user').init();
 // ---------------------------- INITIAL FUNCTIONS ----------------------------- //
 
 $('body').data('bokeh_state','not-ready');
-
 tools.multi_modal_fix();
-
 load_images();
-// check_extension();  TODO: I need to find a way to create the association first, I would need elevated priviledges
 check_port();    // TODO: move function into tools module
-server_renderer.check_octave();
+check_octave()
 check_previous_session();
 
 $(document).ready(function() {
@@ -301,6 +298,19 @@ function load_images() {
     // })
 }
 
+function check_octave() {
+    lg.warn('-- CHECK OCTAVE')
+    var octave_version = data.get('octave_version', loc.shared_data);
+    var octave_path = data.get('octave_path', loc.shared_data);
+    if (octave_version == false || octave_path == false) {
+        lg.warn('-- CHECK OCTAVE >> PROCESSING ATTRIBUTES');
+        ipcRenderer.send('set-octave-path');
+    } else {
+        lg.warn('-- CHECK OCTAVE >> ATTRIBUTES ALREADY SET');
+        $('#octave_version').text(octave_version);
+    }
+}
+
 // ---------------------------------  LISTENERS ---------------------------------------------- //
 
 ipcRenderer.on('show-modal', (event, arg) => {
@@ -337,3 +347,18 @@ ipcRenderer.on('relaunch-bokeh', (event, arg) => {
     $('body').data('bokeh_state','not-ready');
     server_renderer.go_to_bokeh();
 });
+
+ipcRenderer.on('set-octave-info', (event, arg) => {
+    var octave_version = data.get('octave_version', loc.shared_data);
+    if (octave_version != false) {
+        $('#octave_version').text(octave_version);
+    } else {
+        if ('msg' in arg) {
+            $('#octave_version').text(arg['msg']);
+        } else {
+            $('#octave_version').text('Undetected');
+        }
+        $('#octave_version').css('color', 'red');
+        $('#octave_version').css('font-weight', 'bold');
+    }
+})

@@ -135,22 +135,16 @@ ipcMain.on('open-file', (event, arg) => {
     menu_actions.open_file(arg);
 })
 
-// ipcMain.on('launch-bokeh-server', (event, arg) => {
-//     server.launch_bokeh();
-// })
-
 ipcMain.on('set-bokeh-server-port', function (event, port) {
     lg.info('>> NEW PORT ASSIGNED: ' + port);
     data.set({'bokeh_port': port}, loc.shared_data);
 });
 
 ipcMain.on('set-bokeh-menu', function(){
-    lg.info('-- SETTING BOKEH MENU');
     menu.set_bokeh_menu();
 })
 
 ipcMain.on('set-main-menu', function(){
-    lg.info('-- SETTING MAIN MENU');
     menu.set_main_menu();
 })
 
@@ -162,5 +156,11 @@ ipcMain.on('enable-watcher', function(event, args){
 ipcMain.on('disable-watcher', function(event, args){
     var web_contents = main_window.webContents;
     web_contents.send('disable-watcher');
+})
+
+ipcMain.on('set-octave-path', function(event, args){
+    server.set_octave_path();
+    var web_contents = main_window.webContents;
+    web_contents.send('update-octave-state');
 })
 

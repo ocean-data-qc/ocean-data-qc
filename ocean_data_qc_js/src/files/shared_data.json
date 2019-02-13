@@ -4,7 +4,8 @@
     "dev_mode": true,
     "file_to_open": false,
     "latest_file": false,
-    "octave": true,
+    "octave_path": false,
+    "octave_version": false,
     "project_state": "modified",
     "python_pid": 1196
 }
