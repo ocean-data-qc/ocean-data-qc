@@ -44,13 +44,12 @@ module.exports = {
         self.set_python_path();
     },
 
-    get_python_version: function() {
+    check_python_version: function() {
         var self = this;
         return new Promise((resolve, reject) => {
-            if (command_exists_sync('python')) {
             var py_options = {
                 mode: 'text',
-                    pythonPath: 'python',
+                pythonPath: self.python_path,
                 scriptPath: loc.scripts
             };
             python_shell.run('get_python_version.py', py_options, function (err, results) {
@@ -64,30 +63,23 @@ module.exports = {
                             reject('Version could not be parsed');
                         }
                         if (v == 3) {
-                                self.python_path = 'python';  // TODO: check python3 alias???
                             resolve(true)
                         } else {
-                                if (command_exists_sync('python3')) {
-                                    self.python_path = 'python3';
-                                    resolve(true);
-                                } else {
-                                    reject('Wrong python version');                                    
-                                }   
+                            reject('Wrong python version: ' + results[0]);
                         }
                     }
                 }
             });
-            }
         });
     },
 
+    /** Sets the python path
+     *    1. First check if python exists in the environment
+     *    2. If not it will use the local python instaled in the system
+    */
     set_python_path: function() {
         lg.info('-- SET PYTHON PATH');
         var self = this;
-        self.get_python_version().then(() => {
-            self.set_ocean_data_qc_path();
-        }).catch((err) => {                         // look for python manually
-            lg.error(err)
 
         if (process.platform === 'win32' && fs.existsSync(loc.python_win)) {
             self.python_path = loc.python_win;
@@ -95,13 +87,35 @@ module.exports = {
             self.python_path = loc.python_mac;
         } else if (process.platform === 'linux' && fs.existsSync(loc.python_lin)) {
             self.python_path = loc.python_lin;
+        } else {
+            self.python_path = 'python';
+        }
+        lg.warn('>> CHECK PYTHON PATH: ' + self.python_path);
+        self.check_python_version().then(() => {
+            self.set_ocean_data_qc_path();
+        }).catch((err) => {
+            lg.warn('>> WRONG PYTHON PATH: ' + self.python_path);
+            lg.warn('>> ERR: ' + err);
+            if (command_exists_sync('python')) {
+                self.python_path = 'python'
+                self.check_python_version().then(() => {
+                    self.set_ocean_data_qc_path();
+                }).catch((err) => {
+                    lg.warn('>> WRONG PYTHON PATH USED: ' + self.python_path);
+                    lg.warn('>> ERR: ' + err);
+                })
+            } else {
+                if (command_exists_sync('python3')) {
+                    self.python_path = 'python3'
+                    self.check_python_version().then(() => {
+                        self.set_ocean_data_qc_path();
+                    }).catch((err) => {
+                        lg.warn('>> WRONG PYTHON PATH USED: ' + self.python_path);
+                        lg.warn('>> ERR: ' + err);
+                    })
                 }
-            if (self.python_path != 'python') {    // it was set manually with one of the previous paths
-                                                   // if there is environment we assume that python has the correct version
-                self.set_ocean_data_qc_path()
             }
         })
-        lg.info('>> PYTHON PATH USED: ' + self.python_path);
     },
 
     set_ocean_data_qc_path: function() {
