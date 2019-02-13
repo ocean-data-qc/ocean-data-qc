@@ -172,6 +172,7 @@ module.exports = {
     init_user_data: function() {
         var self = this;
         if (!fs.existsSync(loc.files)) {
+            fs.mkdirSync(loc.files);
             fs_extra.copySync(
                 loc.default_files,  // TOCHECK: does it work within the asar file?
                 loc.files
