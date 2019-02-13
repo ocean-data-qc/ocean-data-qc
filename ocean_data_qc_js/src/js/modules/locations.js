@@ -48,9 +48,9 @@ const locations = {
     'default_settings': path.join(__user_data, 'files/default_settings.json'),
 
     // PYTHON EXECUTABLE
-    'python_win': path.join(__ocean_data_qc_js, '../env/win/python.exe'),
-    'python_mac': path.join(__ocean_data_qc_js, '../env/mac/bin/python'),
-    'python_lin': path.join(__ocean_data_qc_js, '../env/lin/bin/python')
+    'python_win': path.join(__ocean_data_qc_js, '../env/python.exe'),
+    'python_mac': path.join(__ocean_data_qc_js, '../env/bin/python'),
+    'python_lin': path.join(__ocean_data_qc_js, '../env/bin/python')
 }
 
 module.exports = locations;  // can this be here?
