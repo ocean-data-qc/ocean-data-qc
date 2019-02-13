@@ -6,7 +6,9 @@
 
 import shutil
 import sys
+import fnmatch
 import os
+from bokeh.util.logconfig import bokeh_logger as lg
 
 OCTAVE_EXECUTABLE = shutil.which('octave')
 if sys.platform == 'win32':
@@ -19,3 +21,12 @@ if sys.platform == 'win32':
                     OCTAVE_EXECUTABLE = os.path.join(base_octave,vdir,'bin','octave-cli.exe')
             except:
                 pass
+else:
+    if not shutil.which('octave'):
+        if os.path.isfile('/usr/local/bin/octave'):
+            OCTAVE_EXECUTABLE = '/usr/local/bin/octave'
+        else:
+            for dname in os.listdir('/Applications'):
+                if fnmatch.fnmatch(dname, 'Octave-*'):
+                    OCTAVE_EXECUTABLE = os.path.join('/Applications', dname, 'Contents/Resources/usr/bin/octave')
+lg.info('-- OCTAVE_EXECUTABLE: {}'.format(OCTAVE_EXECUTABLE))
