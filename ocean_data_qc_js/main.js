@@ -61,9 +61,9 @@ app.on('ready', function() {
         title: 'AtlantOS Ocean Data QC!'  // if not the title ocean_data_qc is shown for a moment
         // backgroundColour: '#e8e8e7'              // TODO: try to give a desktop application color
     })
-    main_window.maximize();
+    //main_window.maximize();
     var web_contents = main_window.webContents;          // TODO: avoid globals
-    web_contents.openDevTools();     // TODO: "chromium DevTools" >> add this options to development menu (toggle)
+    //web_contents.openDevTools();     // TODO: "chromium DevTools" >> add this options to development menu (toggle)
 
     menu_actions.init(web_contents, server);
     menu.init(web_contents, menu_actions, server);
@@ -95,6 +95,10 @@ app.on('window-all-closed', function (event) {
 
     lg.info('-- WINDOWS ALL CLOSED');
     server.close_with_exit_prompt();
+})
+
+app.on('will-quit', function (event) {
+    server.close_app();
 })
 
 app.on('activate', function () {
