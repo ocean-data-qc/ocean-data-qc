@@ -9,7 +9,7 @@
         "start_offline": "electron . --offline",
         "clean": "node ./src/scripts/clean.js",
         "pack": "electron-builder --dir",
-        "dist": "electron-builder --win --x64"
+        "dist": "electron-builder --macos"
     },
     "repository": {
         "type": "git",
@@ -51,6 +51,7 @@
         "mime-type": "^3.0.5",
         "node-csv": "^0.1.2",
         "node-watch": "^0.5.4",
+        "npm-which": "^3.0.1",
         "popper.js": "^1.14.6",
         "portscanner": "^2.1.1",
         "python-shell": "^0.4.0",
@@ -94,6 +95,7 @@
                 ]
             }
         ],
+        "asar": false,
         "directories": {
             "buildResources": "src/img",
             "output": "dist"
@@ -105,6 +107,20 @@
                 "description": "AtlantOS Ocean Data QC File",
                 "icon": "icon.ico"
             }
-        ]
+        ],
+        "dmg": {
+            "contents": [
+                {
+                    "x": 110,
+                    "y": 150
+                },
+                {
+                    "x": 240,
+                    "y": 150,
+                    "type": "link",
+                    "path": "/Applications"
+                }
+            ]
+        }
     }
 }
