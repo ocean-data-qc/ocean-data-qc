@@ -48,35 +48,35 @@ module.exports = {
         var self = this;
         return new Promise((resolve, reject) => {
             if (command_exists_sync('python')) {
-                var py_options = {
-                    mode: 'text',
+            var py_options = {
+                mode: 'text',
                     pythonPath: 'python',
-                    scriptPath: loc.scripts
-                };
-                python_shell.run('get_python_version.py', py_options, function (err, results) {
-                    if (err) {
-                        reject('>> Error running script: ' + err);
-                    } else {
-                        if (typeof(results) !== 'undefined') {
-                            try {
-                                var v = parseInt(results[0].split('.')[0])
-                            } catch(err) {
-                                reject('Version could not be parsed');
-                            }
-                            if (v == 3) {
+                scriptPath: loc.scripts
+            };
+            python_shell.run('get_python_version.py', py_options, function (err, results) {
+                if (err) {
+                    reject('>> Error running script: ' + err);
+                } else {
+                    if (typeof(results) !== 'undefined') {
+                        try {
+                            var v = parseInt(results[0].split('.')[0])
+                        } catch(err) {
+                            reject('Version could not be parsed');
+                        }
+                        if (v == 3) {
                                 self.python_path = 'python';  // TODO: check python3 alias???
-                                resolve(true)
-                            } else {
+                            resolve(true)
+                        } else {
                                 if (command_exists_sync('python3')) {
                                     self.python_path = 'python3';
                                     resolve(true);
                                 } else {
                                     reject('Wrong python version');                                    
                                 }   
-                            }
                         }
                     }
-                });
+                }
+            });
             }
         });
     },
@@ -89,13 +89,13 @@ module.exports = {
         }).catch((err) => {                         // look for python manually
             lg.error(err)
 
-            if (process.platform === 'win32' && fs.existsSync(loc.python_win)) {
-                self.python_path = loc.python_win;
-            } else if (process.platform === 'darwin' && fs.existsSync(loc.python_mac)) {
-                self.python_path = loc.python_mac;
-            } else if (process.platform === 'linux' && fs.existsSync(loc.python_lin)) {
-                self.python_path = loc.python_lin;
-            }
+        if (process.platform === 'win32' && fs.existsSync(loc.python_win)) {
+            self.python_path = loc.python_win;
+        } else if (process.platform === 'darwin' && fs.existsSync(loc.python_mac)) {
+            self.python_path = loc.python_mac;
+        } else if (process.platform === 'linux' && fs.existsSync(loc.python_lin)) {
+            self.python_path = loc.python_lin;
+                }
             if (self.python_path != 'python') {    // it was set manually with one of the previous paths
                                                    // if there is environment we assume that python has the correct version
                 self.set_ocean_data_qc_path()
@@ -240,11 +240,13 @@ module.exports = {
         }));
     },
 
-    close_app: function() {
+    close_app: function () {
+        var self = this;
         lg.info('-- CLOSE APP')
-        if (process.platform !== 'darwin') {
-            app.quit();  // this waits until the children (self.shell.childProcess) are killed
-        }
+        //if (process.platform !== 'darwin') {
+        self.shell.childProcess.kill();
+        app.quit();  // this waits until the children (self.shell.childProcess) are killed
+        //}
     },
 
     close_with_exit_prompt: function(e) {
