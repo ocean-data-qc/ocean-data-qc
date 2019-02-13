@@ -16,8 +16,8 @@ from datetime import datetime
 os.environ['OCTAVE_EXECUTABLE'] = OCTAVE_EXECUTABLE
 from oct2py import Oct2Py
 oc = Oct2Py()
-oc.addpath('octave')
-oc.addpath('octave/CANYON-B')
+oc.addpath(os.path.join(OCEAN_DATA_QC, 'octave'))
+oc.addpath(os.path.join(OCEAN_DATA_QC, 'octave', 'CANYON-B'))
 
 def pressure_combined(CTDPRS, DEPTH, LATITUDE):
     pressure = -1 * CTDPRS
