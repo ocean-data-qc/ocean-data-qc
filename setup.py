@@ -29,12 +29,9 @@ def get_package_data():
 
     return {
         'ocean_data_qc': [
-            'static/css/*.*',
-            'static/font-awesome-v5.3.1/css/*.*',
-            'static/font-awesome-v5.3.1/webfonts/*.*',
             'templates/*.*',
             'files/*.json',
-        ],
+        ] + ['static/' + x for x in get_file_paths('ocean_data_qc/static')] + ['octave/' + x for x in get_file_paths('ocean_data_qc/octave')]
         # 'ocean_data_qc_js': get_file_paths('ocean_data_qc_js')
     }
 
@@ -68,6 +65,7 @@ setup(
         'ocean_data_qc',
         'ocean_data_qc.bokeh_models',
         'ocean_data_qc.data_models',
+        'ocean_data_qc.octave'
     ],
     package_data=get_package_data(),
     zip_safe=False,
