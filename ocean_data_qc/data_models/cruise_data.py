@@ -223,19 +223,42 @@ class CruiseData(CruiseDataExport):
             @from_scratch: boolean to force the loading from scratch
         """
         lg.info('-- SET DF')
-        self.df = pd.read_csv(
-            filepath_or_buffer=self.filepath_or_buffer,
-            comment='#',
-            delimiter=',',
-            skip_blank_lines=True,
-            engine='c',                 # engine='python' is more versatile, 'c' is faster
-            dtype=str,                  # useful to make some replacements before casting to numeric values
-            skiprows=self.skiprows,
-            # verbose=False             # indicates the number of NA values placed in non-numeric columns
-        )
+        try:
+            self.df = pd.read_csv(
+                filepath_or_buffer=self.filepath_or_buffer,
+                comment='#',
+                delimiter=',',
+                skip_blank_lines=True,
+                engine='c',                 # engine='python' is more versatile, 'c' is faster
+                dtype=str,                  # useful to make some replacements before casting to numeric values
+                skiprows=self.skiprows
+                # verbose=False             # indicates the number of NA values placed in non-numeric columns
+            )
+            lg.info('>> PANDAS using \'c\' engine')
+        except:
+            self.df = pd.read_csv(
+                filepath_or_buffer=self.filepath_or_buffer,
+                comment='#',
+                delimiter=',',
+                skip_blank_lines=True,
+                engine='python',                 # engine='python' is more versatile, 'c' is faster
+                dtype=str,                  # useful to make some replacements before casting to numeric values
+                skiprows=self.skiprows
+                # verbose=False             # indicates the number of NA values placed in non-numeric columns
+            )
+            lg.info('>> PANDAS using \'python\' engine')
         # lg.info('\n\n>> DF: \n\n{}'.format(self.df))
         self.df.replace('\s', '', regex=True, inplace=True)  # cleans spaces: \r and \n are managed by read_csv
-        self.df.columns = self._sanitize(self.df.columns)    # remove spaces from columns
+        self.df.columns = self._sanitize(self.df.columns)  # remove spaces from columns
+        self.df.columns = self._sanitize_alternative_names(self.df.columns)
+        try:
+            self.df.columns.index('DATE')
+        except:
+            lg.info('-- trying to generate a DATE column')
+            try:
+                self.df = self.df.assign(DATE=pd.to_datetime(self.df[['YEAR', 'MONTH', 'DAY']]).dt.strftime('%Y%m%d'))
+            except Exception as e:
+                lg.warning('--      {}'.format(e))
 
     def _set_moves(self):
         """ create the self.moves dataframe object
@@ -279,14 +302,58 @@ class CruiseData(CruiseDataExport):
             )
 
     def _sanitize(self, names):
+        lg.info('-- Sanitizing colnames')
         result = []
         for name in names:
-            name = name.replace('PH_TS', 'PH_TOT')
-            name = name.replace('NO2NO3','NO2_NO3')
             name = name.replace('-', '_')
             name = name.replace('+', '_')
             name = name.replace(' ', '')
             result.append(name)
+        return result
+
+    def _replace_if_not_exists(self, columns, orig_name, replace_with):
+        if not orig_name in columns:
+            columns = [c.replace(replace_with, orig_name) for c in columns]
+            lg.info('-- trying to use {} as {} '.format(replace_with, orig_name))
+        return columns
+
+
+    def _sanitize_alternative_names(self, names):
+        lg.info('-- Sanitizing usual alternative colnames')
+        result = [n.upper() for n in names]
+        result = self._replace_if_not_exists(result, 'EXPOCODE', 'CRUISE')
+        result = self._replace_if_not_exists(result, 'EXPOCODE', 'CRUISENO')
+        result = self._replace_if_not_exists(result, 'STNNBR', 'STATION')
+        result = self._replace_if_not_exists(result, 'CASTNO', 'CAST')
+        result = self._replace_if_not_exists(result, 'BTLNBR', 'BOTTLE')
+        result = self._replace_if_not_exists(result, 'CTDPRS', 'PRESSURE')
+        result = self._replace_if_not_exists(result, 'CTDTMP', 'TEMPERATURE')
+        result = self._replace_if_not_exists(result, 'SALNTY', 'SALINITY')
+        result = self._replace_if_not_exists(result, 'SALNTY', 'CTDSAL')
+        result = self._replace_if_not_exists(result, 'NITRAT', 'NITRATE')
+        result = self._replace_if_not_exists(result, 'NITRIT', 'NITRITE')
+        result = self._replace_if_not_exists(result, 'PHSPHT', 'PHOSPHATE')
+        result = self._replace_if_not_exists(result, 'SILCAT', 'SILICATE')
+        result = self._replace_if_not_exists(result, 'TCARBN', 'TCO2')
+        result = self._replace_if_not_exists(result, 'TCARBN', 'DIC')
+        result = self._replace_if_not_exists(result, 'TCARBN', 'CT')
+        result = self._replace_if_not_exists(result, 'ALKALI', 'TALK')
+        result = self._replace_if_not_exists(result, 'ALKALI', 'ALK')
+        result = self._replace_if_not_exists(result, 'PH_TOT', 'PHTS')
+        result = self._replace_if_not_exists(result, 'PH_TOT', 'PHTS25')
+        result = self._replace_if_not_exists(result, 'PH_TOT', 'PHTS25P0')
+        result = self._replace_if_not_exists(result, 'PH_TOT', 'PH_TOT25P0')
+        result = self._replace_if_not_exists(result, 'PH_SWS', 'PHSWS')
+        result = self._replace_if_not_exists(result, 'PH_SWS', 'PHSWS25')
+        result = self._replace_if_not_exists(result, 'PH_SWS', 'PHSWS25P0')
+        result = self._replace_if_not_exists(result, 'PH_TOT', 'PH_SWS25P0')
+        result = self._replace_if_not_exists(result, 'NO2_NO3', 'NO2NO3')
+        result = self._replace_if_not_exists(result, 'CFC_11', 'CFC11')
+        result = self._replace_if_not_exists(result, 'CFC_12', 'CFC12')
+        for name in result:
+            if name + 'F' in result:
+                result = [r.replace(name + 'F' , name + '_FLAG_W') for r in result]
+        lg.info(result)
         return result
 
     def _replace_missing_values(self):
