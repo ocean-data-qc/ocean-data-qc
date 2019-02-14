@@ -30,7 +30,7 @@ REQUIRED_COLUMNS = [
 
 NON_QC_PARAMS = [                                # discovered by usage
     'CTDPRS', 'DEPTH',
-    'SECT', 'SECT_ID', 'TIME', 'PH_TMP', 'SAMPNO'
+    'SECT', 'SECT_ID', 'TIME', 'PH_TMP', 'SAMPNO', 'BTLNBR'
 ]
 
 BASIC_PARAMS = [
