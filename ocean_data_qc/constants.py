@@ -22,7 +22,7 @@ OUTPUT_BACKEND = 'webgl'    # Even if I change this to 'canvas',
 STNNBR = 'STNNBR'           # Stations column
 FLAG_END = '_FLAG_W'        # Flag distinctive
 
-NA_REGEX_LIST = [r'^-999(\.0*)?$']
+NA_REGEX_LIST = [r'^-999[9]?[\.0]*?$']
 
 REQUIRED_COLUMNS = [
     'EXPOCODE', 'BTLNBR', 'STNNBR', 'CASTNO', 'DATE', 'LATITUDE', 'LONGITUDE'
