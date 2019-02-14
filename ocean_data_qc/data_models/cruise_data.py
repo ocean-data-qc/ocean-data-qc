@@ -19,6 +19,7 @@ from os import path
 import hashlib
 from datetime import datetime
 from shutil import rmtree
+import re
 
 
 class CruiseData(CruiseDataExport):
@@ -313,8 +314,9 @@ class CruiseData(CruiseDataExport):
 
     def _replace_if_not_exists(self, columns, orig_name, replace_with):
         if not orig_name in columns:
-            columns = [c.replace(replace_with, orig_name) for c in columns]
-            lg.info('-- trying to use {} as {} '.format(replace_with, orig_name))
+            columns = [re.sub(r'\b'+replace_with+r'\b', orig_name, c) for c in columns]
+            if replace_with + 'F' in columns:
+                columns = [re.sub(r'\b'+replace_with + 'F'+r'\b', orig_name + '_FLAG_W', c) for c in columns]
         return columns
 
 
@@ -352,7 +354,11 @@ class CruiseData(CruiseDataExport):
         result = self._replace_if_not_exists(result, 'CFC_12', 'CFC12')
         for name in result:
             if name + 'F' in result:
+<<<<<<< HEAD
                 result = [r.replace(name + 'F' , name + '_FLAG_W') for r in result]
+=======
+                result = [re.sub(r'\b'+name + 'F'+r'\b', name + '_FLAG_W', r) for r in result]
+>>>>>>> Fix parameter substitutions
         lg.info(result)
         return result
 
