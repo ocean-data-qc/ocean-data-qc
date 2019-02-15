@@ -348,14 +348,17 @@ module.exports = {
     /** Convert a url "file:///C/..." to the path syntax "C:/..." */
     file_to_path: function(fileUrl=false) {
         // TODO: check if some modification is necessary on linux and mac
-
-        var p = new URL(fileUrl).pathname;
-        if (process.platform === 'win32') {
-            if (p.charAt(0) === '/') {
-                p = p.substr(1);
+        if (fileUrl.startsWith('file:')) {
+            var p = new URL(fileUrl).pathname;
+            if (process.platform === 'win32') {
+                if (p.charAt(0) === '/') {
+                    p = p.substr(1);
+                }
+                p = path.join(p, '');
             }
+            return p;
+        } else {
+            return fileUrl;
         }
-        p = path.join(p, '');
-        return p;
     },
 }
