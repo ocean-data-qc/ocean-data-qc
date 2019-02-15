@@ -33,9 +33,10 @@ class CruiseDataHandler(Environment):
 
         self.new_data = None
 
-    def get_initial_columns(self):
-        lg.info('-- GET INITIAL COLUMNS')
-        self._init_cruise_data()
+    def get_cruise_data_columns(self):
+        lg.info('-- GET CRUISE DATA COLUMNS')
+        if self.env.cruise_data is None:
+            self._init_cruise_data()
         params = self.env.cruise_data.get_columns_by_type('param', discard_nan=True)
         if len(params) == 0:
             raise ValidationError(

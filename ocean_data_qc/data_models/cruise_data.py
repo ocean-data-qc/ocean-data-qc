@@ -202,15 +202,6 @@ class CruiseData(CruiseDataExport):
     def get_units(self):
         return [self.cols[x]['unit'] for x in self.cols]
 
-    def get_plot_cp_params(self):
-        return {
-            'plotable_columns': self.get_columns_by_type(
-                ['param', 'param_flag', 'qc_param_flag', 'computed'],
-                discard_nan=True
-            ),
-            'computed': self.get_columns_by_type('computed')
-        }
-
     def is_flag(self, flag):
         if flag[-7:] == FLAG_END and flag in self.get_columns_by_type(['param_flag', 'qc_param_flag']):
             return True

@@ -43,6 +43,7 @@ class ComputedParameter(Environment):
 
     @property
     def proj_settings_cps(self):
+        # TODO: this is executes many time when the app load a file, avoid multiple file reading to improve efficiency
         try:
             proj_settings = json.load(open(PROJ_SETTINGS))
             return proj_settings['computed_params'] if 'computed_params' in proj_settings else {}

@@ -77,7 +77,7 @@ class CruiseDataCSV(CruiseData):
                 NOTE: When the file is open the cps are copied from `custom_settings.json`
                       So we have all the CP we need in cps['proj_settings_cps']
         '''
-        lg.info('-- SET COMPUTED PARAMETERS')
+        lg.info('-- SET COMPUTED PARAMETERS (CSV)')
         for c in self.env.cp_param.proj_settings_cps:
             self.env.cp_param.add_computed_parameter({
                 'value': c['param_name'],
