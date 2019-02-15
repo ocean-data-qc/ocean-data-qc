@@ -18,8 +18,11 @@ from os import path
 try:
     import magic
 except Exception:
-    from winmagic import magic  # TODO: is this working on linux/osx?
+    try:
+        from winmagic import magic  # TODO: is this working on linux/osx?
                                 #       because I would need only one import
+    except:
+        import mimetypes
 
 
 class CruiseDataHandler(Environment):
@@ -85,11 +88,13 @@ class CruiseDataHandler(Environment):
 
     def _is_plain_text(self, csv_path=''):
         ''' The original.csv file should be a normal raw csv file '''
-        file_type = magic.from_file(csv_path, mime=True)
-        if file_type != 'text/plain':
+        try:
+            file_type = magic.from_file(csv_path, mime=True)
+        except:
+            file_type = mimetypes.guess_type(csv_path)[0]
+        if file_type != 'text/plain' and file_type != 'text/csv':
             return False
-        else:
-            return True
+        return True
 
     def _is_whp_format(self, csv_path=None):
         ''' Open the file and checks if comply to the WHP format requirements '''

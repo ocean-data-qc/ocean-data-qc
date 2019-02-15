@@ -46,8 +46,6 @@ requires = [
 
 if platform == "win32":
     requires.append('python-magic-win64 >=0.4.13')  # depends on python-magic and adds the DLL libmagic library
-else:
-    requires.append('python-magic >=0.4.15')
 
 setup(
     name='ocean_data_qc',
