@@ -300,7 +300,7 @@ module.exports = {
     */
     set_octave_path: function() {
         var self = this;
-        if (self.octave_path == false) {
+        if (self.octave_path == false || (self.octave_path != false && !fs.existsSync(tools.file_to_path(self.octave_path)))) {
             var py_options = {
                 mode: 'text',
                 pythonPath: self.python_path,
@@ -308,8 +308,9 @@ module.exports = {
             };
             python_shell.run('get_octave_path.py', py_options, function (err, results) {
                 if (err || typeof(results) === 'undefined') {
-                    lg.warn('>> The "octave" command was not found: ' + err.message);
+                    lg.warn('>>Error detecting Octave executable: ' + err.message);
                     data.set({'octave_path': false }, loc.shared_data);
+                    data.set({'octave_version': false }, loc.shared_data);
                     self.web_contents.send(
                         'set-octave-info',
                         {'msg': 'Undetected in PATH' }
@@ -322,6 +323,7 @@ module.exports = {
                     } catch (err) {
                         lg.warn('>> OCTAVE ERROR CHECKING VERSION: ' + err)
                         data.set({'octave_path': false }, loc.shared_data);
+                        data.set({'octave_version': false }, loc.shared_data);
                         self.web_contents.send(
                             'set-octave-info',
                             {'msg': 'Error checking version' }
@@ -336,7 +338,7 @@ module.exports = {
         var self = this;
         var full_str_version = '';
         const octave = spawn(
-            self.octave_path,                   // command >> is this working on mac an linux?
+            tools.file_to_path(self.octave_path),      // command >> is this working on mac an linux?
             ['--eval', '"OCTAVE_VERSION"'],     // args
             {'shell': true }                    // options
         );

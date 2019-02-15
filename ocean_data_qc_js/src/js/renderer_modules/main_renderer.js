@@ -31,8 +31,8 @@ $('body').data('bokeh_state','not-ready');
 tools.multi_modal_fix();
 load_images();
 check_port();    // TODO: move function into tools module
-check_octave()
 check_previous_session();
+ipcRenderer.send('set-octave-path');
 
 $(document).ready(function() {
     // NOTE: Doing this we avoid to send the form with a submit button
@@ -296,19 +296,6 @@ function load_images() {
     // $.get('file:///path/to/example.asar/file.txt', (data) => {
     //   console.log(data)
     // })
-}
-
-function check_octave() {
-    lg.warn('-- CHECK OCTAVE')
-    var octave_version = data.get('octave_version', loc.shared_data);
-    var octave_path = data.get('octave_path', loc.shared_data);
-    if (octave_version == false || octave_path == false) {
-        lg.warn('-- CHECK OCTAVE >> PROCESSING ATTRIBUTES');
-        ipcRenderer.send('set-octave-path');
-    } else {
-        lg.warn('-- CHECK OCTAVE >> ATTRIBUTES ALREADY SET');
-        $('#octave_version').text(octave_version);
-    }
 }
 
 // ---------------------------------  LISTENERS ---------------------------------------------- //

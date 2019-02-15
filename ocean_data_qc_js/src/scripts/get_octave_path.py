@@ -2,6 +2,7 @@ import shutil
 import sys
 import fnmatch
 import os
+import pathlib
 
 OCTAVE_EXECUTABLE = shutil.which('octave')
 if sys.platform == 'win32':
@@ -22,4 +23,4 @@ else:
             for dname in os.listdir('/Applications'):
                 if fnmatch.fnmatch(dname, 'Octave-*'):
                     OCTAVE_EXECUTABLE = os.path.join('/Applications', dname, 'Contents/Resources/usr/bin/octave')
-print(OCTAVE_EXECUTABLE)
+print(pathlib.Path(OCTAVE_EXECUTABLE).as_uri())
