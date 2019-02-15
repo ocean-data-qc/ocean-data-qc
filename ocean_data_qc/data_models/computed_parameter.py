@@ -39,8 +39,7 @@ class ComputedParameter(Environment):
         self.env.cp_param = self
         self.sandbox_vars = None
         self.sandbox_funcs = None
-        self._set_computed_parameters()
-        self._add_all_possible_cps()
+        self.env.cruise_data.set_cps()
 
     @property
     def proj_settings_cps(self):
@@ -297,38 +296,4 @@ class ComputedParameter(Environment):
                 'success': False,
             }
 
-    def _set_computed_parameters(self):
-        ''' Add all the calculated parameters to the DF
-            when the file is loaded in the application
-        '''
-        lg.info('-- SET COMPUTED PARAMETERS')
-        cps_list = self.env.cruise_data.get_columns_by_type('computed')  # active cps in the attributes.json file
-        lg.warning('>> CP LIST: {}'.format(cps_list))
-        for cp in cps_list:
-            for c in self.proj_settings_cps:
-                if c['param_name'] == cp:
-                    cp_to_compute = {
-                        'computed_param_name': c['param_name'],
-                        'eq': c['equation'],
-                        'precision': c['precision'],
-                    }
-                    lg.info('>> PARAM TO COMPUTE: {}'.format(cp_to_compute))
-                    self.compute_equation(cp_to_compute)
 
-    def _add_all_possible_cps(self):
-        ''' This method is used when the file is open
-                * WHP or CSV: all the possible parameters are computed
-                * AQC: the computed parameters from the attributes.json should be computed
-
-                NOTE: When the file is open the cps are copied from `custom_settings.json`
-                    So we have all the CP we need in cps['proj_settings_cps']
-
-                TODO: In AQC file is still trying to get all the possible parameters, fix it
-        '''
-        lg.info('-- ADD ALL POSSIBLE COMPUTED PARAMS')
-        for cp in self.proj_settings_cps:
-            self.add_computed_parameter({
-                'value': cp['param_name'],
-                'prevent_save': True  # to avoid save_attributes all the times, once is enough
-            })
-        self.env.cruise_data.save_attributes()

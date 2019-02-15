@@ -70,3 +70,17 @@ class CruiseDataWHP(CruiseData):
         self._set_hash_ids()
         self.save_tmp_data()
 
+    def set_cps(self):
+        ''' Adds all the calculated parameters to the DF
+            when the file is loaded in the application.
+
+                NOTE: When the file is open the cps are copied from `custom_settings.json`
+                      So we have all the CP we need in cps['proj_settings_cps']
+        '''
+        lg.info('-- SET COMPUTED PARAMETERS')
+        for c in self.env.cp_param.proj_settings_cps:
+            self.env.cp_param.add_computed_parameter({
+                'value': c['param_name'],
+                'prevent_save': True  # to avoid save_attributes all the times, once is enough
+            })
+        self.env.cruise_data.save_attributes()

@@ -39,3 +39,24 @@ class CruiseDataAQC(CruiseData):
         self._replace_missing_values()         # '-999' >> NaN
         self._convert_data_to_number()
         self._set_hash_ids()
+
+    def set_cps(self):
+        ''' Adds all the calculated parameters to the DF when the file is loaded in the application.
+            The computed parameters from the attributes.json should be computed.
+
+                NOTE: When the file is open the cps are copied from `custom_settings.json`
+                    So we have all the CP we need in cps['proj_settings_cps']
+        '''
+        lg.info('-- SET COMPUTED PARAMETERS')
+        cps_list = self.env.cruise_data.get_columns_by_type('computed')  # get already active cps in the attributes.json file (AQC)
+        lg.warning('>> CP LIST: {}'.format(cps_list))
+        for cp in cps_list:
+            for c in self.env.cp_param.proj_settings_cps:
+                if c['param_name'] == cp:
+                    cp_to_compute = {
+                        'computed_param_name': c['param_name'],
+                        'eq': c['equation'],
+                        'precision': c['precision'],
+                    }
+                    lg.info('>> PARAM TO COMPUTE: {}'.format(cp_to_compute))
+                    self.compute_equation(cp_to_compute)

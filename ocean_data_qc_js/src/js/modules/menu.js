@@ -113,7 +113,7 @@ module.exports = {
             label: 'View',
             submenu: [
                 { label: 'Actions History', accelerator: 'CmdOrCtrl+A', click: () => { self.menu_actions.show_moves(); } },
-                { label: 'Change Layout', accelerator: 'CmdOrCtrl+L', click: () => { self.menu_actions.edit_project(); } }
+                { label: 'Edit Plot Layout', accelerator: 'CmdOrCtrl+L', click: () => { self.menu_actions.edit_plot_layout(); } }
             ]
         }
 
@@ -151,7 +151,7 @@ module.exports = {
         self.bokeh_dev_menu = {
             label: 'Development',
             submenu: [
-                { label: 'Project Settings (JSON)', accelerator: 'CmdOrCtrl+Shift+P', click: () => { self.menu_actions.edit_project_json(); } },
+                { label: 'Project Settings (JSON)', accelerator: 'CmdOrCtrl+Shift+P', click: () => { self.menu_actions.edit_plot_layout_json(); } },
                 { label: 'Logger [TO-DO]', accelerator: 'CmdOrCtrl+L', click: () => { alert('Not implemented yet');} },
                 { label: 'Show DataFrame [TO-DO]', accelerator: 'CmdOrCtrl+D+F', click: () => { alert('Not implemented yet');} },
                 { label: 'Reload Server', accelerator: 'CmdOrCtrl+R', click: () => { self.menu_actions.server.relaunch_bokeh(); } }

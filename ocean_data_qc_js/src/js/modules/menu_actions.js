@@ -270,13 +270,13 @@ module.exports = {
         );
     },
 
-    edit_project_json: function() {
+    edit_plot_layout_json: function() {
         var self = this;
         lg.info('-- EDIT PROJECT SETTINGS (JSON)');
         self.web_contents.send('set-project-settings-json');
     },
 
-    edit_project: function() {
+    edit_plot_layout: function() {
         var self = this;
         lg.info('-- EDIT PROJECT SETTINGS USER');
         self.web_contents.send('project-settings-bokeh');
