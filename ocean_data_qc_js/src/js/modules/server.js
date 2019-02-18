@@ -307,6 +307,7 @@ module.exports = {
                 scriptPath: loc.scripts
             };
             python_shell.run('get_octave_path.py', py_options, function (err, results) {
+                lg.info('>> Trying to find octave');
                 if (err || typeof(results) === 'undefined') {
                     lg.warn('>>Error detecting Octave executable: ' + err.message);
                     data.set({'octave_path': false }, loc.shared_data);
@@ -331,6 +332,10 @@ module.exports = {
                     }
                 }
             })
+        } else {
+            lg.info('>> octave set on: ' + self.octave_path);
+            self.set_octave_version()
+            //self.web_contents.send('set-octave-info');
         }
     },
 
