@@ -141,7 +141,7 @@ class ComputedParameter(Environment):
                 global_dict=self.sandbox_vars
             )
         except Exception as e:
-            lg.warning('>> THE CP COULD NOT BE CALCULATED: {}'.format(e))
+            lg.warning('>> THE CP {} COULD NOT BE CALCULATED: {}'.format(computed_param_name, e))
             return {
                 'success': False,
                 'msg': 'The equation could not be computed: {}'.format(eq),

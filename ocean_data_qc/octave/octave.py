@@ -17,8 +17,8 @@ if sys.platform == 'win32':
         if os.path.isdir(base_octave):
             try:
                 vdir = os.listdir(base_octave)[0]
-                if os.path.isfile(os.path.join(base_octave,vdir,'bin','octave-cli.exe')):
-                    OCTAVE_EXECUTABLE = os.path.join(base_octave,vdir,'bin','octave-cli.exe')
+                if os.path.isfile(os.path.join(base_octave, vdir,'bin','octave-cli.exe')):
+                    OCTAVE_EXECUTABLE = os.path.join(base_octave, vdir,'bin','octave-cli.exe')
             except:
                 pass
 else:

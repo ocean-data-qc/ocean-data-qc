@@ -35,9 +35,9 @@ NON_QC_PARAMS = [                                # discovered by usage
 
 BASIC_PARAMS = [
     'CTDSAL', 'SALNTY', 'CTDOXY', 'OXYGEN',
-    'NITRAT','PHSPHT','NITRIT','NO2_NO3',
-
+    'NITRAT', 'PHSPHT', 'NITRIT', 'NO2_NO3',
     'CTDPRS', 'DEPTH',
+    'CTDTMP'
 ]
 
 # --------------------- COLORS ---------------------------- #

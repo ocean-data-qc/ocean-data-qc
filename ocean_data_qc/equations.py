@@ -35,32 +35,10 @@ def nitrate_combined(NITRAT, NITRIT, NO2_NO3):
     return oc.nitrate_combined(np.transpose(np.vstack((NITRAT, NITRIT, NO2_NO3))))
 
 def salinity_combined(ctdsal, ctdsalf, botsal, botsalf):
-    dummy_ctdsal = np.array([np.nan]*ctdsal.size)
-    try:
-        dummy_ctdsal[ctdsalf < 3] = ctdsal[ctdsalf < 3]
-    except:
-        pass
-    dummy_botsal = np.array([np.nan]*ctdsal.size)
-    try:
-        dummy_botsal[botsalf < 3] = botsal[botsalf < 3]
-    except:
-        pass
-    return dummy_ctdsal
-    return np.nanmean([dummy_ctdsal, dummy_botsal], axis=0)
+    return oc.salinity_combined(np.transpose(np.vstack((ctdsal, ctdsalf, botsal, botsalf))))
 
 def oxygen_combined(ctdoxy, ctdoxyf, botoxy, botoxyf):
-    dummy_ctdoxy = np.array([np.nan]*ctdoxy.size)
-    try:
-        dummy_ctdoxy[ctdoxyf < 3] = ctdoxy[ctdoxyf < 3]
-    except:
-        pass
-    dummy_botoxy = np.array([np.nan]*ctdoxy.size)
-    try:
-        dummy_botoxy[botoxyf < 3] = botoxy[botoxyf < 3]
-    except:
-        pass
-    return dummy_botoxy
-    return np.nanmean([dummy_ctdoxy, dummy_botoxy], axis=0)
+    return oc.oxygen_combined(np.transpose(np.vstack((ctdoxy, ctdoxyf, botoxy, botoxyf))))
 
 def aou_gg(SAL, THETA, OXY):
     ret = oc.aou_gg(np.transpose(np.vstack((SAL, THETA, OXY))))
