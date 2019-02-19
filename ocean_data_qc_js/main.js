@@ -161,6 +161,6 @@ ipcMain.on('disable-watcher', function(event, args){
 ipcMain.on('set-octave-path', function(event, args){
     server.set_octave_path();
     var web_contents = main_window.webContents;
-    web_contents.send('update-octave-state');
+    web_contents.send('set-octave-info');
 })
 
