@@ -52,7 +52,6 @@
         "mime-type": "^3.0.5",
         "node-csv": "^0.1.2",
         "node-watch": "^0.5.4",
-        "npm-which": "^3.0.1",
         "popper.js": "^1.14.6",
         "portscanner": "^2.1.1",
         "python-shell": "^0.4.0",
