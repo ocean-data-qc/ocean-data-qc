@@ -67,6 +67,7 @@ class CruiseDataCSV(CruiseData):
         self._replace_missing_values()         # '-999' >> NaN
         self._init_early_calculated_params()
         self._convert_data_to_number()
+        self._sanitize_flags()
         self._set_hash_ids()
         self.save_tmp_data()
 

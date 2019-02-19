@@ -79,6 +79,17 @@ class CruiseData(CruiseDataExport):
         if self.original_type == 'whp':
             self.df = self.df[1:-1].reset_index(drop=True)          # rewrite index column and remove the units row
 
+    def _sanitize_flags(self):
+        lg.info('-- SANITIZING FLAGS --')
+        column_list = self.df.columns.tolist()
+        for column in column_list:
+            flag = column + FLAG_END
+            if flag in column_list:
+                try:
+                    self.df[flag][pd.isnull(self.df[column])] = 9
+                except:
+                    lg.warning('Unable to sanitize flag %s for column %s', flag, column)
+
     def _add_column(self, column='', units=False):
         ''' Adds a column to the self.cols dictionary
             This dictionary is useful to select some columns by type
