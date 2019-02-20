@@ -64,6 +64,7 @@ module.exports = {
             if (callback != false) {
                 $('#modal_message_close').click(callback);
             }
+            self.show_default_cursor();
             $('#modal_message_trigger').click();
         });
     },
@@ -162,6 +163,7 @@ module.exports = {
             if (callback != false) {
                 $('#modal_message_close').click(callback);
             }
+            self.show_default_cursor();
             $('#modal_message_trigger').click();
         });
     },

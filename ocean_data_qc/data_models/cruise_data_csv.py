@@ -18,16 +18,18 @@ class CruiseDataCSV(CruiseData):
     '''
     env = CruiseData.env
 
-    def __init__(self):
+    def __init__(self, working_dir=TMP):
         lg.info('-- INIT CSV')
-        self.filepath_or_buffer = ORIGINAL_CSV
+        self.working_dir = working_dir
+        self.filepath_or_buffer = path.join(working_dir, 'original.csv')
+        self.filepath_or_buffer = file_path
         self.skiprows = 0
         super(CruiseDataCSV, self).__init__(original_type='csv')
 
     def _validate_original_data(self):
         ''' Checks if all the rows have the same number of elements '''
         lg.info('-- CHECK DATA FORMAT (CSV)')
-        with open(ORIGINAL_CSV, newline='') as csvfile:
+        with open(self.filepath_or_buffer, newline='') as csvfile:
             spamreader = csv.reader(csvfile, delimiter=',', quotechar='"')
             first_len = -1
             row_number = 1
@@ -64,7 +66,7 @@ class CruiseDataCSV(CruiseData):
         lg.info('-- LOAD FILE CSV >> FROM SCRATCH')
         self._set_attributes_from_scratch()  # the dataframe has to be created
         self._validate_required_columns()
-        self._replace_missing_values()         # '-999' >> NaN
+        self._replace_nan_values()         # '-999' >> NaN
         self._init_early_calculated_params()
         self._convert_data_to_number()
         self._sanitize_flags()

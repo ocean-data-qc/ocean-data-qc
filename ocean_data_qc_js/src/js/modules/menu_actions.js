@@ -52,8 +52,11 @@ module.exports = {
                 if (mime.lookup(file_path) == 'text/csv') {
                     lg.info('Importing the CSV file name to the temporal folder...');
                     try {
-                        data.copy(file_path, path.join(loc.proj_files, 'new.csv'), function() {
-                            lg.info('main.js - the new.csv file was created...')
+                        if (!fs.existsSync(loc.proj_upd)) {  // TODO: remove folder if it is already created
+                            fs.mkdirSync(loc.proj_upd);
+                        }
+                        data.copy(file_path, path.join(loc.proj_upd, 'original.csv'), function() {
+                            lg.info('main.js - the original.csv file in proj_upd folder was created...')
                             self.web_contents.send('compare-data');
                         });
                     } catch(err) {

@@ -89,8 +89,6 @@ class Environment(object):
 
     # ------------------------------------ OBJECTS ---------------------------------------- #
 
-    # TODO: rename to ob_***** (object)
-
     bk_sources = None
     bk_plots = []                   # List of plot objects
     bk_plots_handler = None
@@ -101,8 +99,9 @@ class Environment(object):
     bk_layout = None
 
     bk_bridge = None                # Messages Bridge object
-    cruise_data = None                # Cruise Data object
-    files_handler = None         # Files handler (mainly to extract and update JSON files), tabs are managed here as well
-
+    files_handler = None            # Files handler (mainly to extract and update JSON files), tabs are managed here as well
+    cruise_data = None              # Cruise Data object
     cd_handler = None               # Cruise Data Handler
+    cd_update = None                # Cruise Data Update, update values from a similar CSV file
+    cd_aux = None                   # Cruise Data Auxiliar, used to make comparisons in with cd_update
     cp_param = None                 # Computer Parameters

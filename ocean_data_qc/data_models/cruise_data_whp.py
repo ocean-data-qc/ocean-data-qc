@@ -18,16 +18,17 @@ class CruiseDataWHP(CruiseData):
     '''
     env = CruiseData.env
 
-    def __init__(self):
+    def __init__(self, working_dir=TMP):
         lg.warning('-- INIT CD WHP')
-        self.filepath_or_buffer = ORIGINAL_CSV
+        self.working_dir = working_dir
+        self.filepath_or_buffer = path.join(working_dir, 'original.csv')
         self.skiprows = 1
         super(CruiseDataWHP, self).__init__(original_type='whp')
 
     def _validate_original_data(self):               # TODO: this should be in each cruise data class
         ''' Checks if all the rows have the same number of elements '''
         lg.info('-- CHECK DATA FORMAT (WHP)')
-        with open(ORIGINAL_CSV, newline='') as csvfile:
+        with open(self.filepath_or_buffer, newline='') as csvfile:
             spamreader = csv.reader(csvfile, delimiter=',', quotechar='"')          # TODO: ignore comments with #
             first_len = -1
             row_number = 1
@@ -64,7 +65,7 @@ class CruiseDataWHP(CruiseData):
         lg.info('-- LOAD FILE WHP >> FROM SCRATCH')
         self._set_attributes_from_scratch()  # the dataframe has to be created
         self._validate_required_columns()
-        self._replace_missing_values()         # '-999' >> NaN
+        self._replace_nan_values()         # '-999' >> NaN
         self._init_early_calculated_params()
         self._convert_data_to_number()
         self._sanitize_flags()

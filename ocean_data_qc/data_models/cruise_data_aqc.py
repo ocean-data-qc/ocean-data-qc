@@ -14,14 +14,13 @@ import csv
 class CruiseDataAQC(CruiseData):
     ''' This class use to manage the plain AQC files. This file can be come from
         csv file or whp csv file.
-
-        TODO: Is this class really needed?
     '''
     env = CruiseData.env
 
-    def __init__(self, original_type=''):
+    def __init__(self, original_type='', working_dir=TMP):
         lg.warning('-- INIT AQC')
-        self.filepath_or_buffer = DATA_CSV
+        self.working_dir = working_dir
+        self.filepath_or_buffer = path.join(working_dir, 'data.csv')  # TODO: original.csv should exists and be the same file??
         self.skiprows = 0
         super(CruiseDataAQC, self).__init__(original_type=original_type)
 
@@ -36,7 +35,7 @@ class CruiseDataAQC(CruiseData):
     def load_file(self):
         lg.info('-- LOAD FILE AQC >> LOAD FROM FILES')
         self._set_attributes_from_json_file()
-        self._replace_missing_values()         # '-999' >> NaN
+        self._replace_nan_values()         # '-999' >> NaN
         self._convert_data_to_number()
         self._set_hash_ids()
 

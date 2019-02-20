@@ -349,7 +349,6 @@ module.exports = {
         );
         octave.stdout.on('data', (buffer) => {
             var version = buffer.toString('utf8');
-            lg.warn('>> ON DATA: ' + version)
             full_str_version += version;
             if (full_str_version.match(/ans = [0-9]\.[0-9]\.[0-9]/g) != null) {
                 // NOTE: When the expression is full (all buffers concatenated)

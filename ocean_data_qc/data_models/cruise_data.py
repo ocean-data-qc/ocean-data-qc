@@ -30,16 +30,17 @@ class CruiseData(CruiseDataExport):
 
     def __init__(self, original_type=''):
         lg.info('-- INIT CRUISE DATA PARENT')
-        self.env.cruise_data = self
-        self.original_type = original_type
-        self.df = None
+        self.original_type = original_type      # original.csv type (whp, csv)
+        self.df = None                          # numeric DataFrame
+        self.df_str = None                      # string DataFrame
         self.moves = None
         self.cols = {}
 
         self._validate_original_data()
-        self._set_moves()
+        self._set_moves()                       # TODO: this is not needed for cd_update
         self._set_df()
         self.load_file()        # implemented in the children
+        return self
 
     def _set_attributes_from_scratch(self):
         """ The main attributes of the object are filled:
@@ -357,14 +358,18 @@ class CruiseData(CruiseDataExport):
         for name in result:
             if name + 'F' in result:
 <<<<<<< HEAD
+<<<<<<< HEAD
                 result = [r.replace(name + 'F' , name + '_FLAG_W') for r in result]
 =======
                 result = [re.sub(r'\b'+name + 'F'+r'\b', name + '_FLAG_W', r) for r in result]
 >>>>>>> Fix parameter substitutions
+=======
+                result = [re.sub(r'\b'+name + 'F'+r'\b', name + FLAG_END, r) for r in result]
+>>>>>>> Make the updates work again
         lg.info(result)
         return result
 
-    def _replace_missing_values(self):
+    def _replace_nan_values(self):
         ''' Replaces the -990.0, -999.00, etc values to NaN.
             There will be strings and floats in the same column because NaN is considered a float64
             and this step should be before the numeric conversion
@@ -388,11 +393,13 @@ class CruiseData(CruiseDataExport):
             If a cell of a column with dtype=np.int8 is assign to some int64 value, then the column
             is completely converted to int64
         '''
+        self.df_str = self.df.copy(deep=True)    # TODO: this has to be synchronized when seld.df is updated
         self.df = self.df.apply(lambda x: pd.to_numeric(x, errors='ignore', downcast='integer'))
 
         # if the new values are float >> check the original string to make the rounding well
 
         self.df = self.df.round(5)  # TODO: round with the original number of decimals >> float comparison
+                                    #       I think this rounding can be made by df column
 
     def update_flag_values(self, column, new_flag_value, row_indices):
         """ This method is executed mainly when a flag is pressed to update the values

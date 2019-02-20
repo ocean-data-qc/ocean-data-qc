@@ -31,8 +31,6 @@ class CruiseDataHandler(Environment):
     def __init__(self):
         self.env.cd_handler = self
 
-        self.new_data = None
-
     def get_cruise_data_columns(self):
         lg.info('-- GET CRUISE DATA COLUMNS')
         if self.env.cruise_data is None:
@@ -61,30 +59,76 @@ class CruiseDataHandler(Environment):
                 `aqc` >> open directly
         '''
         lg.info('-- INIT CRUISE DATA OBJECT')
-        if path.isfile(ORIGINAL_CSV):
-            if self._is_plain_text(ORIGINAL_CSV):
-                is_whp_format = self._is_whp_format(ORIGINAL_CSV)
-                if path.isfile(DATA_CSV):
+        original_path = path.join(TMP, 'original.csv')
+        if path.isfile(original_path):
+            if self._is_plain_text(original_path):
+                cd = None
+                is_whp_format = self._is_whp_format(original_path)
+                if path.isfile(path.join(TMP, 'data.csv')):
                     if is_whp_format:
-                        CruiseDataAQC(original_type='whp')    # TODO: the original type should be saved in the setting.json somewhere
+                        cd = CruiseDataAQC(
+                            original_type='whp',        # TODO: the original type should be saved in the setting.json somewhere
+                        )
                     else:
-                        CruiseDataAQC(original_type='csv')
+                        cd = CruiseDataAQC(original_type='csv')
                 else:
                     if is_whp_format:
-                        CruiseDataWHP()  # generates data.csv from original.csv
+                        cd = CruiseDataWHP()  # generates data.csv from original.csv
                     else:
-                        CruiseDataCSV()  # the data.csv should be a copy of original.csv, at the beggining at least
-                ComputedParameter()
+                        cd = CruiseDataCSV()  # the data.csv should be a copy of original.csv, at the beggining at least
             else:
                 raise ValidationError(
                     'The file to open should be a CSV file.'
                     ' That is a plain text file with comma separate values.',
                     rollback='cruise_data'
                 )
+            self.env.cruise_data = cd
+            ComputedParameter()
         else:
             raise ValidationError(
                 'The file could not be open',
                 rollback='cruise_data'
+            )
+
+    def _init_cruise_data_aux(self):
+        ''' Checks data type and instantiates the appropriate cruise data object in order to create the
+                objects to make comparisons and update the current files
+                `whp` and `raw_csv` (csv) >> process file from scratch and validate data
+                `aqc` >> open directly
+        '''
+        lg.info('-- INIT CRUISE DATA OBJECT UPD')
+        original_path = path.join(UPD, 'original.csv')
+        if path.isfile(original_path):
+            if self._is_plain_text(original_path):
+                cd = None
+                is_whp_format = self._is_whp_format(original_path)
+                if path.isfile(path.join(UPD, 'data.csv')):
+                    if is_whp_format:
+                        cd = CruiseDataAQC(
+                            original_type='whp',        # TODO: the original type should be saved in the setting.json somewhere
+                            working_dir=UPD
+                        )
+                    else:
+                        cd = CruiseDataAQC(
+                            original_type='csv',
+                            working_dir=UPD
+                        )
+                else:
+                    if is_whp_format:
+                        cd = CruiseDataWHP(working_dir=UPD)  # generates data.csv from original.csv
+                    else:
+                        cd = CruiseDataCSV(working_dir=UPD)  # the data.csv should be a copy of original.csv, at the beggining at least
+            else:
+                raise ValidationError(
+                    'The file to open should be a CSV file.'
+                    ' That is a plain text file with comma separate values.',
+                    rollback='cruise_data_update'
+                )
+            self.env.cd_aux = cd
+        else:
+            raise ValidationError(
+                'The file could not be open',
+                rollback='cruise_data_update'
             )
 
     def _is_plain_text(self, csv_path=''):
@@ -116,33 +160,25 @@ class CruiseDataHandler(Environment):
 
     def compare_data(self):
         lg.info('-- COMPARE DATA')
-        self.new_data = CruiseDataUpdate(self.env.cruise_data)
-        comparison_data = {
-            'new_columns': self.new_data.new_columns,
-            'removed_columns': self.new_data.removed_columns,
-            'removed_columns_plotted': self.new_data.removed_columns_plotted,
-            'new_rows': self.new_data.new_rows,
-            'removed_rows': self.new_data.removed_rows,
-            'different_values_number': self.new_data.different_values_number,
-            'modified': self.new_data.modified
-        }
-        lg.info('>> COMPARISON DATA: {}'.format(comparison_data))
-        return comparison_data
+        self._init_cruise_data_aux()  # self.env.cd_aux is set here
+        CruiseDataUpdate()            # self.env.cd_update uses cd_aux to make comparisons
+        compared_data = self.env.cd_update.get_compared_data()
+        return compared_data
 
     def get_different_values(self):
         return {
-            'diff_values': self.new_data.get_different_values()
+            'diff_values': self.env.cd_update.get_different_values()
         }
 
     def update_from_csv(self, args={}):
         lg.info('-- UPDATE FROM CSV --')
         lg.info('>> ARGS: {}'.format(args))
-        if self.new_data != None:
+        if self.env.cd_update != None:
             if 'selected' in args:
                 if args['selected'] is True:
-                    self.new_data.update_data_from_csv(args)
-                    self.new_data = None
+                    self.env.cd_update.update_data_from_csv(args)
+                    self.env.cd_update = None
                     return {'success': True}
                 else:
-                    self.new_data.discard_changes()
-                    self.new_data = None
+                    self.env.cd_update.discard_changes()
+                    self.env.cd_update = None

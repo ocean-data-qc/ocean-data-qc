@@ -6,6 +6,9 @@
 
 from bokeh.util.logconfig import bokeh_logger as lg
 from ocean_data_qc.env import Environment
+from ocean_data_qc.constants import *
+import shutil
+import os
 
 
 class ValidationError(Exception, Environment):
@@ -16,11 +19,20 @@ class ValidationError(Exception, Environment):
         self.value = value
         if rollback == 'cruise_data':
             self._cruise_data_rollback()
+        elif rollback == 'cruise_data_update':
+            self._cruise_data_update_rollback()
 
     def _cruise_data_rollback(self):
         self.env.cruise_data = None
         self.env.cp_param = None
         self.env.files_handler.remove_tmp_folder()
+        self.env.bk_bridge.show_default_cursor()
+
+    def _cruise_data_update_rollback(self):
+        self.env.cd_aux = None
+        self.env.cd_update = None
+        if os.path.isdir(UPD):
+            shutil.rmtree(UPD)
         self.env.bk_bridge.show_default_cursor()
 
 

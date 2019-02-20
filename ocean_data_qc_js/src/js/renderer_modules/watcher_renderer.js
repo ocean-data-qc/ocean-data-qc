@@ -38,8 +38,8 @@ module.exports = {
 
         self.watcher = watch(loc.proj_files, function(event, name) {  // event = 'update', name = 'modified path file'
             lg.info('-- WATCHER CALLBACK >> EVENT: ' + event + ' | FILE: ' + name);
-            if (path.join(loc.proj_files, 'new.csv') != name) {     // avoid mark as modified when the new.csv file is created
-                                                                    // TODO: fin a better way to do this
+            if (path.join(loc.proj_upd, 'original.csv') != name) {     // avoid mark as modified when the new csv file is created
+                                                                       // TODO: fin a better way to do this
                 if (typeof(self.watcher) != 'undefined' && !self.watcher.isClosed()) {
                     self.watcher.close();
                 }
