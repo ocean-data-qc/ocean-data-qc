@@ -42,10 +42,14 @@ module.exports = {
             self.bokeh_data_menu,
             self.help_menu,
         ];
-        // lg.info('>> SHARED DATA LOC: ' + loc.shared_data);
-        var dev_mode = data.get('dev_mode', loc.shared_data);
-        if (dev_mode) {
-            bokeh_menu.push(self.bokeh_dev_menu);
+        try {
+            var dev_mode = data.get('dev_mode', loc.shared_data);
+            if (dev_mode) {
+                bokeh_menu.push(self.bokeh_dev_menu);
+            }
+        } catch (err) {     // TODO: check why sometimes data.get throws error here:
+                            //       Unexpected end of JSON file
+            lg.error('>> dev_mode could not be got: ' + err);
         }
 
         menu.setApplicationMenu(
