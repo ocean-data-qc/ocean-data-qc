@@ -308,7 +308,7 @@ class CruiseDataUpdate(Environment):
 
         self._update_moves()
         self.env.cruise_data.save_tmp_data()
-        self._handle_aux_files()
+        self._reset_update_env()
 
     def _update_rows(self, new_rows_checked=False, removed_rows_checked=False):
         lg.info('-- Updating rows')
@@ -320,8 +320,8 @@ class CruiseDataUpdate(Environment):
                 self.env.cruise_data.df.loc[hash_id, columns] = self.env.cd_aux.df.loc[hash_id, columns].tolist()
 
                 # NOTE: when there is a new row but we do not have value in the flag column: NaN >> 9
-                cd_aux_flag_columns = self.env.cd_aux.get_columns_by_type('param_flag', 'qc_param_flag')
-                cd_flag_columns = self.env.cruise_data.get_columns_by_type('param_flag', 'qc_param_flag')
+                cd_aux_flag_columns = self.env.cd_aux.get_columns_by_type(['param_flag', 'qc_param_flag'])
+                cd_flag_columns = self.env.cruise_data.get_columns_by_type(['param_flag', 'qc_param_flag'])
                 flag_cols = [col for col in cd_flag_columns if col not in cd_aux_flag_columns]
                 self.env.cruise_data.df.loc[hash_id, flag_cols] = 9
 
@@ -343,8 +343,18 @@ class CruiseDataUpdate(Environment):
             if new_columns_checked is True and self.new_columns != []:
                 for column in self.new_columns:
                     self.env.cruise_data.cols[column] = self.env.cd_aux.cols[column]      # TODO: is it copied the full element or only a reference?
-                    if len(self.env.cd_aux.df) == len(self.env.cruise_data.df):           # TODO: else raise error
-                        self.env.cruise_data.df[column] = self.env.cd_aux.df[column].tolist()
+
+                    # TODO: update values per hash_id one by one, because they may have different rows
+                    if column[-7:] == FLAG_END:
+                        self.env.cruise_data.df[column] = self.env.cruise_data.df.index.size * [9]
+                    else:
+                        self.env.cruise_data.df[column] = self.env.cruise_data.df.index.size * [np.nan]
+                    self.env.cruise_data._add_column(column)  # if it is flag is checked inside
+                    for i in self.env.cruise_data.df.index.tolist():
+                        if i in self.env.cd_aux.df.index:
+                            self.env.cruise_data.df.loc[i, column] = self.env.cd_aux.df.loc[i, column]
+
+                    # TODO: add to self.env.cruise_data.cols as well right??
 
             if removed_columns_checked is True and self.removed_columns != []:
                 for column in self.removed_columns:
@@ -413,7 +423,7 @@ class CruiseDataUpdate(Environment):
             description = 'Updated values: {}'.format(self.different_values_number)
             self.env.cruise_data.add_moves_element(action, description)
 
-    def _handle_aux_files(self):
+    def _reset_update_env(self):
         lg.warning('-- RENAME FILES')
         if self.modified is True:
             if path.isfile(path.join(TMP, 'original.old.csv')):
@@ -428,6 +438,8 @@ class CruiseDataUpdate(Environment):
             )
         if os.path.isdir(UPD):
             shutil.rmtree(UPD)
+        self.env.cd_update = None
+        self.env.cd_aux = None
 
         # TODO: raise error if the file is in use (windows) or wrong permissions (unix)
 

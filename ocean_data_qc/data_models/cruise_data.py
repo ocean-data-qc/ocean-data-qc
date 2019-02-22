@@ -95,6 +95,7 @@ class CruiseData(CruiseDataExport):
         ''' Adds a column to the self.cols dictionary
             This dictionary is useful to select some columns by type
         '''
+        lg.warning('>> ADDING COLUMN: {}'.format(column))
         if column not in self.get_columns_by_type('all'):
             self.cols[column] = {
                 'types': [],
@@ -130,6 +131,7 @@ class CruiseData(CruiseDataExport):
                         'Flag column that was missing added to the project '
                         'with default value "2" in all the rows: {}'.format(flag)
                     )
+        lg.warning('>> SELF.COLS: {}'.format(self.cols))
 
     def _init_early_calculated_params(self):
         ''' Initializates the dataframe with the basic params that all csv files should have.
