@@ -96,6 +96,7 @@ class BokehSources(Environment):
         for tab in self.env.files_handler.tab_list:
             flag = tab + FLAG_END
             flags = {}
+            lg.warning('>> COLUMN FLAG ({}): \n\n{}'.format(flag, self.env.source.data[flag]))
             for i, val in enumerate(self.env.source.data[flag]):
                 flags.setdefault(int(val), []).append(i)
 

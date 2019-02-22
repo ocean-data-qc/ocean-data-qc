@@ -100,7 +100,13 @@ class CruiseDataUpdate(Environment):
             So I need the intersections of rows and columns to make sure that they exist in both df """
         lg.info('-- COMPUTE VALUES COMPARISON')
         RESET_FLAG_VALUE = 2
-        columns = list(frozenset(self.env.cd_aux.get_columns_by_type('all')).intersection(self.env.cruise_data.get_columns_by_type('all')))
+        columns = list(
+            frozenset(
+                self.env.cd_aux.get_columns_by_type('all')
+            ).intersection(
+                self.env.cruise_data.get_columns_by_type('all')
+            )
+        )
 
         new_hash_id_list = self.env.cd_aux.df.index.tolist()
         old_has_id_list = self.env.cruise_data.df.index.tolist()
@@ -110,6 +116,9 @@ class CruiseDataUpdate(Environment):
             for column in columns:
                 new_scalar = self.env.cd_aux.df.loc[hash_id, column]
                 old_scalar = self.env.cruise_data.df.loc[hash_id, column]
+
+                # TODO: make it with strings self.env.cruise_data.df_str == self.env.cruise_data.df_str
+                #       how to calculate the hash ids?
 
                 # and if they are new_scalar = 'str' and old_scalar = NaN ?????
                 nan_different = False
@@ -305,8 +314,17 @@ class CruiseDataUpdate(Environment):
         lg.info('-- Updating rows')
         if new_rows_checked is True and self.new_rows_hash_list != []:
             for hash_id in self.new_rows_hash_list:
-                columns = list(frozenset(self.env.cd_aux.get_columns_by_type('all')).intersection(self.env.cruise_data.get_columns_by_type(['all'])))
+                cd_aux_columns = self.env.cd_aux.get_columns_by_type('all')
+                cd_columns = self.env.cruise_data.get_columns_by_type(['all'])
+                columns = list(frozenset(cd_aux_columns).intersection(cd_columns))
                 self.env.cruise_data.df.loc[hash_id, columns] = self.env.cd_aux.df.loc[hash_id, columns].tolist()
+
+                # NOTE: when there is a new row but we do not have value in the flag column: NaN >> 9
+                cd_aux_flag_columns = self.env.cd_aux.get_columns_by_type('param_flag', 'qc_param_flag')
+                cd_flag_columns = self.env.cruise_data.get_columns_by_type('param_flag', 'qc_param_flag')
+                flag_cols = [col for col in cd_flag_columns if col not in cd_aux_flag_columns]
+                self.env.cruise_data.df.loc[hash_id, flag_cols] = 9
+
             lg.info('>> Rows added: {}'.format(list(self.new_rows_hash_list)))
 
         if removed_rows_checked is True and self.removed_rows_hash_list != []:
@@ -324,14 +342,14 @@ class CruiseDataUpdate(Environment):
         if new_columns_checked is True or removed_columns_checked is True:
             if new_columns_checked is True and self.new_columns != []:
                 for column in self.new_columns:
-                    self.env.cruise_data.cols[column] = self.cols[column]      # TODO: is it copied the full element or only a reference?
+                    self.env.cruise_data.cols[column] = self.env.cd_aux.cols[column]      # TODO: is it copied the full element or only a reference?
                     if len(self.env.cd_aux.df) == len(self.env.cruise_data.df):           # TODO: else raise error
                         self.env.cruise_data.df[column] = self.env.cd_aux.df[column].tolist()
 
             if removed_columns_checked is True and self.removed_columns != []:
                 for column in self.removed_columns:
                     if column in self.env.cruise_data.get_columns_by_type(['param']):
-                        column_flag = column + '_FLAG_W'
+                        column_flag = column + FLAG_END
                         if column_flag not in self.removed_columns:
                             if column_flag in self.env.cruise_data.get_columns_by_type(['param_flag']):
                                 del self.env.cruise_data.cols[column_flag]  # if the param column is deleted, then the flag is also deleted

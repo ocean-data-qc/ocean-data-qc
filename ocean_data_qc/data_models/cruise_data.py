@@ -319,7 +319,7 @@ class CruiseData(CruiseDataExport):
         if not orig_name in columns:
             columns = [re.sub(r'\b'+replace_with+r'\b', orig_name, c) for c in columns]
             if replace_with + 'F' in columns:
-                columns = [re.sub(r'\b'+replace_with + 'F'+r'\b', orig_name + '_FLAG_W', c) for c in columns]
+                columns = [re.sub(r'\b'+replace_with + 'F'+r'\b', orig_name + FLAG_END, c) for c in columns]
         return columns
 
 
@@ -375,6 +375,8 @@ class CruiseData(CruiseDataExport):
             and this step should be before the numeric conversion
         '''
         lg.info('-- REPLACE MISSING VALUES (-999 >> NaN)')
+        self.df_str = self.df.copy(deep=True)    # TODO: this has to be synchronized when seld.df is updated
+
         # self.df = self.df.applymap(lambda x: str.strip(x))  # trim spaces, we do  this with the raw data directly
         self.df.replace(
             to_replace=NA_REGEX_LIST,
@@ -393,7 +395,6 @@ class CruiseData(CruiseDataExport):
             If a cell of a column with dtype=np.int8 is assign to some int64 value, then the column
             is completely converted to int64
         '''
-        self.df_str = self.df.copy(deep=True)    # TODO: this has to be synchronized when seld.df is updated
         self.df = self.df.apply(lambda x: pd.to_numeric(x, errors='ignore', downcast='integer'))
 
         # if the new values are float >> check the original string to make the rounding well
