@@ -18,7 +18,7 @@ class CruiseDataAQC(CruiseData):
     env = CruiseData.env
 
     def __init__(self, original_type='', working_dir=TMP):
-        lg.warning('-- INIT AQC')
+        lg.info('-- INIT AQC')
         self.working_dir = working_dir
         self.filepath_or_buffer = path.join(working_dir, 'data.csv')  # TODO: original.csv should exists and be the same file??
         self.skiprows = 0

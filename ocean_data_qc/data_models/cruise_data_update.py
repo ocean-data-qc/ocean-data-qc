@@ -270,6 +270,8 @@ class CruiseDataUpdate(Environment):
 
     def discard_changes(self):
         """ aux folder is removed file is removed """
+        self.env.cd_update = None
+        self.env.cd_aux = None
         if path.isdir(path.join(UPD)):
             shutil.rmtree(path.join(UPD))
 
@@ -444,7 +446,7 @@ class CruiseDataUpdate(Environment):
         # TODO: raise error if the file is in use (windows) or wrong permissions (unix)
 
     def get_compared_data(self):
-        lg.warning('-- GET COMPARED DATA')
+        lg.info('-- GET COMPARED DATA')
         compared_data = {
             'new_columns': self.new_columns,
             'removed_columns': self.removed_columns,

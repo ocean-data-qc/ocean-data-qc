@@ -19,7 +19,7 @@ class CruiseDataWHP(CruiseData):
     env = CruiseData.env
 
     def __init__(self, working_dir=TMP):
-        lg.warning('-- INIT CD WHP')
+        lg.info('-- INIT CD WHP')
         self.working_dir = working_dir
         self.filepath_or_buffer = path.join(working_dir, 'original.csv')
         self.skiprows = 1
