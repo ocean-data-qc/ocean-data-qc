@@ -79,14 +79,15 @@ class BokehLoader(Environment):
         sidebar_col.children.clear()
         sidebar_col.children.append(Spacer())
 
-        self.reset_environment()
+        self.reset_env()
 
-    def reset_environment(self):
+    def reset_env(self, do_not_reset=[]):
         lg.info('-- RESET ENVIRONMENT')
-        do_not_reset = [
-            'bk_loader', 'doc', 'tabs_widget', 'sidebar', 'bk_bridge',
-            'bridge_row', 'cruise_data', 'files_handler'
-        ]
+        if do_not_reset == []:
+            do_not_reset = [
+                'bk_loader', 'doc', 'tabs_widget', 'sidebar', 'bk_bridge',
+                'bridge_row', 'cruise_data', 'files_handler'
+            ]
         for attr in dir(self.env):
             if attr[:2] != '__':  # to exclude special methods and attributes
                 if attr not in do_not_reset:
@@ -115,6 +116,13 @@ class BokehLoader(Environment):
                 lg.info('ATTR: {} | VALUE: {}'.format(attr, value))
 
         CruiseDataHandler()
+
+    def reset_env_cruise_data(self):
+        do_not_reset = [
+            'bk_loader', 'doc', 'tabs_widget', 'sidebar', 'bk_bridge',  # some of them should not exist yet
+            'bridge_row', 'files_handler'
+        ]
+        self.reset_env(do_not_reset)
 
     def reload_bokeh(self):
         lg.info('-- RELOAD BOKEH')

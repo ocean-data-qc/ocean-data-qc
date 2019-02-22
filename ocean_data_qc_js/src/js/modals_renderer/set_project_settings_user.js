@@ -124,6 +124,13 @@ module.exports = {
                         lg.info('~~ PROJECT DIRECTORY DELETED');
                     });
                 }
+                var call_params = {
+                    'object': 'bokeh.loader',
+                    'method': 'reset_env_cruise_data',
+                }
+                tools.call_promise(call_params).then((result) => {
+                    lg.info('>> ENV CRUISE DATA RESET')
+                });
             });
 
             tools.show_default_cursor();

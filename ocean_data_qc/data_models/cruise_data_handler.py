@@ -33,6 +33,7 @@ class CruiseDataHandler(Environment):
 
     def get_cruise_data_columns(self):
         lg.info('-- GET CRUISE DATA COLUMNS')
+        lg.warning('>> SELF.ENV.CRUISE_DATA: {}'.format(self.env.cruise_data))
         if self.env.cruise_data is None:
             self._init_cruise_data()
         params = self.env.cruise_data.get_columns_by_type('param', discard_nan=True)
