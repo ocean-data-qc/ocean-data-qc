@@ -348,4 +348,11 @@ module.exports = {
         // lg.info('>> NEW ROW: ' + new_row.get());
         return new_row;
     },
+
+    update_column_params: function(file_columns, cps_columns, params) {
+        var self = this;
+        self.file_columns = file_columns;
+        self.cps_columns = cps_columns;
+        self.params = params;
+    }
 }

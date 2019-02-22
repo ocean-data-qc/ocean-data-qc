@@ -52,9 +52,16 @@ module.exports = {
                         });
                     });
 
-                    // build the form with qc_plot_tabs_final
-                    self.create_qc_tab_tables(qc_plot_tabs_final);
-                    self.load_buttons();
+                    // update set_project_settings_user columns
+                    // update by csv could add more columns to the project before
+                    set_project_settings_user.update_column_params(
+                        self.file_columns,
+                        self.cps_columns,
+                        self.params
+                    );
+
+                    set_project_settings_user.create_qc_tab_tables(qc_plot_tabs_final);
+                    set_project_settings_user.load_buttons();
 
                     $('#accept_and_plot').on('click', function() {
                         // validations
@@ -121,156 +128,6 @@ module.exports = {
                 });
             });
         });
-    },
-
-    // same as settings_user
-
-    load_buttons: function() {
-        var self = this;
-        $('#add_new_tab').on('click', function() {
-            var new_fieldset = $('fieldset:first').clone();
-            $('fieldset:last').after(new_fieldset);
-            new_fieldset.slideDown();
-            self.params.forEach(function(column) {
-                new_fieldset.find('select[name=tab_title]').append($('<option>', {
-                    value: column,
-                    text: column,
-                }));
-            })
-            self.file_columns.forEach(function(column) {
-                if (self.cps_columns.includes(column)) {
-                    lg.warn('>> ADDING COMPUTED CLASS')
-                    new_fieldset.find('.qc_tabs_table_row select').append($('<option>', {
-                        value: column,
-                        text : column,
-                        class: 'layout_computed_param_column'
-                    }));
-                } else {
-                    new_fieldset.find('.qc_tabs_table_row select').append($('<option>', {
-                        value: column,
-                        text : column
-                    }));
-                }
-            });
-            new_fieldset.find('.add_new_plot').click(function() {
-                var new_row = self.get_new_row();
-                $(this).parent().parent().before(new_row);
-                $('.delete_graph').on('click', function() {
-                    $(this).parent().parent().remove();
-                });
-            });
-
-            // reindex fieldsets
-            var index = 0;
-            var first = true;
-            $('fieldset').each(function() {
-                if (first == true) {
-                    first = false;
-                } else {
-                    lg.info('>> QC TABS TABLE ID: ' + $(this).attr('id'));
-                    $(this).attr('id', 'qc_tabs_table-' + index);
-                    index++;
-                }
-            });
-            self.load_row_buttons(new_fieldset);
-        });
-
-    },
-
-    create_qc_tab_tables: function(qc_plot_tabs={}) {
-        lg.info('-- CREATE QC TAB TABLES');
-        var self = this;
-        // lg.info('>> TABS: ' + JSON.stringify(qc_plot_tabs, null, 4));
-
-        if (qc_plot_tabs == {} || self.file_columns == []) {
-            lg.error('>> QC PLOT TABS EMPTY or THE FILE DOES NOT HAVE ANY COLUMNS');
-            return;
-        }
-
-        var index = 0;
-        Object.keys(qc_plot_tabs).forEach(function(tab) {
-            // TODO: check here if the tab is going to have graphs
-
-            var new_qc_tab_div = $("#qc_tabs_table").clone();
-            new_qc_tab_div.attr('id', 'qc_tabs_table-' + index);
-            new_qc_tab_div.find('.add_new_plot').click(function() {
-                var new_row = self.get_new_row();
-                $(this).parent().parent().before(new_row);
-                $('.delete_graph').on('click', function() {
-                    $(this).parent().parent().remove();
-                });
-            });
-            self.params.forEach(function (column) {
-                new_qc_tab_div.find('select[name=tab_title]').append($('<option>', {
-                    value: column,
-                    text: column,
-                }));
-            });
-            new_qc_tab_div.find('select[name=tab_title]').val(tab);
-
-            qc_plot_tabs[tab].forEach(function (graph) {
-                var new_row = self.get_new_row(graph);
-                new_qc_tab_div.find('tbody tr:last-child').before(new_row);
-            });
-
-            new_qc_tab_div.appendTo("#qc_tabs_container").css('display', 'block');
-            index++;
-            self.load_row_buttons(new_qc_tab_div)
-        });
-    },
-
-    load_row_buttons: function(fieldset) {
-        fieldset.find('.delete_tab').on('click', function() {
-            if ($('#qc_tabs_table-1').length != 0) {
-                $(this).parent().parent().slideUp('fast', function() {
-                    $(this).remove();
-                    // reindex fieldsets
-                    var index = 0;
-                    var first = true;
-                    $('fieldset').each(function() {
-                        if (first == true) {
-                            first = false;
-                        } else {
-                            $(this).attr('id', 'qc_tabs_table-' + index);
-                            index++;
-                        }
-                    });
-                });
-            } else {
-                tools.showModal(
-                    'ERROR',
-                    'You should show at least one tab on the project layout.'
-                );
-            }
-        });
-
-        $('.delete_graph').on('click', function() {
-            $(this).parent().parent().remove();
-        });
-    },
-
-    get_new_row: function(graph=null) {
-        var self = this;
-        var new_row = $('#qc_tabs_table .qc_tabs_table_row:first').clone();
-        self.file_columns.forEach(function (column) {
-            var option_attrs = {
-                value: column,
-                text : column,
-            };
-            if (self.cps_columns.includes(column)) {
-                option_attrs['class'] = 'layout_computed_param_column';  // green color
-            }
-            new_row.find('select[name=x_axis]').append($('<option>', option_attrs));
-            new_row.find('select[name=y_axis]').append($('<option>', option_attrs));
-        });
-        if (graph != null) {
-            new_row.find('input[name=title]').val(graph.title);
-            new_row.find('select[name=x_axis]').val(graph.x);
-            new_row.find('select[name=y_axis]').val(graph.y);
-        }
-        new_row.css('display', 'table-row');
-        // lg.info('>> NEW ROW: ' + new_row.get());
-        return new_row;
     },
 
 }
