@@ -20,7 +20,7 @@ class CruiseDataAQC(CruiseData):
     def __init__(self, original_type='', working_dir=TMP):
         lg.info('-- INIT AQC')
         self.working_dir = working_dir
-        self.filepath_or_buffer = path.join(working_dir, 'data.csv')  # TODO: original.csv should exists and be the same file??
+        self.filepath_or_buffer = path.join(self.working_dir, 'data.csv')  # TODO: original.csv should exists and be the same file??
         self.skiprows = 0
         super(CruiseDataAQC, self).__init__(original_type=original_type)
 

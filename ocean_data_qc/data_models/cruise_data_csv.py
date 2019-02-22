@@ -11,6 +11,7 @@ from ocean_data_qc.data_models.exceptions import ValidationError
 from ocean_data_qc.env import Environment
 
 import csv
+from shutil import copyfile
 
 
 class CruiseDataCSV(CruiseData):
@@ -21,8 +22,11 @@ class CruiseDataCSV(CruiseData):
     def __init__(self, working_dir=TMP):
         lg.info('-- INIT CSV')
         self.working_dir = working_dir
-        self.filepath_or_buffer = path.join(working_dir, 'original.csv')
-        self.filepath_or_buffer = file_path
+        copyfile(
+            path.join(self.working_dir, 'original.csv'),
+            path.join(self.working_dir, 'data.csv')
+        )
+        self.filepath_or_buffer = path.join(self.working_dir, 'data.csv')
         self.skiprows = 0
         super(CruiseDataCSV, self).__init__(original_type='csv')
 

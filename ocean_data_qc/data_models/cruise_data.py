@@ -255,14 +255,22 @@ class CruiseData(CruiseDataExport):
         self.df.replace('\s', '', regex=True, inplace=True)  # cleans spaces: \r and \n are managed by read_csv
         self.df.columns = self._sanitize(self.df.columns)  # remove spaces from columns
         self.df.columns = self._sanitize_alternative_names(self.df.columns)
-        try:
-            self.df.columns.index('DATE')
-        except:
-            lg.info('-- trying to generate a DATE column')
+        if 'DATE' not in self.df.columns.tolist():
+            lg.warning('>> Trying to generate a DATE column')
             try:
-                self.df = self.df.assign(DATE=pd.to_datetime(self.df[['YEAR', 'MONTH', 'DAY']]).dt.strftime('%Y%m%d'))
+                self.df = self.df.assign(
+                    DATE=pd.to_datetime(self.df[['YEAR', 'MONTH', 'DAY']]).dt.strftime('%Y%m%d')
+                )
+                self.add_moves_element(
+                    'required_column_added',
+                    'DATE column was automatically generated from the columns YEAR, MONTH and DAY'
+                )
             except Exception as e:
-                lg.warning('--      {}'.format(e))
+                raise ValidationError(
+                    'DATE column did not exist and it could not be created'
+                    ' from YEAR, MONTH and DAY columns: [{}]'.format(missing_columns),
+                    rollback='cruise_data'
+                )
 
     def _set_moves(self):
         """ create the self.moves dataframe object
