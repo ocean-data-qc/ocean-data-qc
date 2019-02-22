@@ -255,8 +255,11 @@ class CruiseData(CruiseDataExport):
         self.df.replace('\s', '', regex=True, inplace=True)  # cleans spaces: \r and \n are managed by read_csv
         self.df.columns = self._sanitize(self.df.columns)  # remove spaces from columns
         self.df.columns = self._sanitize_alternative_names(self.df.columns)
+        self.create_date_column()
+
+    def create_date_column(self):
         if 'DATE' not in self.df.columns.tolist():
-            lg.warning('>> Trying to generate a DATE column')
+            lg.info('>> Generating the DATE column from YEAR MONTH and DAY columns')
             try:
                 self.df = self.df.assign(
                     DATE=pd.to_datetime(self.df[['YEAR', 'MONTH', 'DAY']]).dt.strftime('%Y%m%d')
@@ -267,7 +270,7 @@ class CruiseData(CruiseDataExport):
                 )
             except Exception as e:
                 raise ValidationError(
-                    'DATE column did not exist and it could not be created'
+                    'DATE column did not exist and it could not be created. And that is a required column'
                     ' from YEAR, MONTH and DAY columns: [{}]'.format(missing_columns),
                     rollback='cruise_data'
                 )
