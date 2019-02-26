@@ -140,7 +140,7 @@ module.exports = {
 
     load_buttons: function() {
         var self = this;
-        $('#add_new_tab').on('click', function() {
+        $('.add_new_tab').on('click', function() {
             var new_fieldset = $('fieldset:first').clone();
             $('fieldset:last').after(new_fieldset);
             new_fieldset.slideDown();
@@ -191,7 +191,7 @@ module.exports = {
     },
 
     load_accept_and_plot_button() {
-        $('#accept_and_plot').on('click', function() {
+        $('.accept_and_plot').on('click', function() {
             // validations
             if($('#project_name').val() == '') {
                 tools.show_modal({

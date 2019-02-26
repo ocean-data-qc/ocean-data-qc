@@ -15,15 +15,16 @@
                         <div class="col-xs-12">
                             <div class="row">
                                 <label class="control-label col-sm-2" for="project_name">Project name:</label>
-                                <div class="col-sm-8">
+                                <div class="col-sm-7">
                                     <input id="project_name" class="form-control form-control-sm" type="text" placeholder="Enter project name">
                                     <small id="project_name_validate_msg" style="display: none; color: red;">The project name is required</small>
                                 </div>
+                                <button type="button" class="accept_and_plot btn btn-sm btn-primary col-sm-3" >Accept and Plot</button>
                             </div>
                         </div>
                         <div id="qc_tabs_container" class="col-xs-12">
                             <div class="row">
-                                <label class="control-label" style="text-align: left">The plots are going to be built with this data:</label>
+                                <label class="control-label" style="text-align: left">Plots layout:</label>
                             </div>
 
                             <!-- table to clone -->
@@ -72,8 +73,8 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button id="add_new_tab" type="button" class="btn btn-primary">Add new Tab</button>
-                <button id="accept_and_plot" type="button" class="btn btn-primary" >Accept and Plot</button>
+                <button type="button" class="add_new_tab btn btn-primary">Add new Tab</button>
+                <button type="button" class="accept_and_plot btn btn-primary" >Accept and Plot</button>
                 <button id="dummy_close" type="button" class="btn btn-primary" style="display: none;" data-dismiss="modal">Dummy Close</button>
                 <button id="discard_plotting" type="button" class="btn btn-default" data-dismiss="modal">Discard</button>
             </div>

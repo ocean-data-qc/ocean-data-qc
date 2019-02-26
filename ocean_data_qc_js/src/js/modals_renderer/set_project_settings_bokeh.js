@@ -63,7 +63,7 @@ module.exports = {
                     set_project_settings_user.create_qc_tab_tables(qc_plot_tabs_final);
                     set_project_settings_user.load_buttons();
 
-                    $('#accept_and_plot').on('click', function() {
+                    $('.accept_and_plot').on('click', function() {
                         // validations
                         if($('#project_name').val() == '') {
                             tools.show_modal({

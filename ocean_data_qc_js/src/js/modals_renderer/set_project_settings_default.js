@@ -37,7 +37,7 @@ module.exports = {
                 logger.info('~~ DISCARD CHANGES');
             });
 
-            $('#add_new_tab').on('click', function() {
+            $('.add_new_tab').on('click', function() {
                 var new_fieldset = $('fieldset:first').clone();
                 $('fieldset:last').after(new_fieldset);
                 new_fieldset.slideDown();

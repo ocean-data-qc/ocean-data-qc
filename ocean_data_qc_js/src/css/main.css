@@ -316,6 +316,12 @@ fieldset select[name='tab_title'] {
     margin-left: 15px;
 }
 
+
+#set_project_settings_form label {
+    font-weight: bold;
+    padding-top: 6px;
+}
+
 /* UPDATE CRUISE DATA FORM */
 
 .comparison_title {
