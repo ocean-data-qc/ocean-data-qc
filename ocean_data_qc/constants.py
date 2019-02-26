@@ -86,3 +86,6 @@ DEFAULT_SETTINGS = path.join(FILES, 'default_settings.json')
 SHARED_DATA = path.join(FILES, 'shared_data.json')
 
 MOVES_CSV = path.join(TMP, 'moves.csv')
+
+APP_SHORT_NAME = 'OCEANDATAQC'
+APP_LONG_NAME = 'AtlantOS Ocean Data QC'

@@ -13,6 +13,7 @@ import os
 import json
 from datetime import datetime
 import numpy as np
+import re
 
 
 class CruiseDataExport(Environment):
@@ -35,9 +36,9 @@ class CruiseDataExport(Environment):
                 with open(path.join(TMP, 'original.csv')) as f_in:
                     f_out.write(f_in.readline())    # get the first line ("BOTTLE...") from the original file, just in the case of WHP file
             elif self.env.cruise_data.original_type == 'csv':
-                f_out.write('BOTTLE,{}ATLANTOSQC\n'.format(datetime.now().strftime('%Y%m%d')))
+                f_out.write('BOTTLE,{}{}\n'.format(datetime.now().strftime('%Y%m%d'),re.sub(r'\W+', '', APP_SHORT_NAME).upper()))
 
-            f_out.write('# {} Edited by Atlantos Ocean Data QC\n'.format(datetime.now().strftime('%Y/%m/%d')))
+            f_out.write('# {} Edited by {}\n'.format(datetime.now().strftime('%Y-%m-%d'), APP_LONG_NAME))
 
             with open(path.join(TMP, 'metadata')) as f_in:
                 for line in f_in:
