@@ -140,8 +140,10 @@ module.exports = {
 
     save_file: function(arg) {
         var self = this;
-        if ('save_from' in arg) {
+        if (typeof(arg) !== 'undefined' && 'save_from' in arg) {
             self.save_from = arg.save_from;
+        } else {
+            lg.warn('>> NO SAVE FROM (save_file')
         }
         return new Promise((resolve, reject) => {
             var project_file = data.get('project_file', loc.proj_settings);
@@ -175,8 +177,10 @@ module.exports = {
     save_file_as: function(arg) {
         lg.info('-- SAVE FILE AS');
         var self = this;
-        if ('save_from' in arg) {
+        if (typeof(arg) !== 'undefined' && 'save_from' in arg) {
             self.save_from = arg.save_from;
+        } else {
+            lg.warn('>> NO SAVE FROM (save_file')
         }
         return new Promise((resolve, reject) => {
             var settings = data.load(loc.proj_settings);  // use settings only to read
