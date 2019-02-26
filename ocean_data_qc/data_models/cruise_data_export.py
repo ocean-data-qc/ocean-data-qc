@@ -27,14 +27,18 @@ class CruiseDataExport(Environment):
             It will export the latest saved data
         """
         lg.info('-- EXPORT WHP')
-
         if path.isfile(path.join(TMP, 'export_whp.csv')):
             os.remove(path.join(TMP, 'export_whp.csv'))
 
         with open(path.join(TMP, 'export_whp.csv'), 'w') as f_out:
-            with open(path.join(TMP, 'original.csv')) as f_in:
-                f_out.write(f_in.readline())    # get the first line ("BOTTLE...") from the original file
-            f_out.write('# {} Edited by Atlantos QC\n'.format(datetime.now().strftime('%m/%d/%Y')))
+            if self.env.cruise_data.original_type == 'whp':
+                with open(path.join(TMP, 'original.csv')) as f_in:
+                    f_out.write(f_in.readline())    # get the first line ("BOTTLE...") from the original file, just in the case of WHP file
+            elif self.env.cruise_data.original_type == 'csv':
+                f_out.write('BOTTLE,{}ATLANTOSQC\n'.format(datetime.now().strftime('%Y%m%d')))
+
+            f_out.write('# {} Edited by Atlantos Ocean Data QC\n'.format(datetime.now().strftime('%Y/%m/%d')))
+
             with open(path.join(TMP, 'metadata')) as f_in:
                 for line in f_in:
                     f_out.write('# {}'.format(line))
