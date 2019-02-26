@@ -117,31 +117,31 @@
         },
         {
             "param_name": "SIGMA0",
-            "equation": "@pden(SAL, CTDTMP, PRES, 0)",
+            "equation": "@pden(SAL, CTDTMP, PRES, 0) - 1000",
             "units": false,
             "precision": "5"
         },
         {
             "param_name": "SIGMA1",
-            "equation": "@pden(SAL, CTDTMP, PRES, 1000)",
+            "equation": "@pden(SAL, CTDTMP, PRES, 1000) - 1000",
             "units": false,
             "precision": "5"
         },
         {
             "param_name": "SIGMA2",
-            "equation": "@pden(SAL, CTDTMP, PRES, 2000)",
+            "equation": "@pden(SAL, CTDTMP, PRES, 2000) - 1000",
             "units": false,
             "precision": "5"
         },
         {
             "param_name": "SIGMA3",
-            "equation": "@pden(SAL, CTDTMP, PRES, 3000)",
+            "equation": "@pden(SAL, CTDTMP, PRES, 3000) - 1000",
             "units": false,
             "precision": "5"
         },
         {
             "param_name": "SIGMA4",
-            "equation": "@pden(SAL, CTDTMP, PRES, 4000)",
+            "equation": "@pden(SAL, CTDTMP, PRES, 4000) - 1000",
             "units": false,
             "precision": "5"
         },
