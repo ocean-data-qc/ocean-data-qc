@@ -51,8 +51,8 @@ module.exports = {
                         lg.warn('Closing df_data');
                         // $('.df_data').fadeOut('slow');        // TODO: too heavy to make animation?
                         // $('.float_button').fadeOut('slow');
-                        $('.df_data').fadeOut('slow');
-                        $('.float_button').fadeOut('slow');
+                        $('.df_data').remove();
+                        $('.float_button').remove();
                     });
 
 
