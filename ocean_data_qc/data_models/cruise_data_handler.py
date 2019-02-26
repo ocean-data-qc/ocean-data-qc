@@ -33,7 +33,6 @@ class CruiseDataHandler(Environment):
 
     def get_cruise_data_columns(self):
         lg.info('-- GET CRUISE DATA COLUMNS')
-        lg.warning('>> SELF.ENV.CRUISE_DATA: {}'.format(self.env.cruise_data))
         if self.env.cruise_data is None:
             self._init_cruise_data()
         params = self.env.cruise_data.get_columns_by_type('param', discard_nan=True)
@@ -183,3 +182,27 @@ class CruiseDataHandler(Environment):
                 else:
                     self.env.cd_update.discard_changes()
                     self.env.cd_update = None
+
+    def get_cruise_data_df_to_html(self):
+        lg.info('-- GET CRUISE DATA DF TO HTML')
+        df_aux = self.env.cruise_data.df.copy(deep=True)
+        new_index = [x for x in range(self.env.cruise_data.df.index.size)]
+        df_aux['NEW_INDEX'] = new_index
+        df_aux.set_index(keys='NEW_INDEX', inplace=True)
+
+        html = df_aux.to_html(
+            classes='table table-striped',
+            # formatters={
+            #     'EXPOCODE': lambda x: '<b>' + str(x) + '</b>'
+            # },
+            escape=False,
+            justify='left',
+            index_names=False,
+            border=0,
+            # columns=['EXPOCODE', 'STNNBR', 'DEPTH', 'SALNTY', 'SALNTY_FLAG_W']
+        )
+
+        # TODO: I did not find any better way to do this:
+        html = html.replace('<th>', '<th class="rotate"><div><div><span>')
+        html = html.replace('</th>', '</span></div></div>')
+        return html

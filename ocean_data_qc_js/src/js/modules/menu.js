@@ -146,8 +146,8 @@ module.exports = {
                     click: function() { self.web_contents.send('add-computed-parameter'); }
                 },
                 {
-                    label: 'Flag Settings [TO-DO]', accelerator: 'CmdOrCtrl+P',
-                    click: function() { lg.info('It is not implemented yet.'); }
+                    label: 'Show Data', accelerator: 'CmdOrCtrl+D',
+                    click: function() { self.web_contents.send('show-data'); }
                 }
             ]
         }
@@ -157,7 +157,6 @@ module.exports = {
             submenu: [
                 { label: 'Project Settings (JSON)', accelerator: 'CmdOrCtrl+Shift+P', click: () => { self.menu_actions.edit_plot_layout_json(); } },
                 { label: 'Logger [TO-DO]', accelerator: 'CmdOrCtrl+L', click: () => { alert('Not implemented yet');} },
-                { label: 'Show DataFrame [TO-DO]', accelerator: 'CmdOrCtrl+D+F', click: () => { alert('Not implemented yet');} },
                 { label: 'Reload Server', accelerator: 'CmdOrCtrl+R', click: () => { self.menu_actions.server.relaunch_bokeh(); } }
             ]
         }

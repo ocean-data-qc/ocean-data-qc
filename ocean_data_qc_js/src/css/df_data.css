@@ -1,0 +1,71 @@
+
+/* https://css-tricks.com/rotated-table-column-headers/ */
+/* https://stackoverflow.com/questions/54832885/how-to-add-formatters-of-html-elements-to-column-headers-with-the-method-to-html/54883756#54883756 */
+
+.df_data {
+    background-color: whitesmoke;
+    cursor: default;
+    font-size: 0.7rem;
+    font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
+    overflow: scroll;
+    padding: 10px;
+}
+
+.df_data table {
+    border-collapse: collapse;
+    width: auto;
+}
+
+.df_data thead th {
+    border-top: none;
+    padding: 0;
+    min-width: 45px;
+    border-bottom: 1px solid #b1b4b8 !important;
+}
+
+.df_data thead th td {
+    text-align: center;
+    padding: 10px 5px;
+    border: 1px solid #b1b4b8;
+}
+
+.df_data thead th.rotate {
+    margin-left: 100%;
+    height: 120px;
+    white-space: nowrap;
+}
+
+.df_data thead th.rotate > div {
+    position: relative;
+    width: 100%;
+    height: 30px;
+}
+
+.df_data thead th.rotate > div > div {
+        position: absolute;
+        left: 100%;
+        width: 30px;
+        transform:
+        translate(-10px, 7px)
+        rotate(315deg);
+    }
+
+.df_data thead th.rotate > div > div > span {
+    border-bottom: 1px solid #b1b4b8;
+    padding: 9px 0px;
+}
+
+.df_data tbody {
+    line-height: 0.5;
+}
+
+.df_data tbody th {
+    padding: 0 10px;
+    border-bottom: 1px solid #b1b4b8 !important;
+}
+
+.df_data tbody td {
+    border-right: 1px solid #b1b4b8;
+    border-bottom: 1px solid #b1b4b8 !important;
+}
+

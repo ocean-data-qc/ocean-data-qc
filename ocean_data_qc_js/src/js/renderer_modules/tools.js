@@ -120,6 +120,10 @@ module.exports = {
                     modal.find('.modal-title').css('color', '#a94442');   // TODO: assign a class and set the color in the class
                     modal.find('.modal-title-icon').removeClass().addClass('fa fa-exclamation-triangle');
                     break;
+                case 'USER ERROR':
+                    modal.find('.modal-title').css('color', '#a94442');   // TODO: assign a class and set the color in the class
+                    modal.find('.modal-title-icon').removeClass().addClass('fa fa-exclamation-triangle');
+                    break;
                 case 'INFO':
                     modal.find('.modal-title').css('color', '#5FBA7D');
                     modal.find('.modal-title-icon').removeClass().addClass('fa fa-info-circle');

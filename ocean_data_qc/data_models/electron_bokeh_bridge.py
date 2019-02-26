@@ -155,7 +155,10 @@ class ElectronBokehBridge(Environment):
         """
         if params != {}:
             params = json.dumps(params, sort_keys=True)
-        lg.info('>> RUN JS CODE, PARAMS: {}'.format(params))
+        if len(params) < 500:
+            lg.info('>> RUN JS CODE, PARAMS: {}'.format(params))
+        else:
+            lg.warning('>> Very long string in params')
         lg.info('>> SIGNAL: {}'.format(signal))
         js_code = """
             window.top.postMessage({{

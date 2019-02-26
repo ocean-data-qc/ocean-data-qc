@@ -117,7 +117,6 @@ class CruiseData(CruiseDataExport):
                 flag = column + FLAG_END
                 column_list = self.df.columns.tolist()
                 if flag not in column_list and column not in qc_column_exceptions:
-                    lg.info('>> ROWS LENGTH: {}'.format(len(self.df.index)))
                     lg.info('>> CREATING FLAG: {}'.format(flag))
                     values = ['2'] * len(self.df.index)
                     self.df[flag] = values
@@ -454,7 +453,6 @@ class CruiseData(CruiseDataExport):
         self.save_tmp_data()
 
     def add_moves_element(self, action, description):
-        lg.info('-- ADD ELEM TO MOVES.csv --')
         date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         if not self.moves.empty:
             last_pos = self.moves.tail(1).index[0]

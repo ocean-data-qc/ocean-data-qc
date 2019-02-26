@@ -231,7 +231,7 @@ html, body, .bokeh_iframe {
     margin-left: 10px;
 }
 
-#loader_mask {
+.top_layer {
     /* to block any action in the whole document */
     cursor: wait;
     z-index: 9999;
@@ -240,6 +240,19 @@ html, body, .bokeh_iframe {
     position: fixed;
     top: 0;
     left: 0;
+}
+
+.float_button {
+    z-index: 10000;
+    height: 100px;
+    width: 100px;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+.float_button #close_df_data {
+    margin: 15px;
 }
 
 @-webkit-keyframes spin {

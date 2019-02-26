@@ -32,6 +32,7 @@ require('update_values_by_station');
 require('set_project_settings_json').init();
 require('set_project_settings_bokeh').init();
 require('add_computed_parameter').init();
+require('show_data').init();
 
 // ------------------------------- IPC SIGNAL RECEIVERS ----------------------------------------- //
 
