@@ -338,7 +338,6 @@ class CruiseData(CruiseDataExport):
                 columns = [re.sub(r'\b'+replace_with + 'F'+r'\b', orig_name + FLAG_END, c) for c in columns]
         return columns
 
-
     def _sanitize_alternative_names(self, names):
         lg.info('-- Sanitizing usual alternative colnames')
         result = [n.upper() for n in names]
@@ -373,15 +372,7 @@ class CruiseData(CruiseDataExport):
         result = self._replace_if_not_exists(result, 'CFC_12', 'CFC12')
         for name in result:
             if name + 'F' in result:
-<<<<<<< HEAD
-<<<<<<< HEAD
-                result = [r.replace(name + 'F' , name + '_FLAG_W') for r in result]
-=======
-                result = [re.sub(r'\b'+name + 'F'+r'\b', name + '_FLAG_W', r) for r in result]
->>>>>>> Fix parameter substitutions
-=======
                 result = [re.sub(r'\b'+name + 'F'+r'\b', name + FLAG_END, r) for r in result]
->>>>>>> Make the updates work again
         lg.info(result)
         return result
 
