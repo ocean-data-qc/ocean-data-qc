@@ -191,7 +191,13 @@ class CruiseData(CruiseDataExport):
         col_positions = dict(
             [(df_cols[df_cols.index(x)], df_cols.index(x)) for x in df_cols]  # {'COL1': 0, 'COL2': 1, ...}
         )
-        prepaired_list = [(col_positions[x], x) for x in res]
+        try:
+            prepaired_list = [(col_positions[x], x) for x in res]
+        except Exception:
+            raise ValidationError(
+                'Some column in the attributes.json file or '
+                'self.cols object is not in the DataFrame'
+            )
         sorted_list = sorted(prepaired_list, key=lambda elem: elem[0])  # reordering
         final_list = [x[1] for x in sorted_list]
         if discard_nan:

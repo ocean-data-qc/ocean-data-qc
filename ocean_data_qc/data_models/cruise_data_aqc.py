@@ -43,19 +43,17 @@ class CruiseDataAQC(CruiseData):
         ''' Adds all the calculated parameters to the DF when the file is loaded in the application.
             The computed parameters from the attributes.json should be computed.
 
-                NOTE: When the file is open the cps are copied from `custom_settings.json`
-                    So we have all the CP we need in cps['proj_settings_cps']
+            NOTE: When the file is open the cps are copied from `custom_settings.json`
+                  So we have all the CP we need in cps['proj_settings_cps']
+                  Also the computed parameters in self.cols is always going to be a subset of the proj_settings_cps
         '''
         lg.info('-- SET COMPUTED PARAMETERS')
-        cps_list = self.env.cruise_data.get_columns_by_type('computed')  # get already active cps in the attributes.json file (AQC)
-        lg.warning('>> CP LIST: {}'.format(cps_list))
-        for cp in cps_list:
-            for c in self.env.cp_param.proj_settings_cps:
-                if c['param_name'] == cp:
-                    cp_to_compute = {
-                        'computed_param_name': c['param_name'],
-                        'eq': c['equation'],
-                        'precision': c['precision'],
-                    }
-                    lg.info('>> PARAM TO COMPUTE: {}'.format(cp_to_compute))
-                    self.compute_equation(cp_to_compute)
+        proj_settings_cps = self.env.cp_param.proj_settings_cps
+        for c in proj_settings_cps:
+            cp_to_compute = {
+                'computed_param_name': c['param_name'],
+                'eq': c['equation'],
+                'precision': c['precision'],
+            }
+            lg.info('>> COMPUTING PARAMETER: {}'.format(c['param_name']))
+            self.env.cp_param.compute_equation(cp_to_compute)

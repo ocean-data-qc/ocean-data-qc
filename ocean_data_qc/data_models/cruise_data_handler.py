@@ -64,7 +64,7 @@ class CruiseDataHandler(Environment):
             if self._is_plain_text(original_path):
                 cd = None
                 is_whp_format = self._is_whp_format(original_path)
-                if path.isfile(path.join(TMP, 'data.csv')):
+                if path.isfile(path.join(TMP, 'data.csv')):   # aqc or pending session
                     if is_whp_format:
                         cd = CruiseDataAQC(
                             original_type='whp',        # TODO: the original type should be saved in the setting.json somewhere
