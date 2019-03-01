@@ -329,6 +329,23 @@ fieldset select[name='tab_title'] {
     color: #337ab7;
 }
 
+/* UPDATE VALUES FORM */
+
+.results_table td:first-child { /* title */
+    width: 300px;
+}
+
+.results_table td:nth-child(2) { /* changes */
+    width: 360px;
+}
+
+.results_table td:nth-child(3) { /* checkboxes cell */
+    width: 0px;
+}
+
+a#update_values_by_station {
+    padding-left: 15px;
+}
 
 /* UPDATE VALUES BY STATION MODAL FORM */
 
