@@ -25,12 +25,12 @@ FLAG_END = '_FLAG_W'        # Flag distinctive
 NA_REGEX_LIST = [r'^-999[9]?[\.0]*?$']
 
 REQUIRED_COLUMNS = [
-    'EXPOCODE', 'BTLNBR', 'STNNBR', 'CASTNO', 'DATE', 'LATITUDE', 'LONGITUDE'
+    'EXPOCODE', 'STNNBR', 'CASTNO', 'DATE', 'LATITUDE', 'LONGITUDE'
 ]
 
 NON_QC_PARAMS = [                                # discovered by usage
     'CTDPRS', 'DEPTH',
-    'SECT', 'SECT_ID', 'TIME', 'PH_TMP', 'SAMPNO', 'BTLNBR'
+    'SECT', 'SECT_ID', 'TIME', 'PH_TMP'
 ]
 
 BASIC_PARAMS = [

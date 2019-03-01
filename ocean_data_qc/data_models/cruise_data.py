@@ -27,7 +27,9 @@ class CruiseData(CruiseDataExport):
         the aqc, csv and whp files
     '''
     env = CruiseDataExport.env
-
+    filepath_or_buffer = None          # implemented in the children
+    skiprows = None  # implemented in the children
+    
     def __init__(self, original_type=''):
         lg.info('-- INIT CRUISE DATA PARENT')
         self.original_type = original_type      # original.csv type (whp, csv)
@@ -257,10 +259,24 @@ class CruiseData(CruiseDataExport):
             )
             lg.info('>> PANDAS using \'python\' engine')
         # lg.info('\n\n>> DF: \n\n{}'.format(self.df))
-        self.df.replace('\s', '', regex=True, inplace=True)  # cleans spaces: \r and \n are managed by read_csv
+        self.df.replace(r'\s', '', regex=True, inplace=True)  # cleans spaces: \r and \n are managed by read_csv
         self.df.columns = self._sanitize(self.df.columns)  # remove spaces from columns
         self.df.columns = self._sanitize_alternative_names(self.df.columns)
+        self.create_btlnbr_or_sampno_column()
         self.create_date_column()
+
+    def create_btlnbr_or_sampno_column(self):
+        cols = self.df.columns.tolist()
+        if 'BTLNBR' in cols and not 'SAMPNO' in cols:
+            lg.info('>> Generating SAMPNO column from BTLNBR')
+            self.df['SAMPNO']=self.df['BTLNBR']
+        elif not 'BTLNBR' in cols and 'SAMPNO' in cols:
+            lg.info('>> Generating BTLNBR column from SAMPNO')
+            self.df['BTLNBR']=self.df['SAMPNO']
+        elif not 'BTLNBR' in cols and not 'SAMPNO' in cols:
+            lg.info('>> Generating SAMPNO and BTLNBR columns from incremental values')
+            self.df['BTLNBR']=range(len(self.df))
+            self.df['SAMPNO']=range(len(self.df))
 
     def create_date_column(self):
         if 'DATE' not in self.df.columns.tolist():
@@ -274,6 +290,7 @@ class CruiseData(CruiseDataExport):
                     'DATE column was automatically generated from the columns YEAR, MONTH and DAY'
                 )
             except Exception as e:
+                missing_columns = ', '.join(list(set(REQUIRED_COLUMNS) - set(self.get_columns_by_type('all'))))
                 raise ValidationError(
                     'DATE column did not exist and it could not be created. And that is a required column'
                     ' from YEAR, MONTH and DAY columns: [{}]'.format(missing_columns),
@@ -373,7 +390,6 @@ class CruiseData(CruiseDataExport):
         for name in result:
             if name + 'F' in result:
                 result = [re.sub(r'\b'+name + 'F'+r'\b', name + FLAG_END, r) for r in result]
-        lg.info(result)
         return result
 
     def _replace_nan_values(self):

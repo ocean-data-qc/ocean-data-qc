@@ -8,12 +8,3 @@ import ocean_data_qc.data_models
 import ocean_data_qc.bokeh_models
 
 # NOTE: the __init__.py file of those module folders is executed
-
-
-
-
-
-
-
-
-
