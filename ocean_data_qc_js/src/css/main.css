@@ -245,7 +245,7 @@ html, body, .bokeh_iframe {
 .float_button {
     z-index: 10000;
     height: 100px;
-    width: 100px;
+    width: 150px;
     position: fixed;
     top: 0;
     left: 0;
