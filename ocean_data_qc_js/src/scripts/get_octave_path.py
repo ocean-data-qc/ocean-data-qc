@@ -10,9 +10,14 @@ if sys.platform == 'win32':
         base_octave = r'C:\Octave'
         if os.path.isdir(base_octave):
             try:
-                vdir = os.listdir(base_octave)[0]
-                if os.path.isfile(os.path.join(base_octave, vdir,'bin','octave-cli.exe')):
-                    OCTAVE_EXECUTABLE = os.path.join(base_octave, vdir,'bin','octave-cli.exe')
+                odir = sorted(os.listdir(base_octave), reverse=True)
+                for vdir in odir:
+                    if os.path.isfile(os.path.join(base_octave, vdir, 'mingw64', 'bin', 'octave-cli.exe')):
+                        OCTAVE_EXECUTABLE = os.path.join(base_octave, vdir, 'mingw64', 'bin', 'octave-cli.exe')
+                    elif os.path.isfile(os.path.join(base_octave, vdir, 'bin', 'octave-cli.exe')):
+                        OCTAVE_EXECUTABLE = os.path.join(base_octave, vdir, 'bin', 'octave-cli.exe')
+                    elif os.path.isfile(os.path.join(base_octave, vdir, 'mingw32', 'bin', 'octave-cli.exe')):
+                        OCTAVE_EXECUTABLE = os.path.join(base_octave, vdir, 'mingw32', 'bin', 'octave-cli.exe') 
             except:
                 pass
 else:
