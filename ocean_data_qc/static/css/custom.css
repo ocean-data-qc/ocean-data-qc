@@ -94,6 +94,10 @@ body {
     margin-top: -10px !important;
 }
 
+.flagger_select select {
+    max-width: 170px;
+}
+
 .flags_control_col {
     margin-left: -5px !important;
     margin-top: -9px !important;
