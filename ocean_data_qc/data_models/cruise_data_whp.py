@@ -11,6 +11,7 @@ from ocean_data_qc.data_models.exceptions import ValidationError
 from ocean_data_qc.env import Environment
 
 import csv
+import re
 
 
 class CruiseDataWHP(CruiseData):
@@ -28,12 +29,14 @@ class CruiseDataWHP(CruiseData):
     def _validate_original_data(self):               # TODO: this should be in each cruise data class
         ''' Checks if all the rows have the same number of elements '''
         lg.info('-- CHECK DATA FORMAT (WHP)')
-        with open(self.filepath_or_buffer, newline='') as csvfile:
+        with open(self.filepath_or_buffer, newline='', errors='surrogateescape') as csvfile:
             spamreader = csv.reader(csvfile, delimiter=',', quotechar='"')          # TODO: ignore comments with #
             first_len = -1
             row_number = 1
             header = True
+            trim_excel_artifacts = re.compile(r'^[\s\"]*')
             for row in spamreader:
+                row[0] = trim_excel_artifacts.sub('', row[0])
                 if not(row[0].startswith('BOTTLE') or row[0].startswith('END_DATA') or row[0].startswith('#')):
                     if header is True and '' in row:
                         csvfile.close()

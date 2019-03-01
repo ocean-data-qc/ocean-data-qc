@@ -13,6 +13,7 @@ from ocean_data_qc.data_models.cruise_data_update import CruiseDataUpdate
 from ocean_data_qc.data_models.computed_parameter import ComputedParameter
 from ocean_data_qc.data_models.exceptions import ValidationError
 from ocean_data_qc.env import Environment
+import re
 
 from os import path
 try:
@@ -73,6 +74,18 @@ class CruiseDataHandler(Environment):
                         cd = CruiseDataAQC(original_type='csv')
                 else:
                     if is_whp_format:
+                        try:
+                            lg.info('-- TRYING TO SANITIZE UGLY EXCEL ARTIFACTS IN WHP FILES')
+                            f = open(original_path, 'r', errors='surrogateescape')
+                            trim_excel_artifacts = re.compile(r'[\n\r][\s\"]*')
+                            buf = trim_excel_artifacts.sub('\n', f.read())
+                            buf = re.sub(r'[\n\r]END_DATA[\s\S]*', '\nEND_DATA', buf)
+                            f.close()
+                            f = open(original_path, 'w', errors='surrogateescape')
+                            f.write(buf)
+                            f.close()
+                        except Exception as e:
+                            lg.info('-- ERROR TRYING TO SANITIZE UGLY EXCEL ARTIFACTS IN WHP FILES: %s', str(e))
                         cd = CruiseDataWHP()  # generates data.csv from original.csv
                     else:
                         cd = CruiseDataCSV()  # the data.csv should be a copy of original.csv, at the beggining at least
