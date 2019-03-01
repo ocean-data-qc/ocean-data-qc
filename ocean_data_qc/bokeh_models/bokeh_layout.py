@@ -22,7 +22,31 @@ class BokehLayout(Environment):
     def __init__(self):
         lg.info('-- INIT BOKEH LAYOUT')
         self.env.bk_layout = self
+        self.init_basic_layout()
 
+    def init_basic_layout(self):
+        self.env.tabs_widget_col = column(
+            name='tabs_widget_col',
+            children=[Spacer()]
+        )
+        self.env.doc.add_root(self.env.tabs_widget_col)
+        self.env.sidebar = column(
+            name='sidebar_col',
+            width=250,
+            children=[Spacer()],
+            css_classes=['sidebar_col'],
+        )
+        self.env.doc.add_root(self.env.sidebar)
+
+        # TODO: Add plot styles from the theme.yaml file
+
+        # curdoc().theme = Theme(json=yaml.load("""
+        # attrs:
+        #    DataTable:
+        #        text_font_size: 8pt
+        # """))
+
+    def init_bokeh_layout(self):
         # ---------------------- DATATABLE ----------------------- #
 
         sample_control = row(

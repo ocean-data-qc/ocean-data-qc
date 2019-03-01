@@ -31,26 +31,7 @@ class BokehLoader(Environment):
     def __init__(self):
         lg.info('-- INIT BOKEH LOADER')
         self.env.bk_loader = self
-        self.env.tabs_widget_col = column(
-            name='tabs_widget_col',
-            children=[Spacer()]
-        )
-        self.env.doc.add_root(self.env.tabs_widget_col)
-        self.env.sidebar = column(
-            name='sidebar_col',
-            width=250,
-            children=[Spacer()],
-            css_classes=['sidebar_col'],
-        )
-        self.env.doc.add_root(self.env.sidebar)
-
-        # TODO: Add plot styles from the theme.yaml file
-
-        # curdoc().theme = Theme(json=yaml.load("""
-        # attrs:
-        #    DataTable:
-        #        text_font_size: 8pt
-        # """))
+        BokehLayout()
 
     def init_bokeh(self):
         if self.env.cruise_data is None:
@@ -62,7 +43,7 @@ class BokehLoader(Environment):
         BokehEvents()
         BokehFlags()
         BokehMap()
-        BokehLayout()
+        self.env.bk_layout.init_bokeh_layout()
 
     def reset_bokeh(self):
         ''' Reset the layout values in order to close the project '''
@@ -81,13 +62,22 @@ class BokehLoader(Environment):
 
         self.reset_env()
 
-    def reset_env(self, do_not_reset=[]):
+    def reset_env(self, reset=[]):
         lg.info('-- RESET ENVIRONMENT')
-        if do_not_reset == []:
-            do_not_reset = [
-                'bk_loader', 'doc', 'tabs_widget', 'sidebar', 'bk_bridge',
-                'bridge_row', 'cruise_data', 'files_handler'
-            ]
+        do_not_reset = [
+            'bk_loader',
+            'bk_layout',
+            'sidebar',          # bk_loader
+            'doc',              # bk_bridge
+            'bridge_row',       # bk_bridge
+            'bk_bridge',
+            'cruise_data',      # only if a session is closed or the opening is cancelled
+            'files_handler'     # nothing important in the __init__ method
+        ]
+        if reset != []:
+            for elem in reset:
+                if elem in do_not_reset:
+                    do_not_reset.remove(elem)
         lg.warning('>> ELEMENTS TO RESET: {}'.format(do_not_reset))
         for attr in dir(self.env):
             if attr[:2] != '__':  # to exclude special methods and attributes
@@ -119,11 +109,9 @@ class BokehLoader(Environment):
         CruiseDataHandler()
 
     def reset_env_cruise_data(self):
-        do_not_reset = [
-            'bk_loader', 'doc', 'tabs_widget', 'sidebar', 'bk_bridge',  # some of them should not exist yet
-            'bridge_row', 'files_handler'
-        ]
-        self.reset_env(do_not_reset)
+        lg.warning('-- RESET ENV + CRUISE DATA')
+        self.reset_bokeh()
+        self.reset_env(reset=['cruise_data'])
 
     def reload_bokeh(self):
         lg.info('-- RELOAD BOKEH')
