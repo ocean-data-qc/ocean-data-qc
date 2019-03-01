@@ -29,7 +29,7 @@ class CruiseData(CruiseDataExport):
     env = CruiseDataExport.env
     filepath_or_buffer = None          # implemented in the children
     skiprows = None  # implemented in the children
-    
+
     def __init__(self, original_type=''):
         lg.info('-- INIT CRUISE DATA PARENT')
         self.original_type = original_type      # original.csv type (whp, csv)
@@ -41,6 +41,7 @@ class CruiseData(CruiseDataExport):
         self._validate_original_data()
         self._set_moves()                       # TODO: this is not needed for cd_update
         self._set_df()
+        self._prep_df_columns()
         self.load_file()        # implemented in the children
         return self
 
@@ -259,26 +260,37 @@ class CruiseData(CruiseDataExport):
             )
             lg.info('>> PANDAS using \'python\' engine')
         # lg.info('\n\n>> DF: \n\n{}'.format(self.df))
+
+    def _prep_df_columns(self):
         self.df.replace(r'\s', '', regex=True, inplace=True)  # cleans spaces: \r and \n are managed by read_csv
         self.df.columns = self._sanitize(self.df.columns)  # remove spaces from columns
         self.df.columns = self._sanitize_alternative_names(self.df.columns)
-        self.create_btlnbr_or_sampno_column()
-        self.create_date_column()
+        self._create_btlnbr_or_sampno_column()
+        self._create_date_column()
 
-    def create_btlnbr_or_sampno_column(self):
+    def _create_btlnbr_or_sampno_column(self):
         cols = self.df.columns.tolist()
         if 'BTLNBR' in cols and not 'SAMPNO' in cols:
-            lg.info('>> Generating SAMPNO column from BTLNBR')
-            self.df['SAMPNO']=self.df['BTLNBR']
+            self.df['SAMPNO'] = self.df['BTLNBR']
+            self.add_moves_element(
+                'sampno_column_added',
+                'SAMPNO column was automatically generated from the column BTLNBR'
+            )
         elif not 'BTLNBR' in cols and 'SAMPNO' in cols:
-            lg.info('>> Generating BTLNBR column from SAMPNO')
-            self.df['BTLNBR']=self.df['SAMPNO']
+            self.df['BTLNBR'] = self.df['SAMPNO']
+            self.add_moves_element(
+                'sampno_column_added',
+                'BTLNBR column was automatically generated from the column SAMPNO'
+            )
         elif not 'BTLNBR' in cols and not 'SAMPNO' in cols:
-            lg.info('>> Generating SAMPNO and BTLNBR columns from incremental values')
-            self.df['BTLNBR']=range(len(self.df))
-            self.df['SAMPNO']=range(len(self.df))
+            self.df['BTLNBR'] = range(self.df.index.size)
+            self.df['SAMPNO'] = range(self.df.index.size)
+            self.add_moves_element(
+                'sampno_btlnbr_columns_added',
+                'BTLNBR, SAMPNO column was automatically generated from the column '
+            )
 
-    def create_date_column(self):
+    def _create_date_column(self):
         if 'DATE' not in self.df.columns.tolist():
             lg.info('>> Generating the DATE column from YEAR MONTH and DAY columns')
             try:
