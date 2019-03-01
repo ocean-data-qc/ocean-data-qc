@@ -64,5 +64,7 @@ class BokehLayout(Environment):
 
         tabs_widget_col = self.env.doc.select_one({'name': 'tabs_widget_col'})
         tabs_widget_spacer = tabs_widget_col.select_one({'type': Spacer})
-        tabs_widget_col.children.remove(tabs_widget_spacer)
+
+        if tabs_widget_spacer in tabs_widget_col.children:  # TODO: check why when reloading bokeh spacer is not in the doc
+            tabs_widget_col.children.remove(tabs_widget_spacer)
         tabs_widget_col.children.insert(0, self.env.tabs_widget)

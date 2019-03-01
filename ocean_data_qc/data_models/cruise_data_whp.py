@@ -19,12 +19,29 @@ class CruiseDataWHP(CruiseData):
     '''
     env = CruiseData.env
 
-    def __init__(self, working_dir=TMP):
+    def __init__(self, working_dir=TMP, cd_aux=False):
         lg.info('-- INIT CD WHP')
         self.working_dir = working_dir
         self.filepath_or_buffer = path.join(working_dir, 'original.csv')
         self.skiprows = 1
-        super(CruiseDataWHP, self).__init__(original_type='whp')
+        self._sanitize_original_csv()
+        super(CruiseDataWHP, self).__init__(original_type='whp', cd_aux=cd_aux)
+        self.load_file()
+
+    def _sanitize_original_csv(self):
+        try:
+            lg.info('-- TRYING TO SANITIZE UGLY EXCEL ARTIFACTS IN WHP FILES')
+            with open(self.filepath_or_buffer, 'r', errors='surrogateescape') as f:
+                trim_excel_artifacts = re.compile(r'[\n\r][\s\"]*')
+                buf = trim_excel_artifacts.sub('\n', f.read())
+                buf = re.sub(r'[\n\r]END_DATA[\s\S]*', '\nEND_DATA', buf)
+            with open(self.filepath_or_buffer, 'w', errors='surrogateescape') as f:
+                f.write(buf)
+        except Exception as e:
+            raise ValidationError(
+                'Error trying to sanitize ugly excel artifacts in WHP files: {}'.format(e),
+                rollback='cruise_data'
+            )
 
     def _validate_original_data(self):               # TODO: this should be in each cruise data class
         ''' Checks if all the rows have the same number of elements '''
@@ -73,7 +90,8 @@ class CruiseDataWHP(CruiseData):
         self._convert_data_to_number()
         self._sanitize_flags()
         self._set_hash_ids()
-        self.save_tmp_data()
+        if not self.cd_aux:
+            self.save_tmp_data()
 
     def set_cps(self):
         ''' Adds all the calculated parameters to the DF

@@ -54,94 +54,55 @@ class CruiseDataHandler(Environment):
         }
         return d
 
-    def _init_cruise_data(self):
+    def _init_cruise_data(self, update=False):
         ''' Checks data type and instantiates the appropriate cruise data object
                 `whp` and `raw_csv` (csv) >> process file from scratch and validate data
                 `aqc` >> open directly
+                @update - boolean, whether the instantiated object is to make comparisons or not
         '''
         lg.info('-- INIT CRUISE DATA OBJECT')
-        original_path = path.join(TMP, 'original.csv')
+        if update:
+            rollback = 'cruise_data_update'
+            working_dir = UPD
+            cd_aux = True
+        else:
+            rollback = 'cruise_data'
+            working_dir = TMP
+            cd_aux = False
+        original_path = path.join(working_dir, 'original.csv')
         if path.isfile(original_path):
             if self._is_plain_text(original_path):
                 cd = None
                 is_whp_format = self._is_whp_format(original_path)
-                if path.isfile(path.join(TMP, 'data.csv')):   # aqc or pending session
-                    if is_whp_format:
-                        cd = CruiseDataAQC(
-                            original_type='whp',        # TODO: the original type should be saved in the setting.json somewhere
-                        )
-                    else:
-                        cd = CruiseDataAQC(original_type='csv')
+                if path.isfile(path.join(working_dir, 'data.csv')):   # aqc or pending session
+                    original_type = 'whp' if is_whp_format else 'csv'
+                    cd = CruiseDataAQC(
+                        original_type=original_type,
+                        working_dir=working_dir,
+                        cd_aux=cd_aux
+                    )
                 else:
                     if is_whp_format:
-                        try:
-                            lg.info('-- TRYING TO SANITIZE UGLY EXCEL ARTIFACTS IN WHP FILES')
-                            f = open(original_path, 'r', errors='surrogateescape')
-                            trim_excel_artifacts = re.compile(r'[\n\r][\s\"]*')
-                            buf = trim_excel_artifacts.sub('\n', f.read())
-                            buf = re.sub(r'[\n\r]END_DATA[\s\S]*', '\nEND_DATA', buf)
-                            f.close()
-                            f = open(original_path, 'w', errors='surrogateescape')
-                            f.write(buf)
-                            f.close()
-                        except Exception as e:
-                            lg.info('-- ERROR TRYING TO SANITIZE UGLY EXCEL ARTIFACTS IN WHP FILES: %s', str(e))
-                        cd = CruiseDataWHP()  # generates data.csv from original.csv
+                        # generates data.csv from original.csv
+                        cd = CruiseDataWHP(working_dir=working_dir, cd_aux=cd_aux)
                     else:
-                        cd = CruiseDataCSV()  # the data.csv should be a copy of original.csv, at the beggining at least
+                        # the data.csv should be a copy of original.csv, at the beggining at least
+                        cd = CruiseDataCSV(working_dir=working_dir, cd_aux=cd_aux)
             else:
                 raise ValidationError(
                     'The file to open should be a CSV file.'
                     ' That is a plain text file with comma separate values.',
-                    rollback='cruise_data'
+                    rollback=rollback
                 )
-            self.env.cruise_data = cd
-            ComputedParameter()
-        else:
-            raise ValidationError(
-                'The file could not be open',
-                rollback='cruise_data'
-            )
-
-    def _init_cruise_data_aux(self):
-        ''' Checks data type and instantiates the appropriate cruise data object in order to create the
-                objects to make comparisons and update the current files
-                `whp` and `raw_csv` (csv) >> process file from scratch and validate data
-                `aqc` >> open directly
-        '''
-        lg.info('-- INIT CRUISE DATA OBJECT UPD')
-        original_path = path.join(UPD, 'original.csv')
-        if path.isfile(original_path):
-            if self._is_plain_text(original_path):
-                cd = None
-                is_whp_format = self._is_whp_format(original_path)
-                if path.isfile(path.join(UPD, 'data.csv')):
-                    if is_whp_format:
-                        cd = CruiseDataAQC(
-                            original_type='whp',        # TODO: the original type should be saved in the setting.json somewhere
-                            working_dir=UPD
-                        )
-                    else:
-                        cd = CruiseDataAQC(
-                            original_type='csv',
-                            working_dir=UPD
-                        )
-                else:
-                    if is_whp_format:
-                        cd = CruiseDataWHP(working_dir=UPD)  # generates data.csv from original.csv
-                    else:
-                        cd = CruiseDataCSV(working_dir=UPD)  # the data.csv should be a copy of original.csv, at the beggining at least
+            if not update:
+                self.env.cruise_data = cd
+                ComputedParameter()   # ?? >> computed values may be compared if a new columns was added to the DF
             else:
-                raise ValidationError(
-                    'The file to open should be a CSV file.'
-                    ' That is a plain text file with comma separate values.',
-                    rollback='cruise_data_update'
-                )
-            self.env.cd_aux = cd
+                self.env.cd_aux = cd
         else:
             raise ValidationError(
                 'The file could not be open',
-                rollback='cruise_data_update'
+                rollback=rollback
             )
 
     def _is_plain_text(self, csv_path=''):
@@ -173,8 +134,8 @@ class CruiseDataHandler(Environment):
 
     def compare_data(self):
         lg.info('-- COMPARE DATA')
-        self._init_cruise_data_aux()  # self.env.cd_aux is set here
-        CruiseDataUpdate()            # self.env.cd_update uses cd_aux to make comparisons
+        self._init_cruise_data(update=True)  # self.env.cd_aux is set here
+        CruiseDataUpdate()                   # self.env.cd_update uses cd_aux to make comparisons
         compared_data = self.env.cd_update.get_compared_data()
         return compared_data
 

@@ -24,15 +24,14 @@ import re
 
 class CruiseData(CruiseDataExport):
     ''' This class is gathering all the common methods needed to manage
-        the aqc, csv and whp files
+        the aqc, csv and whp files (instantiated with the children classes)
     '''
     env = CruiseDataExport.env
-    filepath_or_buffer = None          # implemented in the children
-    skiprows = None  # implemented in the children
 
-    def __init__(self, original_type=''):
+    def __init__(self, original_type='', cd_aux=False):
         lg.info('-- INIT CRUISE DATA PARENT')
         self.original_type = original_type      # original.csv type (whp, csv)
+        self.cd_aux = cd_aux
         self.df = None                          # numeric DataFrame
         self.df_str = None                      # string DataFrame
         self.moves = None
@@ -42,7 +41,6 @@ class CruiseData(CruiseDataExport):
         self._set_moves()                       # TODO: this is not needed for cd_update
         self._set_df()
         self._prep_df_columns()
-        self.load_file()        # implemented in the children
         return self
 
     def _set_attributes_from_scratch(self):
@@ -97,6 +95,12 @@ class CruiseData(CruiseDataExport):
     def _add_column(self, column='', units=False):
         ''' Adds a column to the self.cols dictionary
             This dictionary is useful to select some columns by type
+                * required      - required columns
+                * param         - parameter columns
+                * param_flag    - flag columns
+                * qc_param_flag - flag columns created by this app
+                * non_qc_param  - parameters without flag columns associated
+                * computed      - computed parameters
         '''
         if column not in self.get_columns_by_type('all'):
             self.cols[column] = {

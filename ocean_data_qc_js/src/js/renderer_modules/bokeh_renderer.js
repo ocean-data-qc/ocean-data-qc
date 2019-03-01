@@ -66,7 +66,7 @@ ipcRenderer.on('show-modal-close-project-form', (event, arg) => {
 
         $('#modal_no').on('click', function() {
             data.set({'project_state': 'saved'}, loc.shared_data);
-            server_renderer.come_back_to_welcome();
+            server_renderer.come_back_to_welcome(true);  // reset cruise data as well
         });
         $('#modal_trigger_modal_question_form').click();
     });
@@ -152,11 +152,16 @@ ipcRenderer.on('reset-bokeh', function() {
     server_renderer.reset_bokeh();
 });
 
+ipcRenderer.on('reset-bokeh-cruise-data', function() {
+    lg.info('-- CALLING TO RESET BOKEH CRUISE DATA')
+    server_renderer.reset_bokeh_cruise_data();
+});
+
 ipcRenderer.on('show-project-saved-dialog', function() {
     tools.showModal( // send signal
         'INFO',
         'Project saved. Press "Close" in order to come back to the welcome screen',
         null,
-        function() {server_renderer.come_back_to_welcome(); }
+        function() {server_renderer.come_back_to_welcome(true); }
     );
 })

@@ -72,6 +72,19 @@ module.exports = {
         });
     },
 
+    reset_bokeh_cruise_data: function() {
+        var self = this;
+        var call_params = {
+            'object': 'bokeh.loader',
+            'method': 'reset_env_cruise_data',
+        }
+        tools.call_promise(call_params).then((result) => {
+            lg.info('-- RESETING BOKEH AND CRUISE DATA');
+            self.go_to_welcome();
+            ipcRenderer.send('set-main-menu');
+        });
+    },
+
     reload_bokeh: function(callback=null) {
         var self = this;
         self.show_loader();
@@ -120,7 +133,7 @@ module.exports = {
         self.hide_loader();
     },
 
-    come_back_to_welcome: function() {
+    come_back_to_welcome: function(reset_cruise_data=false) {
         lg.info('-- COME BACK TO WELCOME --');
         var self = this;
         document.title = 'AtlantOS Ocean Data QC!';
@@ -134,7 +147,11 @@ module.exports = {
                 return;
             }
             lg.info('Project files deleted');
-            self.reset_bokeh();
+            if (reset_cruise_data) {
+                self.reset_bokeh_cruise_data();
+            } else {
+                self.reset_bokeh();
+            }
         });
     }
 }

@@ -19,7 +19,7 @@ class CruiseDataCSV(CruiseData):
     '''
     env = CruiseData.env
 
-    def __init__(self, working_dir=TMP):
+    def __init__(self, working_dir=TMP, cd_aux=False):
         lg.info('-- INIT CSV')
         self.working_dir = working_dir
         copyfile(
@@ -28,7 +28,8 @@ class CruiseDataCSV(CruiseData):
         )
         self.filepath_or_buffer = path.join(self.working_dir, 'data.csv')
         self.skiprows = 0
-        super(CruiseDataCSV, self).__init__(original_type='csv')
+        super(CruiseDataCSV, self).__init__(original_type='csv', cd_aux=cd_aux)
+        self.load_file()
 
     def _validate_original_data(self):
         ''' Checks if all the rows have the same number of elements '''
@@ -75,7 +76,8 @@ class CruiseDataCSV(CruiseData):
         self._convert_data_to_number()
         self._sanitize_flags()
         self._set_hash_ids()
-        self.save_tmp_data()
+        if not self.cd_aux:
+            self.save_tmp_data()
 
     def set_cps(self):
         ''' Adds all the calculated parameters to the DF

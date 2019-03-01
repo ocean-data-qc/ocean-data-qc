@@ -17,12 +17,13 @@ class CruiseDataAQC(CruiseData):
     '''
     env = CruiseData.env
 
-    def __init__(self, original_type='', working_dir=TMP):
+    def __init__(self, original_type='', working_dir=TMP, cd_aux=False):
         lg.info('-- INIT AQC')
         self.working_dir = working_dir
         self.filepath_or_buffer = path.join(self.working_dir, 'data.csv')  # TODO: original.csv should exists and be the same file??
         self.skiprows = 0
-        super(CruiseDataAQC, self).__init__(original_type=original_type)
+        super(CruiseDataAQC, self).__init__(original_type=original_type, cd_aux=cd_aux)
+        self.load_file()
 
     def _validate_original_data(self):
         ''' Checks if all the rows have the same number of elements

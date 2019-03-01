@@ -34,6 +34,9 @@ class CruiseDataUpdate(Environment):
         lg.info('-- CRUISE DATA UPDATE INIT')
         self.env.cd_update = self
 
+        self.cols_to_compare = [
+            'param', 'param_flag', 'qc_param_flag', 'non_qc_param', 'required'
+        ]
         self.modified = False
         self.new_columns = []
         self.removed_columns = []
@@ -59,8 +62,13 @@ class CruiseDataUpdate(Environment):
                 lg.info('>> THERE ARE CHANGES!!')
 
     def _compute_columns_comparison(self):
-        new_cols = self.env.cd_aux.get_columns_by_type(['param', 'param_flag', 'qc_param_flag'])
-        old_data_cols = self.env.cruise_data.get_columns_by_type(['param', 'param_flag', 'qc_param_flag'])
+        ''' Compare columns
+            Required columns will always exist
+            Computed columns are not taken in consideration
+        '''
+        lg.info('-- COMPUTE COLUMNS COMPARISON')
+        new_cols = self.env.cd_aux.get_columns_by_type(self.cols_to_compare)
+        old_data_cols = self.env.cruise_data.get_columns_by_type(self.cols_to_compare)
         new_cols.sort()                # sort() order the list permanently
         old_data_cols.sort()
         if new_cols != old_data_cols:  # it compares order and values
@@ -80,6 +88,7 @@ class CruiseDataUpdate(Environment):
         # lg.info('>> COLUMNS COMPARISON: new {}, removed {}'.format(self.new_columns, self.removed_columns))
 
     def _compute_rows_comparison(self):
+        lg.info('-- COMPUTE ROWS COMPARISON')
         new_hash_id_list = self.env.cd_aux.df.index.tolist()
         old_has_id_list = self.env.cruise_data.df.index.tolist()
 
@@ -102,9 +111,9 @@ class CruiseDataUpdate(Environment):
         RESET_FLAG_VALUE = 2
         columns = list(
             frozenset(
-                self.env.cd_aux.get_columns_by_type('all')
+                self.env.cd_aux.get_columns_by_type(self.cols_to_compare)
             ).intersection(
-                self.env.cruise_data.get_columns_by_type('all')
+                self.env.cruise_data.get_columns_by_type(self.cols_to_compare)
             )
         )
 
@@ -316,8 +325,8 @@ class CruiseDataUpdate(Environment):
         lg.info('-- Updating rows')
         if new_rows_checked is True and self.new_rows_hash_list != []:
             for hash_id in self.new_rows_hash_list:
-                cd_aux_columns = self.env.cd_aux.get_columns_by_type('all')
-                cd_columns = self.env.cruise_data.get_columns_by_type(['all'])
+                cd_aux_columns = self.env.cd_aux.get_columns_by_type(self.cols_to_compare)
+                cd_columns = self.env.cruise_data.get_columns_by_type(self.cols_to_compare)
                 columns = list(frozenset(cd_aux_columns).intersection(cd_columns))
                 self.env.cruise_data.df.loc[hash_id, columns] = self.env.cd_aux.df.loc[hash_id, columns].tolist()
 
@@ -426,7 +435,7 @@ class CruiseDataUpdate(Environment):
             self.env.cruise_data.add_moves_element(action, description)
 
     def _reset_update_env(self):
-        lg.warning('-- RENAME FILES')
+        lg.info('-- RESET FILES >> store old original csv and remove update folder')
         if self.modified is True:
             if path.isfile(path.join(TMP, 'original.old.csv')):
                 os.remove(path.join(TMP, 'original.old.csv'))  # previous old file stored as history

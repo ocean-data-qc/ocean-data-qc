@@ -308,7 +308,7 @@ module.exports = {
                     });
                     return false;
                 }
-                self.web_contents.send('reset-bokeh');
+                self.web_contents.send('reset-bokeh-cruise-data');
             });
         }
     }

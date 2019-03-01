@@ -88,6 +88,7 @@ class BokehLoader(Environment):
                 'bk_loader', 'doc', 'tabs_widget', 'sidebar', 'bk_bridge',
                 'bridge_row', 'cruise_data', 'files_handler'
             ]
+        lg.warning('>> ELEMENTS TO RESET: {}'.format(do_not_reset))
         for attr in dir(self.env):
             if attr[:2] != '__':  # to exclude special methods and attributes
                 if attr not in do_not_reset:

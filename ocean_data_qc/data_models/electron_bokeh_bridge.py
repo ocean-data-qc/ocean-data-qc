@@ -155,7 +155,7 @@ class ElectronBokehBridge(Environment):
         """
         if params != {}:
             params = json.dumps(params, sort_keys=True)
-        if len(params) < 500:
+        if len(params) < 2000:
             lg.info('>> RUN JS CODE, PARAMS: {}'.format(params))
         else:
             lg.warning('>> Very long string in params')
