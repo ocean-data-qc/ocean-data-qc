@@ -155,7 +155,6 @@ module.exports = {
                 $('#removed_columns_input').attr('disabled', true);
             }
 
-            lg.warn('>> REMOVED CPS: ' + self.comparisons.removed_cps_plotted)
             // REMOVED CPS COLUMNS
             if (self.comparisons.removed_cps_plotted) {
                 var rmvd_ccp_plotted_str = self.comparisons.removed_cps_plotted.join(', ');

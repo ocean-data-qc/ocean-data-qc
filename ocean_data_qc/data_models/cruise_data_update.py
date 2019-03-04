@@ -91,8 +91,6 @@ class CruiseDataUpdate(Environment):
         # checks if some computed cp cannot be computed anymore with the new df
         old_cp_cols = self.env.cruise_data.get_columns_by_type('computed')
         new_cp_cols = self.env.cd_aux.get_columns_by_type('computed')
-        lg.warning('>> OLD CP COLS: {}'.format(old_cp_cols))
-        lg.warning('>> NEW CP COLS: {}'.format(new_cp_cols))
         self.removed_cps_plotted = []
         for old_cp in old_cp_cols:
             if old_cp not in new_cp_cols and old_cp in self.env.cur_plotted_cols:

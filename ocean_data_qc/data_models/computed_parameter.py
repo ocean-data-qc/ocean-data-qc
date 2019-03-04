@@ -84,10 +84,8 @@ class ComputedParameter(Environment):
                 else:
                     lg.warning('>> THE CP {} COULD NOT BE COMPUTED{}'.format(
                         cp['param_name'],
-                        ': {}'.format(result.get('msg', ''))
+                        ': {}'.format(result.get('error', ''))
                     ))
-                    if result.get('error', '') != '':
-                        lg.warning('>> Specific error: {}'.format(result.get('error', '')))
                 return result
 
     def compute_equation(self, args):
