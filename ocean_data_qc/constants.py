@@ -34,7 +34,7 @@ NON_QC_PARAMS = [                                # discovered by usage
     'SECT', 'SECT_ID', 'TIME', 'PH_TMP'
 ]
 
-BASIC_PARAMS = [
+BASIC_PARAMS = [                                # they are created if they do not exist yet
     'CTDSAL', 'SALNTY', 'CTDOXY', 'OXYGEN',
     'NITRAT', 'PHSPHT', 'NITRIT', 'NO2_NO3',
     'CTDPRS', 'DEPTH', 'CTDTMP', 'SAMPNO'

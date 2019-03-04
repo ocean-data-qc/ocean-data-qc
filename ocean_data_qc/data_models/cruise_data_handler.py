@@ -96,7 +96,6 @@ class CruiseDataHandler(Environment):
                 )
             if not update:
                 self.env.cruise_data = cd
-                ComputedParameter()   # ?? >> computed values may be compared if a new columns was added to the DF
             else:
                 self.env.cd_aux = cd
         else:

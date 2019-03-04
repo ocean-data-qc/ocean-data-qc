@@ -34,16 +34,15 @@ else:
 class ComputedParameter(Environment):
     env = Environment
 
-    def __init__(self):
+    def __init__(self, cruise_data=False):
         lg.info('-- INIT COMPUTED PARAMETER')
-        self.env.cp_param = self
         self.sandbox_vars = None
         self.sandbox_funcs = None
-        self.env.cruise_data.set_cps()
+        self.cruise_data = cruise_data
 
     @property
     def proj_settings_cps(self):
-        # TODO: this is executes many time when the app load a file, avoid multiple file reading to improve efficiency
+        # TODO: this is executed many time when the app load a file, avoid multiple file reading to improve efficiency
         try:
             proj_settings = json.load(open(PROJ_SETTINGS))
             return proj_settings['computed_params'] if 'computed_params' in proj_settings else {}
@@ -75,13 +74,20 @@ class ComputedParameter(Environment):
                 }
                 result = self.compute_equation(new_cp)
                 if result.get('success', False):
-                    self.env.cruise_data.cols[val] = {
+                    self.cruise_data.cols[val] = {
                         'types': ['computed'],
                         'unit': cp.get('units', False),
                     }
                     if prevent_save is False:
-                        self.env.cruise_data.save_attributes()
+                        self.cruise_data.save_attributes()
                     lg.info('>> CP ADDED: {}'.format(val))
+                else:
+                    lg.warning('>> THE CP {} COULD NOT BE COMPUTED{}'.format(
+                        cp['param_name'],
+                        ': {}'.format(result.get('msg', ''))
+                    ))
+                    if result.get('error', '') != '':
+                        lg.warning('>> Specific error: {}'.format(result.get('error', '')))
                 return result
 
     def compute_equation(self, args):
@@ -124,7 +130,7 @@ class ComputedParameter(Environment):
 
         # check if all the identifiers are in the df
         for i in ids:
-            if i not in self.env.cruise_data.df.columns:  # already calculated parameters also can be use as columns
+            if i not in self.cruise_data.df.columns:  # already calculated parameters also can be use as columns
                 return {
                     'success': False,
                     'msg': 'Some identifiers do not exist in the current dataframe',
@@ -133,7 +139,7 @@ class ComputedParameter(Environment):
         eq = '{} = {}'.format(computed_param_name, eq)
         # lg.info('>> EQUATION: {}'.format(eq))
         try:
-            self.env.cruise_data.df.eval(
+            self.cruise_data.df.eval(
                 expr=eq,
                 engine='python',                 # NOTE: numexpr does not support custom functions
                 inplace=True,
@@ -141,16 +147,16 @@ class ComputedParameter(Environment):
                 global_dict=self.sandbox_vars
             )
         except Exception as e:
-            lg.warning('>> THE CP {} COULD NOT BE CALCULATED: {}'.format(computed_param_name, e))
+            # lg.warning('>> THE CP {} COULD NOT BE CALCULATED: {}'.format(computed_param_name, e))
             return {
                 'success': False,
                 'msg': 'The equation could not be computed: {}'.format(eq),
                 'error': '{}'.format(e),
             }
-        if computed_param_name == 'AUX' and 'AUX' in self.env.cruise_data.df.columns:
-            del self.env.cruise_data.df['AUX']
+        if computed_param_name == 'AUX' and 'AUX' in self.cruise_data.df.columns:
+            del self.cruise_data.df['AUX']
         else:
-            self.env.cruise_data.df = self.env.cruise_data.df.round({computed_param_name: precision})
+            self.cruise_data.df = self.cruise_data.df.round({computed_param_name: precision})
 
         return {
             'success': True,
@@ -260,11 +266,11 @@ class ComputedParameter(Environment):
 
     def get_all_parameters(self):
         lg.info('-- GET ALL PARAMETERS')
-        cols = self.env.cruise_data.get_columns_by_type(
+        cols = self.cruise_data.get_columns_by_type(
             ['param', 'param_flag', 'qc_param_flag', 'non_qc_param', 'required']
         )
         deps = self.check_dependencies()
-        cp_cols = self.env.cruise_data.get_columns_by_type('computed')
+        cp_cols = self.cruise_data.get_columns_by_type('computed')
         return dict(
             columns=cols,
             dependencies=deps,
@@ -279,12 +285,12 @@ class ComputedParameter(Environment):
         '''
         lg.info('-- DELETE COMPUTED PARAMETER')
         value = args.get('value', False)
-        current_columns = self.env.cruise_data.get_columns_by_type(['all'])
+        current_columns = self.cruise_data.get_columns_by_type(['all'])
         if value in current_columns:
             try:
-                if value in self.env.cruise_data.df.columns:
-                    del self.env.cruise_data.df[value]
-                del self.env.cruise_data.cols[value]
+                if value in self.cruise_data.df.columns:
+                    del self.cruise_data.df[value]
+                del self.cruise_data.cols[value]
                 return {
                     'success': True,
                 }

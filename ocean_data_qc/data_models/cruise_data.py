@@ -41,6 +41,7 @@ class CruiseData(CruiseDataExport):
         self._set_moves()                       # TODO: this is not needed for cd_update
         self._set_df()
         self._prep_df_columns()
+        self.cp_param = ComputedParameter(self)
         return self
 
     def _set_attributes_from_scratch(self):
@@ -166,6 +167,13 @@ class CruiseData(CruiseDataExport):
             with open(path.join(TMP, 'attributes.json'), 'r') as f:
                 attr = json.load(f)
             self.cols = attr
+
+    def get_column_type(self, column=''):
+        ''' Return a list of column types associated to argument '''
+        if column in self.cols:
+            return self.cols[column]['types']
+        else:
+            return False
 
     def get_columns_by_type(self, column_types=[], discard_nan=False):
         ''' Possible types:
@@ -488,3 +496,33 @@ class CruiseData(CruiseDataExport):
             self.moves.loc[last_pos + 1] = [date, action, '', '', '', '', '', '', '', description]  # fastest way to add a row at the end
         else:
             self.moves.loc[0] = [date, action, '', '', '', '', '', '', '', description]
+
+    def recompute_cps(self):
+        ''' Compute all the calculated parameters again. Mainly after a cruise data update
+
+            NOTE: what should happen if some column cannot be computed?
+                  - Check if it is plotted in order to remove the plots?
+                  - Show a error message (now only a warning appears)
+        '''
+        lg.info('-- RECOMPUTE CP PARAMETERS')
+        cp_params = self.env.cruise_data.get_columns_by_type('computed')
+        for c in cp_params:
+            del self.cols[c]
+        for c in self.cp_param.proj_settings_cps:
+            if c['param_name'] not in self.env.cruise_data.cols:
+                res = self.cp_param.add_computed_parameter({
+                    'value': c['param_name'],
+                    'prevent_save': True
+                })
+                if res.get('success', False) is False:
+                    # TODO: check if the equation has to be removed from the plots first
+                    raise ValidationError(
+                        'The equation cannot be computed with the new changes.'
+                        ' Remove it from the shown plots first'
+                    )
+            return {
+                'success': False,
+                'msg': 'The equation could not be computed: {}'.format(eq),
+                'error': '{}'.format(e),
+            }
+        self.env.cruise_data.save_attributes()

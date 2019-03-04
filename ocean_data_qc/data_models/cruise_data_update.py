@@ -40,6 +40,7 @@ class CruiseDataUpdate(Environment):
         self.modified = False
         self.new_columns = []
         self.removed_columns = []
+        self.removed_cps_plotted = []
         self.new_rows = 0
         self.removed_rows = 0
         self.different_values_number = 0
@@ -65,12 +66,14 @@ class CruiseDataUpdate(Environment):
         ''' Compare columns
             Required columns will always exist
             Computed columns are not taken in consideration
+
+             # compare a computed param only if the self.cruise_data.df column is a param column
         '''
         lg.info('-- COMPUTE COLUMNS COMPARISON')
-        new_cols = self.env.cd_aux.get_columns_by_type(self.cols_to_compare)
         old_data_cols = self.env.cruise_data.get_columns_by_type(self.cols_to_compare)
-        new_cols.sort()                # sort() order the list permanently
         old_data_cols.sort()
+        new_cols = self.env.cd_aux.get_columns_by_type(self.cols_to_compare)
+        new_cols.sort()
         if new_cols != old_data_cols:  # it compares order and values
             for column in new_cols:
                 if column not in old_data_cols:
@@ -84,6 +87,16 @@ class CruiseDataUpdate(Environment):
         for rc in self.removed_columns:
             if rc in self.env.cur_plotted_cols:
                 self.removed_columns_plotted = True
+
+        # checks if some computed cp cannot be computed anymore with the new df
+        old_cp_cols = self.env.cruise_data.get_columns_by_type('computed')
+        new_cp_cols = self.env.cd_aux.get_columns_by_type('computed')
+        lg.warning('>> OLD CP COLS: {}'.format(old_cp_cols))
+        lg.warning('>> NEW CP COLS: {}'.format(new_cp_cols))
+        self.removed_cps_plotted = []
+        for old_cp in old_cp_cols:
+            if old_cp not in new_cp_cols and old_cp in self.env.cur_plotted_cols:
+                self.removed_cps_plotted.append(old_cp)
 
         # lg.info('>> COLUMNS COMPARISON: new {}, removed {}'.format(self.new_columns, self.removed_columns))
 
@@ -436,6 +449,7 @@ class CruiseDataUpdate(Environment):
 
     def _reset_update_env(self):
         lg.info('-- RESET FILES >> store old original csv and remove update folder')
+        self.env.cruise_data.recompute_cps()
         if self.modified is True:
             if path.isfile(path.join(TMP, 'original.old.csv')):
                 os.remove(path.join(TMP, 'original.old.csv'))  # previous old file stored as history
@@ -460,6 +474,7 @@ class CruiseDataUpdate(Environment):
             'new_columns': self.new_columns,
             'removed_columns': self.removed_columns,
             'removed_columns_plotted': self.removed_columns_plotted,
+            'removed_cps_plotted': self.removed_cps_plotted,
             'new_rows': self.new_rows,
             'removed_rows': self.removed_rows,
             'different_values_number': self.different_values_number,

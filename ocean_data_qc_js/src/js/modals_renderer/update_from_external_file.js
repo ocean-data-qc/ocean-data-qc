@@ -155,6 +155,28 @@ module.exports = {
                 $('#removed_columns_input').attr('disabled', true);
             }
 
+            lg.warn('>> REMOVED CPS: ' + self.comparisons.removed_cps_plotted)
+            // REMOVED CPS COLUMNS
+            if (self.comparisons.removed_cps_plotted) {
+                var rmvd_ccp_plotted_str = self.comparisons.removed_cps_plotted.join(', ');
+                lg.warn('>> REMOVED CPS STR: ' + rmvd_ccp_plotted_str);
+                $('#removed_columns_value').closest('tbody').append($('<tr>').append($('<td>', {
+                        colspan: '3',
+                        style: 'background-color: white; padding-left: 0px; border: 0;'
+                    }).append($('<div>', {
+                                class: 'alert alert-warning',
+                                role: 'alert',
+                                html: '<strong>Warning!</strong> Remove the following calculated columns '
+                                      + 'from the layout first in order to remove them from the DataFrame. '
+                                      + 'They cannot be calculated if the columns are removed: '
+                                      + rmvd_ccp_plotted_str
+                            })
+                        )
+                    )
+                );
+                $('#removed_columns_input').attr('disabled', true);
+            }
+
             // NEW ROWS
             if (self.comparisons.new_rows != 0) {
                 $('#new_rows_value').text(self.comparisons.new_rows);

@@ -24,7 +24,7 @@ class ValidationError(Exception, Environment):
 
     def _cruise_data_rollback(self):
         self.env.cruise_data = None
-        self.env.cp_param = None
+        self.env.cruise_data.cp_param = None
         self.env.files_handler.remove_tmp_folder()
         self.env.bk_bridge.show_default_cursor()
 

@@ -122,7 +122,7 @@ class ElectronBokehBridge(Environment):
         elif obj == 'bokeh.loader':
             method = getattr(self.env.bk_loader, method_str)
         elif obj == 'computed.parameter':
-            method = getattr(self.env.cp_param, method_str)
+            method = getattr(self.env.cruise_data.cp_param, method_str)
         # elif obj == 'computed.parameter':
         #     method = getattr(self.plot.cruisedata.cp, method)
 
