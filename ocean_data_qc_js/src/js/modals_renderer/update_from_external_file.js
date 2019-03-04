@@ -156,7 +156,7 @@ module.exports = {
             }
 
             // REMOVED CPS COLUMNS
-            if (self.comparisons.removed_cps_plotted) {
+            if (self.comparisons.removed_cps_plotted.length > 0) {
                 var rmvd_ccp_plotted_str = self.comparisons.removed_cps_plotted.join(', ');
                 lg.warn('>> REMOVED CPS STR: ' + rmvd_ccp_plotted_str);
                 $('#removed_columns_value').closest('tbody').append($('<tr>').append($('<td>', {

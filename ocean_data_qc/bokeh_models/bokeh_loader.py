@@ -78,7 +78,7 @@ class BokehLoader(Environment):
             for elem in reset:
                 if elem in do_not_reset:
                     do_not_reset.remove(elem)
-        lg.warning('>> ELEMENTS TO RESET: {}'.format(do_not_reset))
+        # lg.warning('>> ELEMENTS TO RESET: {}'.format(do_not_reset))
         for attr in dir(self.env):
             if attr[:2] != '__':  # to exclude special methods and attributes
                 if attr not in do_not_reset:

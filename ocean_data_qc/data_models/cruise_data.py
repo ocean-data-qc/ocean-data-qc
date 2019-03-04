@@ -509,20 +509,15 @@ class CruiseData(CruiseDataExport):
         for c in cp_params:
             del self.cols[c]
         for c in self.cp_param.proj_settings_cps:
-            if c['param_name'] not in self.env.cruise_data.cols:
+            if c['param_name'] not in self.cols:  # exclude the computed parameters
                 res = self.cp_param.add_computed_parameter({
                     'value': c['param_name'],
                     'prevent_save': True
                 })
                 if res.get('success', False) is False:
-                    # TODO: check if the equation has to be removed from the plots first
-                    raise ValidationError(
-                        'The equation cannot be computed with the new changes.'
-                        ' Remove it from the shown plots first'
-                    )
-            return {
-                'success': False,
-                'msg': 'The equation could not be computed: {}'.format(eq),
-                'error': '{}'.format(e),
-            }
+                    if c['param_name'] in self.env.cur_plotted_cols:
+                        raise ValidationError(
+                            'The equation cannot be computed with the new changes.'
+                            ' Remove it from the shown plots first'
+                        )
         self.env.cruise_data.save_attributes()

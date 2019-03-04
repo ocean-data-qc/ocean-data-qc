@@ -371,12 +371,11 @@ class CruiseDataUpdate(Environment):
                         self.env.cruise_data.df[column] = self.env.cruise_data.df.index.size * [9]
                     else:
                         self.env.cruise_data.df[column] = self.env.cruise_data.df.index.size * [np.nan]
-                    self.env.cruise_data._add_column(column)  # if it is flag is checked inside
-                    for i in self.env.cruise_data.df.index.tolist():
+                    self.env.cruise_data._add_column(column)  # if the column is a flag column is already marked inside
+
+                    for i in self.env.cruise_data.df.index.tolist():  # copy all the cell elements one by one
                         if i in self.env.cd_aux.df.index:
                             self.env.cruise_data.df.loc[i, column] = self.env.cd_aux.df.loc[i, column]
-
-                    # TODO: add to self.env.cruise_data.cols as well right??
 
             if removed_columns_checked is True and self.removed_columns != []:
                 for column in self.removed_columns:
@@ -463,6 +462,7 @@ class CruiseDataUpdate(Environment):
             shutil.rmtree(UPD)
         self.env.cd_update = None
         self.env.cd_aux = None
+        self.env.cruise_data.cp_param = None
 
         # TODO: raise error if the file is in use (windows) or wrong permissions (unix)
 
