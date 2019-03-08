@@ -29,7 +29,7 @@
   width: 16px;
   height: 16px;
   left: 0;
-  top: 2px;
+  top: 3px;             /* FIX TOP */
   margin-left: -1.25rem;
   padding-left: 3px;
   padding-top: 1px;

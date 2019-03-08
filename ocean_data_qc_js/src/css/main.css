@@ -469,3 +469,9 @@ select[name='all_computed_param'] {
     background-image: linear-gradient(#d9534f, transparent);
     transform: rotate(90deg);
 }
+
+/* Awesome bootstrap checkbox (fix top) */
+
+.abc-checkbox label::after {
+    top: 3px !important;
+}
