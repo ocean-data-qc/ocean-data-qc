@@ -17,14 +17,13 @@ class ValidationError(Exception, Environment):
     def __init__(self, value, rollback=False):
         lg.error('-- Validation error: {}'.format(value))
         self.value = value
-        if rollback == 'cruise_data':
+        if rollback == 'cd':
             self._cruise_data_rollback()
-        elif rollback == 'cruise_data_update':
+        elif rollback == 'cd_update':
             self._cruise_data_update_rollback()
 
     def _cruise_data_rollback(self):
         self.env.cruise_data = None
-        self.env.cruise_data.cp_param = None
         self.env.files_handler.remove_tmp_folder()
         self.env.bk_bridge.show_default_cursor()
 

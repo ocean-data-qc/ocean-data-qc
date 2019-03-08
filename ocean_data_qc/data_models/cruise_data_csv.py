@@ -21,6 +21,7 @@ class CruiseDataCSV(CruiseData):
 
     def __init__(self, working_dir=TMP, cd_aux=False):
         lg.info('-- INIT CSV')
+        self.rollback = 'cd' if self.cd_aux is False else 'cd_update'
         self.working_dir = working_dir
         copyfile(
             path.join(self.working_dir, 'original.csv'),
@@ -45,7 +46,7 @@ class CruiseDataCSV(CruiseData):
                         'Some header column name is missing: ROW = {} | COL = {}'.format(
                             row_number, row.index('') + 1
                         ),
-                        rollback='cruise_data'
+                        rollback=self.rollback
                     )
                     break                               # interrupt for loop
 
@@ -62,7 +63,7 @@ class CruiseDataCSV(CruiseData):
                             ' The number of header columns fields is: {}'.format(
                                 len(row), row_number, first_len
                             ),
-                            rollback='cruise_data'
+                            rollback=self.rollback
                         )
                         break                               # interrupt for loop
                 row_number += 1

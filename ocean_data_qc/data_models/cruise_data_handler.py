@@ -42,7 +42,7 @@ class CruiseDataHandler(Environment):
                 'There should be at least one parameter with data, '
                 'in addition to the required columns and the parameters that'
                 ' should not have a QC column associated.',
-                rollback='cruise_data'
+                rollback='cd'
             )
         d = {
             'cps': self.env.cruise_data.get_cols_by_type('computed'),
@@ -62,11 +62,11 @@ class CruiseDataHandler(Environment):
         '''
         lg.info('-- INIT CRUISE DATA OBJECT')
         if update:
-            rollback = 'cruise_data_update'
+            rollback = 'cd_update'
             working_dir = UPD
             cd_aux = True
         else:
-            rollback = 'cruise_data'
+            rollback = 'cd'
             working_dir = TMP
             cd_aux = False
         original_path = path.join(working_dir, 'original.csv')

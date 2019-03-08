@@ -52,7 +52,7 @@ class ComputedParameter(Environment):
         except Exception:
             raise ValidationError(
                 'Project JSON settings file could be opened to process the calculated parameters',
-                rollback='cruise_data'  # TODO: only if we are loading the files in the initialization
+                rollback='cd'  # TODO: only if we are loading the files in the initialization
             )
 
     def add_computed_parameter(self, arg):

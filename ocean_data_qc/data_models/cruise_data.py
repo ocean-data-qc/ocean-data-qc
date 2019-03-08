@@ -324,7 +324,7 @@ class CruiseData(CruiseDataExport):
                 raise ValidationError(
                     'DATE column did not exist and it could not be created. And that is a required column'
                     ' from YEAR, MONTH and DAY columns: [{}]'.format(missing_columns),
-                    rollback='cruise_data'
+                    rollback=self.rollback
                 )
 
     def _set_moves(self):
@@ -365,7 +365,7 @@ class CruiseData(CruiseDataExport):
             missing_columns = ', '.join(list(set(REQUIRED_COLUMNS) - set(self.get_cols_by_type('all'))))
             raise ValidationError(
                 'Missing required columns in the file: [{}]'.format(missing_columns),
-                rollback='cruise_data'
+                rollback=self.rollback
             )
 
     def _sanitize_cols(self, names):

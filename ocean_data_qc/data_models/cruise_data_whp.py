@@ -21,6 +21,7 @@ class CruiseDataWHP(CruiseData):
 
     def __init__(self, working_dir=TMP, cd_aux=False):
         lg.info('-- INIT CD WHP')
+        self.rollback = 'cd' if self.cd_aux is False else 'cd_update'
         self.working_dir = working_dir
         self.filepath_or_buffer = path.join(working_dir, 'original.csv')
         self.skiprows = 1
@@ -40,7 +41,7 @@ class CruiseDataWHP(CruiseData):
         except Exception as e:
             raise ValidationError(
                 'Error trying to sanitize ugly excel artifacts in WHP files: {}'.format(e),
-                rollback='cruise_data'
+                rollback=self.rollback
             )
 
     def _validate_original_data(self):               # TODO: this should be in each cruise data class
@@ -61,7 +62,7 @@ class CruiseDataWHP(CruiseData):
                             'Some header column name is missing: FILE ROW = {} | COL = {}'.format(
                                 row_number, row.index('') + 1
                             ),
-                            rollback='cruise_data'
+                            rollback='cd'
                         )
                         break                               # interrupt for loop
                     if header is True:
@@ -76,7 +77,7 @@ class CruiseDataWHP(CruiseData):
                                 ' The number of header columns fields is: {}'.format(
                                     len(row), row_number, first_len
                                 ),
-                                rollback='cruise_data'
+                                rollback=self.rollback
                             )
                             break                               # interrupt for loop
                 row_number += 1
