@@ -38,13 +38,27 @@ class CruiseDataUpdate(Environment):
             'param', 'param_flag', 'qc_param_flag', 'non_qc_param', 'required'
         ]
         self.modified = False
-        self.new_columns = []
-        self.removed_columns = []
-        self.removed_cps_plotted = []
-        self.new_rows = 0
-        self.removed_rows = 0
-        self.different_values_number = 0
-        self.different_values_pairs = []
+
+        # COLUMNS
+        self.add_cols = []
+        self.rmv_cols = []
+        self.rmv_plot_cols = []
+        self.rmv_plot_cps = []
+
+        # TODO: do not break couples (param, associated flags)?
+        # self.fg_to_rmv = []         # if a param is removed but the flag column associated is kept
+        # self.fg_to_reset = []       # if a flag column is removed but its param is kept
+
+        # self.fg_to_create = []    # TODO: a param is added without associated flag >> this flag is created automatically in cd_aux
+        # self.fg_to_ignore = []    # TODO: create flag column with 'ignore' type in self.cols
+
+        # ROWS
+        self.add_rows = 0
+        self.rmv_rows = 0
+
+        # VALUES
+        self.diff_val_qty = 0
+        self.diff_val_pairs = []
         self._compute_comparison()
 
     def _compute_comparison(self):
@@ -58,7 +72,7 @@ class CruiseDataUpdate(Environment):
             self._compute_rows_comparison()
             self._compute_values_comparison()
 
-            if self.new_columns or self.removed_columns or self.new_rows or self.removed_rows or self.different_values_number:
+            if self.add_cols or self.rmv_cols or self.add_rows or self.rmv_rows or self.diff_val_qty:
                 self.modified = True
                 lg.info('>> THERE ARE CHANGES!!')
 
@@ -70,33 +84,36 @@ class CruiseDataUpdate(Environment):
              # compare a computed param only if the self.cruise_data.df column is a param column
         '''
         lg.info('-- COMPUTE COLUMNS COMPARISON')
-        old_data_cols = self.env.cruise_data.get_columns_by_type(self.cols_to_compare)
+        old_data_cols = self.env.cruise_data.get_cols_by_type(self.cols_to_compare)
         old_data_cols.sort()
-        new_cols = self.env.cd_aux.get_columns_by_type(self.cols_to_compare)
+        new_cols = self.env.cd_aux.get_cols_by_type(self.cols_to_compare)
         new_cols.sort()
         if new_cols != old_data_cols:  # it compares order and values
             for column in new_cols:
                 if column not in old_data_cols:
-                    self.new_columns.append(column)
+                    self.add_cols.append(column)
+
             for column in old_data_cols:
                 if column not in new_cols:
-                    self.removed_columns.append(column)
+                    self.rmv_cols.append(column)
+
+            # TODO: check if some of the rmv_cols do not have associated couple
+            #       in order to show warnings
 
         # Checks if the removed columns are plotted
-        self.removed_columns_plotted = False
-        for rc in self.removed_columns:
+        for rc in self.rmv_cols:
             if rc in self.env.cur_plotted_cols:
-                self.removed_columns_plotted = True
+                self.rmv_plot_cols.append(rc)
 
         # checks if some computed cp cannot be computed anymore with the new df
-        old_cp_cols = self.env.cruise_data.get_columns_by_type('computed')
-        new_cp_cols = self.env.cd_aux.get_columns_by_type('computed')
-        self.removed_cps_plotted = []
+        old_cp_cols = self.env.cruise_data.get_cols_by_type('computed')
+        new_cp_cols = self.env.cd_aux.get_cols_by_type('computed')
+        self.rmv_plot_cps = []
         for old_cp in old_cp_cols:
             if old_cp not in new_cp_cols and old_cp in self.env.cur_plotted_cols:
-                self.removed_cps_plotted.append(old_cp)
+                self.rmv_plot_cps.append(old_cp)
 
-        # lg.info('>> COLUMNS COMPARISON: new {}, removed {}'.format(self.new_columns, self.removed_columns))
+        # lg.info('>> COLUMNS COMPARISON: new {}, removed {}'.format(self.add_cols, self.rmv_cols))
 
     def _compute_rows_comparison(self):
         lg.info('-- COMPUTE ROWS COMPARISON')
@@ -105,13 +122,13 @@ class CruiseDataUpdate(Environment):
 
         # a frozenset is more efficient than a list or than a simple set
         difference_list = frozenset(old_has_id_list).difference(new_hash_id_list)
-        self.removed_rows = len(difference_list)
-        self.removed_rows_hash_list = difference_list
+        self.rmv_rows = len(difference_list)
+        self.rmv_rows_hash_list = difference_list
         lg.info('>> REMOVED ROWS: {}'.format(len(difference_list)))
 
         reverse_difference_list = frozenset(new_hash_id_list).difference(old_has_id_list)
-        self.new_rows = len(reverse_difference_list)
-        self.new_rows_hash_list = reverse_difference_list
+        self.add_rows = len(reverse_difference_list)
+        self.add_rows_hash_list = reverse_difference_list
         lg.info('>> NEW ROWS: {}'.format(len(reverse_difference_list)))
 
     def _compute_values_comparison(self):
@@ -122,9 +139,9 @@ class CruiseDataUpdate(Environment):
         RESET_FLAG_VALUE = 2
         columns = list(
             frozenset(
-                self.env.cd_aux.get_columns_by_type(self.cols_to_compare)
+                self.env.cd_aux.get_cols_by_type(self.cols_to_compare)
             ).intersection(
-                self.env.cruise_data.get_columns_by_type(self.cols_to_compare)
+                self.env.cruise_data.get_cols_by_type(self.cols_to_compare)
             )
         )
 
@@ -152,24 +169,24 @@ class CruiseDataUpdate(Environment):
 
                 if not self._are_equal(new_scalar, old_scalar):
                     if nan_different or not (np.isnan(new_scalar) and np.isnan(old_scalar)):
-                        if (hash_id, column) not in self.different_values_pairs: # is this possible?
-                            self.different_values_number += 1
-                            self.different_values_pairs.append((hash_id, column))
+                        if (hash_id, column) not in self.diff_val_pairs: # is this possible?
+                            self.diff_val_qty += 1
+                            self.diff_val_pairs.append((hash_id, column))
                             lg.info('>> POS: ({}, {}) - NEW VALUE: {} - OLD VALUE: {}'.format(
                                 hash_id, column, new_scalar, old_scalar
                             ))
 
                         # the column flag has to be reset by default
                         # unless the whole flag column was added or the flag cell was modified
-                        if column in self.env.cruise_data.get_columns_by_type(['param']):
+                        if column in self.env.cruise_data.get_cols_by_type(['param']):
                             flag_column = column + FLAG_END
-                            if flag_column in self.env.cruise_data.get_columns_by_type(['param_flag']):
-                                if (hash_id, flag_column) not in self.different_values_pairs:
-                                    if flag_column in self.env.cd_aux.get_columns_by_type('param_flag'):
-                                        if flag_column not in self.new_columns:
+                            if flag_column in self.env.cruise_data.get_cols_by_type(['param_flag']):
+                                if (hash_id, flag_column) not in self.diff_val_pairs:
+                                    if flag_column in self.env.cd_aux.get_cols_by_type('param_flag'):
+                                        if flag_column not in self.add_cols:
                                             if self.env.cd_aux.df.loc[hash_id, flag_column] != RESET_FLAG_VALUE:
-                                                self.different_values_number += 1
-                                                self.different_values_pairs.append((hash_id, column))
+                                                self.diff_val_qty += 1
+                                                self.diff_val_pairs.append((hash_id, column))
                                                 self.env.cd_aux.df.loc[hash_id, flag_column] = RESET_FLAG_VALUE
                                                 lg.info('>> FLAG RESET POS: HASH: {} FLAG COLUMN: {}'.format(
                                                     hash_id, flag_column
@@ -225,7 +242,7 @@ class CruiseDataUpdate(Environment):
         HASH = 0
         COL = 1
         self.diff_values = {}
-        for pair in self.different_values_pairs:
+        for pair in self.diff_val_pairs:
             stt = str(int(self.env.cd_aux.df.loc[pair[HASH], 'STNNBR']))  # the stt should be always integers?
             col = pair[COL]
             hash_id = pair[HASH]
@@ -301,11 +318,11 @@ class CruiseDataUpdate(Environment):
 
             The parameters sent (params dictionary) are boolean values, for example if everything should be saved:
             params = {
-                'new_columns': true,
-                'removed_columns': true,
-                'new_rows': true,
-                'removed_rows': true,
-                'different_values_number': true,
+                'add_cols': true,
+                'rmv_cols': true,
+                'add_rows': true,
+                'rmv_rows': true,
+                'diff_val_qty': true,
                 'diff_values': {}     # dict with the accepted values
             }
         """
@@ -313,16 +330,16 @@ class CruiseDataUpdate(Environment):
 
         if params != {}:
             self._update_rows(
-                new_rows_checked=params['new_rows'],
-                removed_rows_checked=params['removed_rows']
+                add_rows_checked=params['add_rows'],
+                rmv_rows_checked=params['rmv_rows']
             )
             self._update_columns(
-                new_columns_checked=params['new_columns'],
-                removed_columns_checked=params['removed_columns']
+                add_cols_checked=params['add_cols'],
+                rmv_cols_checked=params['rmv_cols']
             )
             diff_values = params['diff_values'] if 'diff_values' in params else {}
             self._update_values(
-                different_values_number=params['different_values_number'],
+                diff_val_qty=params['diff_val_qty'],
                 diff_values=diff_values
             )
 
@@ -332,38 +349,38 @@ class CruiseDataUpdate(Environment):
         self.env.cruise_data.save_tmp_data()
         self._reset_update_env()
 
-    def _update_rows(self, new_rows_checked=False, removed_rows_checked=False):
+    def _update_rows(self, add_rows_checked=False, rmv_rows_checked=False):
         lg.info('-- Updating rows')
-        if new_rows_checked is True and self.new_rows_hash_list != []:
-            for hash_id in self.new_rows_hash_list:
-                cd_aux_columns = self.env.cd_aux.get_columns_by_type(self.cols_to_compare)
-                cd_columns = self.env.cruise_data.get_columns_by_type(self.cols_to_compare)
+        if add_rows_checked is True and self.add_rows_hash_list != []:
+            for hash_id in self.add_rows_hash_list:
+                cd_aux_columns = self.env.cd_aux.get_cols_by_type(self.cols_to_compare)
+                cd_columns = self.env.cruise_data.get_cols_by_type(self.cols_to_compare)
                 columns = list(frozenset(cd_aux_columns).intersection(cd_columns))
                 self.env.cruise_data.df.loc[hash_id, columns] = self.env.cd_aux.df.loc[hash_id, columns].tolist()
 
                 # NOTE: when there is a new row but we do not have value in the flag column: NaN >> 9
-                cd_aux_flag_columns = self.env.cd_aux.get_columns_by_type(['param_flag', 'qc_param_flag'])
-                cd_flag_columns = self.env.cruise_data.get_columns_by_type(['param_flag', 'qc_param_flag'])
+                cd_aux_flag_columns = self.env.cd_aux.get_cols_by_type(['param_flag', 'qc_param_flag'])
+                cd_flag_columns = self.env.cruise_data.get_cols_by_type(['param_flag', 'qc_param_flag'])
                 flag_cols = [col for col in cd_flag_columns if col not in cd_aux_flag_columns]
                 self.env.cruise_data.df.loc[hash_id, flag_cols] = 9
 
-            lg.info('>> Rows added: {}'.format(list(self.new_rows_hash_list)))
+            lg.info('>> Rows added: {}'.format(list(self.add_rows_hash_list)))
 
-        if removed_rows_checked is True and self.removed_rows_hash_list != []:
-            for hash_id in self.removed_rows_hash_list:
+        if rmv_rows_checked is True and self.rmv_rows_hash_list != []:
+            for hash_id in self.rmv_rows_hash_list:
                 self.env.cruise_data.df = self.env.cruise_data.df.drop(hash_id)  # assignation needed
-            lg.info('>> Rows removed: {}'.format(list(self.removed_rows_hash_list)))
+            lg.info('>> Rows removed: {}'.format(list(self.rmv_rows_hash_list)))
 
-    def _update_columns(self, new_columns_checked=False, removed_columns_checked=False):
+    def _update_columns(self, add_cols_checked=False, rmv_cols_checked=False):
         """ It updates the old_data object adding or removing columns
-            that are in the new object (self in this case)
+            that are in the new object (self.env.cd_aux)
         """
         lg.info('-- UPDATE COLUMNS')
 
         # I have to add the columns manually because other way I cannot assign the units well in the right position
-        if new_columns_checked is True or removed_columns_checked is True:
-            if new_columns_checked is True and self.new_columns != []:
-                for column in self.new_columns:
+        if add_cols_checked is True or rmv_cols_checked is True:
+            if add_cols_checked is True and self.add_cols != []:
+                for column in self.add_cols:
                     self.env.cruise_data.cols[column] = self.env.cd_aux.cols[column]      # TODO: is it copied the full element or only a reference?
 
                     # TODO: update values per hash_id one by one, because they may have different rows
@@ -377,30 +394,53 @@ class CruiseDataUpdate(Environment):
                         if i in self.env.cd_aux.df.index:
                             self.env.cruise_data.df.loc[i, column] = self.env.cd_aux.df.loc[i, column]
 
-            if removed_columns_checked is True and self.removed_columns != []:
-                for column in self.removed_columns:
-                    if column in self.env.cruise_data.get_columns_by_type(['param']):
-                        column_flag = column + FLAG_END
-                        if column_flag not in self.removed_columns:
-                            if column_flag in self.env.cruise_data.get_columns_by_type(['param_flag']):
-                                del self.env.cruise_data.cols[column_flag]  # if the param column is deleted, then the flag is also deleted
-                                del self.env.cruise_data.df[column_flag]    # if they are not in the removed columns
+            if rmv_cols_checked is True and self.rmv_cols != []:
+                col_flag_rmv = []
+                do_not_rmv = []
+                for column in self.rmv_cols:
+                    # REMOVES PARAM AND FLAG
+                    if column in self.env.cruise_data.get_cols_by_type(['param']):
+
+                        # TODO: keep the flag for now
+                        # column_flag = column + FLAG_END
+                        # if column_flag not in self.rmv_cols:
+                        #     col_flag_rmv.append.append(column_flag)  # TODO: this should be added in the method compare_columns to show it to the user
+                        #     if column_flag in self.env.cruise_data.get_cols_by_type(['param_flag']):
+                        #         lg.warning('>> REMOVING ALSO THE ASSOCIATED FLAG: {}'.format(column_flag))
+                        #         del self.env.cruise_data.cols[column_flag]  # if the param column is deleted, then the flag is also deleted
+                        #         del self.env.cruise_data.df[column_flag]    # if they are not in the removed columns
+
+                        # lg.warning('>> REMOVING PARAM: {}'.format(column))
                         del self.env.cruise_data.cols[column]
                         del self.env.cruise_data.df[column]
-                    if column in self.env.cruise_data.get_columns_by_type(['param_flag']):
-                        param = column[:-7]  # to delete '_FLAG_W'
-                        if param in self.env.cruise_data.get_columns_by_type(['param']):
-                            self.env.cruise_data.df[column] = 9  # resetting to 9 instead of deleting the flag column
-                        else:
-                            del self.env.cruise_data.cols[column]
-                            del self.env.cruise_data.df[column]
 
-    def _update_values(self, different_values_number=0, diff_values={}):
+                    # TODO: RESET FLAG TO DEFAULT VALUES INSTEAD OF REMOVING THEM
+                    if column in self.env.cruise_data.get_cols_by_type(['param_flag']):
+                        # lg.warning('>> REMOVING FLAG: {}'.format(column))
+                        del self.env.cruise_data.cols[column]
+                        del self.env.cruise_data.df[column]
+
+                        # NOTE: if the associated param exists, when self.env.cruise_data is reloaded again
+                        #       the flag column should be created???
+
+                # for c in do_not_rmv:
+                #     self.rmv_cols.remove(c)           # TODO: this should be done in the comparison part
+                # self.rmv_cols.extend(col_flag_rmv)
+                # lg.warning('>> REMOVED COLUMNS: {} | FLAG_COLS_RMV: {} | DO NOT REMOVE: {}'.format(
+                #     self.rmv_cols, col_flag_rmv, do_not_rmv))
+
+                # lg.warning('>> SELF.RMV_COLS: {}'.format(self.rmv_cols))
+                self.env.files_handler.remove_cols_from_qc_plot_tabs(self.rmv_cols)
+
+                # FIXME: for some reason the SILCAT_FLAG_W is correctly remove from some places but I get key error
+                #        >> check if the layout is loaded well again
+
+    def _update_values(self, diff_val_qty=0, diff_values={}):
         """ update the values in the self.env.cruise_data object with the new ones
             the flag associated to the columns has to be reset """
         lg.info('-- UPDATING VALUES')
-        if different_values_number is True:  # update all the values
-            for hash_id, column in self.different_values_pairs:
+        if diff_val_qty is True:  # update all the values
+            for hash_id, column in self.diff_val_pairs:
                 self.env.cruise_data.df.loc[hash_id, column] = self.env.cd_aux.df.loc[hash_id, column]
         else:
             if diff_values != {} and diff_values is not False:
@@ -419,33 +459,37 @@ class CruiseDataUpdate(Environment):
         lg.info('-- Updating moves')
         date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        if len(self.new_columns) > 0:
+        if len(self.add_cols) > 0:
             action = '[ADD] Columns'
-            description = 'Added columns: {}'.format(self.new_columns)
+            description = 'Added columns: {}'.format(self.add_cols)
             self.env.cruise_data.add_moves_element(action, description)
 
-        if len(self.removed_columns) > 0:
+        if len(self.rmv_cols) > 0:
             action = '[DEL] Columns'
-            description = 'Deleted columns: {}'.format(self.removed_columns)
+            description = 'Deleted columns: {}'.format(self.rmv_cols)
             self.env.cruise_data.add_moves_element(action, description)
 
-        if self.new_rows > 0:
+        if self.add_rows > 0:
             action = '[ADD] Rows'
-            description = 'Added rows: {}'.format(self.new_rows)
+            description = 'Added rows: {}'.format(self.add_rows)
             self.env.cruise_data.add_moves_element(action, description)
 
-        if self.removed_rows > 0:
+        if self.rmv_rows > 0:
             action = '[DEL] Rows'
-            description = 'Deleted rows: {}'.format(self.removed_rows)
+            description = 'Deleted rows: {}'.format(self.rmv_rows)
             self.env.cruise_data.add_moves_element(action, description)
 
-        if self.different_values_number > 0:
+        if self.diff_val_qty > 0:
             action = '[UPD] Values'
-            description = 'Updated values: {}'.format(self.different_values_number)
+            description = 'Updated values: {}'.format(self.diff_val_qty)
             self.env.cruise_data.add_moves_element(action, description)
 
     def _reset_update_env(self):
         lg.info('-- RESET FILES >> store old original csv and remove update folder')
+        # TODO: Reset cruise_data columns in order to make sure that the pairs (param, param_flag) are right
+        for c in self.env.cruise_data.get_cols_by_type('param'):
+            self.env.cruise_data.create_missing_flag_col(c)
+        self.env.cruise_data.cp_param = ComputedParameter()
         self.env.cruise_data.recompute_cps()
         if self.modified is True:
             if path.isfile(path.join(TMP, 'original.old.csv')):
@@ -462,20 +506,19 @@ class CruiseDataUpdate(Environment):
             shutil.rmtree(UPD)
         self.env.cd_update = None
         self.env.cd_aux = None
-        self.env.cruise_data.cp_param = None
 
         # TODO: raise error if the file is in use (windows) or wrong permissions (unix)
 
     def get_compared_data(self):
         lg.info('-- GET COMPARED DATA')
         compared_data = {
-            'new_columns': self.new_columns,
-            'removed_columns': self.removed_columns,
-            'removed_columns_plotted': self.removed_columns_plotted,
-            'removed_cps_plotted': self.removed_cps_plotted,
-            'new_rows': self.new_rows,
-            'removed_rows': self.removed_rows,
-            'different_values_number': self.different_values_number,
+            'add_cols': self.add_cols,
+            'rmv_cols': self.rmv_cols,
+            'rmv_plot_cols': self.rmv_plot_cols,
+            'rmv_plot_cps': self.rmv_plot_cps,
+            'add_rows': self.add_rows,
+            'rmv_rows': self.rmv_rows,
+            'diff_val_qty': self.diff_val_qty,
             'modified': self.modified
         }
         lg.info('>> COMPARISON DATA: {}'.format(compared_data))

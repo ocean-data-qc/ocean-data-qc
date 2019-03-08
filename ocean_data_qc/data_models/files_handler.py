@@ -107,6 +107,36 @@ class FilesHandler(Environment):
                 if '' in cols:
                     cols.remove('')
                 self.env.cur_plotted_cols = cols
+        # lg.warning('>> SELF GRAPHS: {}'.format(self.graphs))
+
+    def remove_cols_from_qc_plot_tabs(self, cols=[]):
+        ''' Checks if the columns that are in the plot layout
+            and removes them if needed
+        '''
+        lg.info('-- REMOVE COLS FROM QC PLOT TABS. REMOVING: {}'.format(cols))
+        if cols != [] and path.isfile(path.join(TMP, 'settings.json')):
+            config = {}
+            tabs = {}
+            with open(path.join(TMP, 'settings.json'), 'r') as f:
+                config = json.load(f,  object_pairs_hook=OrderedDict)
+                if 'qc_plot_tabs' in config:
+                    tabs = config.get('qc_plot_tabs', False)
+                    tabs_to_rmv = []
+                    for tab in tabs:
+                        graphs_to_rmv = []
+                        for graph in tabs[tab]:
+                            if graph.get('x', '') in cols:
+                                graphs_to_rmv.append(graph)
+                            if graph.get('y', '') in cols:
+                                graphs_to_rmv.append(graph)
+                        for g in graphs_to_rmv:
+                            tabs[tab].remove(g)
+                        if tabs[tab] == []:  # if all the plot of some tab were removed
+                            tabs_to_rmv.append(tab)
+                    for t in tabs_to_rmv:
+                        del tabs[t]   # >> take into account that here config is also updated
+            with open(path.join(TMP, 'settings.json'), 'w') as f:
+                json.dump(config, f, indent=4, sort_keys=True)
 
     @property
     def graphs_per_tab(self):

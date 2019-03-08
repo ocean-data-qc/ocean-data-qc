@@ -38,12 +38,12 @@ module.exports = {
                     });
                     // change the value in the parent modal
                     var comparisons = $('body').data('comparisons');
-                    $('#different_values_number').text(nb_changed_values + ' / ' + comparisons.different_values_number);
+                    $('#diff_val_qty').text(nb_changed_values + ' / ' + comparisons.diff_val_qty);
 
-                    if (nb_changed_values < comparisons.different_values_number) {
-                        $('input[name=different_values_number]').prop('checked', false);
+                    if (nb_changed_values < comparisons.diff_val_qty) {
+                        $('input[name=diff_val_qty]').prop('checked', false);
                     } else {
-                        $('input[name=different_values_number]').prop('checked', true);
+                        $('input[name=diff_val_qty]').prop('checked', true);
                     }
                 });
 
@@ -64,10 +64,10 @@ module.exports = {
                         });
                     });
                     // change the value in the parent modal
-                    var values_nb = $('body').data('comparisons').different_values_number;
-                    $('#different_values_number').text(nb_changed_values + ' / ' + values_nb);
+                    var values_nb = $('body').data('comparisons').diff_val_qty;
+                    $('#diff_val_qty').text(nb_changed_values + ' / ' + values_nb);
 
-                    $('input[name=different_values_number]').prop('checked', true);
+                    $('input[name=diff_val_qty]').prop('checked', true);
                 });
 
                 var params = {

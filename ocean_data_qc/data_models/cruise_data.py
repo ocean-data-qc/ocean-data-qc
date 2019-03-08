@@ -44,7 +44,7 @@ class CruiseData(CruiseDataExport):
         self.cp_param = ComputedParameter(self)
         return self
 
-    def _set_attributes_from_scratch(self):
+    def _set_cols_from_scratch(self):
         """ The main attributes of the object are filled:
 
                 "cols": {
@@ -103,7 +103,7 @@ class CruiseData(CruiseDataExport):
                 * non_qc_param  - parameters without flag columns associated
                 * computed      - computed parameters
         '''
-        if column not in self.get_columns_by_type('all'):
+        if column not in self.get_cols_by_type('all'):
             self.cols[column] = {
                 'types': [],
                 'unit': units,
@@ -120,30 +120,36 @@ class CruiseData(CruiseDataExport):
                     self.cols[column]['types'] += ['non_qc_param']
                 else:
                     self.cols[column]['types'] += ['param']
+                self.create_missing_flag_col(column)
 
-                qc_column_exceptions = NON_QC_PARAMS + REQUIRED_COLUMNS
-                flag = column + FLAG_END
-                column_list = self.df.columns.tolist()
-                if flag not in column_list and column not in qc_column_exceptions:
-                    lg.info('>> CREATING FLAG: {}'.format(flag))
-                    values = ['2'] * len(self.df.index)
-                    self.df[flag] = values
-                    self.cols[flag] = {
-                        'types': ['param_flag', 'qc_param_flag'],
-                        'unit': False,
-                    }
-                    self.add_moves_element(
-                        'flag_column_added',
-                        'Flag column that was missing added to the project '
-                        'with default value "2" in all the rows: {}'.format(flag)
-                    )
+    def create_missing_flag_col(self, param=None):
+        ''' Make sure there is a flag column for each param parameter '''
+        if param is not None and isinstance(param, str) and not param.endswith(FLAG_END):
+            flag = param + FLAG_END
+            cols = self.df.columns.tolist()
+            if flag not in cols and param not in NON_QC_PARAMS:
+                lg.info('>> CREATING FLAG: {}'.format(flag))
+                values = ['2'] * len(self.df.index)
+                self.df[flag] = values
+
+                # TODO: 9 if there the param value is NaN
+
+                self.cols[flag] = {
+                    'types': ['param_flag', 'qc_param_flag'],
+                    'unit': False,
+                }
+                self.add_moves_element(
+                    'flag_column_added',
+                    'Flag column that was missing added to the project '
+                    'with default value "2" in all the rows: {}'.format(flag)
+                )
 
     def _init_early_calculated_params(self):
         ''' Initializates the dataframe with the basic params that all csv files should have.
             If some of them do not exist in the dataframe yet, they are created with the default values
         '''
         for pname in BASIC_PARAMS:
-            if pname not in self.get_columns_by_type('all'):
+            if pname not in self.get_cols_by_type('all'):
                 if pname.endswith(FLAG_END):
                     self.df[pname] = np.array(['9'] * self.df.index.size)
                     self.add_moves_element(
@@ -160,22 +166,22 @@ class CruiseData(CruiseDataExport):
                     )
                 self._add_column(column=pname, units=False)
 
-    def _set_attributes_from_json_file(self):
-        """ The attributes (cols) are set directly from the attributes.json file """
+    def _set_cols_from_json_file(self):
+        """ The columns are set directly from the columns.json file """
         lg.info('-- SET ATTRIBUTES FROM JSON FILE --')
-        if path.isfile(path.join(TMP, 'attributes.json')):
-            with open(path.join(TMP, 'attributes.json'), 'r') as f:
+        if path.isfile(path.join(TMP, 'columns.json')):
+            with open(path.join(TMP, 'columns.json'), 'r') as f:
                 attr = json.load(f)
             self.cols = attr
 
-    def get_column_type(self, column=''):
+    def get_col_type(self, column=''):
         ''' Return a list of column types associated to argument '''
         if column in self.cols:
             return self.cols[column]['types']
         else:
             return False
 
-    def get_columns_by_type(self, column_types=[], discard_nan=False):
+    def get_cols_by_type(self, column_types=[], discard_nan=False):
         ''' Possible types:
                 * computed      - calculated parameters
                 * param         - parameters
@@ -210,7 +216,7 @@ class CruiseData(CruiseDataExport):
             prepaired_list = [(col_positions[x], x) for x in res]
         except Exception:
             raise ValidationError(
-                'Some column in the attributes.json file or '
+                'Some column in the columns.json file or '
                 'self.cols object is not in the DataFrame'
             )
         sorted_list = sorted(prepaired_list, key=lambda elem: elem[0])  # reordering
@@ -235,7 +241,7 @@ class CruiseData(CruiseDataExport):
         return [self.cols[x]['unit'] for x in self.cols]
 
     def is_flag(self, flag):
-        if flag[-7:] == FLAG_END and flag in self.get_columns_by_type(['param_flag', 'qc_param_flag']):
+        if flag[-7:] == FLAG_END and flag in self.get_cols_by_type(['param_flag', 'qc_param_flag']):
             return True
         else:
             return False
@@ -314,7 +320,7 @@ class CruiseData(CruiseDataExport):
                     'DATE column was automatically generated from the columns YEAR, MONTH and DAY'
                 )
             except Exception as e:
-                missing_columns = ', '.join(list(set(REQUIRED_COLUMNS) - set(self.get_columns_by_type('all'))))
+                missing_columns = ', '.join(list(set(REQUIRED_COLUMNS) - set(self.get_cols_by_type('all'))))
                 raise ValidationError(
                     'DATE column did not exist and it could not be created. And that is a required column'
                     ' from YEAR, MONTH and DAY columns: [{}]'.format(missing_columns),
@@ -355,8 +361,8 @@ class CruiseData(CruiseDataExport):
 
     def _validate_required_columns(self):
         lg.info('-- VALIDATE REQUIRED COLUMNS')
-        if (not set(self.get_columns_by_type('all')).issuperset(REQUIRED_COLUMNS)):
-            missing_columns = ', '.join(list(set(REQUIRED_COLUMNS) - set(self.get_columns_by_type('all'))))
+        if (not set(self.get_cols_by_type('all')).issuperset(REQUIRED_COLUMNS)):
+            missing_columns = ', '.join(list(set(REQUIRED_COLUMNS) - set(self.get_cols_by_type('all'))))
             raise ValidationError(
                 'Missing required columns in the file: [{}]'.format(missing_columns),
                 rollback='cruise_data'
@@ -505,7 +511,7 @@ class CruiseData(CruiseDataExport):
                   - Show a error message (now only a warning appears)
         '''
         lg.info('-- RECOMPUTE CP PARAMETERS')
-        cp_params = self.env.cruise_data.get_columns_by_type('computed')
+        cp_params = self.env.cruise_data.get_cols_by_type('computed')
         for c in cp_params:
             del self.cols[c]
         for c in self.cp_param.proj_settings_cps:

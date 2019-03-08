@@ -44,7 +44,7 @@ class CruiseDataExport(Environment):
                 for line in f_in:
                     f_out.write('# {}'.format(line))
 
-            columns = self.get_columns_by_type(['required', 'param', 'non_qc_param', 'qc_param_flag', 'param_flag'])        # column order?
+            columns = self.get_cols_by_type(['required', 'param', 'non_qc_param', 'qc_param_flag', 'param_flag'])        # column order?
             columns_row = ','.join(columns)
             f_out.write(columns_row + '\n')
 
@@ -72,7 +72,7 @@ class CruiseDataExport(Environment):
             os.remove(path.join(TMP, 'export_data.csv'))
         aux_df = self.df.copy()
         aux_df = aux_df.replace(np.nan, -999.0)  # float64 fields value will be -999.0
-        cols = self.get_columns_by_type(['required', 'param', 'non_qc_param','qc_param_flag', 'param_flag'])
+        cols = self.get_cols_by_type(['required', 'param', 'non_qc_param','qc_param_flag', 'param_flag'])
         aux_df = aux_df.filter(cols)
         aux_df.to_csv(
             os.path.join(TMP, 'export_data.csv'),
@@ -106,9 +106,9 @@ class CruiseDataExport(Environment):
             )
 
     def save_attributes(self):
-        """ The file attributes.json is created """
+        """ The file columns.json is created """
         lg.info('-- SAVE ATTRIBUTES to JSON')
-        with open(path.join(TMP,'attributes.json'), 'w') as fp:
+        with open(path.join(TMP,'columns.json'), 'w') as fp:
             json.dump(self.cols, fp, indent=4, sort_keys=True)
 
     def save_metadata(self):

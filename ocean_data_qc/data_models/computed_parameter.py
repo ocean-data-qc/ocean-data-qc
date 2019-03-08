@@ -38,7 +38,10 @@ class ComputedParameter(Environment):
         lg.info('-- INIT COMPUTED PARAMETER')
         self.sandbox_vars = None
         self.sandbox_funcs = None
-        self.cruise_data = cruise_data
+        if cruise_data is not False:
+            self.cruise_data = cruise_data
+        else:
+            self.cruise_data = self.env.cruise_data
 
     @property
     def proj_settings_cps(self):
@@ -264,11 +267,11 @@ class ComputedParameter(Environment):
 
     def get_all_parameters(self):
         lg.info('-- GET ALL PARAMETERS')
-        cols = self.cruise_data.get_columns_by_type(
+        cols = self.cruise_data.get_cols_by_type(
             ['param', 'param_flag', 'qc_param_flag', 'non_qc_param', 'required']
         )
         deps = self.check_dependencies()
-        cp_cols = self.cruise_data.get_columns_by_type('computed')
+        cp_cols = self.cruise_data.get_cols_by_type('computed')
         return dict(
             columns=cols,
             dependencies=deps,
@@ -283,7 +286,7 @@ class ComputedParameter(Environment):
         '''
         lg.info('-- DELETE COMPUTED PARAMETER')
         value = args.get('value', False)
-        current_columns = self.cruise_data.get_columns_by_type(['all'])
+        current_columns = self.cruise_data.get_cols_by_type(['all'])
         if value in current_columns:
             try:
                 if value in self.cruise_data.df.columns:

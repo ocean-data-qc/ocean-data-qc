@@ -31,17 +31,17 @@ module.exports = {
             lg.info('>> COMPARISON DATA (JSON): ' + JSON.stringify(self.comparisons, null, 4))
             self.load_values();
 
-            $('input[name=different_values_number]').click(function() {
+            $('input[name=diff_val_qty]').click(function() {
                 if (typeof(self.comparisons) === 'undefined') {
                     self.comparisons = $('body').data('comparisons');
                 }
                 if ($(this).is(':checked')) {
-                    $('#different_values_number').text(
-                        self.comparisons.different_values_number + ' / ' + self.comparisons.different_values_number
+                    $('#diff_val_qty').text(
+                        self.comparisons.diff_val_qty + ' / ' + self.comparisons.diff_val_qty
                     );
                 } else {
-                    $('#different_values_number').text(
-                        '0 / ' + self.comparisons.different_values_number
+                    $('#diff_val_qty').text(
+                        '0 / ' + self.comparisons.diff_val_qty
                     );
                 }
             });
@@ -52,11 +52,11 @@ module.exports = {
                     'method': 'update_from_csv',
                     'args': {
                         'selected': true,  // do not discard changes
-                        'new_columns': true,
-                        'removed_columns': true,
-                        'new_rows': true,
-                        'removed_rows': true,
-                        'different_values_number': true,  // if true then all the values are updated
+                        'add_cols': true,
+                        'rmv_cols': true,
+                        'add_rows': true,
+                        'rmv_rows': true,
+                        'diff_val_qty': true,  // if true then all the values are updated
                     }
                 }
                 tools.call_promise(params).then((result) => {
@@ -82,11 +82,11 @@ module.exports = {
                     'method': 'update_from_csv',
                     'args': {
                         'selected': true,  // do not discard changes
-                        'new_columns': $('input[name=new_columns]').is(':checked'),
-                        'removed_columns': $('input[name=removed_columns]').is(':checked'),
-                        'new_rows': $('input[name=new_rows]').is(':checked'),
-                        'removed_rows': $('input[name=removed_rows]').is(':checked'),
-                        'different_values_number': $('input[name=different_values_number]').is(':checked'),
+                        'add_cols': $('input[name=add_cols]').is(':checked'),
+                        'rmv_cols': $('input[name=rmv_cols]').is(':checked'),
+                        'add_rows': $('input[name=add_rows]').is(':checked'),
+                        'rmv_rows': $('input[name=rmv_rows]').is(':checked'),
+                        'diff_val_qty': $('input[name=diff_val_qty]').is(':checked'),
                         'diff_values': diff_values          // TODO and if this is not defined?
                     }
                 }
@@ -123,81 +123,81 @@ module.exports = {
         var self = this;
         if (self.comparisons.modified == true) {
             // NEW COLUMNS
-            if (self.comparisons.new_columns.length > 0) {
-                $('#new_columns_value').text(self.comparisons.new_columns.join(', '));
+            if (self.comparisons.add_cols.length > 0) {
+                $('#add_cols_value').text(self.comparisons.add_cols.join(', '));
             } else {
-                $('#new_columns_value').text('None');
-                $('#new_columns_input').attr('disabled', true);
+                $('#add_cols_value').text('None');
+                $('#add_cols_input').attr('disabled', true);
             }
 
             // REMOVED COLUMNS
-            if (self.comparisons.removed_columns.length > 0) {
-                $('#removed_columns_value').text(self.comparisons.removed_columns.join(', '));
+            if (self.comparisons.rmv_cols.length > 0) {
+                $('#rmv_cols_value').text(self.comparisons.rmv_cols.join(', '));
 
                 // check if the removed columns are currently plotted and show a warning
-                if (self.comparisons.removed_columns_plotted) {
-                    $('#removed_columns_value').closest('tbody').append($('<tr>').append($('<td>', {
+                if (self.comparisons.rmv_plot_cols.length > 0) {
+                    var rmv_plot_cols_str = self.comparisons.rmv_plot_cols.join(', ');
+                    $('#rmv_cols_value').closest('tbody').append($('<tr>').append($('<td>', {
                             colspan: '3',
                             style: 'background-color: white; padding-left: 0px; border: 0;'
                         }).append($('<div>', {
                                     class: 'alert alert-warning',
                                     role: 'alert',
-                                    html: '<strong>Warning!</strong> Remove the columns from the layout first in order to remove them from the DataFrame.'
+                                    html: '<strong>Warning!</strong> '
+                                          + 'The following columns will be removed from the layout as well: '
+                                          + rmv_plot_cols_str
                                 })
                             )
                         )
                     );
-                    $('#removed_columns_input').attr('disabled', true);
-
                 }
             } else {
-                $('#removed_columns_value').text('None');
-                $('#removed_columns_input').attr('disabled', true);
+                $('#rmv_cols_value').text('None');
+                $('#rmv_cols_input').attr('disabled', true);
             }
 
             // REMOVED CPS COLUMNS
-            if (self.comparisons.removed_cps_plotted.length > 0) {
-                var rmvd_ccp_plotted_str = self.comparisons.removed_cps_plotted.join(', ');
+            if (self.comparisons.rmv_plot_cps.length > 0) {
+                var rmvd_ccp_plotted_str = self.comparisons.rmv_plot_cps.join(', ');
                 lg.warn('>> REMOVED CPS STR: ' + rmvd_ccp_plotted_str);
-                $('#removed_columns_value').closest('tbody').append($('<tr>').append($('<td>', {
+                $('#rmv_cols_value').closest('tbody').append($('<tr>').append($('<td>', {
                         colspan: '3',
                         style: 'background-color: white; padding-left: 0px; border: 0;'
                     }).append($('<div>', {
                                 class: 'alert alert-warning',
                                 role: 'alert',
-                                html: '<strong>Warning!</strong> Remove the following calculated columns '
-                                      + 'from the layout first in order to remove them from the DataFrame. '
-                                      + 'They cannot be calculated if the columns are removed: '
+                                html: '<strong>Warning!</strong> The following calculated columns will be'
+                                      + 'from the layout as well. They cannot be calculated if the columns are removed: '
                                       + rmvd_ccp_plotted_str
                             })
                         )
                     )
                 );
-                $('#removed_columns_input').attr('disabled', true);
+                // $('#rmv_cols_input').attr('disabled', true);
             }
 
             // NEW ROWS
-            if (self.comparisons.new_rows != 0) {
-                $('#new_rows_value').text(self.comparisons.new_rows);
+            if (self.comparisons.add_rows != 0) {
+                $('#add_rows_value').text(self.comparisons.add_rows);
             } else {
-                $('#new_rows_value').text('None');
-                $('#new_rows_input').attr('disabled', true);
+                $('#add_rows_value').text('None');
+                $('#add_rows_input').attr('disabled', true);
             }
 
             // REMOVED ROWS
-            if (self.comparisons.removed_rows != 0) {
-                $('#removed_rows_value').text(self.comparisons.removed_rows);
+            if (self.comparisons.rmv_rows != 0) {
+                $('#rmv_rows_value').text(self.comparisons.rmv_rows);
             } else {
-                $('#removed_rows_value').text('None');
-                $('#removed_rows_input').attr('disabled', true);
+                $('#rmv_rows_value').text('None');
+                $('#rmv_rows_input').attr('disabled', true);
             }
 
             // MODIFIED VALUES
-            if (self.comparisons.different_values_number != 0) {
-                $('#different_values_number').text('0 / ' + self.comparisons.different_values_number);
+            if (self.comparisons.diff_val_qty != 0) {
+                $('#diff_val_qty').text('0 / ' + self.comparisons.diff_val_qty);
             } else {
-                $('#different_values_number').text('None');
-                $('#different_values_number_input').attr('disabled', true);
+                $('#diff_val_qty').text('None');
+                $('#diff_val_qty_input').attr('disabled', true);
                 $('#update_values_by_station').remove();
             }
         } else {

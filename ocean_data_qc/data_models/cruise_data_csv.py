@@ -69,7 +69,7 @@ class CruiseDataCSV(CruiseData):
 
     def load_file(self):
         lg.info('-- LOAD FILE CSV >> FROM SCRATCH')
-        self._set_attributes_from_scratch()  # the dataframe has to be created
+        self._set_cols_from_scratch()  # the dataframe has to be created
         self._validate_required_columns()
         self._replace_nan_values()         # '-999' >> NaN
         self._init_early_calculated_params()

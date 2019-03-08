@@ -35,7 +35,7 @@ class CruiseDataAQC(CruiseData):
 
     def load_file(self):
         lg.info('-- LOAD FILE AQC >> LOAD FROM FILES')
-        self._set_attributes_from_json_file()
+        self._set_cols_from_json_file()
         self._replace_nan_values()         # '-999' >> NaN
         self._convert_data_to_number()
         self._set_hash_ids()
@@ -43,7 +43,7 @@ class CruiseDataAQC(CruiseData):
 
     def _set_cps(self):
         ''' Adds all the calculated parameters to the DF when the file is loaded in the application.
-            The computed parameters from the attributes.json should be computed.
+            The computed parameters from the columns.json should be computed.
 
             NOTE: When the file is open the cps are copied from `custom_settings.json`
                   So we have all the CP we need in cps['proj_settings_cps']

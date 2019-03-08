@@ -46,7 +46,7 @@ class BokehLoader(Environment):
         self.env.bk_layout.init_bokeh_layout()
 
     def reset_bokeh(self):
-        ''' Reset the layout values in order to close the project '''
+        ''' Reset the layout values in order to prepare them for the next loading time '''
         lg.info('-- RESET VALUES ON THE FORM (> SPACERS)')
 
         # The problem is >> I can update only the children of elements

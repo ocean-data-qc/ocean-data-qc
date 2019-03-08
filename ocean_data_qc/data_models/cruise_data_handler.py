@@ -36,7 +36,7 @@ class CruiseDataHandler(Environment):
         lg.info('-- GET CRUISE DATA COLUMNS')
         if self.env.cruise_data is None:
             self._init_cruise_data()
-        params = self.env.cruise_data.get_columns_by_type('param', discard_nan=True)
+        params = self.env.cruise_data.get_cols_by_type('param', discard_nan=True)
         if len(params) == 0:
             raise ValidationError(
                 'There should be at least one parameter with data, '
@@ -45,8 +45,8 @@ class CruiseDataHandler(Environment):
                 rollback='cruise_data'
             )
         d = {
-            'cps': self.env.cruise_data.get_columns_by_type('computed'),
-            'cols': self.env.cruise_data.get_columns_by_type(
+            'cps': self.env.cruise_data.get_cols_by_type('computed'),
+            'cols': self.env.cruise_data.get_cols_by_type(
                 ['param', 'param_flag', 'qc_param_flag', 'computed'],
                 discard_nan=True
             ),

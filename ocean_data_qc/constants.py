@@ -32,7 +32,7 @@ REQUIRED_COLUMNS = [
 NON_QC_PARAMS = [                                # discovered by usage
     'CTDPRS', 'DEPTH',
     'SECT', 'SECT_ID', 'TIME', 'PH_TMP'
-]
+] + REQUIRED_COLUMNS                            # TODO: Sometimes there is a BTLNBR_FLAG_W ???
 
 BASIC_PARAMS = [                                # they are created if they do not exist yet
     'CTDSAL', 'SALNTY', 'CTDOXY', 'OXYGEN',

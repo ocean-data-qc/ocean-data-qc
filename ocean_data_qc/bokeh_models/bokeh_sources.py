@@ -86,9 +86,9 @@ class BokehSources(Environment):
             NOTE: self.env.all_flags and  self.env.tabs_flags_plots should be created beforehand
         '''
         lg.info('-- INIT FLAG VIEWS')
-        # lg.info('>> SELF.ENV.ALL_FLAGS: {}'.format(self.env.all_flags))
-        # lg.info('>> self.env.tabs_flags_plot: {}'.format(self.env.tabs_flags_plots))
-        # lg.info('>> self.env.files_handler.tab_list: {}'.format(self.env.files_handler.tab_list))
+        # lg.warning('>> SELF.ENV.ALL_FLAGS: {}'.format(self.env.all_flags))
+        # lg.warning('>> self.env.tabs_flags_plot: {}'.format(self.env.tabs_flags_plots))
+        # lg.warning('>> self.env.files_handler.tab_list: {}'.format(self.env.files_handler.tab_list))
         # lg.info('>> self.env.source.data: {}'.format(self.env.source.data))
 
         # TODO: tabs with the same flag should share the views
@@ -181,7 +181,7 @@ class BokehSources(Environment):
                 ...
             }
         '''
-        cols = self.env.cruise_data.get_columns_by_type(['param_flag', 'qc_param_flag'])
+        cols = self.env.cruise_data.get_cols_by_type(['param_flag', 'qc_param_flag'])
         flag_vals = self.env.cds_df[cols].values.ravel('K')  # ravel('K') to flatten the multidimensional array
         flag_vals = flag_vals[~np.isnan(flag_vals)]          # remove nan
         flag_vals = np.unique(flag_vals)                     # select the unique values
