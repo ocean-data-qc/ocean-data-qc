@@ -83,11 +83,15 @@ class ComputedParameter(Environment):
                     }
                     if prevent_save is False:
                         self.cruise_data.save_attributes()
-                    lg.info('>> CP ADDED: {}'.format(val))
+                    lg.info('>> CP <<{}>> ADDED'.format(val))
                 else:
-                    lg.warning('>> THE CP {} COULD NOT BE COMPUTED{}'.format(
-                        cp['param_name'],
-                        ': {}'.format(result.get('error', ''))
+                    msg = ''
+                    if 'error' in result:
+                        msg = result.get('error', '')  # TODO: remove "\n" fro here?
+                    elif 'msg' in result:
+                        msg = result.get('msg', '')
+                    lg.warning('>> CP <<{}>> COULD NOT BE COMPUTED: {}'.format(
+                        cp['param_name'], msg
                     ))
                 return result
 
