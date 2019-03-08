@@ -281,8 +281,8 @@ class CruiseData(CruiseDataExport):
 
     def _prep_df_columns(self):
         self.df.replace(r'\s', '', regex=True, inplace=True)  # cleans spaces: \r and \n are managed by read_csv
-        self.df.columns = self._sanitize(self.df.columns)  # remove spaces from columns
-        self.df.columns = self._sanitize_alternative_names(self.df.columns)
+        self.df.columns = self._sanitize_cols(self.df.columns)  # remove spaces from columns
+        self.df.columns = self._map_col_names(self.df.columns)
         self._create_btlnbr_or_sampno_column()
         self._create_date_column()
 
@@ -368,8 +368,7 @@ class CruiseData(CruiseDataExport):
                 rollback='cruise_data'
             )
 
-    def _sanitize(self, names):
-        lg.info('-- Sanitizing colnames')
+    def _sanitize_cols(self, names):
         result = []
         for name in names:
             name = name.replace('-', '_')
@@ -385,38 +384,11 @@ class CruiseData(CruiseDataExport):
                 columns = [re.sub(r'\b'+replace_with + 'F'+r'\b', orig_name + FLAG_END, c) for c in columns]
         return columns
 
-    def _sanitize_alternative_names(self, names):
-        lg.info('-- Sanitizing usual alternative colnames')
+    def _map_col_names(self, names):
+        lg.info('-- MAP COL NAMES')
         result = [n.upper() for n in names]
-        result = self._replace_if_not_exists(result, 'EXPOCODE', 'CRUISE')
-        result = self._replace_if_not_exists(result, 'EXPOCODE', 'CRUISENO')
-        result = self._replace_if_not_exists(result, 'STNNBR', 'STATION')
-        result = self._replace_if_not_exists(result, 'CASTNO', 'CAST')
-        result = self._replace_if_not_exists(result, 'BTLNBR', 'BOTTLE')
-        result = self._replace_if_not_exists(result, 'CTDPRS', 'PRESSURE')
-        result = self._replace_if_not_exists(result, 'CTDTMP', 'TEMPERATURE')
-        result = self._replace_if_not_exists(result, 'SALNTY', 'SALINITY')
-        result = self._replace_if_not_exists(result, 'SALNTY', 'CTDSAL')
-        result = self._replace_if_not_exists(result, 'NITRAT', 'NITRATE')
-        result = self._replace_if_not_exists(result, 'NITRIT', 'NITRITE')
-        result = self._replace_if_not_exists(result, 'PHSPHT', 'PHOSPHATE')
-        result = self._replace_if_not_exists(result, 'SILCAT', 'SILICATE')
-        result = self._replace_if_not_exists(result, 'TCARBN', 'TCO2')
-        result = self._replace_if_not_exists(result, 'TCARBN', 'DIC')
-        result = self._replace_if_not_exists(result, 'TCARBN', 'CT')
-        result = self._replace_if_not_exists(result, 'ALKALI', 'TALK')
-        result = self._replace_if_not_exists(result, 'ALKALI', 'ALK')
-        result = self._replace_if_not_exists(result, 'PH_TOT', 'PHTS')
-        result = self._replace_if_not_exists(result, 'PH_TOT', 'PHTS25')
-        result = self._replace_if_not_exists(result, 'PH_TOT', 'PHTS25P0')
-        result = self._replace_if_not_exists(result, 'PH_TOT', 'PH_TOT25P0')
-        result = self._replace_if_not_exists(result, 'PH_SWS', 'PHSWS')
-        result = self._replace_if_not_exists(result, 'PH_SWS', 'PHSWS25')
-        result = self._replace_if_not_exists(result, 'PH_SWS', 'PHSWS25P0')
-        result = self._replace_if_not_exists(result, 'PH_TOT', 'PH_SWS25P0')
-        result = self._replace_if_not_exists(result, 'NO2_NO3', 'NO2NO3')
-        result = self._replace_if_not_exists(result, 'CFC_11', 'CFC11')
-        result = self._replace_if_not_exists(result, 'CFC_12', 'CFC12')
+        for m in COL_NAMES_MAPPING:
+            result = self._replace_if_not_exists(result, m[0], m[1])
         for name in result:
             if name + 'F' in result:
                 result = [re.sub(r'\b'+name + 'F'+r'\b', name + FLAG_END, r) for r in result]

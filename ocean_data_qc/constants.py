@@ -40,6 +40,38 @@ BASIC_PARAMS = [                                # they are created if they do no
     'CTDPRS', 'DEPTH', 'CTDTMP', 'SAMPNO'
 ]
 
+COL_NAMES_MAPPING = [
+    ('EXPOCODE', 'CRUISE'),
+    ('EXPOCODE', 'CRUISENO'),
+    ('STNNBR', 'STATION'),
+    ('CASTNO', 'CAST'),
+    ('BTLNBR', 'BOTTLE'),
+    ('CTDPRS', 'PRESSURE'),
+    ('CTDTMP', 'TEMPERATURE'),
+    ('SALNTY', 'SALINITY'),
+    ('SALNTY', 'CTDSAL'),
+    ('NITRAT', 'NITRATE'),
+    ('NITRIT', 'NITRITE'),
+    ('PHSPHT', 'PHOSPHATE'),
+    ('SILCAT', 'SILICATE'),
+    ('TCARBN', 'TCO2'),
+    ('TCARBN', 'DIC'),
+    ('TCARBN', 'CT'),
+    ('ALKALI', 'TALK'),
+    ('ALKALI', 'ALK'),
+    ('PH_TOT', 'PHTS'),
+    ('PH_TOT', 'PHTS25'),
+    ('PH_TOT', 'PHTS25P0'),
+    ('PH_TOT', 'PH_TOT25P0'),
+    ('PH_SWS', 'PHSWS'),
+    ('PH_SWS', 'PHSWS25'),
+    ('PH_SWS', 'PHSWS25P0'),
+    ('PH_TOT', 'PH_SWS25P0'),
+    ('NO2_NO3', 'NO2NO3'),
+    ('CFC_11', 'CFC11'),
+    ('CFC_12', 'CFC12'),
+]
+
 # --------------------- COLORS ---------------------------- #
 
 BLUES = Blues8[1:-1]  # len = 6, from dark to light blue
