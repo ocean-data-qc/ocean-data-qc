@@ -94,6 +94,7 @@ module.exports = {
         }
         tools.call_promise(call_params).then((result) => {
             lg.info('-- RELOADING BOKEH');
+            self.run_on_ready();
             self.hide_loader();
             if (callback != null) {
                 callback();
