@@ -329,6 +329,12 @@ fieldset select[name='tab_title'] {
     color: #337ab7;
 }
 
+table.results_table td.remove_warning {
+    background-color: white;
+    padding: 15px 0px 0px 0px !important;
+    border: 0 !important;
+}
+
 /* UPDATE VALUES FORM */
 
 .results_table td:first-child { /* title */

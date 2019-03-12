@@ -486,6 +486,7 @@ class CruiseData(CruiseDataExport):
         cp_params = self.env.cruise_data.get_cols_by_type('computed')
         for c in cp_params:
             del self.cols[c]
+        cps_to_rmv = []
         for c in self.cp_param.proj_settings_cps:
             if c['param_name'] not in self.cols:  # exclude the computed parameters
                 res = self.cp_param.add_computed_parameter({
@@ -494,8 +495,7 @@ class CruiseData(CruiseDataExport):
                 })
                 if res.get('success', False) is False:
                     if c['param_name'] in self.env.cur_plotted_cols:
-                        raise ValidationError(
-                            'The equation cannot be computed with the new changes.'
-                            ' Remove it from the shown plots first'
-                        )
+                        cps_to_rmv.append(c['param_name'])
+        if cps_to_rmv != []:
+            self.env.files_handler.remove_cols_from_qc_plot_tabs(cps_to_rmv)
         self.env.cruise_data.save_attributes()

@@ -139,7 +139,7 @@ module.exports = {
                     var rmv_plot_cols_str = self.comparisons.rmv_plot_cols.join(', ');
                     $('#rmv_cols_value').closest('tbody').append($('<tr>').append($('<td>', {
                             colspan: '3',
-                            style: 'background-color: white; padding-left: 0px; border: 0;'
+                            class: 'remove_warning'
                         }).append($('<div>', {
                                     class: 'alert alert-warning',
                                     role: 'alert',
@@ -162,12 +162,12 @@ module.exports = {
                 lg.warn('>> REMOVED CPS STR: ' + rmvd_ccp_plotted_str);
                 $('#rmv_cols_value').closest('tbody').append($('<tr>').append($('<td>', {
                         colspan: '3',
-                        style: 'background-color: white; padding-left: 0px; border: 0;'
+                        class: 'remove_warning'
                     }).append($('<div>', {
                                 class: 'alert alert-warning',
                                 role: 'alert',
-                                html: '<strong>Warning!</strong> The following calculated columns will be'
-                                      + 'from the layout as well. They cannot be calculated if the columns are removed: '
+                                html: '<strong>Warning!</strong> The following calculated columns will be removed '
+                                      + 'from the layout. They cannot be calculated if the previous columns are removed: '
                                       + rmvd_ccp_plotted_str
                             })
                         )

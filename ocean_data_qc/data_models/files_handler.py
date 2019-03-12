@@ -125,9 +125,7 @@ class FilesHandler(Environment):
                     for tab in tabs:
                         graphs_to_rmv = []
                         for graph in tabs[tab]:
-                            if graph.get('x', '') in cols:
-                                graphs_to_rmv.append(graph)
-                            if graph.get('y', '') in cols:
+                            if graph.get('x', '') in cols or graph.get('y', '') in cols:
                                 graphs_to_rmv.append(graph)
                         for g in graphs_to_rmv:
                             tabs[tab].remove(g)

@@ -1,13 +1,12 @@
 .vscode
 
 # ocean data qc files
-/bokeh
-/csv_examples
-/ocean_data_qc/files/tmp
-/env
-
 /ocean_data_qc_js/node_modules
 /ocean_data_qc_js/dist
+/ocean_data_qc/tiles
+/bokeh
+/csv_examples
+/env
 
 # folders for buildings
 /build
