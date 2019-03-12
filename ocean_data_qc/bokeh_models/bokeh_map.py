@@ -35,7 +35,7 @@ class BokehMap(Environment):
         ts_online = self.env.f_handler.get(
             attr='tile_server_online', f_path=SHARED_DATA
         )
-        lg.warning('>> TS STATE: {}'.format(ts_state))
+        lg.warning('>> TS ONLINE: {}'.format(ts_online))
         if ts_online:
             tile_options = {
                 'url': ("https://server.arcgisonline.com/ArcGIS/rest/services/Ocean_Basemap/MapServer/tile/{Z}/{Y}/{X}/")
