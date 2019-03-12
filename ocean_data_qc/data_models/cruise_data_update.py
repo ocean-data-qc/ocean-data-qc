@@ -430,7 +430,7 @@ class CruiseDataUpdate(Environment):
                 #     self.rmv_cols, col_flag_rmv, do_not_rmv))
 
                 # lg.warning('>> SELF.RMV_COLS: {}'.format(self.rmv_cols))
-                self.env.files_handler.remove_cols_from_qc_plot_tabs(self.rmv_cols)
+                self.env.f_handler.remove_cols_from_qc_plot_tabs(self.rmv_cols)
 
                 # FIXME: for some reason the SILCAT_FLAG_W is correctly remove from some places but I get key error
                 #        >> check if the layout is loaded well again

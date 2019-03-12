@@ -3,7 +3,6 @@
 # ocean data qc files
 /ocean_data_qc_js/node_modules
 /ocean_data_qc_js/dist
-/ocean_data_qc/tiles
 /bokeh
 /csv_examples
 /env

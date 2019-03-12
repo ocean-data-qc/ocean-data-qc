@@ -54,7 +54,7 @@ class FilesHandler(Environment):
     env = Environment
 
     def __init__(self):
-        self.env.files_handler = self
+        self.env.f_handler = self
 
     def load_data(self):
         lg.info('-- LOAD DATA (FilesHandler class)')
@@ -181,16 +181,15 @@ class FilesHandler(Environment):
         shutil.rmtree(TMP)
 
     # TODO: test this method
-    # def get(self, attr, f_path):
-    #     """ Gets data from json files
-    #         * attr: attribute to get
-    #         * f_path: file path where the file is located
-    #     """
-
-    #     lg.info('-- GET ATTR: {} | FROM FILE: {}'.format(attr, f_path))
-    #     with open(f_path, 'r') as f:
-    #         json_content = json.load(f)
-    #     if attr in json_content:
-    #         return json_content[attr]
-    #     else:
-    #         lg.warning('>> The attribute {} is not in the JSON file: {}'.format(attr, f_path))
+    def get(self, attr, f_path):
+        """ Gets data from json files
+            * attr: attribute to get
+            * f_path: file path where the file is located
+        """
+        lg.info('-- GET ATTR: {} | FROM FILE: {}'.format(attr, f_path))
+        with open(f_path, 'r') as f:
+            json_content = json.load(f)
+        if attr in json_content:
+            return json_content[attr]
+        else:
+            lg.warning('>> The attribute {} is not in the JSON file: {}'.format(attr, f_path))

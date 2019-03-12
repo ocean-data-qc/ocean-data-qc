@@ -14,7 +14,6 @@ from bokeh.palettes import Reds3
 
 from ocean_data_qc.env import Environment
 from ocean_data_qc.constants import *
-from ocean_data_qc.data_models.files_handler import FilesHandler
 
 
 class BokehSources(Environment):
@@ -26,7 +25,7 @@ class BokehSources(Environment):
 
     def load_data(self):
         lg.info('-- LOAD DATA')
-        self.env.files_handler.load_data()
+        self.env.f_handler.load_data()
         self._init_cds_df()
         self._init_bathymetric_map_data()
         self.env.stations = self.env.cruise_data.stations
@@ -88,12 +87,12 @@ class BokehSources(Environment):
         lg.info('-- INIT FLAG VIEWS')
         # lg.warning('>> SELF.ENV.ALL_FLAGS: {}'.format(self.env.all_flags))
         # lg.warning('>> self.env.tabs_flags_plot: {}'.format(self.env.tabs_flags_plots))
-        # lg.warning('>> self.env.files_handler.tab_list: {}'.format(self.env.files_handler.tab_list))
+        # lg.warning('>> self.env.f_handler.tab_list: {}'.format(self.env.f_handler.tab_list))
         # lg.info('>> self.env.source.data: {}'.format(self.env.source.data))
 
         # TODO: tabs with the same flag should share the views
 
-        for tab in self.env.files_handler.tab_list:
+        for tab in self.env.f_handler.tab_list:
             flag = tab + FLAG_END
             flags = {}
             for i, val in enumerate(self.env.source.data[flag]):
@@ -122,8 +121,8 @@ class BokehSources(Environment):
         d = {}
         compound_cols = []
         # lg.info('>> TABS FLAGS PLOTS: {}'.format(self.env.tabs_flags_plots))
-        graphs = self.env.files_handler.graphs_per_tab
-        for tab in self.env.files_handler.tab_list:
+        graphs = self.env.f_handler.graphs_per_tab
+        for tab in self.env.f_handler.tab_list:
             for graph in graphs[tab]:
 
             # for col in self.env.cds_df.columns.tolist():  # TODO: not all of them
@@ -162,8 +161,8 @@ class BokehSources(Environment):
         lg.info('-- INIT ASTERISK SOURCE')
         d = {}
         compound_cols = []
-        graphs = self.env.files_handler.graphs_per_tab
-        for tab in self.env.files_handler.tab_list:
+        graphs = self.env.f_handler.graphs_per_tab
+        for tab in self.env.f_handler.tab_list:
             for graph in graphs[tab]:
                 compound_cols.append('{}_{}'.format(tab, graph.x))
                 compound_cols.append('{}_{}'.format(tab, graph.y))
@@ -329,7 +328,7 @@ class BokehSources(Environment):
         stt_order_reversed = list(reversed(stt_order))
         # lg.warning('>> STT ORDER REVERSED: {}'.format(stt_order_reversed))
 
-        for tab in self.env.files_handler.tab_list:
+        for tab in self.env.f_handler.tab_list:
             for col in current_plotted_cols:
                 i = NPROF - 1
                 for stt in stt_order_reversed:
@@ -361,7 +360,7 @@ class BokehSources(Environment):
         lg.info('-- GET EMPTY PROF DF')
         compound_cols = []
         current_plotted_cols = []
-        for tab in self.env.files_handler.tab_list:
+        for tab in self.env.f_handler.tab_list:
             plot_indices = self.env.tabs_flags_plots[tab]['plots']
             aux_cols = []
             for pi in plot_indices:
@@ -396,10 +395,10 @@ class BokehSources(Environment):
         lg.info('-- UPDATE ASTERISK SOURCE')
 
         if self.env.sample_to_select is not None:
-            values = [np.nan] * (len(current_plotted_cols) * len(self.env.files_handler.tab_list))   # values should have the same order than the CDS columns
+            values = [np.nan] * (len(current_plotted_cols) * len(self.env.f_handler.tab_list))   # values should have the same order than the CDS columns
             columns = []
             pos = 0
-            for tab in self.env.files_handler.tab_list:
+            for tab in self.env.f_handler.tab_list:
                 for col in current_plotted_cols:
                     columns.append('{}_{}'.format(tab, col))
                     if self.env.plot_prof_invsbl_points:  # then always visible

@@ -99,7 +99,7 @@ class Environment(object):
     bk_layout = None
 
     bk_bridge = None                # Messages Bridge object
-    files_handler = None            # Files handler (mainly to extract and update JSON files), tabs are managed here as well
+    f_handler = None                # Files handler (mainly to extract and update JSON files), tabs are managed here as well
     cruise_data = None              # Cruise Data object
     cd_handler = None               # Cruise Data Handler
     cd_update = None                # Cruise Data Update, update values from a similar CSV file

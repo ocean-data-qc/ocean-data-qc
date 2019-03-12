@@ -30,6 +30,7 @@ const locations = {
     'html': path.join(__ocean_data_qc_js, 'src/html'),
     'img': path.join(__ocean_data_qc_js, 'src/img'),
     'scripts': path.join(__ocean_data_qc_js, 'src/scripts'),
+    'satellite_tile': path.join(__ocean_data_qc_js, 'src/mbtiles/satellite-lowres-v1.1-z0-z5.mbtiles'),
 
     // LOGGERS
     'logs_folder': path.join(__user_data, 'logs'),
@@ -51,7 +52,12 @@ const locations = {
     // PYTHON EXECUTABLE
     'python_win': path.join(__ocean_data_qc_js, '../env/python.exe'),
     'python_mac': path.join(__ocean_data_qc_js, '../env/bin/python'),
-    'python_lin': path.join(__ocean_data_qc_js, '../env/bin/python')
+    'python_lin': path.join(__ocean_data_qc_js, '../env/bin/python'),
+
+    // ENV BINARIES PATH
+    'env_bin_win': path.join(__ocean_data_qc_js, '../env/Scripts'),
+    'env_bin_mac': path.join(__ocean_data_qc_js, '../env/bin'),
+    'env_bin_lin': path.join(__ocean_data_qc_js, '../env/bin')
 }
 
 module.exports = locations;  // can this be here?

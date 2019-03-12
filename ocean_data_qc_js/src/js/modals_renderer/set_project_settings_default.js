@@ -11,10 +11,6 @@ app_module_path.addPath(path.join(__dirname, '../modules'));
 app_module_path.addPath(path.join(__dirname, '../renderer_modules'));
 app_module_path.addPath(__dirname);
 
-const {ipcRenderer} = require('electron');
-const fs = require('fs');                             // file system module
-const python_shell = require('python-shell');
-
 const loc = require('locations');
 const logger = require('logging');
 const data = require('data');

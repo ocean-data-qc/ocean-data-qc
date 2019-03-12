@@ -67,8 +67,8 @@ class BokehPlotsHandler(Environment):
         self.env.bk_sources._init_prof_circles_sources()
         self.env.bk_sources._init_flag_views()
         self._init_ranges()
-        graphs = self.env.files_handler.graphs_per_tab  # property of FilesHandler object
-        for tab in self.env.files_handler.tab_list:
+        graphs = self.env.f_handler.graphs_per_tab  # property of FilesHandler object
+        for tab in self.env.f_handler.tab_list:
             tab_flag = tab + FLAG_END       # TODO: tabs titles cannot be flags?
                                             #       if there is not flag available choose the first in the dropdown
             self.env.tabs_flags_plots[tab] = {

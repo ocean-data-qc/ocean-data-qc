@@ -72,7 +72,7 @@ class BokehLoader(Environment):
             'bridge_row',       # bk_bridge
             'bk_bridge',
             'cruise_data',      # only if a session is closed or the opening is cancelled
-            'files_handler'     # nothing important in the __init__ method
+            'f_handler'     # nothing important in the __init__ method
         ]
         if reset != []:
             for elem in reset:

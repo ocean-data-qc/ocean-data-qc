@@ -497,5 +497,5 @@ class CruiseData(CruiseDataExport):
                     if c['param_name'] in self.env.cur_plotted_cols:
                         cps_to_rmv.append(c['param_name'])
         if cps_to_rmv != []:
-            self.env.files_handler.remove_cols_from_qc_plot_tabs(cps_to_rmv)
+            self.env.f_handler.remove_cols_from_qc_plot_tabs(cps_to_rmv)
         self.env.cruise_data.save_attributes()

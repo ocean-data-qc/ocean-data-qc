@@ -31,10 +31,19 @@ class BokehMap(Environment):
         self._set_tools()
 
     def _init_bokeh_map(self):
-        # 'ocean_basemap', 'map_server'
-        tile_options = {
-            'url': ("https://server.arcgisonline.com/ArcGIS/rest/services/Ocean_Basemap/MapServer/tile/{Z}/{Y}/{X}/")
-        }
+        lg.warning('-- INIT BOKEH MAP')
+        ts_online = self.env.f_handler.get(
+            attr='tile_server_online', f_path=SHARED_DATA
+        )
+        lg.warning('>> TS STATE: {}'.format(ts_state))
+        if ts_online:
+            tile_options = {
+                'url': ("https://server.arcgisonline.com/ArcGIS/rest/services/Ocean_Basemap/MapServer/tile/{Z}/{Y}/{X}/")
+            }
+        else:
+            tile_options = {
+                'url': ("http://127.0.0.1:8080/tiles/0/tiles/{Z}/{X}/{Y}/")
+            }
         tile_source = WMTSTileSource(**tile_options)
 
         range_padding = 0.30

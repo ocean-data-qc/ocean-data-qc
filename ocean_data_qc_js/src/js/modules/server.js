@@ -31,6 +31,7 @@ module.exports = {
         self.bokeh_port = data.get('bokeh_port', loc.shared_data);
         self.shell = null;
         self.python_options = {};
+        self.script_env_path = ''
         self.python_path = 'python';
         self.ocean_data_qc_path = '';
         self.octave_path = data.get('octave_path', loc.shared_data);
@@ -78,16 +79,20 @@ module.exports = {
     /** Sets the python path
      *    1. First check if python exists in the environment
      *    2. If not it will use the local python instaled in the system
+     *  Sets scripts python path as well
     */
     set_python_path: function() {
         var self = this;
 
         if (process.platform === 'win32' && fs.existsSync(loc.python_win)) {
             self.python_path = loc.python_win;
+            self.script_env_path = loc.env_bin_win;
         } else if (process.platform === 'darwin' && fs.existsSync(loc.python_mac)) {
             self.python_path = loc.python_mac;
+            self.script_env_path = loc.env_bin_mac;
         } else if (process.platform === 'linux' && fs.existsSync(loc.python_lin)) {
             self.python_path = loc.python_lin;
+            self.script_env_path = loc.env_bin_lin;
         } else {
             self.python_path = 'python';
         }
@@ -142,6 +147,7 @@ module.exports = {
                     self.ocean_data_qc_path = loc.ocean_data_qc_dev;
                     self.set_python_shell_options();
                     self.run_bokeh();
+                    self.run_tile_server();
                 }
             }
             if (typeof(results) !== 'undefined') {
@@ -151,6 +157,7 @@ module.exports = {
                 self.ocean_data_qc_path = tools.file_to_path(p);
                 self.set_python_shell_options();
                 self.run_bokeh();
+                self.run_tile_server();
             }
         });
     },
@@ -208,6 +215,7 @@ module.exports = {
         var self = this;
         self.web_contents.send('show-loader');
         self.shell.childProcess.kill();
+        self.ts_shell.childProcess.kill();
         self.launch_bokeh();
         self.load_bokeh_on_iframe();
         self.web_contents.send('relaunch-bokeh');
@@ -257,6 +265,7 @@ module.exports = {
         lg.info('-- CLOSE APP')
         //if (process.platform !== 'darwin') {
         self.shell.childProcess.kill();
+        self.ts_shell.childProcess.kill();
         app.quit();  // this waits until the children (self.shell.childProcess) are killed
         //}
     },
@@ -361,5 +370,35 @@ module.exports = {
         octave.stderr.on('data', (data) => {
             lg.warn(`Error detecting Octave version: ${data}`);
         });
-    }
+    },
+
+    /**
+     * Runs tile server application.
+     */
+    run_tile_server: function() {
+        var self = this;
+        lg.warn('-- RUN TILE SERVER')
+
+        // TODO: run only if tile_server_state == offline
+
+        var py_options = {
+            mode: 'text',                            // actually I do not need to return anything,
+            pythonPath: self.python_path,
+            pythonOptions: [loc.satellite_tile],   // -m option ?
+            scriptPath: self.script_env_path
+        };
+        var self = this;
+        if (self.ocean_data_qc_path != '') {
+            self.ts_shell = python_shell.run(
+                'tc-viewer', py_options, (err, results) => {
+                    if (err || typeof(results) !== 'undefined') {
+                        lg.error(`>> ERROR RUNNING TILE SERVER: ${err}`);
+                    }
+                    if (typeof(results) !== 'undefined') {  // actually nothing is returned? >> divert info
+                        lg.info('>> TILE SERVER RETURNS: ' + results[0]);
+                    }
+                }
+            );
+        }
+    },
 }
