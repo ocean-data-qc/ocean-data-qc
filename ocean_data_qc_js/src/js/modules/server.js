@@ -384,7 +384,7 @@ module.exports = {
         var py_options = {
             mode: 'text',                            // actually I do not need to return anything,
             pythonPath: self.python_path,
-            pythonOptions: [loc.satellite_tile],   // -m option ?
+            args: [loc.satellite_tile],
             scriptPath: self.script_env_path
         };
         var self = this;
