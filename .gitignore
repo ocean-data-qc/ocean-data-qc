@@ -25,7 +25,6 @@
 # compiled and compressed files
 *.egg-info
 *.pyc
-*.zip
 *.rar
 
 # log files

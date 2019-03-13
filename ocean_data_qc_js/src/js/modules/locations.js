@@ -30,7 +30,10 @@ const locations = {
     'html': path.join(__ocean_data_qc_js, 'src/html'),
     'img': path.join(__ocean_data_qc_js, 'src/img'),
     'scripts': path.join(__ocean_data_qc_js, 'src/scripts'),
-    'satellite_tile': path.join(__ocean_data_qc_js, 'src/mbtiles/satellite-lowres-v1.1-z0-z5.mbtiles'),
+
+    // TILE SERVICES
+    //'basemap_offile_tile': path.join(__ocean_data_qc_js, 'src/tiles/world_ocean_base_z4.zip'),
+    'basemap_offile_tile': path.join(__ocean_data_qc_js, 'src/tiles/etopo1_z4.zip'),
 
     // LOGGERS
     'logs_folder': path.join(__user_data, 'logs'),
