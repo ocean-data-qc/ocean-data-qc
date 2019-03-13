@@ -82,6 +82,7 @@ class Environment(object):
     tab_change = False              # True if the tab was currently changed
     all_flags = {}                  # Dictionary with all the current flags in the DF {2: 'FLAG 2', 3: 'FLAG 3', ...}
     dt_manual_update = False        # This should be True if a flag datatable values is updated manually with the keyboard
+    ts_state = None
 
     # TODO: these two flags are only used in the bokeh_table class, so they are not needed on the env variable
     dt_next_sample = False          # Flag to make difference when the DataTable is updated from the "Next Sample" button

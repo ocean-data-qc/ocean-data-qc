@@ -33,7 +33,8 @@ class BokehLoader(Environment):
         self.env.bk_loader = self
         BokehLayout()
 
-    def init_bokeh(self):
+    def init_bokeh(self, args={}):
+        self.env.ts_state = args.get('ts_state', None)
         if self.env.cruise_data is None:
             self.env.cd_handler._init_cruise_data()
         BokehSources()

@@ -28,7 +28,8 @@ require('set_project_settings_user').init();
 
 // ---------------------------- INITIAL FUNCTIONS ----------------------------- //
 
-$('body').data('bokeh_state','not-ready');
+$('body').data('bokeh_state', 'not-ready');
+$('body').data('ts_state', 'checking');
 tools.multi_modal_fix();
 load_images();
 check_port();    // TODO: move function into tools module
@@ -64,20 +65,20 @@ window.onmessage = function(e){
         // check ArcGIS Tile Server State
         urlExists('https://server.arcgisonline.com/arcgis/rest/services/Ocean/World_Ocean_Base/MapServer/tile/0/0/0', function(err, exists) {
             if (exists) {
-                data.set({ 'tile_server_online': true }, loc.shared_data);
-                lg.warn('>> TS STATUS: ONLINE')
+                lg.info('Tile server online');
+                $('body').data('ts_state', 'online');
+
                 $('#argis_tile_server_state').text('Online');
                 $('#argis_tile_server_state').css('color', 'green');
-                lg.info('Tile server online');                
             } else {
-                data.set({ 'tile_server_online': false }, loc.shared_data);
-                lg.warn('>> TS STATUS: OFFLINE')
+                lg.warn('Tile server offline, or there is no internet connection');
+                $('body').data('ts_state', 'offline');
+
                 $('#argis_tile_server_state').text('Offline');
                 $('#argis_tile_server_state').css('color', 'red');
-                lg.warn('Tile server offline, or there is no internet connection');               
             }
+            $('#argis_tile_server_state').css('font-weight', 'bold');
         });
-        $('#argis_tile_server_state').css('font-weight', 'bold');
     }
 
     if (typeof(e.data.signal) !== 'undefined') {

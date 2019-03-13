@@ -30,6 +30,7 @@ module.exports = {
         self.menu = menu;
         self.bokeh_port = data.get('bokeh_port', loc.shared_data);
         self.shell = null;
+        self.ts_shell = null;
         self.python_options = {};
         self.script_env_path = ''
         self.python_path = 'python';
@@ -83,7 +84,8 @@ module.exports = {
     */
     set_python_path: function() {
         var self = this;
-
+        lg.warn('-- SET PYTHON PATH')
+        lg.warn('-- PYTHON WIN: ' + loc.python_win);
         if (process.platform === 'win32' && fs.existsSync(loc.python_win)) {
             self.python_path = loc.python_win;
             self.script_env_path = loc.env_bin_win;
@@ -96,6 +98,8 @@ module.exports = {
         } else {
             self.python_path = 'python';
         }
+        lg.warn('>> (SET_PYTHON_PATH) SELF.SCRIPT_ENV_PATH: ' + self.script_env_path)
+        lg.warn('>> (SET_PYTHON_PATH) SELF.PYTHON_PATH: ' + self.python_path)
         self.check_python_version().then(() => {
             self.set_ocean_data_qc_path();
         }).catch((err) => {
@@ -147,7 +151,6 @@ module.exports = {
                     self.ocean_data_qc_path = loc.ocean_data_qc_dev;
                     self.set_python_shell_options();
                     self.run_bokeh();
-                    self.run_tile_server();
                 }
             }
             if (typeof(results) !== 'undefined') {
@@ -157,7 +160,6 @@ module.exports = {
                 self.ocean_data_qc_path = tools.file_to_path(p);
                 self.set_python_shell_options();
                 self.run_bokeh();
-                self.run_tile_server();
             }
         });
     },
@@ -215,7 +217,9 @@ module.exports = {
         var self = this;
         self.web_contents.send('show-loader');
         self.shell.childProcess.kill();
-        self.ts_shell.childProcess.kill();
+        if (self.ts_shell != null) {
+            self.ts_shell.childProcess.kill();
+        }
         self.launch_bokeh();
         self.load_bokeh_on_iframe();
         self.web_contents.send('relaunch-bokeh');
@@ -263,11 +267,11 @@ module.exports = {
     close_app: function () {
         var self = this;
         lg.info('-- CLOSE APP')
-        //if (process.platform !== 'darwin') {
-        self.shell.childProcess.kill();
-        self.ts_shell.childProcess.kill();
+        self.shell.childProcess.kill();  // mac needs to kill children explicitly
+        if (self.ts_shell != null) {
+            self.ts_shell.childProcess.kill();
+        }
         app.quit();  // this waits until the children (self.shell.childProcess) are killed
-        //}
     },
 
     close_with_exit_prompt: function(e) {
@@ -379,27 +383,32 @@ module.exports = {
         var self = this;
         lg.warn('-- RUN TILE SERVER')
 
-        // TODO: run only if tile_server_state == offline
-
-        var py_options = {
-            mode: 'text',                            // actually I do not need to return anything,
-            pythonPath: self.python_path,
-            args: [loc.basemap_offile_tile],
-            scriptPath: self.script_env_path
-        };
-        var self = this;
-        lg.info('-- TILE SERVER OFFLINE FILE: ' + path.parse(loc.basemap_offile_tile).base);
-        if (self.ocean_data_qc_path != '') {
-            self.ts_shell = python_shell.run(
-                'tc-viewer', py_options, (err, results) => {
-                    if (err || typeof(results) !== 'undefined') {
-                        lg.error(`>> ERROR RUNNING TILE SERVER: ${err}`);
-                    }
-                    if (typeof(results) !== 'undefined') {  // actually nothing is returned? >> divert info
-                        lg.info('>> TILE SERVER RETURNS: ' + results[0]);
-                    }
+        var _checkScriptEnvPathSet = setInterval(function() {
+            lg.warn('>> CHECK IF SCRIPT PATH IS SET');
+            if (self.script_env_path != '') {
+                clearInterval(_checkScriptEnvPathSet);
+                lg.warn('>> SCRIPT ENV PATH: ' + self.script_env_path);
+                var py_options = {
+                    mode: 'text',                            // actually I do not need to return anything,
+                    pythonPath: self.python_path,
+                    args: [loc.basemap_offile_tile],
+                    scriptPath: self.script_env_path
+                };
+                lg.info('-- TILE SERVER OFFLINE FILE: ' + path.parse(loc.basemap_offile_tile).base);
+                if (self.ocean_data_qc_path != '') {
+                    self.ts_shell = python_shell.run(
+                        'tc-viewer', py_options, (err, results) => {
+                            if (err || typeof(results) !== 'undefined') {
+                                lg.error(`>> ERROR RUNNING TILE SERVER: ${err}`);
+                            }
+                            if (typeof(results) !== 'undefined') {  // actually nothing is returned? >> divert info
+                                lg.info('>> TILE SERVER RETURNS: ' + results[0]);
+                            }
+                        }
+                    );
                 }
-            );
-        }
+            }
+        }, 100);
+
     },
 }

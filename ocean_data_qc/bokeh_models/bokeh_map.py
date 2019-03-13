@@ -13,6 +13,7 @@ from bokeh.models.tools import (
     HoverTool
 )
 from bokeh.models.ranges import DataRange1d
+from ocean_data_qc.data_models.exceptions import Error
 
 from bokeh.util.logconfig import bokeh_logger as lg
 from ocean_data_qc.env import Environment
@@ -32,18 +33,22 @@ class BokehMap(Environment):
 
     def _init_bokeh_map(self):
         lg.warning('-- INIT BOKEH MAP')
-        ts_online = self.env.f_handler.get(
-            attr='tile_server_online', f_path=SHARED_DATA
-        )
-        lg.warning('>> TS ONLINE: {}'.format(ts_online))
-        if ts_online:
+        lg.warning('>> TS STATE: {}'.format(self.env.ts_state))
+        if self.env.ts_state is None:
+            raise Error(
+                'The tile server state is not set yet',
+                rollback='cd'
+            )
+        if self.env.ts_state == 'online':
             tile_options = {
                 'url': ("https://server.arcgisonline.com/ArcGIS/rest/services/Ocean_Basemap/MapServer/tile/{Z}/{Y}/{X}/")
             }
         else:
+            lg.warning('>> TAKING LOCAL TILE SERVER')
             tile_options = {
                 'url': ("http://127.0.0.1:8080/tiles/0/tiles/{Z}/{X}/{Y}/")
             }
+
         tile_source = WMTSTileSource(**tile_options)
 
         range_padding = 0.30

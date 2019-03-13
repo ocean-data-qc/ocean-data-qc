@@ -29,17 +29,28 @@ module.exports = {
         }
         var _checkBokehSate = setInterval(function() {
             lg.info('>> CHECK BOKEH STATE');
-            if ($('body').data('bokeh_state') == 'ready') {  // check if bokeh is already loaded
+            if ($('body').data('bokeh_state') == 'ready' && $('body').data('ts_state') != 'checking') {  // check if bokeh is already loaded
                 clearInterval(_checkBokehSate);
-                var call_params = {
-                    'object': 'bokeh.loader',
-                    'method': 'init_bokeh',
+                if ($('body').data('ts_state') == 'offline') {
+                    ipcRenderer.send('run-tile-server');
                 }
-                tools.call_promise(call_params).then((result) => {
-                    self.run_on_ready();
-                });
+                self.init_bokeh()
             }
         }, 100);
+    },
+
+    init_bokeh: function() {
+        var self = this;
+        var call_params = {
+            'object': 'bokeh.loader',
+            'method': 'init_bokeh',
+            'args': {
+                'ts_state': $('body').data('ts_state'),
+            }
+        }
+        tools.call_promise(call_params).then((result) => {
+            self.run_on_ready();
+        });
     },
 
     show_loader: function() {

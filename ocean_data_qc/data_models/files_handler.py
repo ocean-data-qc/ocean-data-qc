@@ -180,11 +180,12 @@ class FilesHandler(Environment):
         lg.warning('-- REMOVE TMP FOLDER')
         shutil.rmtree(TMP)
 
-    # TODO: test this method
     def get(self, attr, f_path):
         """ Gets data from json files
             * attr: attribute to get
             * f_path: file path where the file is located
+
+            NOTE: This method should be avoided because access to hard disk is very costly
         """
         lg.info('-- GET ATTR: {} | FROM FILE: {}'.format(attr, f_path))
         with open(f_path, 'r') as f:

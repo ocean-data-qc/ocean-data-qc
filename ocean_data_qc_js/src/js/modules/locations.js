@@ -64,4 +64,4 @@ const locations = {
     'env_bin_lin': path.join(__ocean_data_qc_js, '../env/bin')
 }
 
-module.exports = locations;  // can this be here?
+module.exports = locations;

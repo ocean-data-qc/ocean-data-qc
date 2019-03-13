@@ -164,3 +164,8 @@ ipcMain.on('set-octave-path', function(event, args){
     web_contents.send('set-octave-info');
 })
 
+ipcMain.on('run-tile-server', function(event, args){
+    server.run_tile_server();
+})
+
+
