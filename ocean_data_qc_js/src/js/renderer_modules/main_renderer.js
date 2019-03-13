@@ -22,6 +22,7 @@ const lg = require('logging');
 const data = require('data');
 const tools = require('tools');
 const server_renderer = require('server_renderer');
+const urlExists = require('url-exists');
 
 require('set_project_settings_user').init();
 
@@ -61,26 +62,22 @@ window.onmessage = function(e){
         $('body').data('bokeh_state','ready');
 
         // check ArcGIS Tile Server State
-        var path = 'https://server.arcgisonline.com/arcgis/rest/services/Ocean/World_Ocean_Base/MapServer/tile/0/0/0';
-        $('<img src="' + path + '" />').load(path, function(response, status, xhr) {
-            if ( status == "error" ) {
-                data.set({'tile_server_online': false }, loc.shared_data);
-                lg.warn('>> TS STATUS: OFFLINE')
-                $('#argis_tile_server_state').text('Offline');
-                $('#argis_tile_server_state').css('color', 'red');
-                lg.warn('Tile server offline, or there is no internet connection');
-                lg.warn(xhr.status + " " + xhr.statusText);
-
-                // TODO: run tile server with python shell
-            } else {
-                data.set({'tile_server_online': true }, loc.shared_data);
+        urlExists('https://server.arcgisonline.com/arcgis/rest/services/Ocean/World_Ocean_Base/MapServer/tile/0/0/0', function(err, exists) {
+            if (exists) {
+                data.set({ 'tile_server_online': true }, loc.shared_data);
                 lg.warn('>> TS STATUS: ONLINE')
                 $('#argis_tile_server_state').text('Online');
                 $('#argis_tile_server_state').css('color', 'green');
-                lg.info('Tile server online');
+                lg.info('Tile server online');                
+            } else {
+                data.set({ 'tile_server_online': false }, loc.shared_data);
+                lg.warn('>> TS STATUS: OFFLINE')
+                $('#argis_tile_server_state').text('Offline');
+                $('#argis_tile_server_state').css('color', 'red');
+                lg.warn('Tile server offline, or there is no internet connection');               
             }
-            $('#argis_tile_server_state').css('font-weight', 'bold');
         });
+        $('#argis_tile_server_state').css('font-weight', 'bold');
     }
 
     if (typeof(e.data.signal) !== 'undefined') {
