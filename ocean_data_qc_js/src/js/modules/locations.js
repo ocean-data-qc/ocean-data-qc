@@ -33,7 +33,8 @@ const locations = {
 
     // TILE SERVICES
     //'basemap_offile_tile': path.join(__ocean_data_qc_js, 'src/tiles/world_ocean_base_z4.zip'),
-    'basemap_offile_tile': path.join(__ocean_data_qc_js, 'src/tiles/etopo1_z4.zip'),
+    //'basemap_offile_tile': path.join(__ocean_data_qc_js, 'src/tiles/etopo1_z4.zip'),
+    'basemap_offile_tile': path.join(__ocean_data_qc_js, 'src/tiles/world_ocean_base_z5.zip'),
 
     // LOGGERS
     'logs_folder': path.join(__user_data, 'logs'),
