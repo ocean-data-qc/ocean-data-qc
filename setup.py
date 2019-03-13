@@ -42,7 +42,10 @@ requires = [
     'more_itertools >=4.3.0',
     'oct2py >=4.0.6',  # this should install scipy automatically
     'scipy >=1.1.0',
-    'tilecloud >= 1.1.0'
+    'tilecloud'
+]
+dependency_links = [
+    'https://github.com/ocean-data-qc/tilecloud/tarball/master#egg=tilecloud'
 ]
 
 if platform == "win32":
@@ -60,6 +63,7 @@ setup(
     author_email='jcacabelos@iim.csic.es',
     license='MIT',
     install_requires=requires,
+    dependency_links=dependency_links,
     packages=[
         'ocean_data_qc',
         'ocean_data_qc.bokeh_models',
