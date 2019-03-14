@@ -10,7 +10,8 @@
         "clean": "node ./src/scripts/clean.js",
         "pack": "electron-builder --dir",
         "dist_mac": "electron-builder --macos",
-        "dist_win": "electron-builder --win --x64"
+        "dist_win": "electron-builder --win --x64",
+        "dist_linux": "electron-builder --linux --x64"
     },
     "repository": {
         "type": "git",
@@ -32,7 +33,7 @@
         "seawater",
         "bokeh"
     ],
-    "author": "CSIC",
+    "author": "IIM-CSIC <jcacabelos@iim.csic.es>",
     "license": "CC0-1.0",
     "dependencies": {
         "app-module-path": "^2.2.0",
@@ -109,6 +110,14 @@
                 "icon": "icon.ico"
             }
         ],
+        "linux": {
+            "category": "Utility",
+            "synopsis": "Tool for 1st Quality Control on Hydrographic Cruise Data",
+            "target": [
+                "deb",
+                "snap"
+            ]
+        },
         "dmg": {
             "contents": [
                 {
