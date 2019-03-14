@@ -31,10 +31,13 @@ if sys.platform == 'win32':
                 pass
 else:
     if not shutil.which('octave'):
-        if os.path.isfile('/usr/local/bin/octave'):
-            OCTAVE_EXECUTABLE = '/usr/local/bin/octave'
-        else:
-            for dname in os.listdir('/Applications'):
-                if fnmatch.fnmatch(dname, 'Octave-*'):
-                    OCTAVE_EXECUTABLE = os.path.join('/Applications', dname, 'Contents/Resources/usr/bin/octave')
+        try: 
+            if os.path.isfile('/usr/local/bin/octave'):
+                OCTAVE_EXECUTABLE = '/usr/local/bin/octave'
+            elif os.path.isdir('/Applications'):                
+                for dname in os.listdir('/Applications'):
+                    if fnmatch.fnmatch(dname, 'Octave-*'):
+                        OCTAVE_EXECUTABLE = os.path.join('/Applications', dname, 'Contents/Resources/usr/bin/octave')
+        except:
+            pass
 lg.info('-- OCTAVE_EXECUTABLE: {}'.format(OCTAVE_EXECUTABLE))
