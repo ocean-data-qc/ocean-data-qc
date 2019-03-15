@@ -115,7 +115,8 @@
             "synopsis": "Tool for 1st Quality Control on Hydrographic Cruise Data",
             "target": [
                 "deb",
-                "snap"
+                "snap",
+                "rpm"
             ]
         },
         "dmg": {
