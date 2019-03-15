@@ -191,16 +191,21 @@ module.exports = {
      * The bokeh process is bound to the node process.
      */
     run_bokeh: function() {
-        lg.info('-- RUN BOKEH')
         var self = this;
+        lg.info('-- RUN BOKEH')
+        lg.warn('>> PYTHON SHELL OPTIONS: ' + JSON.stringify(self.python_options, null, 4));
         if (self.ocean_data_qc_path != '') {
             self.shell = python_shell.run(
                 '', self.python_options, (err, results) => {
-                    if (err || typeof(results) !== 'undefined') {
+                    if (err || typeof(results) == 'undefined') {
                         lg.error(`>> ERROR RUNNING BOKEH: ${err}`);
                     }
                     if (typeof(results) !== 'undefined') {  // actually nothing is returned
-                        lg.info('>> OCEAN_DATA_QC RETURNS: ' + results[0]);
+                        if (results != null) {
+                            lg.info('>> OCEAN_DATA_QC RETURNS: ' + results[0]);
+                        } else {
+                            lg.error('>> PYTHON SHELL COMMAND RETURNED NULL')
+                        }
                     }
                 }
             );
