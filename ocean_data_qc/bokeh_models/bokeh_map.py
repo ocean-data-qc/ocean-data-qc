@@ -39,7 +39,6 @@ class BokehMap(Environment):
                 'url': ("https://server.arcgisonline.com/ArcGIS/rest/services/Ocean_Basemap/MapServer/tile/{Z}/{Y}/{X}/")
             }
         else:
-            lg.warning('>> TAKING LOCAL TILE SERVER')
             tile_options = {
                 'url': ("http://127.0.0.1:8080/tiles/0/tiles/{Z}/{X}/{Y}/")
             }

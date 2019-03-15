@@ -30,7 +30,6 @@ module.exports = {
         var _checkBokehSate = setInterval(function() {
             lg.info('>> CHECK BOKEH STATE');
             if ($('body').data('bokeh_state') == 'ready' && $('body').data('ts_state') != 'checking') {  // check if bokeh is already loaded
-                lg.warn('>> TS STATE: ' + $('body').data('ts_state'));
                 clearInterval(_checkBokehSate);
                 if ($('body').data('ts_state') == 'offline') {
                     ipcRenderer.send('run-tile-server');

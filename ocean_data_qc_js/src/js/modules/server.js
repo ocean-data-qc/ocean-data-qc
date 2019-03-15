@@ -382,6 +382,10 @@ module.exports = {
     run_tile_server: function() {
         var self = this;
         lg.info('-- RUN TILE SERVER');
+        if (self.ts_shell != null) {
+            lg.warn('>> TILE SERVER ALREADY RUNNING');
+            return;
+        }
         var _checkScriptEnvPathSet = setInterval(function() {
             if (self.script_env_path != '') {
                 clearInterval(_checkScriptEnvPathSet);
