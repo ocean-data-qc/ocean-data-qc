@@ -91,8 +91,8 @@ module.exports = {
     open_file: function (file_paths) {
         lg.info('-- OPEN FILE');
         var self = this;
-        self.web_contents.send('show-wait-cursor');
         if (file_paths === undefined) return;
+        self.web_contents.send('show-wait-cursor');
         var file_path = file_paths[0];
 
         mime.define(                        // adding new extension to node mime-types
