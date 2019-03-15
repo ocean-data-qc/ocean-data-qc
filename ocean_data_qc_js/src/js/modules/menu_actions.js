@@ -142,8 +142,6 @@ module.exports = {
         var self = this;
         if (typeof(arg) !== 'undefined' && 'save_from' in arg) {
             self.save_from = arg.save_from;
-        } else {
-            lg.warn('>> NO SAVE FROM (save_file')
         }
         return new Promise((resolve, reject) => {
             var project_file = data.get('project_file', loc.proj_settings);
@@ -156,10 +154,11 @@ module.exports = {
                 try {
                     zip.zipSync(loc.proj_files, file_path);
                     self.web_contents.send('enable-watcher', { 'mark': 'saved' });
-                    if (typeof(self.save_from) !== 'undefined' && self.save_from != 'closing_process') {
-                        self.web_contents.send('show-snackbar', {'msg': 'The project was saved correctly' });
-                    } else {
+                    lg.warn('>> SAVE FROM VALUE: ' + self.save_from);
+                    if (typeof(self.save_from) !== 'undefined' && self.save_from == 'closing_process') {
                         self.web_contents.send('show-project-saved-dialog')
+                    } else {
+                        self.web_contents.send('show-snackbar', {'msg': 'The project was saved correctly' });
                     }
                 } catch(err) {
                     self.web_contents.send('show-modal', {
