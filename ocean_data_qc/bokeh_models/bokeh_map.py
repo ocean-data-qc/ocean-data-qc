@@ -35,14 +35,9 @@ class BokehMap(Environment):
         if self.env.ts_state is None:     # this should not happen, I add it here just in case
             self.env.ts_state = 'online'  # I set online because I cannot run tile server from here
         if self.env.ts_state == 'online':
-            tile_options = {
-                'url': ("https://server.arcgisonline.com/ArcGIS/rest/services/Ocean_Basemap/MapServer/tile/{Z}/{Y}/{X}/")
-            }
+            tile_options = dict(url=ARGIS_TS)
         else:
-            tile_options = {
-                'url': ("http://127.0.0.1:8080/tiles/0/tiles/{Z}/{X}/{Y}/")
-            }
-
+            tile_options = dict(url=LOCAL_TS)
         tile_source = WMTSTileSource(**tile_options)
 
         range_padding = 0.30

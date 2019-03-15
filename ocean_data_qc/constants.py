@@ -72,6 +72,11 @@ COL_NAMES_MAPPING = [
     ('CFC_12', 'CFC12'),
 ]
 
+# ---------------------- URLS ----------------------------- #
+
+ARGIS_TS = "https://server.arcgisonline.com/ArcGIS/rest/services/Ocean_Basemap/MapServer/tile/{Z}/{Y}/{X}/"
+LOCAL_TS = "http://127.0.0.1:8080/tiles/0/tiles/{Z}/{X}/{Y}/"
+
 # --------------------- COLORS ---------------------------- #
 
 BLUES = Blues8[1:-1]  # len = 6, from dark to light blue
