@@ -34,7 +34,7 @@ class BokehMap(Environment):
     def _init_bokeh_map(self):
         lg.warning('-- INIT BOKEH MAP')
         lg.warning('>> TS STATE: {}'.format(self.env.ts_state))
-        if self.env.ts_state is None:
+        if self.env.ts_state is None:  # TODO: check this before go_to_bokeh js method
             raise Error(
                 'The tile server state is not set yet',
                 rollback='cd'

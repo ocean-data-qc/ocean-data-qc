@@ -12,6 +12,7 @@ app_module_path.addPath(path.join(__dirname, '../modals_renderer'));
 app_module_path.addPath(__dirname);
 
 const { ipcRenderer } = require('electron');
+const shell = require('electron').shell;
 const portscanner = require('portscanner')
 const rmdir = require('rimraf');
 const fs = require('fs');
@@ -51,6 +52,11 @@ $(document).ready(function() {
 if (is_dev) {
     $('#update_state').text('Running on development').addClass('update_error');
 }
+
+$('.open-in-browser').click((event) => {
+    event.preventDefault();
+    shell.openExternal(event.target.href);
+});
 
 // -------------------- RECEIVING MESSAGES FROM THE BOKEH IFRAME ------------------ //
 

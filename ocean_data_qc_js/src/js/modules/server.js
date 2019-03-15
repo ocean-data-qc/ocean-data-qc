@@ -381,20 +381,17 @@ module.exports = {
      */
     run_tile_server: function() {
         var self = this;
-        lg.warn('-- RUN TILE SERVER')
-
+        lg.info('-- RUN TILE SERVER');
         var _checkScriptEnvPathSet = setInterval(function() {
-            lg.warn('>> CHECK IF SCRIPT PATH IS SET');
             if (self.script_env_path != '') {
                 clearInterval(_checkScriptEnvPathSet);
-                lg.warn('>> SCRIPT ENV PATH: ' + self.script_env_path);
                 var py_options = {
                     mode: 'text',                            // actually I do not need to return anything,
                     pythonPath: self.python_path,
                     args: [loc.basemap_offile_tile],
                     scriptPath: self.script_env_path
                 };
-                lg.info('-- TILE SERVER OFFLINE FILE: ' + path.parse(loc.basemap_offile_tile).base);
+                lg.info('>> TILE SERVER OFFLINE FILE: ' + path.parse(loc.basemap_offile_tile).base);
                 if (self.ocean_data_qc_path != '') {
                     self.ts_shell = python_shell.run(
                         'tc-viewer', py_options, (err, results) => {
