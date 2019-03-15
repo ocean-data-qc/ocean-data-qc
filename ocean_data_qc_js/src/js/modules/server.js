@@ -84,8 +84,7 @@ module.exports = {
     */
     set_python_path: function() {
         var self = this;
-        lg.warn('-- SET PYTHON PATH')
-        lg.warn('-- PYTHON WIN: ' + loc.python_win);
+        lg.info('-- SET PYTHON PATH')
         if (process.platform === 'win32' && fs.existsSync(loc.python_win)) {
             self.python_path = loc.python_win;
             self.script_env_path = loc.env_bin_win;
@@ -98,8 +97,7 @@ module.exports = {
         } else {
             self.python_path = 'python';
         }
-        lg.warn('>> (SET_PYTHON_PATH) SELF.SCRIPT_ENV_PATH: ' + self.script_env_path)
-        lg.warn('>> (SET_PYTHON_PATH) SELF.PYTHON_PATH: ' + self.python_path)
+        lg.info('>> (SET_PYTHON_PATH) SELF.PYTHON_PATH: ' + self.python_path)
         self.check_python_version().then(() => {
             self.set_ocean_data_qc_path();
         }).catch((err) => {
