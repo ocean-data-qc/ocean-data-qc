@@ -34,7 +34,8 @@ class BokehLoader(Environment):
         BokehLayout()
 
     def init_bokeh(self, args={}):
-        self.env.ts_state = args.get('ts_state', None)
+        if self.env.ts_state is None:
+            self.env.ts_state = args.get('ts_state', None)
         if self.env.cruise_data is None:
             self.env.cd_handler._init_cruise_data()
         BokehSources()
@@ -73,7 +74,8 @@ class BokehLoader(Environment):
             'bridge_row',       # bk_bridge
             'bk_bridge',
             'cruise_data',      # only if a session is closed or the opening is cancelled
-            'f_handler'     # nothing important in the __init__ method
+            'f_handler',     # nothing important in the __init__ method
+            'ts_state'
         ]
         if reset != []:
             for elem in reset:

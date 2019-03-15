@@ -44,27 +44,3 @@ class UserError(Exception, Environment):
         return repr(
             'USER ERROR: {}'.format(self.value)
         )
-
-
-class Error(Exception, Environment):
-    env = Environment
-
-    def __init__(self, value, rollback=False):
-        lg.error('{}'.format(value))
-        self.value = value
-        if rollback == 'cd':
-            self._cruise_data_rollback()
-        elif rollback == 'cd_update':
-            self._cruise_data_update_rollback()
-
-    def _cruise_data_rollback(self):
-        self.env.cruise_data = None
-        self.env.f_handler.remove_tmp_folder()
-        self.env.bk_bridge.show_default_cursor()
-
-    def _cruise_data_update_rollback(self):
-        self.env.cd_aux = None
-        self.env.cd_update = None
-        if os.path.isdir(UPD):
-            shutil.rmtree(UPD)
-        self.env.bk_bridge.show_default_cursor()
