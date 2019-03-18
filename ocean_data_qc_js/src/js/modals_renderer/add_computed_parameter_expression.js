@@ -12,7 +12,7 @@ app_module_path.addPath(path.join(__dirname, '../renderer_modules'));
 app_module_path.addPath(__dirname);
 
 const loc = require('locations');
-const logger = require('logging');
+const lg = require('logging');
 const data = require('data');
 const tools = require('tools');
 
@@ -32,6 +32,7 @@ module.exports = {
             self.precision.val(5);
             self.comp_param_name = $('input[name=expr_name]');
             self.current_columns = [];
+            self.current_cp_cols = []
 
             $('#save_expr').prop('disabled', true);
 
@@ -41,7 +42,7 @@ module.exports = {
 
     load_data: function() {
         var self = this;
-        logger.info('-- LOAD DATA');
+        lg.info('-- LOAD DATA');
         var params = {
             'object': 'computed.parameter',
             'method': 'get_all_parameters'
@@ -49,6 +50,9 @@ module.exports = {
         tools.call_promise(params).then((result) => {
             if (typeof(result['columns']) !== 'undefined') {
                 self.current_columns = result['columns'];
+            }
+            if (typeof(result['computed']) !== 'undefined') {
+                self.current_cp_cols = result['computed'];
             }
 
             self.current_columns.forEach(function (column) {
@@ -198,7 +202,7 @@ module.exports = {
         });
 
         $('#del_comp_param').click(function() {
-            logger.info('-- DEL COMP PARAM')
+            lg.info('-- DEL COMP PARAM')
             var value = self.all_computed_params_list.val();
 
             // check if it is an added parameter
@@ -242,7 +246,7 @@ module.exports = {
 
             self.all_computed_params_list.find('option:selected').remove();
             if (self.all_computed_params_list.find('option').length > 0) {
-                logger.info('-- CLICKING ON THE FIRST ELEMENT');
+                lg.info('-- CLICKING ON THE FIRST ELEMENT');
                 self.all_computed_params_list.val(self.all_computed_params_list.find('option:eq(0)').val());
                 self.all_computed_params_list.find('option:eq(0)').click();
             }
@@ -290,37 +294,40 @@ module.exports = {
         });
 
         $('#reset_defaults').click(() => {
-            var default_cp = data.get('computed_params', loc.default_settings);
-            data.set({'computed_params': default_cp }, loc.custom_settings);
-            data.set({'computed_params': default_cp }, loc.proj_settings);
-            var custom_cps = data.get('computed_params', loc.custom_settings);  // TODO: is this needed?
-
-            self.all_computed_params_list.text('');
-            default_cp.forEach(function (column) {
-                self.all_computed_params_list.append($('<option>', {
-                    value: column.param_name,
-                    text: column.param_name,
-                    class: self.get_default_class(custom_cps, column)
-                }));
-            });
-            self.sort_select_list(self.all_computed_params_list);
-
-            self.available_computed_param.text('');
-            default_cp.forEach(function (column) {
-                if (!self.current_columns.includes(column.param_name)) {
-                    self.available_computed_param.append($('<option>', {
-                        value: column.param_name,
-                        text: column.param_name,
-                    }));
-                }
-            });
-            self.sort_select_list(self.available_computed_param);
-
             var params = {
                 'object': 'computed.parameter',
                 'method': 'check_dependencies',
             }
-            tools.call_promise(params).then((result) => {   // I do it like this to make only one python call
+            tools.call_promise(params).then((result) => {
+                var default_cp = data.get('computed_params', loc.default_settings);
+                data.set({'computed_params': default_cp }, loc.custom_settings);
+                data.set({'computed_params': default_cp }, loc.proj_settings);
+                var custom_cps = data.get('computed_params', loc.custom_settings);  // TODO: is this needed?
+
+                self.all_computed_params_list.text('');
+                default_cp.forEach(function (column) {
+                    self.all_computed_params_list.append($('<option>', {
+                        value: column.param_name,
+                        text: column.param_name,
+                        class: self.get_default_class(custom_cps, column)
+                    }));
+                });
+                self.sort_select_list(self.all_computed_params_list);
+
+                lg.warn('>> CURRENT CP COLS: ' + self.current_cp_cols);
+                lg.warn('>> CURRENT COLS: ' + self.current_columns);
+
+                self.available_computed_param.text('');
+                default_cp.forEach(function (column) {
+                    if (!self.current_cp_cols.includes(column.param_name)) {
+                        self.available_computed_param.append($('<option>', {
+                            value: column.param_name,
+                            text: column.param_name,
+                        }));
+                    }
+                });
+                self.sort_select_list(self.available_computed_param);
+
                 if (result != {} && result != null) {
                     self.all_computed_params_list.find('option').each(function() {
                         if ($(this).val() in result) {
@@ -329,6 +336,7 @@ module.exports = {
                                     $(this).removeClass('default_param');
                                 }
                                 $(this).addClass('missing_param');
+                                self.available_computed_param.find('option[value="' + $(this).val() + '"]').remove();
                             }
                         }
                     })
@@ -368,7 +376,7 @@ module.exports = {
     },
 
     get_default_class: function(cps, column) {
-        logger.info('-- GET DEFAULT CLASS');
+        lg.info('-- GET DEFAULT CLASS');
         var self = this;
         var is_default = false;
         cps.every(function (elem, index){
@@ -378,7 +386,7 @@ module.exports = {
             }
             return true;                // continue every statement
         });
-        logger.info('>> PARAM NAME TO CHECK: ' + column.param_name);
+        lg.info('>> PARAM NAME TO CHECK: ' + column.param_name);
         if (is_default == true && !self.current_columns.includes(column.param_name)) {
             return 'default_param';
         } else if(self.current_columns.includes(column.param_name)) {
@@ -409,7 +417,7 @@ module.exports = {
     },
 
     compute_cp: function(self=false) {
-        logger.info('-- COMPUTE CP');
+        lg.info('-- COMPUTE CP');
         if (self == false) {
             var self = this;
         }
@@ -423,7 +431,7 @@ module.exports = {
             }
         }
         tools.call_promise(params).then((result) => {
-            logger.info('>> VALIDATE EQUATION RESULT: ' + JSON.stringify(result, null, 4));
+            lg.info('>> VALIDATE EQUATION RESULT: ' + JSON.stringify(result, null, 4));
             if ('success' in result && result['success'] == true) {
                 self.update_computed_params(expr_name);
                 self.all_computed_params_list.val(self.comp_param_name.val());

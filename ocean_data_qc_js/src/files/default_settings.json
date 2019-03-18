@@ -86,6 +86,12 @@
             "precision": "2"
         },
         {
+            "param_name": "_NITRAT",
+            "equation": "@nitrate_combined(NITRAT, NITRIT, NO2_NO3)",
+            "units": false,
+            "precision": "2"
+        },
+        {
             "param_name": "SAL",
             "equation": "@salinity_combined(CTDSAL, CTDSAL_FLAG_W, SALNTY, SALNTY_FLAG_W)",
             "units": false,
@@ -194,7 +200,49 @@
             "precision": "3"
         },
         {
-            "param_name": "TCARBN_CALCULATED_ts",
+            "param_name": "ALK_NNCANYONB_BIT18",
+            "equation": "@alk_nncanyonb_bit18(DATE, LATITUDE, LONGITUDE, PRES, CTDTMP, SAL, OXY)",
+            "units": false,
+            "precision": "3"
+        },
+        {
+            "param_name": "TCARBN_NNCANYONB_BIT18",
+            "equation": "@dic_nncanyonb_bit18(DATE, LATITUDE, LONGITUDE, PRES, CTDTMP, SAL, OXY)",
+            "units": false,
+            "precision": "3"
+        },
+        {
+            "param_name": "PHTS25P0_NNCANYONB_BIT18",
+            "equation": "@phts25p0_nncanyonb_bit18(DATE, LATITUDE, LONGITUDE, PRES, CTDTMP, SAL, OXY)",
+            "units": false,
+            "precision": "5"
+        },
+        {
+            "param_name": "NITRAT_NNCANYONB_BIT18",
+            "equation": "@nitrat_nncanyonb_bit18(DATE, LATITUDE, LONGITUDE, PRES, CTDTMP, SAL, OXY)",
+            "units": false,
+            "precision": "5"
+        },
+        {
+            "param_name": "PHSPHT_NNCANYONB_BIT18",
+            "equation": "@phspht_nncanyonb_bit18(DATE, LATITUDE, LONGITUDE, PRES, CTDTMP, SAL, OXY)",
+            "units": false,
+            "precision": "5"
+        },
+        {
+            "param_name": "SILCAT_NNCANYONB_BIT18",
+            "equation": "@silcat_nncanyonb_bit18(DATE, LATITUDE, LONGITUDE, PRES, CTDTMP, SAL, OXY)",
+            "units": false,
+            "precision": "5"
+        },
+        {
+            "param_name": "TCARBN_CALCULATED_SWS",
+            "equation": "@tcarbon_from_alk_phsws25p0(ALKALI, PH_SWS, SAL, SILCAT, PHSPHT)",
+            "units": false,
+            "precision": "3"
+        },
+        {
+            "param_name": "TCARBN_CALCULATED_TS",
             "equation": "@tcarbon_from_alk_phts25p0(ALKALI, PH_TOT, SAL, SILCAT, PHSPHT)",
             "units": false,
             "precision": "3"
@@ -203,7 +251,31 @@
             "param_name": "PHTS25P0_CALCULATED",
             "equation": "@phts25p0_from_alk_tcarbn(ALKALI, TCARBN, SAL, SILCAT, PHSPHT)",
             "units": false,
-            "precision": "3"
+            "precision": "5"
+        },
+        {
+            "param_name": "DELTA_PH",
+            "equation": "PH_TOT - PHTS25P0_CALCULATED",
+            "units": false,
+            "precision": "5"
+        },
+        {
+            "param_name": "AT_DIFF",
+            "equation": " ALK_NN3WRMSE_BRO18 - ALKALI ",
+            "units": false,
+            "precision": "5"
+        },
+        {
+            "param_name": "OXY_DIFF",
+            "equation": " CTDOXY - OXYGEN ",
+            "units": false,
+            "precision": "5"
+        },
+        {
+            "param_name": "SAL_DIFF",
+            "equation": " CTDSAL - SALNTY ",
+            "units": false,
+            "precision": "5"
         }
     ],
     "qc_plot_tabs": {

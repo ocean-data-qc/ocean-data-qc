@@ -282,12 +282,6 @@
             "equation": " CTDSAL - SALNTY ",
             "units": false,
             "precision": "5"
-        },
-        {
-            "param_name": "TEST_SILCAT",
-            "equation": "SILCAT + 3",
-            "units": false,
-            "precision": "5"
         }
     ],
     "qc_plot_tabs": {
