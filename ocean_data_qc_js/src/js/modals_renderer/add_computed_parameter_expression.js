@@ -294,6 +294,7 @@ module.exports = {
         });
 
         $('#reset_defaults').click(() => {
+            tools.show_wait_cursor();
             var params = {
                 'object': 'computed.parameter',
                 'method': 'check_dependencies',
@@ -313,9 +314,6 @@ module.exports = {
                     }));
                 });
                 self.sort_select_list(self.all_computed_params_list);
-
-                lg.warn('>> CURRENT CP COLS: ' + self.current_cp_cols);
-                lg.warn('>> CURRENT COLS: ' + self.current_columns);
 
                 self.available_computed_param.text('');
                 default_cp.forEach(function (column) {
@@ -341,6 +339,8 @@ module.exports = {
                         }
                     })
                 }
+                tools.show_default_cursor();
+                tools.show_snackbar('Reset values completed!');
             });
         });
 
