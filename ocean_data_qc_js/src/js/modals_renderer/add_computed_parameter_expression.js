@@ -36,7 +36,6 @@ module.exports = {
             $('#save_expr').prop('disabled', true);
 
             self.load_data();
-            self.events();
         });
     },
 
@@ -86,6 +85,7 @@ module.exports = {
                 }
             });
             self.sort_select_list(self.all_computed_params_list);
+            self.events();
         });
     },
 
@@ -350,7 +350,6 @@ module.exports = {
             } else {
                 $('#save_expr').prop('disabled', false);
             }
-
         });
 
         $('#modal_trigger_add_computed_parameter_expression').click();
