@@ -89,6 +89,13 @@ module.exports = {
                     click: function () {
                         electron.shell.openExternal('https://www.atlantos-h2020.eu/')
                     }
+                },
+                {
+                    label: 'Toggle Developer Tools',
+                    accelerator: process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I',
+                    click(item, focusedWindow) {
+                        if (focusedWindow) focusedWindow.webContents.toggleDevTools()
+                    }
                 }
             ]
         };

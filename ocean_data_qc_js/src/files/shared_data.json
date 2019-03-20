@@ -1,7 +1,7 @@
 {
     "bokeh_port": 5006,
     "bokeh_url": "http://localhost",
-    "dev_mode": true,
+    "dev_mode": false,
     "file_to_open": false,
     "latest_file": false,
     "octave_path": false,
