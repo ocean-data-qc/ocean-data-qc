@@ -153,7 +153,6 @@ class CruiseDataUpdate(Environment):
             for column in columns:
                 new_scalar = self.env.cd_aux.df.loc[hash_id, column]
                 old_scalar = self.env.cruise_data.df.loc[hash_id, column]
-
                 # TODO: make it with strings self.env.cruise_data.df_str == self.env.cruise_data.df_str
                 #       how to calculate the hash ids?
 
@@ -168,7 +167,7 @@ class CruiseDataUpdate(Environment):
                     nan_different = True
 
                 if not self._are_equal(new_scalar, old_scalar):
-                    if nan_different or not (np.isnan(new_scalar) and np.isnan(old_scalar)):
+                    if nan_different or (isinstance(new_scalar, str) and isinstance(old_scalar, str)) or not (np.isnan(new_scalar) and np.isnan(old_scalar)):
                         if (hash_id, column) not in self.diff_val_pairs: # is this possible?
                             self.diff_val_qty += 1
                             self.diff_val_pairs.append((hash_id, column))
