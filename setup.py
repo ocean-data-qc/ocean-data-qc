@@ -1,12 +1,13 @@
 import os
 from os.path import dirname, exists, join, realpath, relpath
 from setuptools import setup
-from sys import platform
+import sys
 import shutil
 
+if sys.platform == 'win32':
+    sys.executable='python.exe'
+
 ROOT = dirname(realpath(__file__))
-ENV_PATH = os.path.dirname(shutil.which('python'))
-print('-- ENV PATH: {}'.format(ENV_PATH))
 
 def get_package_data():
     print('-- GET PACKAGE DATA')
@@ -53,7 +54,7 @@ dependency_links = [
     'https://github.com/ocean-data-qc/tilecloud/tarball/master#egg=tilecloud'
 ]
 
-if platform == "win32":
+if sys.platform == "win32":
     requires.append('python-magic-win64 >=0.4.13')  # depends on python-magic and adds the DLL libmagic library
 
 setup(
@@ -79,42 +80,16 @@ setup(
     zip_safe=False,
 )
 
-# TODO: remove conda-meta in the environment folder (removing absolute paths)
-# TODO: remove shebangs
+if sys.platform == "win32":
+    env_path = os.path.dirname(shutil.which('python'))
+else:
+    env_path = os.path.join(os.path.dirname(shutil.which('python')), '..')
 
 # NOTE: if for some reason they are in readonly mode
 #       https://stackoverflow.com/questions/2656322/shutil-rmtree-fails-on-windows-with-access-is-denied
-conda_meta = os.path.join(ENV_PATH, 'conda-meta')
+
+conda_meta = os.path.join(env_path, 'conda-meta')
 if os.path.isdir(conda_meta):
     print('>> REMOVING CONDA-META: {}'.format(conda_meta))
     shutil.rmtree(conda_meta)
 
-# fn = 0
-# for root, subdirs, files in os.walk(ENV_PATH):  # root == ENV_PATH
-#     print('>> ROOT: {}'.format(root))
-#     for filename in files:
-#         # TODO: make some filter to do it faster
-
-#         fn += 1
-#         if fn % 100 == 0:
-#             print('>> FILE NUMBER: {}'.format(fn))
-#         file_path = os.path.join(root, filename)
-#         try:
-#             with open(file_path, 'r') as f:
-#                 lines = f.readlines()
-#             with open(file_path, 'w') as f:
-#                 for line in lines:
-#                     f.write(re.sub(r'^#!.*\n', '\n', line))   # TODO: only first line >> faster
-#             # print('>> REPLACEMENT DONE IN: {}'.format(file_path))
-#         except Exception as e:
-#             pass
-#             # print('>> ERROR READING FILE: {}'.format(file_path))
-
-
-# TODO: this is the correct shebang to use >> #!/usr/bin/env python3
-#       https://stackoverflow.com/a/19305076/4891717
-python_map = [
-    '^#! /usr/bin/env python',
-    '^#!python',
-    '^#!.*python.exe',  # absolute paths
-]
