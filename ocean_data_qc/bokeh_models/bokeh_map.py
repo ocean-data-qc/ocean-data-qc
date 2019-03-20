@@ -78,11 +78,11 @@ class BokehMap(Environment):
             # color='#00FF00',
             # marker='circle',            # value by default
             line_color=None,
-            fill_color='#192fd4',
+            fill_color='#000e7a',
             fill_alpha=1.0,
 
             nonselection_line_color=None,
-            nonselection_fill_color='#192fd4',
+            nonselection_fill_color='#000e7a',
             nonselection_fill_alpha=1.0,
         )
 
