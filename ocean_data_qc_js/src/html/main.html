@@ -124,6 +124,11 @@
           <div class="card">
             <div class="card-header card-title text-white">Resources <div class="fa fa-bolt float-right"></div></div>
             <div class="card-body">
+              <p><strong>AtlantOS Ocean Data QC: </strong><script>
+                const {app} = require('electron').remote;
+                document.write(app.getVersion());
+                </script></p>
+              <p><strong>App Update: <span id="update_state" ></span></strong></p>
               <div id="bokeh_info" class="clearfix">
                 <div class="pull-left">
                     <strong>Bokeh: </strong> <span id="bokeh_state">(loading)</span>
@@ -132,16 +137,11 @@
                   <div id="bokeh_state_loader" class="mini_loader"></div>
                 </div>
               </div>
-              <p><strong>AtlantOS Ocean Data QC: </strong><script>
-                const {app} = require('electron').remote;
-                document.write(app.getVersion());
-              </script></p>
-              <p><strong>App Update: <span id="update_state" ></span></strong></p>
-              <p><strong>Node.js: </strong><script>document.write(process.versions.node)</script></p>
-              <p><strong>Chromium: </strong><script>document.write(process.versions.chrome)</script></p>
               <p><strong>Electron: </strong><script>document.write(process.versions.electron)</script></p>
+              <p><strong>Chromium: </strong><script>document.write(process.versions.chrome)</script></p>
+              <p><strong>Node.js: </strong><script>document.write(process.versions.node)</script></p>
               <p><strong>Octave: </strong><span id="octave_version">Checking...</span></p>
-              <p><strong>ArcGIS Tile Server Status: </strong><span id="argis_tile_server_state">Checking...</span></p>
+              <p><strong>Tile Server Status: </strong><span id="argis_tile_server_state">Checking...</span></p>
             </div>
           </div>
         </div>
