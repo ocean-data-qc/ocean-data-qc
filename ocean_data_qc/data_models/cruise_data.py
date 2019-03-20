@@ -259,6 +259,7 @@ class CruiseData(CruiseDataExport):
                 comment='#',
                 delimiter=',',
                 skip_blank_lines=True,
+                skipinitialspace=True,
                 engine='c',                 # engine='python' is more versatile, 'c' is faster
                 dtype=str,                  # useful to make some replacements before casting to numeric values
                 skiprows=self.skiprows
@@ -271,6 +272,7 @@ class CruiseData(CruiseDataExport):
                 comment='#',
                 delimiter=',',
                 skip_blank_lines=True,
+                skipinitialspace=True,
                 engine='python',                 # engine='python' is more versatile, 'c' is faster
                 dtype=str,                  # useful to make some replacements before casting to numeric values
                 skiprows=self.skiprows
