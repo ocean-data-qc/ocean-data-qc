@@ -66,7 +66,7 @@ COL_NAMES_MAPPING = [
     ('PH_SWS', 'PHSWS'),
     ('PH_SWS', 'PHSWS25'),
     ('PH_SWS', 'PHSWS25P0'),
-    ('PH_TOT', 'PH_SWS25P0'),
+    ('PH_SWS', 'PH_SWS25P0'),
     ('NO2_NO3', 'NO2NO3'),
     ('CFC_11', 'CFC11'),
     ('CFC_12', 'CFC12'),
