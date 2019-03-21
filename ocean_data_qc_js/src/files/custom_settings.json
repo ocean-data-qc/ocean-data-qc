@@ -16,6 +16,8 @@
         "SAMPNO",
         "BTLNBR",
         "BTLNBR_FLAG_W",
+        "SAMPNO",
+        "SAMPNO_FLAG_W",        
         "DATE",
         "TIME",
         "LATITUDE",
@@ -313,7 +315,7 @@
             },
             {
                 "title": "SAL_DIFF vs PRES",
-                "x": "BTLNBR",
+                "x": "SAMPNO",
                 "y": "SAL_DIFF"
             }
         ],
@@ -330,7 +332,7 @@
             },
             {
                 "title": "OXY_DIFF vs PRES",
-                "x": "BTLNBR",
+                "x": "SAMPNO",
                 "y": "OXY_DIFF"
             }
         ],
