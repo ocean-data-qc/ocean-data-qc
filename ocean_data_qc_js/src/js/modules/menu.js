@@ -11,6 +11,7 @@ const {ipcRenderer} = require('electron');
 const data = require('data');
 const loc = require('locations');
 const lg = require('logging');
+const path = require('path');
 
 module.exports = {
     init: function(web_contents, menu_actions, server) {
@@ -90,6 +91,12 @@ module.exports = {
                         electron.shell.openExternal('https://www.atlantos-h2020.eu/')
                     }
                 },
+                {
+                    label: 'Guide to Best Practices for QC',
+                    click: function () {
+                        electron.shell.openItem(loc.help)
+                    }
+                },                
                 {
                     label: 'Toggle Developer Tools',
                     accelerator: process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I',

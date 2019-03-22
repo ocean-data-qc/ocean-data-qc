@@ -30,6 +30,7 @@ const locations = {
     'html': path.join(__ocean_data_qc_js, 'src/html'),
     'img': path.join(__ocean_data_qc_js, 'src/img'),
     'scripts': path.join(__ocean_data_qc_js, 'src/scripts'),
+    'help': path.join(__ocean_data_qc_js, 'src/html/help/help.html'),
 
     // TILE SERVICES
     //'basemap_offile_tile': path.join(__ocean_data_qc_js, 'src/tiles/world_ocean_base_z4.zip'),
