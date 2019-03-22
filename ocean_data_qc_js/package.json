@@ -3,7 +3,7 @@
     "description": "AtlantOS Ocean Data Quality Control",
     "homepage": "https://www.atlantos-h2020.eu/",
     "main": "main.js",
-    "version": "0.8.0",
+    "version": "1.0.0",
     "scripts": {
         "start": "electron .",
         "start_offline": "electron . --offline",
