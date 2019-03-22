@@ -31,7 +31,8 @@ REQUIRED_COLUMNS = [
 
 NON_QC_PARAMS = [                                # discovered by usage
     'CTDPRS', 'DEPTH',
-    'SECT', 'SECT_ID', 'TIME', 'PH_TMP'
+    'SECT', 'SECT_ID', 'TIME', 'PH_TMP',
+    'DAY', 'MONTH', 'YEAR', 'HOUR', 'MINUTE',
 ] + REQUIRED_COLUMNS                            # TODO: Sometimes there is a BTLNBR_FLAG_W ???
 
 BASIC_PARAMS = [                                # they are created if they do not exist yet

@@ -34,17 +34,24 @@ class CruiseDataExport(Environment):
         with open(path.join(TMP, 'export_whp.csv'), 'w') as f_out:
             if self.env.cruise_data.original_type == 'whp':
                 with open(path.join(TMP, 'original.csv')) as f_in:
-                    f_out.write(f_in.readline())    # get the first line ("BOTTLE...") from the original file, just in the case of WHP file
+                    f_out.write(f_in.readline())    # get the first line "BOTTLE..."
             elif self.env.cruise_data.original_type == 'csv':
-                f_out.write('BOTTLE,{}{}\n'.format(datetime.now().strftime('%Y%m%d'),re.sub(r'\W+', '', APP_SHORT_NAME).upper()))
+                f_out.write('BOTTLE,{}{}\n'.format(
+                    datetime.now().strftime('%Y%m%d'),
+                    re.sub(r'\W+', '', APP_SHORT_NAME).upper()
+                ))
 
-            f_out.write('# {} Edited by {}\n'.format(datetime.now().strftime('%Y-%m-%d'), APP_LONG_NAME))
+            f_out.write('# {} Edited by {}\n'.format(
+                datetime.now().strftime('%Y-%m-%d'), APP_LONG_NAME
+            ))
 
             with open(path.join(TMP, 'metadata')) as f_in:
                 for line in f_in:
                     f_out.write('# {}'.format(line))
 
-            columns = self.get_cols_by_type(['required', 'param', 'non_qc_param', 'qc_param_flag', 'param_flag'])        # column order?
+            columns = self.get_cols_by_type(  # column order?
+                ['required', 'param', 'non_qc_param', 'qc_param_flag', 'param_flag']
+            )
             columns_row = ','.join(columns)
             f_out.write(columns_row + '\n')
 
@@ -80,7 +87,6 @@ class CruiseDataExport(Environment):
                 orig_col_names.append(self.cols[c]['orig_name'])  # computed do not have orig_name
             else:
                 orig_col_names.append(c)
-        lg.warning('>> ORIG COL NAMES: {}'.format(orig_col_names))
         aux_df.to_csv(
             path_or_buf=os.path.join(TMP, 'export_data.csv'),
             header=orig_col_names,

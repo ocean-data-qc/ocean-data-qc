@@ -50,6 +50,7 @@ class CruiseData(CruiseDataExport):
 
                 "cols": {
                     "ALKALI": {
+                        "orig_name": "alkali",
                         "types": ["param"],
                         "required": False,
                         "unit": "UMOL/KG",
@@ -60,6 +61,9 @@ class CruiseData(CruiseDataExport):
                         "unit": NaN,  # >> False
                     }
                 }
+
+            TODO: to create less noise in the JSON structure:
+                  unit and orig_name should not exist if they do not have any value
         """
         lg.info('-- SET ATTRIBUTES FROM SCRATCH --')
         if self.original_type == 'whp':
@@ -111,7 +115,6 @@ class CruiseData(CruiseDataExport):
                 'unit': units,
                 'orig_name': self.orig_cols.get(column, column),
             }
-            lg.warning('>> SELF.COLS[column]: {}'.format(self.cols[column]))
             if column.endswith(FLAG_END):
                 self.cols[column]['types'] += ['param_flag']
                 flags_not_to_qc = [x + FLAG_END for x in NON_QC_PARAMS]
