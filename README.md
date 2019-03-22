@@ -1,4 +1,4 @@
-# AtlantOS Ocean Data QC
+# AtlantOS Ocean Data QC [![DOI](https://zenodo.org/badge/161626110.svg)](https://zenodo.org/badge/latestdoi/161626110)
 
 Tool for 1st Quality Control on Hydrographic Cruise Data. The CSV files must have the [WHP format](https://www.nodc.noaa.gov/woce/woce_v3/wocedata_1/whp/exchange/exchange_format_desc.htm). This is a crossplatform application.
 
