@@ -80,6 +80,7 @@ setup(
     zip_safe=False,
 )
 
+# TODO: Do this better, if the package is not installed in a environment the conda-meta folder should not exist
 if sys.platform == "win32":
     env_path = os.path.dirname(shutil.which('python'))
 else:
