@@ -74,8 +74,16 @@ class CruiseDataExport(Environment):
         aux_df = aux_df.replace(np.nan, -999.0)  # float64 fields value will be -999.0
         cols = self.get_cols_by_type(['required', 'param', 'non_qc_param','qc_param_flag', 'param_flag'])
         aux_df = aux_df.filter(cols)
+        orig_col_names = []
+        for c in cols:
+            if 'orig_name' in self.cols[c]:
+                orig_col_names.append(self.cols[c]['orig_name'])  # computed do not have orig_name
+            else:
+                orig_col_names.append(c)
+        lg.warning('>> ORIG COL NAMES: {}'.format(orig_col_names))
         aux_df.to_csv(
-            os.path.join(TMP, 'export_data.csv'),
+            path_or_buf=os.path.join(TMP, 'export_data.csv'),
+            header=orig_col_names,
             index=False,
         )
         return True

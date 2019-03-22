@@ -36,6 +36,7 @@ class CruiseData(CruiseDataExport):
         self.df_str = None                      # string DataFrame
         self.moves = None
         self.cols = {}
+        self.orig_cols = {}
 
         self._validate_original_data()
         self._set_moves()                       # TODO: this is not needed for cd_update
@@ -68,6 +69,7 @@ class CruiseData(CruiseDataExport):
             units_list = []
         pos = 0
         column_list = self.df.columns.tolist()
+        lg.warning('>> SELF ORIG COLS: {}'.format(self.orig_cols))
         for column in column_list:
             self._add_column(column=column)
             if units_list != []:
@@ -107,7 +109,9 @@ class CruiseData(CruiseDataExport):
             self.cols[column] = {
                 'types': [],
                 'unit': units,
+                'orig_name': self.orig_cols.get(column, column),
             }
+            lg.warning('>> SELF.COLS[column]: {}'.format(self.cols[column]))
             if column.endswith(FLAG_END):
                 self.cols[column]['types'] += ['param_flag']
                 flags_not_to_qc = [x + FLAG_END for x in NON_QC_PARAMS]
@@ -134,7 +138,7 @@ class CruiseData(CruiseDataExport):
 
                 # TODO: 9 if there the param value is NaN
 
-                self.cols[flag] = {
+                self.cols[flag] = {  # TODO: create this with _add_column method
                     'types': ['param_flag', 'qc_param_flag'],
                     'unit': False,
                 }
@@ -283,12 +287,20 @@ class CruiseData(CruiseDataExport):
 
     def _prep_df_columns(self):
         self.df.replace(r'\s', '', regex=True, inplace=True)  # cleans spaces: \r and \n are managed by read_csv
+        aux_cols = self.df.columns.tolist()
         self.df.columns = self._sanitize_cols(self.df.columns)  # remove spaces from columns
         self.df.columns = self._map_col_names(self.df.columns)
+
+        cur_cols = self.df.columns.tolist()
+        for i in range(len(self.df.columns)):
+            self.orig_cols[cur_cols[i]] = aux_cols[i]
+
         self._create_btlnbr_or_sampno_column()
         self._create_date_column()
 
     def _create_btlnbr_or_sampno_column(self):
+        # TODO: create cols in self.cols with _add_column method and test it
+
         cols = self.df.columns.tolist()
         if 'BTLNBR' in cols and not 'SAMPNO' in cols:
             self.df['SAMPNO'] = self.df['BTLNBR']
