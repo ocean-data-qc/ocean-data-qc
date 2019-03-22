@@ -4,6 +4,10 @@ from setuptools import setup
 import sys
 import shutil
 
+#  NOTE: Shebangs:
+#      * https://docs.python.org/3/using/windows.html#shebang-lines
+#      * https://github.com/pypa/pip/issues/4616
+
 if sys.platform == 'win32':
     sys.executable='python.exe'
 

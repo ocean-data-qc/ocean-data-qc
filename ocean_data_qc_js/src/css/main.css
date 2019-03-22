@@ -381,6 +381,19 @@ select[name='added_computed_param'] { /* left select */
     padding: 3px;
 }
 
+/* add_computed_parameter help form */
+
+#add_computed_parameter_help_form pre {
+    color: #0c5460;
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+    position: relative;
+    padding: 0.75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+}
+
 .comp_param_buttons_proj {
     margin-top: 10px;
 }

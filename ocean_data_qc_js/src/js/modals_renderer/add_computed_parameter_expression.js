@@ -11,6 +11,8 @@ app_module_path.addPath(path.join(__dirname, '../modules'));
 app_module_path.addPath(path.join(__dirname, '../renderer_modules'));
 app_module_path.addPath(__dirname);
 
+const shell = require('electron').shell;
+
 const loc = require('locations');
 const lg = require('logging');
 const data = require('data');
@@ -348,6 +350,11 @@ module.exports = {
             var url = path.join(loc.modals, 'add_computed_parameter_expression_help.html');
             tools.load_modal(url,() => {
                 $('#modal_trigger_add_computed_parameter_help').click();
+
+                $('.open-in-browser').click((event) => {
+                    event.preventDefault();
+                    shell.openExternal(event.target.href);
+                });
             });
         });
 
