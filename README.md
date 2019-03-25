@@ -16,7 +16,8 @@ It's not essential for this software to run, but in order to take advantage of t
 * GNU/Linux rpm (RedHat, SuSe, ...): [ocean-data-qc-1.0.0.x86_64.rpm](https://github.com/ocean-data-qc/ocean-data-qc/releases/download/v1.0.0/ocean-data-qc-1.0.0.x86_64.rpm)
 * GNU/Linux snap: [ocean-data-qc_1.0.0_amd64.snap](https://github.com/ocean-data-qc/ocean-data-qc/releases/download/v1.0.0/ocean-data-qc_1.0.0_amd64.snap)
 
-Source code of release v1.0.0: https://github.com/ocean-data-qc/ocean-data-qc/archive/v1.0.0.tar.gz
+Source code:
+* v1.0.0: https://github.com/ocean-data-qc/ocean-data-qc/archive/v1.0.0.tar.gz [![DOI](https://zenodo.org/badge/161626110.svg)](https://zenodo.org/badge/latestdoi/161626110)
 
 ### Manual Installation
 
@@ -51,8 +52,6 @@ Source code of release v1.0.0: https://github.com/ocean-data-qc/ocean-data-qc/ar
 * [**Bokeh**](https://bokeh.pydata.org) (Python Library). Bokeh is an interactive visualization library that targets modern web browsers for presentation. Its goal is to provide elegant, concise construction of versatile graphics, and to extend this capability with high-performance interactivity over very large or streaming datasets. Bokeh is the main library for the application, as deals with graphic presentation and interaction (Bokeh Development Team (2014). Python library for interactive visualization. http://www.bokeh.pydata.org)
 
 * [**Octave**](https://www.gnu.org/software/octave/). GNU Octave is a high-level interpreted language, primarily intended for numerical computations. It provides capabilities for the numerical solution of linear and nonlinear problems, and for performing other numerical experiments. It also provides extensive graphics capabilities for data visualization and manipulation. The GNU Octave language is quite similar to Matlab™ so that most programs are easily portable. The application uses GNU Octave to drive main oceanographic calculations, as it's actually the main used language in that field of work, and most typical Matlab™ open source oceanographic libraries were built in Matlab™. Running these calculations directly in GNU Octave allows to easy integrating code from researchers.
-
-Actually the application can work without Octave installed. Despite that most Calculated Parameters need it for their calculation, if GNU Octave is not present, the application will run with the parameters present in the used files.
 
 * [**Python**](https://www.python.org/). Python version 3 is the main language in the application. Most processing on data and files are performed through Pandas and/or NumPy libraries in python, and sent to Bokeh, which is also built on python and has an own javascript library for displaying and interacting. Python source code is presented in ocean_data_qc folder in the application.
 
