@@ -65,8 +65,8 @@ setup(
     name='ocean_data_qc',
     version='1.0.0',                                    # TODO: extract the version from package.json
     description='WHP file managing',
-    long_description=open("README.md").read(),
-    long_description_content_type="text/markdown",
+    long_description=open("README.md").read(),          # TODO: check if this is readable in this is publish in a future channel repository or
+    long_description_content_type="text/markdown",      #       Python Package Index https://pypi.org/
     keywords="ocean data quality control seawater csv whp",
     url='https://www.atlantos-h2020.eu/',
     author='Jesus Cacabelos',
@@ -83,19 +83,3 @@ setup(
     package_data=get_package_data(),
     zip_safe=False,
 )
-
-# TODO: Do this better, if the package is not installed in a environment the conda-meta folder should not exist
-# if sys.platform == "win32":
-#     env_path = os.path.dirname(shutil.which('python'))
-# else:
-#     env_path = os.path.join(os.path.dirname(shutil.which('python')), '..')
-
-# # NOTE: if for some reason they are in readonly mode
-# #       https://stackoverflow.com/questions/2656322/shutil-rmtree-fails-on-windows-with-access-is-denied
-
-# TODO: if I remove the conda-meta folder the environment stops working
-# conda_meta = os.path.join(env_path, 'conda-meta')
-# if os.path.isdir(conda_meta):
-#     print('>> REMOVING CONDA-META: {}'.format(conda_meta))
-#     shutil.rmtree(conda_meta)
-
