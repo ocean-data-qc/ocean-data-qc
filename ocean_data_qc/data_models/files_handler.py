@@ -197,6 +197,11 @@ class FilesHandler(Environment):
             lg.warning('>> The attribute {} is not in the JSON file: {}'.format(attr, f_path))
 
     def get_css_checksums(self):
+        ''' Creates sha1 hases to append at the end of the css and js urls
+            The idea is to reload them only when there are changes and prevent
+            from reloading from cache
+            https://stackoverflow.com/a/15562751/4891717
+        '''
         file_paths = []
         filters = ('.css') #, '.js')
         cache_paths = {
