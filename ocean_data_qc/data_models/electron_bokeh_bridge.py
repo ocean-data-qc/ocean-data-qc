@@ -117,12 +117,14 @@ class ElectronBokehBridge(Environment):
         # TODO: try to return the object directly with eval, instead of creating an elif for each model
         if obj == 'cruise.data':
             method = getattr(self.env.cruise_data, method_str)
-        if obj == 'cruise.data.handler':
+        elif obj == 'cruise.data.handler':
             method = getattr(self.env.cd_handler, method_str)
         elif obj == 'bokeh.loader':
             method = getattr(self.env.bk_loader, method_str)
         elif obj == 'computed.parameter':
             method = getattr(self.env.cruise_data.cp_param, method_str)
+        elif obj == 'files.handler':
+            method = getattr(self.env.f_handler, method_str)
         # elif obj == 'computed.parameter':
         #     method = getattr(self.plot.cruisedata.cp, method)
 

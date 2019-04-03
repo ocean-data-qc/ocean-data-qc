@@ -193,7 +193,7 @@ module.exports = {
     run_bokeh: function() {
         var self = this;
         lg.info('-- RUN BOKEH')
-        lg.warn('>> PYTHON SHELL OPTIONS: ' + JSON.stringify(self.python_options, null, 4));
+        // lg.warn('>> PYTHON SHELL OPTIONS: ' + JSON.stringify(self.python_options, null, 4));
         if (self.ocean_data_qc_path != '') {
             self.shell = python_shell.run(
                 '', self.python_options, (err, results) => {

@@ -104,6 +104,11 @@ OCEAN_DATA_QC = path.realpath(
         path.abspath(__file__)
     ),
 )
+
+# TODO: this will only work with asar = false,
+#       so checksums can be made all the process in js
+OCEAN_DATA_QC_JS = path.join(OCEAN_DATA_QC, '..', 'ocean_data_qc_js')
+
 APPDATA = getenv('APPDATA')
 if not APPDATA:
     if path.isdir(path.join(getenv('HOME'), 'Library', 'Application Support')):

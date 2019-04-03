@@ -3,6 +3,7 @@ body, body label, body input,
 body select, body button {
     font: caption; /* system font */
     font-size: 0.9rem !important;
+    user-select: none; /* no selectable text */
 }
 
 body a {

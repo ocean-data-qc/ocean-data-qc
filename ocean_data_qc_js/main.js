@@ -140,10 +140,6 @@ ipcMain.on('set-bokeh-server-port', function (event, port) {
     data.set({'bokeh_port': port}, loc.shared_data);
 });
 
-ipcMain.on('set-bokeh-menu', function(){
-    menu.set_bokeh_menu();
-})
-
 ipcMain.on('set-main-menu', function(){
     menu.set_main_menu();
 })
@@ -151,6 +147,9 @@ ipcMain.on('set-main-menu', function(){
 ipcMain.on('enable-watcher', function(event, args){
     var web_contents = main_window.webContents;
     web_contents.send('enable-watcher', {'mark': args.mark});
+    if ('set_bokeh_menu' in args && args.set_bokeh_menu == true) {
+        menu.set_bokeh_menu();
+    }
 })
 
 ipcMain.on('disable-watcher', function(event, args){

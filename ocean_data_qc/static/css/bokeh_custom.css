@@ -1,8 +1,8 @@
-
 body {
     overflow: hidden;
     background: whitesmoke;
     font: caption; /* system font */
+    user-select: none; /* no selectable text */
 }
 
 .bk-root .bk-slick-row{

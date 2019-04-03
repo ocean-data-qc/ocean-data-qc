@@ -127,8 +127,6 @@ module.exports = {
     run_on_ready_final_step: function() {
         lg.info('-- ON-READY SIGNAL, FINAL STEP');
         var self = this;
-        ipcRenderer.send('set-bokeh-menu');
-
         // TODO: check if it is an aqc (mark watcher as saved file) or a csv file (mark as modified)
 
         var project_file = data.get('project_file', loc.proj_settings);
@@ -140,7 +138,10 @@ module.exports = {
             data.set({'project_state': 'modified'}, loc.shared_data);
             project_state = 'modified';
         }
-        ipcRenderer.send('enable-watcher', {'mark': project_state });
+        ipcRenderer.send('enable-watcher', {
+            'mark': project_state,
+            'set_bokeh_menu': true
+        });
         tools.show_default_cursor();
         self.hide_loader();
     },

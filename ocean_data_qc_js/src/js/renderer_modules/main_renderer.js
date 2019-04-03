@@ -63,6 +63,31 @@ $('.open-in-browser').click((event) => {
 window.onmessage = function(e){
     if (e.data == 'bokeh-loaded') {                    // bokeh completely loaded
         lg.info('-- BOKEH LOADED');
+
+        var call_params = {
+            'object': 'files.handler',
+            'method': 'get_css_checksums',
+        }
+        tools.call_promise(call_params).then((results) => {
+            // TODO: send SHA1 checksum values to the iframe to update the css src
+            lg.info('-- GET CSS CHECKSUMS COMPLETED');
+            // lg.warn('>> RESULTS: ' + JSON.stringify(results, null, 4));
+            $.each(results, function(key, value) {
+                if (key == 'bokeh_css_path') {
+                    $.each(results[key], function(file_name, hash) {
+                        // operator $= : https://www.w3schools.com/jquery/sel_attribute_end_value.asp
+                        var css = $("#bokeh_iframe").contents().find("link[href$='" + file_name + "']");
+                        css.attr('href', css.attr('href') + '?v=' + hash);
+                    });
+                } else if (key == 'electron_css_path') {
+                    $.each(results[key], function(file_name, hash) {
+                        var css = $("link[href$='" + file_name + "']");
+                        css.attr('href', css.attr('href') + '?v=' + hash);
+                    });
+                }
+            });
+        });
+
         $('#bokeh_info').css('color', 'green');
         $('#bokeh_state').text(bokeh_iframe.contentWindow.Bokeh.version + ' (loaded)');
         $('#bokeh_state_loader').attr('hidden', '');
