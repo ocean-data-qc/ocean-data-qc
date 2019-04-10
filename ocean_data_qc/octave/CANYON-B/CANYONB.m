@@ -114,12 +114,6 @@ if length(etemp)==1, etemp=repmat(etemp,nol,1); end
 if length(epsal)==1, epsal=repmat(epsal,nol,1); end
 if length(edoxy)==1, edoxy=repmat(edoxy,nol,1); end
 
-calculate_phts25p0=false;
-if strcmp(param,'pHTS25P0')
-    param={'AT','pH','SiOH4','NO3'};
-    calculate_phts25p0=true;
-end
-
 % define parameters
 paramnames={'AT';'CT';'pH';'pCO2';'NO3';'PO4';'SiOH4'};
 noparams=size(paramnames,1);
@@ -130,6 +124,14 @@ inputsigma(3)=sqrt(.005^2 + .01 ^2); % Orr systematic uncertainty
 paramflag=false(noparams,1);
 if nargin<8 || isempty(param), param=paramnames; end % default to all parameters
 if ischar(param),param=cellstr(param); end % make sure param is cellstr
+calculate_phts25p0=false;
+if ismember('pHTS25P0',param)
+    co2sys_param={'AT','pH','SiOH4','PO4'};
+    misses=setdiff(param,co2sys_param);
+    param=union(param,misses);
+    calculate_phts25p0=true;
+end
+
 for i=1:noparams % check for existence of paramnames on desired param output
     paramflag(i)=any(strcmpi(cellstr(param),paramnames{i}));
 end
@@ -196,13 +198,13 @@ for i=1:noparams
             
             if nlayerflag==1
                 % One hidden layer
-                a=     data_N *w1'+(b1*ones(1,nol))'; % input layer to first hidden layer
-                y=tanh(     a)*w2'+(b2*ones(1,nol))'; % first hidden layer to output layer
+                a=     data_N *w1'+repmat(b1',nol,1); % input layer to first hidden layer
+                y=tanh(     a)*w2'+repmat(b2',nol,1); % first hidden layer to output layer
             elseif nlayerflag==2
                 % Two hidden layers
-                a=     data_N *w1'+(b1*ones(1,nol))'; % input layer to first hidden layer
-                b=tanh(     a)*w2'+(b2*ones(1,nol))'; % first hidden layer to second hidden layer
-                y=tanh(     b)*w3'+(b3*ones(1,nol))'; % second hidden layer to output layer
+                a=     data_N *w1'+repmat(b1',nol,1); % input layer to first hidden layer
+                b=tanh(     a)*w2'+repmat(b2',nol,1); % first hidden layer to second hidden layer
+                y=tanh(     b)*w3'+repmat(b3',nol,1); % second hidden layer to output layer
             end
             
             % and collect outputs
@@ -277,10 +279,10 @@ for i=1:noparams
             clear V1 V2 wgts cval cvalci* cvalcu cvalcy l noparsets data_N mw sw ni ioffset inwgts betaciw
         end
         if i==4 % recalculate pCO2
-            outcalc=CO2SYS(2300,out.(paramnames{i})(:),1,2,35,25,NaN,0,NaN,0,0,1,10,1); % ipCO2 = 'DIC' / umol kg-1 -> pCO2 / uatm
-            outderiv=derivnum('par2',2300,out.(paramnames{i})(:),1,2,35,25,NaN,0,NaN,0,0,1,10,1); % eipCO2 = e'DIC' / umol kg-1 -> epCO2 / uatm
+            outcalc=CO2SYS(2300,out.(paramnames{i})(:),1,2,35,25,NaN,0,NaN,0,0,1,10,1); % ipCO2 = 'DIC' / umol kg-1 -> pCO2 / uatm         
             out.(paramnames{i})=reshape(outcalc(:,4),size(pres));
             if CALCULATE_UNCERTAINTIES
+                outderiv=derivnum('par2',2300,out.(paramnames{i})(:),1,2,35,25,NaN,0,NaN,0,0,1,10,1); % eipCO2 = e'DIC' / umol kg-1 -> epCO2 / uatm
                 out.([paramnames{i} '_ci'])=reshape(outderiv(:,2).*out.([paramnames{i} '_ci'])(:),size(pres)); % epCO2 = dpCO2/dDIC * e'DIC'
                 out.([paramnames{i} '_cim'])=reshape(outderiv(:,2).*out.([paramnames{i} '_cim'])(:),size(pres)); % epCO2 = dpCO2/dDIC * e'DIC'
                 out.([paramnames{i} '_cin'])=reshape(outderiv(:,2).*out.([paramnames{i} '_cin'])(:),size(pres)); % epCO2 = dpCO2/dDIC * e'DIC'
@@ -290,6 +292,6 @@ for i=1:noparams
     end % if paramflag
 end % for noparams   
 if calculate_phts25p0
-    outcalc=CO2SYS(out.AT,out.pH,1,3,psal,temp,25,pres,0,out.SiOH4,out.NO3,1,10,1);
+    outcalc=CO2SYS(out.AT,out.pH,1,3,psal,temp,25,pres,0,out.SiOH4,out.PO4,1,10,1);
     out.pHTS25P0=outcalc(:,37);
 end
