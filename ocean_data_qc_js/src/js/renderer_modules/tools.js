@@ -7,7 +7,8 @@
 
 const path = require('path');
 const app_module_path = require('app-module-path');
-app_module_path.addPath(__dirname);
+
+const bokeh_calls = require('./bokeh_calls');
 
 const lg = require('logging');
 const loc = require('locations');
@@ -329,6 +330,8 @@ module.exports = {
         if ('object' in args) {
             if (args.object == 'tools') {
                 o = self;
+            } else if (args.object == 'bokeh.calls') {
+                o = bokeh_calls;
             }
         }
         if ('function' in args) {
