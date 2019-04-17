@@ -51,10 +51,8 @@ class BokehEvents(Environment):
             self.env.cur_nearby_prof = None
             self.env.cur_partial_stt_selection = []
 
-            self.env.doc.hold('collect')
             self._update_map_selection_prog(new_indices)
             self.env.bk_table.update_dt_source()  # prof sources is updated inside
-            self.env.doc.unhold()
         elif self.env.selection != [] and new_indices == []:
             # NOTE: Keeps the selection when the user click on a space without any sample
             if self.env.reset_selection:
@@ -124,9 +122,7 @@ class BokehEvents(Environment):
                 self.env.plot_prof_invsbl_points = True
             else:
                 self.env.plot_prof_invsbl_points = False
-            self.env.doc.hold('collect')
             self.env.bk_sources.update_prof_sources()
-            self.env.doc.unhold()
 
         self.cb_prof_invsbl_points = CheckboxGroup(
             width=200, height=10,
@@ -146,7 +142,6 @@ class BokehEvents(Environment):
                     if s[next_pos] == self.env.stt_to_select:
                         next_pos = next_pos + 1
                 if next_pos < len(self.env.stations):
-                    self.env.doc.hold('collect')
                     self.env.cur_nearby_prof = s[next_pos]
                     self.env.bk_sources.update_prof_sources(force_selection=True)
                     self.nearby_prof_div.text = str(int(self.env.cur_nearby_prof))
@@ -155,8 +150,6 @@ class BokehEvents(Environment):
                     if next_pos + 1 == len(self.env.stations):
                         self.next_prof_bt.disabled = True
                     self.previous_prof_bt.disabled = False
-
-                    self.env.doc.unhold()
 
         def previous_profile():
             lg.info('-- PREVIOUS PROFILE')
@@ -167,7 +160,6 @@ class BokehEvents(Environment):
                     if s[previous_pos] == self.env.stt_to_select:
                         previous_pos = previous_pos - 1
                 if previous_pos >= 0:
-                    self.env.doc.hold('collect')
                     self.env.cur_nearby_prof = s[previous_pos]
                     self.env.bk_sources.update_prof_sources(force_selection=True)
                     self.nearby_prof_div.text = str(int(self.env.cur_nearby_prof))
@@ -176,8 +168,6 @@ class BokehEvents(Environment):
                     if previous_pos == 0:
                         self.previous_prof_bt.disabled = True
                     self.next_prof_bt.disabled = False
-
-                    self.env.doc.unhold()
 
         self.next_prof_bt = Button(
             width=30, disabled=True,
@@ -200,11 +190,9 @@ class BokehEvents(Environment):
             lg.info('-- ONCLICK NEARBY PROF')
             lg.info('>> SELECTED STT: {}'.format(self.env.stt_to_select))
             if 0 in active_list:
-                self.env.doc.hold('collect')
                 self.env.plot_nearby_prof = True
                 self.set_cur_nearby_prof()
                 self.env.bk_sources.update_prof_sources(force_selection=True)
-                self.env.doc.unhold()
             else:
                 self.env.plot_nearby_prof = False
                 self.next_prof_bt.disabled = True

@@ -207,16 +207,28 @@ class BokehSources(Environment):
 
     def update_prof_sources(self, force_selection=False):
         ''' Selects the points of the profile line and update the multiline data source
-            and asterisks and circles views
+            and asterisks and circles views to draw the whole profiles.
+            This method should be the most efficient of the app
                 @force_selection: a new partial selection should be done from scratch
 
-            NOTE: This method should be the most efficient
+            TODO: Update the sources in different phases:
+                  1. Update the current tab profiles, disable the rest of tabs
+                  2. Update the profiles of the rest of tabs, enable tabs when synchronized
         '''
         lg.info('-- UPDATE PROF SOURCES')
+
+        # TODO: send signal to disable the rest of tabs
+        self.env.bk_bridge.call_js({
+            'object': 'bokeh.calls',
+            'function': 'disable_tabs',
+        })
+
         start = time.time()
+
         if self.env.cur_partial_stt_selection == [] or force_selection:
             self._set_partial_stt_selection()  # len(partial_stt_selection) <= NPROF
         df_fs = None
+
         stt_order = []
         if self.env.cur_partial_stt_selection != []:
             ml_df = pd.DataFrame(index=self.env.cur_partial_stt_selection, columns=[])
@@ -224,22 +236,27 @@ class BokehSources(Environment):
 
             # lg.info('>> DF_FS: \n\n{}\n\n'.format(df_fs))
 
+            d_ml_df = {}
             for bp in self.env.bk_plots:
-                df_p =  df_fs[df_fs[bp.x].notnull() & df_fs[bp.y].notnull()].sort_values(['CTDPRS'], ascending=[True])
+                df_p =  df_fs[df_fs[bp.x].notnull() & df_fs[bp.y].notnull()].sort_values([CTDPRS], ascending=[True])
 
-                # TODO: if one of the axis is CTDPRS then it gives an error here
+                # FIXME: if one of the axis is CTDPRS then it gives an error here
                 #       because the column is duplicated
 
                 if self.env.plot_prof_invsbl_points is False:
                     df_p = df_p[df_p[bp.flag].isin(self.env.visible_flags)]
 
                 if df_p.index.size >= 1:
-                    ml_df['xs{}'.format(bp.n_plot)] = df_p.groupby(STNNBR).apply(lambda x: list(x[bp.x]))
-                    ml_df['ys{}'.format(bp.n_plot)] = df_p.groupby(STNNBR).apply(lambda x: list(x[bp.y]))
+                    d_ml_df.update({
+                        'xs{}'.format(bp.n_plot): df_p.groupby(STNNBR).apply(lambda x: list(x[bp.x])),
+                        'ys{}'.format(bp.n_plot): df_p.groupby(STNNBR).apply(lambda x: list(x[bp.y])),
+                    })
                 else:
-                    ml_df['xs{}'.format(bp.n_plot)] = [[''] for x in self.env.cur_partial_stt_selection]
-                    ml_df['ys{}'.format(bp.n_plot)] = [[''] for x in self.env.cur_partial_stt_selection]
-
+                    d_ml_df.update(**{
+                        'xs{}'.format(bp.n_plot): [[''] for x in self.env.cur_partial_stt_selection],
+                        'ys{}'.format(bp.n_plot): [[''] for x in self.env.cur_partial_stt_selection],
+                    })
+            ml_df = ml_df.assign(**d_ml_df)
             if ml_df.index.size >= 1:
                 # NOTE: Moves the current selected station row to the end of the DF
                 stt_order = ml_df.index.drop(self.env.stt_to_select).tolist() + [self.env.stt_to_select]
@@ -258,15 +275,24 @@ class BokehSources(Environment):
                 ml_df['line_width'] = [2] * (len(stt_order) - 1) + [3]
 
                 ml_cds = ColumnDataSource(ml_df)
-                self.env.ml_source.data = ml_cds.data
-            else:
-                self._reset_ml_source()
-        else:
-            self._reset_ml_source()
 
-        self._update_prof_circle_sources(df_fs, stt_order)
+            else:
+                ml_cds = self._reset_ml_source()
+        else:
+            ml_cds = self._reset_ml_source()
+
+        prof_cds, prof_sel, asterisk_cds = self._update_prof_circle_sources(df_fs, stt_order)
+
+        # synchronized update
+        self.env.doc.hold('collect')
+        self.env.ml_source.data = ml_cds.data
+        self.env.pc_source.data = prof_cds.data
+        self.env.pc_source.selected.indices = prof_sel
+        self.env.asterisk_source.data = asterisk_cds.data
+        self.env.doc.unhold()
+
         end = time.time()
-        lg.info('>> ALGORITHM TIME: {}'.format(end - start))   # about 0.30 ms
+        lg.info('>> ALGORITHM TIME: {}'.format(end - start))
 
     def _set_partial_stt_selection(self):
         ''' Selects the first NPROF points with different stations
@@ -303,12 +329,12 @@ class BokehSources(Environment):
                         self.env.cur_partial_stt_selection.append(stt)
                     i += 1
 
-        lg.info('>> SAMPLE TO SELECT: {}'.format(self.env.sample_to_select))
-        lg.info('>> STT TO SELECT: {}'.format(self.env.stt_to_select))
-        lg.info('>> PARTIAL STT SELECTION: {}'.format(self.env.cur_partial_stt_selection))
-        lg.info('>> CUR NEARBY PROF: {}'.format(self.env.cur_nearby_prof))
-        lg.info('>> TOTAL SELECTION: {}'.format(self.env.selection))
-        lg.info('>> VISIBLE SELECTION (the first one is selected): {}'.format(visible_selection))
+        # lg.info('>> SAMPLE TO SELECT: {}'.format(self.env.sample_to_select))
+        # lg.info('>> STT TO SELECT: {}'.format(self.env.stt_to_select))
+        # lg.info('>> PARTIAL STT SELECTION: {}'.format(self.env.cur_partial_stt_selection))
+        # lg.info('>> CUR NEARBY PROF: {}'.format(self.env.cur_nearby_prof))
+        # lg.info('>> TOTAL SELECTION: {}'.format(self.env.selection))
+        # lg.info('>> VISIBLE SELECTION (the first one is selected): {}'.format(visible_selection))
 
     def _update_prof_circle_sources(self, df_fs=None, stt_order=[]):
         ''' Update the self.env.pc_source in order to mark the selected samples
@@ -318,48 +344,49 @@ class BokehSources(Environment):
             @stt_order: selected stations, red color at the end of the list
         '''
         lg.info('-- UPDATE PROFILE CIRCLE SOURCES')
-        current_plotted_cols, prof_df = self._get_empty_prof_df()
-
-        # TODO: stt_order should have more than one station if they are actually selected in the map
-
-        # TODO: Improve the performance of this algorithm, maybe using groupby instead of loops
-
-        # BUILDING THE NEW PROF_DF
+        start = time.time()
+        cur_plot_cols, prof_df = self._get_empty_prof_df(
+            indices=df_fs.index.values.tolist()
+        )
         stt_order_reversed = list(reversed(stt_order))
-        # lg.warning('>> STT ORDER REVERSED: {}'.format(stt_order_reversed))
-
+        d_temp = {}
         for tab in self.env.f_handler.tab_list:
-            for col in current_plotted_cols:
-                i = NPROF - 1
-                for stt in stt_order_reversed:
-                    df_aux = df_fs[(df_fs[STNNBR] == stt) & df_fs[col].notnull()]
-                    if self.env.plot_prof_invsbl_points is False:
-                        flag = self.env.tabs_flags_plots[tab]['flag']
-                        df_aux = df_aux[df_aux[flag].isin(self.env.visible_flags)]
-                    prof_df.loc[df_aux.index.values, '{}_{}_{}'.format(tab, col, i)] = df_aux[col]
+            if self.env.plot_prof_invsbl_points is False:                       # TODO: extract this condition to outside
+                flag = self.env.tabs_flags_plots[tab]['flag']
+                df_tab = df_fs[df_fs[flag].isin(self.env.visible_flags)]
 
-                    # lg.warning('>> STT: {} | COL: {} | I: {}'.format(stt, col, i))
-                    i -= 1
-        prof_df.dropna(how='all', inplace=True)
+            i = NPROF - 1
+            for stt in stt_order_reversed:
+                df_stt = df_tab[df_tab[STNNBR] == stt]
+                for col in cur_plot_cols:
+                    df_aux = df_stt[col]
+                    d_temp['{}_{}_{}'.format(tab, col, i)] = df_aux
+                i -= 1
+        prof_df = prof_df.assign(**d_temp)
+
+        # partial = time.time()
+        # lg.warn('>> >> 03 - {}'.format(partial - start))
+
+        prof_df.dropna(how='all', inplace=True)   # just in case there are some NaN rows lefovers
         prof_cds = ColumnDataSource(prof_df)
-        self.env.pc_source.data = prof_cds.data
 
         # NOTE: this translates the selection indices into positional indices
         #       bokeh with each ColumnDataSource uses a new index with consecutive integers [0, 1, 2, 3, ...]
         #       it doesn´t matter if you have a different index in the DF that you use to create the CDS
-        sel = []
+        prof_sel = []
         for i in self.env.selection:   # TODO: only selected points within profiles
             if i in prof_df.index:
-                sel.append(prof_df.index.get_loc(i))
-        self.env.pc_source.selected.indices = sel
-        self._update_asterisk_source(current_plotted_cols)
+                prof_sel.append(prof_df.index.get_loc(i))
 
-    def _get_empty_prof_df(self):
+        asterisk_cds = self._update_asterisk_source(cur_plot_cols)
+        return prof_cds, prof_sel, asterisk_cds
+
+    def _get_empty_prof_df(self, indices=[]):
         ''' DF initialization with empty values '''
 
         lg.info('-- GET EMPTY PROF DF')
         compound_cols = []
-        current_plotted_cols = []
+        cur_plot_cols = []
         for tab in self.env.f_handler.tab_list:
             plot_indices = self.env.tabs_flags_plots[tab]['plots']
             aux_cols = []
@@ -368,23 +395,23 @@ class BokehSources(Environment):
                 aux_cols.append(self.env.bk_plots[pi].y)
             aux_cols = list(set(aux_cols))  # removes duplicates
             # lg.info('>> AUX COLS: {}'.format(aux_cols))
-            current_plotted_cols.extend(aux_cols)
+            cur_plot_cols.extend(aux_cols)
             for col in aux_cols:  # TODO: not all of them
                 for n in range(NPROF):
                     compound_cols.append('{}_{}_{}'.format(tab, col, n))
         compound_cols.sort()
-        current_plotted_cols = list(set(current_plotted_cols))
+        cur_plot_cols = list(set(cur_plot_cols))
 
         d = {}
         if compound_cols != []:
             d = dict.fromkeys(compound_cols, [])
         prof_df = pd.DataFrame(d)  # init empty columns
-        prof_df['INDEX'] = self.env.cds_df.index.values
+        prof_df['INDEX'] = indices  # self.env.cds_df.index.values
         prof_df = prof_df.set_index(['INDEX'])
 
-        return current_plotted_cols, prof_df
+        return cur_plot_cols, prof_df
 
-    def _update_asterisk_source(self, current_plotted_cols):
+    def _update_asterisk_source(self, cur_plot_cols):
         ''' Update views for the profile circles.
                 * Resets views that are not used with the current selection
                 * Updates the asterisk view (selected sample)
@@ -395,11 +422,11 @@ class BokehSources(Environment):
         lg.info('-- UPDATE ASTERISK SOURCE')
 
         if self.env.sample_to_select is not None:
-            values = [np.nan] * (len(current_plotted_cols) * len(self.env.f_handler.tab_list))   # values should have the same order than the CDS columns
+            values = [np.nan] * (len(cur_plot_cols) * len(self.env.f_handler.tab_list))   # values should have the same order than the CDS columns
             columns = []
             pos = 0
             for tab in self.env.f_handler.tab_list:
-                for col in current_plotted_cols:
+                for col in cur_plot_cols:
                     columns.append('{}_{}'.format(tab, col))
                     if self.env.plot_prof_invsbl_points:  # then always visible
                         values[pos] = self.env.cds_df.loc[self.env.sample_to_select, col]
@@ -409,22 +436,21 @@ class BokehSources(Environment):
                             values[pos] = self.env.cds_df.loc[self.env.sample_to_select, col]
                     pos += 1
 
-            lg.info('>> COLUMNS: {}'.format(columns))
-            lg.info('>> VALUES: {}'.format(values))
+            # lg.info('>> COLUMNS: {}'.format(columns))
+            # lg.info('>> VALUES: {}'.format(values))
             df = pd.DataFrame(columns=columns)
 
             if any(not np.isnan(x) for x in values):
                 df.loc[self.env.sample_to_select] = values
-            cds = ColumnDataSource(df)
-            self.env.asterisk_source.data = cds.data
+            asterisk_cds = ColumnDataSource(df)
         else: # posibbly reset
             lg.info('>> RESETTING ASTERISK | KEYS: {}'.format(self.env.asterisk_source.data.keys()))
             column_names = list(self.env.asterisk_source.data.keys())
             if 'index' in column_names:
                 column_names.remove('index')
             df = pd.DataFrame(columns=column_names)
-            cds = ColumnDataSource(df)
-            self.env.asterisk_source.data = cds.data
+            asterisk_cds = ColumnDataSource(df)
+        return asterisk_cds
 
     def _reset_ml_source(self):
         n_plots = self.env.bk_plots_handler.current_n_plots
@@ -433,4 +459,4 @@ class BokehSources(Environment):
         columns.append('line_width')
         ml_df = pd.DataFrame(columns=columns)
         ml_cds = ColumnDataSource(ml_df)
-        self.env.ml_source.data = ml_cds.data
+        return ml_cds

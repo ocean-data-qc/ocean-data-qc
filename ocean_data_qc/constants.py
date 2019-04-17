@@ -20,6 +20,7 @@ NPROF = 2 # 6       # Number of profiles
 OUTPUT_BACKEND = 'webgl'    # Even if I change this to 'canvas',
                             # 'webgl' is activated for some other reason automatically
 STNNBR = 'STNNBR'           # Stations column
+CTDPRS = 'CTDPRS'           # Pressure
 FLAG_END = '_FLAG_W'        # Flag distinctive
 
 NA_REGEX_LIST = [r'^-999[9]?[\.0]*?$']
