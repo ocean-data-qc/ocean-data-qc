@@ -39,7 +39,7 @@ module.exports = {
         var bokeh_menu = [
             self.bokeh_file_menu,
             self.bokeh_view_menu,
-            self.bokeh_edit_menu,
+            // self.bokeh_edit_menu,  // elements are no non-selectable, undo and redo not implemented
             self.bokeh_data_menu,
             self.help_menu,
         ];
@@ -95,13 +95,6 @@ module.exports = {
                     label: 'Guide to Best Practices for QC',
                     click: function () {
                         electron.shell.openItem(loc.help)
-                    }
-                },                
-                {
-                    label: 'Toggle Developer Tools',
-                    accelerator: process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I',
-                    click(item, focusedWindow) {
-                        if (focusedWindow) focusedWindow.webContents.toggleDevTools()
                     }
                 }
             ]
@@ -171,7 +164,14 @@ module.exports = {
             submenu: [
                 { label: 'Project Settings (JSON)', accelerator: 'CmdOrCtrl+Shift+P', click: () => { self.menu_actions.edit_plot_layout_json(); } },
                 { label: 'Logger [TO-DO]', accelerator: 'CmdOrCtrl+L', click: () => { alert('Not implemented yet');} },
-                { label: 'Reload Server', accelerator: 'CmdOrCtrl+R', click: () => { self.menu_actions.server.relaunch_bokeh(); } }
+                { label: 'Reload Server', accelerator: 'CmdOrCtrl+R', click: () => { self.menu_actions.server.relaunch_bokeh(); } },
+                {
+                    label: 'Toggle Developer Tools',
+                    accelerator: process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I',
+                    click(item, focusedWindow) {
+                        if (focusedWindow) focusedWindow.webContents.toggleDevTools()
+                    }
+                }
             ]
         }
 
