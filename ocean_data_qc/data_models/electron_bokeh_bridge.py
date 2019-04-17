@@ -174,7 +174,8 @@ class ElectronBokehBridge(Environment):
 
     def call_js(self, params={}):
         """ General method to run JavaScript code from python
-            The signal is sent to the bokeh_renderer.js file
+            The signal is sent to the main_renderer.js file
+            and calls the 'js_call' method in the tools.js file
         """
         if params != {}:
             params = json.dumps(params, sort_keys=True)

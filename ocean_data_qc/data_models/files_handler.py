@@ -226,6 +226,7 @@ class FilesHandler(Environment):
                         if not data:
                             break
                         sha1.update(data)
-                    hashes[p][path.basename(fpath)] = sha1.hexdigest()
+                    hashes[p][path.basename(fpath)] = sha1.hexdigest()  # TODO: if two files have the same name
+                                                                        #       only the latter will be the correct assigned
                     sha1 = hashlib.sha1()  # reset buffer
         return hashes
