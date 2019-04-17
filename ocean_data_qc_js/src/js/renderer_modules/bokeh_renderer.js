@@ -36,6 +36,8 @@ require('show_data').init();
 
 // ------------------------------- IPC SIGNAL RECEIVERS ----------------------------------------- //
 
+// TODO: move all this listeners to 'main_renderer.js' or create a new file 'listeners.js'
+
 ipcRenderer.on('show-modal-close-project-form', (event, arg) => {
     lg.info('Closing with changes not saved')
 

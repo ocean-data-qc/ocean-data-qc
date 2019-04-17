@@ -99,7 +99,7 @@ module.exports = {
                                 qc_plot_tabs[tab] = []
                                 var first_row = true;
                                 $(this).find('.qc_tabs_table_row').each(function() {
-                                    lg.info('>> CURRENT ROW (TITLE): ' + $(this).find('input[name=title]').val());
+                                    // lg.info('>> CURRENT ROW (TITLE): ' + $(this).find('input[name=title]').val());
                                     if (first_row == true) {
                                         first_row = false;
                                     } else {
