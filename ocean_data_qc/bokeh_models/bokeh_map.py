@@ -73,17 +73,19 @@ class BokehMap(Environment):
         self.env.wmts_map_scatter = self.env.wmts_map.circle(
             x='X_WMTS',
             y='Y_WMTS',
-            size=4,
+            size=6,
             source=self.env.wmts_map_source,
             # color='#00FF00',
             # marker='circle',            # value by default
-            line_color=None,
-            fill_color='#000e7a',
+            line_color='#00004c',
+            fill_color='#5bc0de',
             fill_alpha=1.0,
+            line_alpha=1.0,
 
-            nonselection_line_color=None,
-            nonselection_fill_color='#000e7a',
+            nonselection_line_color='#00004c',
+            nonselection_fill_color='#5bc0de',
             nonselection_fill_alpha=1.0,
+            nonselection_line_alpha=1.0,
         )
 
         self.env.wmts_map_scatter.selection_glyph = Circle(
