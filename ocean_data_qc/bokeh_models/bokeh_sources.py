@@ -281,8 +281,6 @@ class BokehSources(Environment):
         else:
             ml_cds = self._reset_ml_source()
 
-        # TODO: if df_fs is none, then all the prof CDS must be reset to empty
-
         prof_cds, prof_sel, asterisk_cds = self._update_prof_circle_sources(df_fs, stt_order)
 
         # synchronized update
