@@ -34,16 +34,16 @@ body {
 }
 
 .bokeh_hidden {
-    display: none;
+    display: none !important;
 }
 
 .bridge_row {
     display: none !important;
 }
 
-.sample_div div div, .cur_stt div div  {
-    padding-left: 25px;
-    padding-top: 8px;
+.sample_div>div, .cur_stt>div  {
+    padding-left: 25px !important;
+    padding-top: 8px !important;
 }
 
 .flagger_bts .bk-widget-box {
@@ -53,11 +53,20 @@ body {
 /* TABS AND SIDEBAR */
 
 .o_tabs {
-    margin-right: 250px;
+    margin-right: 248px;
+    padding-top: 8px;
+    padding-bottom: 30px;
     clear: both;
     overflow: auto;
-    min-height: 600px;
     height: 100vh;
+}
+
+.o_tabs>.bk-root>.bk>.bk>.bk {
+    top: 0px !important;
+}
+
+.o_tabs>.bk-root>.bk>.bk>.bk>.bk {
+    top: 40px !important;
 }
 
 .o_sidebar {
@@ -67,12 +76,16 @@ body {
     float: right;
     overflow-y: scroll;
     overflow-x: hidden;
-    min-height: 600px;
     border-left-color: #d3d3d3;
     border-left-width: 3px;
     border-left-style: solid;
     padding-left: 20px;
     height: 100vh;
+}
+
+.sidebar_col {
+    top: 20px !important;
+    margin-bottom: 15px !important;
 }
 
 .wrapper {
@@ -103,28 +116,27 @@ body {
     margin-top: -9px !important;
 }
 
-.sample_control {
-    height: 45px !important;
-    margin-left: -9px !important;
-}
-
-.prof_nav {
-    height: 40px !important;
-    margin-left: -9px !important;
-}
-
 .data_table {       /* this class is not added due to a bokeh bug */
     width: 190px !important;
     height: 125px !important;
 }
 
 .bk-fixed-profiles-cb {
-    margin-top: 15px;
-    margin-left: 3px;
+    position: absolute;
+    left: 7px;
+    width: 200px;
+    height: 10px;
+    display: block;
+    margin-top: 25px;
 }
 
 .bk-show-nearby-station-cb {
-    margin-left: 3px;
+    position: absolute;
+    left: 7px;
+    width: 200px;
+    height: 20px;
+    display: block;
+    margin-top: 30px;
 }
 
 .bk-fixed-profiles-cb label, .bk-show-nearby-station-cb label {

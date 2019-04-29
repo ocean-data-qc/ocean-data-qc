@@ -23,18 +23,18 @@
 
 .eye_bt button:before {
     content: "\f06e";
-    font-family: "Font Awesome 5 Free";
-    left: -5px;
+    font-family: "Font Awesome 5 Free" !important;
+    left: 4px;
     position: absolute;
-    top: -2px;
- }
+    top: 0px;
+}
 
 .eye_slash_bt button:before {
     content: "\f070";
-    font-family: "Font Awesome 5 Free";
-    left: -5px;
+    font-family: "Font Awesome 5 Free" !important;
+    left: 4px;
     position: absolute;
-    top: -2px;
+    top: 0px;
  }
 
 /* --------- EDIT BUTTONS ------------- */
@@ -62,11 +62,11 @@
 
 .edit_flag_bt button:before {
     content: "\f024";
-    font-family: "Font Awesome 5 Free";
-    left: -5px;
+    font-family: "Font Awesome 5 Free" !important;
+    left: -10px;
     position: absolute;
-    top: -2px;
- }
+    top: 0px;
+}
 
 .edit_flag_bt button.bk-bs-btn-default:hover,
 .eye_slash_bt button.bk-bs-btn-default:hover,
@@ -82,7 +82,10 @@
 
 /* --------- REST ---------------- */
 
-.fg_str_div div div {
-    padding-top: 1px;
-    padding-left: 10px;
+.fg_str_div {
+    left: 65px !important;
+}
+
+.flag_controls_title {
+    left: 41px !important;
 }

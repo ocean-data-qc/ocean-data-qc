@@ -65,7 +65,7 @@ class BokehEvents(Environment):
                 self.env.reset_selection = False
             else:
                 lg.info('>> KEEP SELECTION')
-                new_indices = self.env.selection             # TODO: is this still working on 1.0??
+                self.env.source.selected.indices = self.env.selection   # keep selection
         self.env.dt_manual_update = True  # reactivate the manual update of the datatable
 
     def _update_map_selection(self, attr, old, new_indices):
@@ -252,7 +252,7 @@ class BokehEvents(Environment):
                 toolbar_location='left',  # TODO: separate the toolbars to set some tools active by default,
                                           #       like this the hover icon can be shown as well
             )
-            panel_list.append(Panel(child=gp, title=tab))
+            panel_list.append(Panel(child=gp, title=tab))  # TODO: closable=True
 
         lg.info('>> TABS WIDGET: {}'.format(self.env.tabs_widget))
         if self.env.tabs_widget is None:

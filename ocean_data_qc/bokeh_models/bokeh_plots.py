@@ -221,22 +221,18 @@ class BokehPlots(Environment):
                 * The selection is also removed
                 * The flag visibility is reset
         '''
-        # TODO: the zoom reset id run only for the gridplot on the current tab, how to run it on the rest of the plots?
         lg.info('-- RESET PLOT: {}'.format(self.n_plot))
-        self.env.doc.hold('collect')
-        if self.env.selection != []:
+        if self.n_plot == 0:
             self.env.reset_selection = True  # this does not work anymore
             self.env.selection = []
+            self.env.source.selected.indices = []
             self.env.cur_partial_stt_selection = []  # in order to triger the partial selection method
             self.env.dt_manual_update = False
             self.env.bk_table.update_dt_source()
             self.env.dt_manual_update = True
-
             self.env.map_selection = []
             self.env.wmts_map_source.selected.indices = []
-
-        self.env.bk_flags.reset_all_flags()
-        self.env.doc.unhold()
+            self.env.bk_flags.reset_all_flags()
 
     def _double_tap_event(self, event):
         ''' This could be useful to change the axis variables

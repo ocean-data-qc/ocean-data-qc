@@ -218,10 +218,11 @@ class BokehDataTable(Environment):
             'value': param_values,
             'flag': flag_values
         }
-        lg.info('>> NEW VALS DICT: \n\n{}'.format(new_vals_dict))
-        lg.info('>> LENS (PARAMETER, VALUE, FLAG) = ({}, {}, {})'.format(len(self.params), len(param_values), len(flag_values)))
 
-        lg.info('>> DT_MANUAL_UPDATE IN _UPDATE_DT_SAMPLE: {}'.format(self.env.dt_manual_update))
+        # lg.info('>> NEW VALS DICT: \n\n{}'.format(new_vals_dict))
+        # lg.info('>> LENS (PARAMETER, VALUE, FLAG) = ({}, {}, {})'.format(len(self.params), len(param_values), len(flag_values)))
+        # lg.info('>> DT_MANUAL_UPDATE IN _UPDATE_DT_SAMPLE: {}'.format(self.env.dt_manual_update))
+
         # self.env.dt_manual_update = False  # just in case
         self.data_table.source.data = new_vals_dict
         # self.env.dt_manual_update = True

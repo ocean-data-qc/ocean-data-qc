@@ -135,6 +135,7 @@ class BokehFlags(Environment):
             text='All the flags',
             width=100,
             height=25,
+            css_classes=['flag_controls_title'],
         )
 
         self.flags_control_header_row = row(
@@ -347,3 +348,8 @@ class BokehFlags(Environment):
                 updates=dict(visible=True)
             )
             self.env.visible_flags = self.all_flags_list
+
+            all_flags_bt = self.env.doc.select_one(dict(
+                name='all_flags_bt'
+            ))
+            all_flags_bt.css_classes = ['eye_bt']

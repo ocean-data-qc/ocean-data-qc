@@ -69,7 +69,9 @@ class ElectronBokehBridge(Environment):
         self.bridge_button.css_classes = ['bridge_button']
         self.bridge_button.on_click(self.send_python_response)  # api retrocompatibility?
 
-        self.bridge_text = TextInput()
+        self.bridge_text = TextInput(
+            name='bridge_text_input'
+        )
         self.bridge_text.css_classes = ['bridge_text']
 
     def _init_curdoc(self):

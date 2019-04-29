@@ -191,7 +191,7 @@ module.exports = {
                 'object': params.object,
                 'method': params.method,
                 'args': params.args,
-                'bridge_text_id': $("#bokeh_iframe").contents().find(".bridge_text input").attr('id')
+                // 'bridge_text_id': $("#bokeh_iframe").contents().find(".bridge_text input").attr('id')
             }
             document.getElementById('bokeh_iframe').contentWindow.postMessage({
                 "signal": "call-python-promise",

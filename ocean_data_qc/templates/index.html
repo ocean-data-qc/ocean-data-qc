@@ -8,12 +8,12 @@
     <script src="/ocean_data_qc/static/js/jquery-v3.3.1.js"></script>
 
     <link href="/ocean_data_qc/static/css/bootstrap.css" rel="stylesheet" type="text/css" />
-    <link href="/ocean_data_qc/static/css/bokeh_custom.css" rel="stylesheet" type="text/css" />
-    <link href="/ocean_data_qc/static/css/flags_control.css" rel="stylesheet" type="text/css" />
-
     <link href="/ocean_data_qc/static/css/font_awesome_v5.3.1.css" rel="stylesheet" type="text/css" />
     <link href="/ocean_data_qc/static/css/font_awesome_v4.7.0.css" rel="stylesheet" type="text/css" />
     <link href="/ocean_data_qc/static/css/awesome_bootstrap_checkbox.css" rel="stylesheet" type="text/css" />
+
+    <link href="/ocean_data_qc/static/css/bokeh_custom.css" rel="stylesheet" type="text/css" />
+    <link href="/ocean_data_qc/static/css/flags_control.css" rel="stylesheet" type="text/css" />
 
 {% endblock %}
 
@@ -59,14 +59,24 @@
                         //       you want to run the same action twice, there would'n be change on the value to trigger the python method
 
                         var models = window.Bokeh.index[Object.keys(window.Bokeh.index)[0]].model.document._all_models;
-                        var input_bridge_text = models[e.data.message_data.bridge_text_id];
-                        delete e.data.message_data['bridge_text_id'];
-                        // console.log('>> New DUMMY TEXT value: ' + JSON.stringify(e.data.message_data));
+                        console.log(models)
+                        var model_id = null;
+                        $.each(models, function (m_id) {
+                            console.log(m_id)
+                            if (models[m_id].constructor.name == 'TextInput') {
+                                model_id = m_id;
+                                console.log('>> FOUND TextInput Object with id: ')
+                                console.log('>> TextInput Name: ' + models[m_id].attributes.name)
+                            }
+                        });
+                        var input_bridge_text = models[model_id];
                         input_bridge_text.value = JSON.stringify(e.data.message_data);
-                        var button = document.getElementsByClassName('bridge_button')[0].firstChild;
+                        var button = $('.bridge_button>div>button')
                         button.click();
                 } else if (e.data.signal == 'on-ready') {
-                    console.log('ON READY')
+                    console.log('ON READY');
+
+                    // get current original top absolute position of checkboxes
 
                     // ------ FIXED PROFILES ------
 
@@ -94,6 +104,7 @@
                             $('.fixed_profiles_cb input').click();
                         }
                     });
+                    $('.bk-fixed-profiles-cb').css('top', $('.fixed_profiles_cb').css('top'))
 
                     // ------ SHOW NEARBY STATION -----
 
@@ -121,6 +132,7 @@
                             $('.show_nearby_station_cb input').click();
                         }
                     });
+                    $('.bk-show-nearby-station-cb').css('top', $('.show_nearby_station_cb').css('top'))
 
 
                     window.top.postMessage({

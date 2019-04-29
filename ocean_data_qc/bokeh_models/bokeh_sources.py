@@ -281,6 +281,8 @@ class BokehSources(Environment):
         else:
             ml_cds = self._reset_ml_source()
 
+        # TODO: if df_fs is none, then all the prof CDS must be reset to empty
+
         prof_cds, prof_sel, asterisk_cds = self._update_prof_circle_sources(df_fs, stt_order)
 
         # synchronized update
@@ -345,34 +347,32 @@ class BokehSources(Environment):
         '''
         lg.info('-- UPDATE PROFILE CIRCLE SOURCES')
         start = time.time()
-        cur_plot_cols, prof_df = self._get_empty_prof_df(
-            indices=df_fs.index.values.tolist()
-        )
-        stt_order_reversed = list(reversed(stt_order))
-        d_temp = {}
-        for tab in self.env.f_handler.tab_list:
-            if self.env.plot_prof_invsbl_points is False:                       # TODO: extract this condition to outside
-                flag = self.env.tabs_flags_plots[tab]['flag']
-                df_tab = df_fs[df_fs[flag].isin(self.env.visible_flags)]
+        indices = df_fs.index.values.tolist() if df_fs is not None else []
+        cur_plot_cols, prof_df = self._get_empty_prof_df(indices=indices)
+        if df_fs is not None:
+            stt_order_reversed = list(reversed(stt_order))
+            d_temp = {}
+            df_cur = df_fs.filter(cur_plot_cols + [STNNBR])
+            for tab in self.env.f_handler.tab_list:
+                if self.env.plot_prof_invsbl_points is False:
+                    flag = self.env.tabs_flags_plots[tab]['flag']
+                    df_cur = df_fs[df_fs[flag].isin(self.env.visible_flags)]
 
-            i = NPROF - 1
-            for stt in stt_order_reversed:
-                df_stt = df_tab[df_tab[STNNBR] == stt]
-                for col in cur_plot_cols:
-                    df_aux = df_stt[col]
-                    d_temp['{}_{}_{}'.format(tab, col, i)] = df_aux
-                i -= 1
-        prof_df = prof_df.assign(**d_temp)
-
-        # partial = time.time()
-        # lg.warn('>> >> 03 - {}'.format(partial - start))
-
-        prof_df.dropna(how='all', inplace=True)   # just in case there are some NaN rows lefovers
+                i = NPROF - 1
+                for stt in stt_order_reversed:
+                    df_stt = df_cur[df_cur[STNNBR] == stt]
+                    for col in cur_plot_cols:
+                        df_aux = df_stt[col]
+                        d_temp['{}_{}_{}'.format(tab, col, i)] = df_aux
+                    i -= 1
+            prof_df = prof_df.assign(**d_temp)
+            prof_df.dropna(how='all', inplace=True)   # just in case there are some NaN rows lefovers
         prof_cds = ColumnDataSource(prof_df)
 
         # NOTE: this translates the selection indices into positional indices
         #       bokeh with each ColumnDataSource uses a new index with consecutive integers [0, 1, 2, 3, ...]
         #       it doesn´t matter if you have a different index in the DF that you use to create the CDS
+
         prof_sel = []
         for i in self.env.selection:   # TODO: only selected points within profiles
             if i in prof_df.index:
@@ -406,7 +406,7 @@ class BokehSources(Environment):
         if compound_cols != []:
             d = dict.fromkeys(compound_cols, [])
         prof_df = pd.DataFrame(d)  # init empty columns
-        prof_df['INDEX'] = indices  # self.env.cds_df.index.values
+        prof_df['INDEX'] = indices
         prof_df = prof_df.set_index(['INDEX'])
 
         return cur_plot_cols, prof_df
@@ -444,7 +444,7 @@ class BokehSources(Environment):
                 df.loc[self.env.sample_to_select] = values
             asterisk_cds = ColumnDataSource(df)
         else: # posibbly reset
-            lg.info('>> RESETTING ASTERISK | KEYS: {}'.format(self.env.asterisk_source.data.keys()))
+            lg.info('>> RESETTING ASTERISK')
             column_names = list(self.env.asterisk_source.data.keys())
             if 'index' in column_names:
                 column_names.remove('index')
