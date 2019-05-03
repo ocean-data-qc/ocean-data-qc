@@ -59,14 +59,11 @@
                         //       you want to run the same action twice, there would'n be change on the value to trigger the python method
 
                         var models = window.Bokeh.index[Object.keys(window.Bokeh.index)[0]].model.document._all_models;
-                        console.log(models)
                         var model_id = null;
                         $.each(models, function (m_id) {
-                            console.log(m_id)
                             if (models[m_id].constructor.name == 'TextInput') {
                                 model_id = m_id;
-                                console.log('>> FOUND TextInput Object with id: ')
-                                console.log('>> TextInput Name: ' + models[m_id].attributes.name)
+                                // console.log('>> TextInput Name: ' + models[m_id].attributes.name)
                             }
                         });
                         var input_bridge_text = models[model_id];
