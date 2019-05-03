@@ -4,7 +4,7 @@
 #    AUTHORS and LICENSE files at the root folder of this application   #
 #########################################################################
 
-from bokeh.models import ColumnDataSource, Range1d, Triangle, CustomJSHover
+from bokeh.models import ColumnDataSource, Range1d, Circle, CustomJSHover
 from bokeh.models.tiles import WMTSTileSource
 from bokeh.plotting import Figure
 from bokeh.models.tools import (
@@ -70,7 +70,7 @@ class BokehMap(Environment):
         self.env.wmts_map.axis.visible = True
         self.env.wmts_map.add_tile(tile_source)
 
-        self.env.wmts_map_scatter = self.env.wmts_map.triangle(
+        self.env.wmts_map_scatter = self.env.wmts_map.circle(
             x='X_WMTS',
             y='Y_WMTS',
             size=10,
@@ -86,7 +86,7 @@ class BokehMap(Environment):
             nonselection_line_alpha=1.0,
         )
 
-        self.env.wmts_map_scatter.selection_glyph = Triangle(
+        self.env.wmts_map_scatter.selection_glyph = Circle(
             line_color=RED,
             line_alpha=1.0,
             fill_color='yellow',
