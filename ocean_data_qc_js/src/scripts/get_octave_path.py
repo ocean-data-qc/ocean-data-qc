@@ -4,8 +4,9 @@ import fnmatch
 import os
 import pathlib
 
-OCTAVE_EXECUTABLE = shutil.which('octave')
+OCTAVE_EXECUTABLE = ''
 if sys.platform == 'win32':
+    OCTAVE_EXECUTABLE = shutil.which('octave-cli.exe')
     if not shutil.which('octave.exe') and not shutil.which('octave-cli.exe'):
         base_octave = r'C:\Octave'
         if os.path.isdir(base_octave):
@@ -24,14 +25,16 @@ if sys.platform == 'win32':
             except:
                 pass
 else:
+    OCTAVE_EXECUTABLE = shutil.which('octave')
     if not shutil.which('octave'):
-        try: 
+        try:
             if os.path.isfile('/usr/local/bin/octave'):
                 OCTAVE_EXECUTABLE = '/usr/local/bin/octave'
-            elif os.path.isdir('/Applications'):                
+            elif os.path.isdir('/Applications'):
                 for dname in os.listdir('/Applications'):
                     if fnmatch.fnmatch(dname, 'Octave-*'):
                         OCTAVE_EXECUTABLE = os.path.join('/Applications', dname, 'Contents/Resources/usr/bin/octave')
         except:
             pass
+
 print(pathlib.Path(OCTAVE_EXECUTABLE).as_uri())

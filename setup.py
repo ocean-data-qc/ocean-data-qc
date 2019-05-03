@@ -43,7 +43,7 @@ def get_package_data():
     }
 
 requires = [
-    'bokeh >=0.13.0',
+    'bokeh >=1.1.0',
     'pandas >=0.23.4',
     'seawater >=3.3.4',
     'more_itertools >=4.3.0',

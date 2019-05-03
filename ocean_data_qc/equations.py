@@ -14,8 +14,8 @@ from ocean_data_qc.octave.octave import OCTAVE_EXECUTABLE
 from datetime import datetime
 
 os.environ['OCTAVE_EXECUTABLE'] = OCTAVE_EXECUTABLE
-from oct2py import Oct2Py
-oc = Oct2Py()
+from oct2py import octave as oc
+
 oc.addpath(os.path.join(OCEAN_DATA_QC, 'octave'))
 oc.addpath(os.path.join(OCEAN_DATA_QC, 'octave', 'CANYON-B'))
 
@@ -29,7 +29,7 @@ def depth_combined(CTDPRS, DEPTH, LATITUDE):
     #depth = DEPTH
     depth_from_pres = -1 * sw.dpth(CTDPRS, LATITUDE)
     #depth[np.isnan(depth)] = depth_from_pres[np.isnan(depth)]
-    return depth_from_pres   
+    return depth_from_pres
 
 def nitrate_combined(NITRAT, NITRIT, NO2_NO3):
     return oc.nitrate_combined(np.transpose(np.vstack((NITRAT, NITRIT, NO2_NO3))))
@@ -73,10 +73,10 @@ def alk_nnw3rmse_bro18(LONGITUDE, LATITUDE, DPTH, THETA, SAL, NITRAT, PHSPHT, SI
 
 def nitrat_nncanyonb_bit18(DATE, LATITUDE, LONGITUDE, PRES, CTDTMP, SAL, OXY):
     return oc.nitrat_nncanyonb_bit18(np.transpose(np.vstack((DATE.get_values() // 10000, LATITUDE, LONGITUDE, -1 * PRES, CTDTMP, SAL, OXY))))
-    
+
 def phspht_nncanyonb_bit18(DATE, LATITUDE, LONGITUDE, PRES, CTDTMP, SAL, OXY):
     return oc.phspht_nncanyonb_bit18(np.transpose(np.vstack((DATE.get_values() // 10000, LATITUDE, LONGITUDE, -1 * PRES, CTDTMP, SAL, OXY))))
-    
+
 def silcat_nncanyonb_bit18(DATE, LATITUDE, LONGITUDE, PRES, CTDTMP, SAL, OXY):
     return oc.silcat_nncanyonb_bit18(np.transpose(np.vstack((DATE.get_values()//10000, LATITUDE, LONGITUDE, -1 * PRES, CTDTMP, SAL, OXY))))
 
