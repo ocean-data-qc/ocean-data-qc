@@ -6,7 +6,6 @@
 
 from bokeh.util.logconfig import bokeh_logger as lg
 from bokeh.models.ranges import DataRange1d, Range1d
-from bokeh.models.sources import ColumnDataSource, CDSView
 from bokeh.models.filters import IndexFilter
 
 from ocean_data_qc.env import Environment

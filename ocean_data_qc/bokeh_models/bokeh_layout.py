@@ -5,12 +5,9 @@
 #########################################################################
 
 from bokeh.util.logconfig import bokeh_logger as lg
-from bokeh.models import CDSView, IndexFilter, ColumnDataSource, IndexFilter
 from bokeh.layouts import layout, column, row
 from bokeh.models.layouts import Spacer
 from bokeh.models.widgets.markups import Div
-from bokeh.plotting import figure
-import numpy as np
 
 from ocean_data_qc.env import Environment
 from ocean_data_qc.constants import *

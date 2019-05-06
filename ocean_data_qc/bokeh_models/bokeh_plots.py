@@ -7,7 +7,7 @@
 import numpy as np
 from copy import deepcopy
 from bokeh.plotting import figure
-from bokeh.models.sources import ColumnDataSource, CDSView
+from bokeh.models.sources import ColumnDataSource
 from bokeh.models.filters import GroupFilter, BooleanFilter, IndexFilter
 from bokeh.events import Reset, DoubleTap
 from bokeh.models.renderers import GlyphRenderer
