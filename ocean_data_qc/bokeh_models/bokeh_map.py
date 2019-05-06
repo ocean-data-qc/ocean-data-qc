@@ -73,7 +73,7 @@ class BokehMap(Environment):
         self.env.wmts_map_scatter = self.env.wmts_map.circle(
             x='X_WMTS',
             y='Y_WMTS',
-            size=10,
+            size=5,
             source=self.env.wmts_map_source,
             line_color='#00004c',
             fill_color='#5bc0de',
@@ -107,8 +107,8 @@ class BokehMap(Environment):
 
         code = """
             var projections = require("core/util/projections");
-            var x = special_vars.x
-            var y = special_vars.y
+            var x = special_vars.data_x
+            var y = special_vars.data_y
             var coords = projections.wgs84_mercator.inverse([x, y])
             return coords[%d].toFixed(2)
         """
