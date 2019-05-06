@@ -43,7 +43,6 @@ class CruiseData(CruiseDataExport):
         self._set_df()
         self._prep_df_columns()
         self.cp_param = ComputedParameter(self)
-        return self
 
     def _set_cols_from_scratch(self):
         """ The main attributes of the object are filled:
