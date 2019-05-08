@@ -13,7 +13,7 @@ from bokeh.events import Reset, DoubleTap
 from bokeh.models.renderers import GlyphRenderer
 from bokeh.models.callbacks import CustomJS
 from bokeh.models.glyphs import Line
-from bokeh.models.markers import Circle, Asterisk
+from bokeh.models.markers import Scatter
 from bokeh.palettes import Reds3
 from bokeh.models.tools import (
     PanTool, BoxZoomTool, BoxSelectTool, WheelZoomTool,
@@ -42,10 +42,7 @@ class BokehPlots(Environment):
         if 'n_plot' in kwargs:
             self.n_plot = kwargs['n_plot']
         if 'tab' in kwargs:
-            self.tab = kwargs['tab']    # TODO: is it needed?
-
-        # this plot will be added to a loop to create the grids
-        # self.glyph_rends = []       # GlyphRenderers (Circle Renderers)
+            self.tab = kwargs['tab']
 
         self.plot = None            # plot initialization, should be this a list of plots? or use this class for each plot?
         self.circles = []
@@ -78,7 +75,9 @@ class BokehPlots(Environment):
             title=title,
             output_backend=OUTPUT_BACKEND,
 
-            border_fill_color='whitesmoke',       # TODO: this should be declared on the yaml file
+            lod_threshold=3000,               # downsampling enable when the glyph has more than 3000 samples
+
+            border_fill_color='whitesmoke',   # TODO: this should be declared on the yaml file
             background_fill_color='whitesmoke',
         )
         self.plot.yaxis.axis_label_text_font_style = 'normal'
@@ -92,7 +91,7 @@ class BokehPlots(Environment):
         for key in self.env.all_flags:  # TODO: set some order (overlapping layers)
             # TODO: Waiting for the GroupFilter by numeric value https://github.com/bokeh/bokeh/issues/7524
 
-            c = self.plot.circle(
+            c = self.plot.scatter(
                 x=self.x,
                 y=self.y,
                 size=4,
@@ -106,7 +105,7 @@ class BokehPlots(Environment):
                 nonselection_fill_color=CIRCLE_COLORS[key],
                 nonselection_fill_alpha=1.0,
             )
-            c.selection_glyph = Circle(
+            c.selection_glyph = Scatter(
                 line_color=Reds3[0],
                 line_alpha=1.0,
                 fill_color='yellow',
@@ -144,7 +143,7 @@ class BokehPlots(Environment):
         # profile colors = [..., light blue, blue, dark blue, red]
         for i in range(NPROF):
             color = self.env.profile_colors[i]
-            c = self.plot.circle(
+            c = self.plot.scatter(
                 x='{}_{}_{}'.format(self.tab, self.x, i),
                 y='{}_{}_{}'.format(self.tab, self.y, i),
                 line_color=color,
@@ -157,7 +156,7 @@ class BokehPlots(Environment):
                 nonselection_line_alpha=1.0,
                 nonselection_fill_alpha=1.0
             )
-            c.selection_glyph = Circle(
+            c.selection_glyph = Scatter(
                 line_color=RED,
                 fill_color='yellow',
                 line_alpha=1.0,
@@ -170,45 +169,49 @@ class BokehPlots(Environment):
                 * self.aux_asterisk_asterisk - marked asterisk
                 * self.aux_asteris_circle - center asterisk marked
         '''
-        self.asterisk = self.plot.asterisk(
+        self.asterisk = self.plot.scatter(
+            marker='asterisk',
             x='{}_{}'.format(self.tab, self.x),
             y='{}_{}'.format(self.tab, self.y),
             size=20,
             line_color=Reds3[0],
             line_width=3,
             source=self.env.asterisk_source,
-        )
-        # NOTE: The following object is to avoid a shadow for a
-        #       few ms when a new selection is made
-        self.asterisk.nonselection_glyph = Asterisk(
-            line_color=None, fill_color=None,
-            line_alpha=0.0, fill_alpha=0.0
+
+            nonselection_line_color=None,       # NOTE: The following object is to avoid a shadow for a
+            nonselection_fill_color=None,       #       few ms when a new selection is made
+            nonselection_line_alpha=0.0,
+            nonselection_fill_alpha=0.0
         )
 
-        self.aux_asterisk = self.plot.asterisk(
+        self.aux_asterisk = self.plot.scatter(
+            marker='asterisk',
             x='{}_{}'.format(self.tab, self.x),
             y='{}_{}'.format(self.tab, self.y),
             size=17,
             line_color='yellow',
             line_width=1,
             source=self.env.asterisk_source,
-        )
-        self.aux_asterisk.nonselection_glyph = Asterisk(
-            line_color=None, fill_color=None,
-            line_alpha=0.0, fill_alpha=0.0
+
+            nonselection_line_color=None,
+            nonselection_fill_color=None,
+            nonselection_line_alpha=0.0,
+            nonselection_fill_alpha=0.0
         )
 
-        self.aux_asterisk_circle = self.plot.circle(
+        self.aux_asterisk_circle = self.plot.scatter(
             x='{}_{}'.format(self.tab, self.x),
             y='{}_{}'.format(self.tab, self.y),
-            size=5,
+            size=3,
             fill_color='yellow',
             line_width=None,
+            line_color='yellow',
             source=self.env.asterisk_source,
-        )
-        self.aux_asterisk_circle.nonselection_glyph = Circle(
-            line_color=None, fill_color=None,
-            line_alpha=0.0, fill_alpha=0.0
+
+            nonselection_line_color=None,
+            nonselection_fill_color=None,
+            nonselection_line_alpha=0.0,
+            nonselection_fill_alpha=0.0
         )
 
     @property
@@ -220,9 +223,12 @@ class BokehPlots(Environment):
                 * Hides all the Line GlyphRenderers on the plot.
                 * The selection is also removed
                 * The flag visibility is reset
+
+            NOTE: this is run once per plot in each tab, but actually we need to run it only once
         '''
         lg.info('-- RESET PLOT: {}'.format(self.n_plot))
-        if self.n_plot == 0:
+        n = self.env.tabs_flags_plots[self.tab]['plots'][0]  # first plot in the current tab
+        if self.n_plot == n:
             self.env.reset_selection = True  # this does not work anymore
             self.env.selection = []
             self.env.source.selected.indices = []

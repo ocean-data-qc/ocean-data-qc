@@ -50,12 +50,12 @@ class ElectronBokehBridge(Environment):
             'x': [1, 2, 3],
             'y': [4, 5, 6],
         })
-        self.bridge_trigger = self.bridge_plot.circle(
+        self.bridge_trigger = self.bridge_plot.scatter(
             x='x', y='y', source=source,
             size=1, color="navy", alpha=0.5
         )
         self.bridge_plot_callback = CustomJS(code="""
-            // This content will be overrided by the method run_js_code()
+            // This content will be overwritten by the method run_js_code()
         """)
         self.bridge_trigger.glyph.js_on_change('size', self.bridge_plot_callback)
 
