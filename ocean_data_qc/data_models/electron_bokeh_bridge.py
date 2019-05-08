@@ -63,6 +63,7 @@ class ElectronBokehBridge(Environment):
         ''' Creates dummy objects to trigger and send messages between electron and bokeh '''
 
         self.bridge_button = Button(
+            width=150, height=100,
             label='Bridge Button',
             button_type='success',
         )
@@ -70,6 +71,7 @@ class ElectronBokehBridge(Environment):
         self.bridge_button.on_click(self.send_python_response)  # api retrocompatibility?
 
         self.bridge_text = TextInput(
+            width=150, height=100,
             name='bridge_text_input'
         )
         self.bridge_text.css_classes = ['bridge_text']
@@ -77,6 +79,7 @@ class ElectronBokehBridge(Environment):
     def _init_curdoc(self):
         self.bridge_box = widgetbox(
             width=300,
+            height=200,
             children=[
                 self.bridge_text,
                 self.bridge_button,
@@ -127,6 +130,8 @@ class ElectronBokehBridge(Environment):
             method = getattr(self.env.cruise_data.cp_param, method_str)
         elif obj == 'files.handler':
             method = getattr(self.env.f_handler, method_str)
+        elif obj == 'bokeh.plots.handler':
+            method = getattr(self.env.bk_plots_handler, method_str)
         # elif obj == 'computed.parameter':
         #     method = getattr(self.plot.cruisedata.cp, method)
 

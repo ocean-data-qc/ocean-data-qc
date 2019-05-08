@@ -122,6 +122,7 @@ if not APPDATA:
 FILES = path.join(APPDATA, 'ocean-data-qc', 'files')
 TMP = path.join(APPDATA, 'ocean-data-qc', 'files', 'tmp')
 UPD = path.join(APPDATA, 'ocean-data-qc', 'files', 'tmp', 'update')
+IMG = path.join(OCEAN_DATA_QC, 'static', 'img')
 
 PROJ_SETTINGS = path.join(TMP, 'settings.json')
 CUSTOM_SETTINGS = path.join(FILES, 'custom_settings.json')

@@ -6,7 +6,9 @@
 
 import numpy as np
 from copy import deepcopy
+from os import path
 from bokeh.plotting import figure
+from bokeh.models import CustomAction
 from bokeh.models.sources import ColumnDataSource
 from bokeh.models.filters import GroupFilter, BooleanFilter, IndexFilter
 from bokeh.events import Reset, DoubleTap
@@ -258,13 +260,19 @@ class BokehPlots(Environment):
         crosshair = CrosshairTool()
         tap = TapTool()
         save = SaveTool()
-        reset = ResetTool()     # TODO: add only to one plot, maybe with n_plot
-
+        reset = ResetTool()
         self.lasso_select = LassoSelectTool(
-            renderers=self.circles,                  # default all available renderers
-            select_every_mousemove=False,            # enhance performance
+            renderers=self.circles,          # default = all available renderers
+            select_every_mousemove=False,    # to enhance performance
         )
+        hover = self._get_hover_tool()
+        self.tools = (
+            pan, box_zoom, self.lasso_select, box_select,
+            crosshair, save, reset, tap, wheel_zoom
+        )
+        self.plot.add_tools(*self.tools)
 
+    def _get_hover_tool(self):
         tooltips = '''
             <style>
                 .bk-tooltip>div:not(:nth-child(-n+5)) {{
@@ -294,9 +302,18 @@ class BokehPlots(Environment):
             mode='mouse',
             tooltips=tooltips,
         )
+        return hover
 
-        tools = (
-            pan, box_zoom, self.lasso_select, box_select,
-            crosshair, save, reset, tap, wheel_zoom
+    def add_deselect_tool(self):
+        ''' This tool should be added only once per tab '''
+        js_code = """
+            window.top.postMessage({
+                'signal': 'deselect-tool',
+            }, '*');                        // to main_renderer.js
+        """
+        deselect_tool = CustomAction(  # I took this from ResetTool that inherits from CustomAction
+            icon=path.join(IMG, 'deselect.png'),
+            callback=CustomJS(code=js_code, args=dict(source=self.env.source, reset_selection=self.env.reset_selection)),
+            action_tooltip='Reset Selection'
         )
-        self.plot.add_tools(*tools)
+        self.plot.add_tools(deselect_tool)  # reset is needed?

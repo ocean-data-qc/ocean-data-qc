@@ -53,6 +53,7 @@ class BokehEvents(Environment):
 
             self._update_map_selection_prog(new_indices)
             self.env.bk_table.update_dt_source()  # prof sources is updated inside
+            self.env.reset_selection = False
         elif self.env.selection != [] and new_indices == []:
             # NOTE: Keeps the selection when the user click on a space without any sample
             if self.env.reset_selection:
@@ -74,7 +75,7 @@ class BokehEvents(Environment):
             lg.info('>> NEW MAP SELECTION: {}'.format(new_indices))
             self.env.map_selection = new_indices
 
-            # trigger the _update_selection
+            # triggers the _update_selection
             # lg.info('>> MAP SOURCE: {}'.format(self.env.wmts_map_source.data))
             selected_stts = list(self.env.wmts_map_source.data[STNNBR][new_indices])
             # self.env.cur_partial_stt_selection = selected_stts
@@ -96,7 +97,7 @@ class BokehEvents(Environment):
                 self.env.wmts_map_source.selected.indices = []
             else:
                 lg.info('>> KEEP MAP SELECTION')
-                new_indices = self.env.map_selection
+                self.env.wmts_map_source.selected.indices = self.env.map_selection
 
     def _update_map_selection_prog(self, new_indices):
         ''' Updates the map selection programmatically with the stations of the selected samples

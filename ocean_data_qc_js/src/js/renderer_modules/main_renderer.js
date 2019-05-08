@@ -115,14 +115,18 @@ window.onmessage = function(e){
     if (typeof(e.data.signal) !== 'undefined') {
         if (e.data.signal == 'python-response') {
             $('body').data('python_response', e.data.params);
-        }
-        if (e.data.signal == 'python-error') {
+        } else if  (e.data.signal == 'python-error') {
             $('body').data('python_error', e.data.params);
-        }
-        if (e.data.signal == 'js-call') {
+        } else if (e.data.signal == 'js-call') {
             tools.js_call(e.data.params);
         } else if (e.data.signal == 'on-ready') {
             server_renderer.run_on_ready_final_step();
+        } else if (e.data.signal == 'deselect-tool' || e.data.signal == 'esc-pressed') {
+            var call_params = {
+                'object': 'bokeh.plots.handler',
+                'method': 'deselect_tool',
+            }
+            tools.call_promise(call_params);
         }
     }
 

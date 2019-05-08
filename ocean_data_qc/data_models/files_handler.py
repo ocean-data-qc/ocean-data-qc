@@ -202,7 +202,7 @@ class FilesHandler(Environment):
             from reloading from cache
             https://stackoverflow.com/a/15562751/4891717
         '''
-        lg.warning('-- GET CSS CHECKSUM')
+        lg.info('-- GET CSS CHECKSUM')
         file_paths = []
         filters = ('.css') #, '.js')
         cache_paths = {

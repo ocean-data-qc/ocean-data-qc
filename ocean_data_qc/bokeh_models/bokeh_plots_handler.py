@@ -89,6 +89,10 @@ class BokehPlotsHandler(Environment):
                 self.env.bk_plots.append(bp)
                 self.env.tabs_flags_plots[tab]['plots'].append(graph.pos)
 
+            self.env.bk_plots[
+                self.env.tabs_flags_plots[tab]['plots'][0]
+            ].add_deselect_tool()
+
         # lg.info('>> SELF.ENV.TABS_FLAGS_PLOTS: {}'.format(self.env.tabs_flags_plots))
 
     def _init_ranges(self):
@@ -167,3 +171,14 @@ class BokehPlotsHandler(Environment):
                 else:  # there is no values for the current flag
                     self.env.flag_views[tab][key].filters = [IndexFilter([])]
         # lg.info('>> SELF.ENV.FLAG_VIEWS: {}'.format(self.env.flag_views))
+
+    def deselect_tool(self):
+        self.env.reset_selection = True  # this does not work anymore
+        self.env.selection = []
+        self.env.source.selected.indices = []
+        self.env.cur_partial_stt_selection = []  # in order to triger the partial selection method
+        self.env.dt_manual_update = False
+        self.env.bk_table.update_dt_source()
+        self.env.dt_manual_update = True
+        self.env.map_selection = []
+        self.env.wmts_map_source.selected.indices = []

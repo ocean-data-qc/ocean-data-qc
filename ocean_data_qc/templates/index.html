@@ -50,6 +50,20 @@
             oldLog.apply(console, arguments);
         };
 
+        $(window).keydown(function(event){
+            if(event.keyCode == 13) {
+                event.preventDefault();
+                return false;
+            }
+            if(event.keyCode == 27) {
+                event.preventDefault();
+                window.top.postMessage({
+                    'signal': 'esc-pressed',
+                }, '*');                        // to main_renderer.js
+                return false;
+            }
+        });
+
         window.onmessage = function(e){
             if (typeof(e.data.signal) != "undefined") {
                 if (e.data.signal == 'call-python-promise' || e.data.signal == 'update-bridge-text-value') {
