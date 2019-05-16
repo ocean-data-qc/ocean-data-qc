@@ -36,7 +36,9 @@ class CruiseDataCSV(CruiseData):
         ''' Checks if all the rows have the same number of elements '''
         lg.info('-- CHECK DATA FORMAT (CSV)')
         with open(self.filepath_or_buffer, newline='', errors='surrogateescape') as csvfile:
-            spamreader = csv.reader(csvfile, delimiter=',', quotechar='"')
+            self.dialect = csv.Sniffer().sniff(csvfile.read(4096),delimiters=',;')
+            csvfile.seek(0)
+            spamreader = csv.reader(csvfile, self.dialect, quotechar='"')
             first_len = -1
             row_number = 1
             for row in spamreader:

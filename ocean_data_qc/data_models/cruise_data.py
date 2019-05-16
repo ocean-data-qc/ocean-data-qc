@@ -260,10 +260,14 @@ class CruiseData(CruiseDataExport):
         """
         lg.info('-- SET DF')
         try:
+            delimiter=self.dialect.delimiter
+        except:
+            delimiter=','
+        try:
             self.df = pd.read_csv(
                 filepath_or_buffer=self.filepath_or_buffer,
                 comment='#',
-                delimiter=',',
+                delimiter=delimiter,
                 skip_blank_lines=True,
                 skipinitialspace=True,
                 engine='c',                 # engine='python' is more versatile, 'c' is faster
@@ -276,7 +280,7 @@ class CruiseData(CruiseDataExport):
             self.df = pd.read_csv(
                 filepath_or_buffer=self.filepath_or_buffer,
                 comment='#',
-                delimiter=',',
+                delimiter=delimiter,
                 skip_blank_lines=True,
                 skipinitialspace=True,
                 engine='python',                 # engine='python' is more versatile, 'c' is faster
