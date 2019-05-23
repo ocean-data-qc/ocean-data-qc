@@ -49,7 +49,7 @@ class BokehPlots(Environment):
         self.plot = None            # plot initialization, should be this a list of plots? or use this class for each plot?
         self.circles = []
         self.asterisk = None
-        self.asterisk_cds = None
+        self.astk_cds = None
         self.lasso_select = None
 
         self._init_figure()
@@ -77,7 +77,7 @@ class BokehPlots(Environment):
             title=title,
             output_backend=OUTPUT_BACKEND,
 
-            lod_threshold=3000,               # downsampling enable when the glyph has more than 3000 samples
+            lod_threshold=3000,               # downsampling enabled when the glyph has more than 3000 samples
 
             border_fill_color='whitesmoke',   # TODO: this should be declared on the yaml file
             background_fill_color='whitesmoke',
@@ -126,7 +126,7 @@ class BokehPlots(Environment):
         self.ml_prof_line = self.plot.multi_line(
             xs='xs{}'.format(self.n_plot),
             ys='ys{}'.format(self.n_plot),
-            source=self.env.ml_source,
+            source=self.env.ml_src,
             color='colors',
             line_cap='round',
             line_join='round',
@@ -134,7 +134,7 @@ class BokehPlots(Environment):
         )
 
     def _init_profile_lines_circles(self):
-        ''' This plots the vertexes of the line, the small cloud of points.
+        ''' This method renders the profile line vertexes (circles).
             Two glyphs are plotted:
                 * Selected points
                 * Non-selected points
@@ -151,7 +151,7 @@ class BokehPlots(Environment):
                 line_color=color,
                 fill_color=color,
                 size=4,             # this attr is common for the selection and non-selection glyph
-                source=self.env.pc_source,
+                source=self.env.pc_src,
 
                 nonselection_line_color=color,
                 nonselection_fill_color=color,
@@ -178,7 +178,7 @@ class BokehPlots(Environment):
             size=20,
             line_color=Reds3[0],
             line_width=3,
-            source=self.env.asterisk_source,
+            source=self.env.astk_src,
 
             nonselection_line_color=None,       # NOTE: The following object is to avoid a shadow for a
             nonselection_fill_color=None,       #       few ms when a new selection is made
@@ -193,7 +193,7 @@ class BokehPlots(Environment):
             size=17,
             line_color='yellow',
             line_width=1,
-            source=self.env.asterisk_source,
+            source=self.env.astk_src,
 
             nonselection_line_color=None,
             nonselection_fill_color=None,
@@ -208,7 +208,7 @@ class BokehPlots(Environment):
             fill_color='yellow',
             line_width=None,
             line_color='yellow',
-            source=self.env.asterisk_source,
+            source=self.env.astk_src,
 
             nonselection_line_color=None,
             nonselection_fill_color=None,
@@ -244,7 +244,7 @@ class BokehPlots(Environment):
 
     def _double_tap_event(self, event):
         ''' This could be useful to change the axis variables
-            or some other plot attributes
+            or some other plot attributes on the fly
         '''
         lg.info('-- DOUBLE TAP EVENT, AXIS: {} | {}'.format(self.x, self.y))
 

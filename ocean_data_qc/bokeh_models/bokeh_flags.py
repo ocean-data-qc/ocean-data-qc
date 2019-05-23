@@ -70,7 +70,7 @@ class BokehFlags(Environment):
                 cur_plot_list = self.env.tabs_flags_plots[self.env.cur_tab]['plots']
                 self.env.doc.hold('collect')
                 self.env.bk_plots_handler.replot_color_circles(only_cur_tab=True)
-                self.env.bk_sources.update_prof_sources()  # TODO: keep the selection as it is >> keep_selection = True
+                self.env.bk_sources._upd_prof_srcs()  # TODO: keep the selection as it is >> keep_selection = True
                                                            #       I do this here because some point could be invisible for
                                                            #       other tab
                 self.env.doc.unhold()
@@ -270,7 +270,7 @@ class BokehFlags(Environment):
         # NOTE: update datatable and prof sources is needed because the new flag could be invisible,
         #       then the profiles should be invisible as well
         # self.env.bk_table.update_dt_source()
-        self.env.bk_sources.update_prof_sources(force_selection=True)
+        self.env.bk_sources._upd_prof_srcs(force_selection=True)
 
         self.env.doc.unhold()
 
@@ -327,7 +327,7 @@ class BokehFlags(Environment):
             all_flags_bt.css_classes = ['eye_bt']
 
         self.env.visible_flags = to_visible_flags.copy()
-        self.env.bk_sources.update_prof_sources(force_selection=True)
+        self.env.bk_sources._upd_prof_srcs(force_selection=True)
         self.env.doc.unhold()
 
     def reset_all_flags(self):

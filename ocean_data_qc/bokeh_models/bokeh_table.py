@@ -227,7 +227,7 @@ class BokehDataTable(Environment):
         self.data_table.source.data = new_vals_dict
         # self.env.dt_manual_update = True
 
-        self.env.bk_sources.update_prof_sources(force_selection=True)
+        self.env.bk_sources._upd_prof_srcs(force_selection=True)
 
     def on_change_data_source(self, attr, old, new):
         indices = list(range(self.table_df.size))

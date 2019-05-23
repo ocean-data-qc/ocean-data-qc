@@ -96,8 +96,10 @@ class BokehPlotsHandler(Environment):
         # lg.info('>> SELF.ENV.TABS_FLAGS_PLOTS: {}'.format(self.env.tabs_flags_plots))
 
     def _init_ranges(self):
-        lg.info('-- INIT RANGES')
+        lg.warning('-- INIT RANGES')
         # TODO: do no create axis for some parameters (if not needed)
+        lg.warning('>> TAB LIST: {}'.format(self.env.f_handler.tab_list))
+        # for tab in self.env.f_handler.tab_list:
 
         for col in self.env.cur_plotted_cols:
             # gmax = self.env.cruise_data.df[col].max()

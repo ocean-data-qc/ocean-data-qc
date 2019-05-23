@@ -50,10 +50,10 @@ class Environment(object):
     data = None                     # Original Data() object
     source = None                   # Complete ColumnDataSource
     cds_df = None                   # Dataframe for the main CDS
-    ml_source = None                # Multiline Profiles CDS
-    pc_source = None                # Profile circles´s source, column name example:
+    ml_src = None                # Multiline Profiles CDS
+    pc_src = None                # Profile circles´s source, column name example:
                                     # NITRAT_NITRAT_2 (TAB_COLUMN_PROFNUMBER)
-    asterisk_source = None          # Asterisk CDS >> 0 or 1 (if at least one point is selected)
+    astk_src = None          # Asterisk CDS >> 0 or 1 (if at least one point is selected)
                                     # The lines with all the columns are store in thos source
     flag_views = {}                 # Views that are shared in all plots of a tab
     wmts_map_source = None          # Map source
@@ -77,6 +77,7 @@ class Environment(object):
     profile_colors = []             # List of colors for the profiles circles, RED at the end
     cur_nearby_prof = None          # Current extra shown extension
     tabs_flags_plots = {}           # Stores the tab, the current flag for the tab and the current plots for the tab
+    qc_plot_tabs = {}               # Stores the title and columns in every tab
     cur_flag = None                 # Current selected flag, one different per tab
     cur_tab = None                  # Current selected tab
     tab_change = False              # True if the tab was currently changed

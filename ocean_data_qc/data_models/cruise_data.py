@@ -181,7 +181,7 @@ class CruiseData(CruiseDataExport):
             self.cols = attr
 
     def get_col_type(self, column=''):
-        ''' Return a list of column types associated to argument '''
+        ''' Return a list of column types associated to the column argument '''
         if column in self.cols:
             return self.cols[column]['types']
         else:
