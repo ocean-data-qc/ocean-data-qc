@@ -116,7 +116,6 @@ class BokehPlotsHandler(Environment):
                 renderers=[]
             )
 
-
             # x_range = Range1d(
             #     start=gmin,                       # bounds automatically detected with DataRange1d
             #     end=gmax,

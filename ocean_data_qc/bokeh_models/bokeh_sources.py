@@ -245,14 +245,21 @@ class BokehSources(Environment):
         self.env.pc_src.selected.indices = self.env.selection
 
     def _get_pc_src_patches(self, prof_df=None):
-        lg.warning('-- GET PC SRC PATCHES')
-        # ------------------------ PC_SRC ----------------------------
+        ''' Basically this method make these steps:
+                1. Get non-nan values positions to reset just them
+                2. Mix these positions with the new values
+                3. Reduce the number of slices by groups
+                4. Send patch
 
-        # 1. Get non-nan values positions to reset just them
-        # 2. Mix these positions with the new values
-        # 3. Send patch
-
+                NOTE: How to patch NaN values: https://github.com/bokeh/bokeh/issues/7525
+                      The indices must be int (Int64 throws error)
+        '''
+        lg.info('-- GET PC SRC PATCHES')
         start = time.time()
+
+        # TODO: merge both dataframes in a different way, check if "merge", "join", or "assign" will work
+        # pc_df = self.env.pc_src.to_df()  # get values and convert to NaN, mark them with some flag??
+        # merged_df = pc_df.assign(**prof_df.to_dict())
 
         pc_src_df_old = self.env.pc_src.to_df()
         pc_src_d_old = {}
@@ -261,7 +268,7 @@ class BokehSources(Environment):
                 s = pc_src_df_old[pc_src_df_old[c].notnull()][c]
                 pc_src_d_old[c] = list(zip(s.index, [np.nan] * s.index.size))
 
-        lg.warning('>> OLD SRC VALUES: {}'.format(pc_src_d_old.get('PHSPHT_PRES_0', False)))
+        # lg.warning('>> OLD SRC VALUES: {}'.format(pc_src_d_old.get('PHSPHT_PRES_0', False)))
 
         pc_src_d_new = {}
         for c in prof_df.columns:
@@ -269,10 +276,9 @@ class BokehSources(Environment):
                 s = prof_df[prof_df[c].notnull()][c]
                 pc_src_d_new[c] = list(zip(s.index, s))
 
-        # lg.warning('>> PROF DF: {}'.format(prof_df['PHSPHT_PRES_0']))
-        lg.warning('>> NEW SRC VALUES: {}'.format(pc_src_d_new.get('PHSPHT_PRES_0', False)))
+        # lg.warning('>> NEW SRC VALUES: {}'.format(pc_src_d_new.get('PHSPHT_PRES_0', False)))
 
-        def merge(d1, d2):
+        def merge(d1, d2):          # TODO: move this to a tools.py file
             ''' Merges two dictionarys with lists as values
                     d1 = {
                         'x': [(0, nan), (1, nan), (2, nan), (3, nan), (4, nan), (5, nan)],
@@ -300,31 +306,39 @@ class BokehSources(Environment):
                     d1[c] = d2[c]
             return d1
 
+        def trans(ser):                     # TODO: move this to a tools.py file
+            indices = ser.index.tolist()
+            def build(last, cur, val):
+                if cur == last + 1:
+                    if np.isnan(val):
+                        return (slice(last, cur), np.array([np.nan]))
+                    else:
+                        return (last, val)
+                else:
+                    return (slice(last, cur), np.array([val] * (cur - last)))
+            last = ser.iloc[0]
+            old = last_index = indices[0]
+            resul = []
+            for i in indices[1:]:
+                val = ser[i]
+                if ((val != last) and not(np.isnan(val) and np.isnan(last))) \
+                   or i != old + 1:
+                    resul.append(build(last_index, old + 1, last))
+                    last_index = i
+                    last = val
+                old = i
+            resul.append(build(last_index, old+1, last))
+            return resul
+
         if pc_src_d_old != {}:
-            lg.warning('>> MERGING')
             patches = merge(pc_src_d_old, pc_src_d_new)
         else:
-            lg.warning('>> NO MERGING')
             patches = pc_src_d_new
-
-        lg.warning('>> PATCHES KEYS: {}'.format(patches.keys()))
-        lg.warning('>> PATCHES MERGED: {}'.format(patches.get('PHSPHT_PRES_0', False)))
-
-        # replaces (0, nan) >> (slice(0, 1), [np.nan])
-        # in order to send it as binary file
-        for k in patches.keys():
-            i = 0
-            for t in patches[k]:
-                if np.isnan(t[1]):
-                    patches[k][i] = (slice(t[0], t[0] + 1), np.array([np.nan]))
-                i += 1
-            # patches[k] = np.array(patches[k])
-
-        # lg.warning('>> PATCHES: {}'.format(patches))
-        lg.warning('>> PATCHES RESULT: {}'.format(patches.get('PHSPHT_PRES_0', False)))
+        for key in patches.keys():
+            patches[key] = trans(pd.Series(dict(patches[key])))
 
         end = time.time()
-        lg.warning('>> PATCHES TIME: {}'.format(end - start))
+        lg.info('>> PATCHES TIME: {}'.format(end - start))
         return patches
 
     def _get_ml_df(self):
@@ -429,13 +443,8 @@ class BokehSources(Environment):
         '''
         lg.info('-- UPDATE PROFILE CIRCLE SOURCES')
         start = time.time()
-        # indices = df_fs.index.values.tolist() if df_fs is not None else []
         prof_df = self._get_empty_prof_df()
-        tabs = []
-        cur_tab_cols = self.env.cur_plotted_cols
         tabs = self.env.f_handler.tab_list
-        lg.warning('-- CUR_TAB_COLS: {}'.format(cur_tab_cols))
-
         if df_fs is not None:
             stt_order_reversed = list(reversed(stt_order))
             d_temp = {}

@@ -11,7 +11,7 @@ from bokeh.plotting import figure
 from bokeh.models import CustomAction
 from bokeh.models.sources import ColumnDataSource
 from bokeh.models.filters import GroupFilter, BooleanFilter, IndexFilter
-from bokeh.events import Reset, DoubleTap
+from bokeh.events import Reset, DoubleTap, LODStart, LODEnd
 from bokeh.models.renderers import GlyphRenderer
 from bokeh.models.callbacks import CustomJS
 from bokeh.models.glyphs import Line
@@ -77,7 +77,7 @@ class BokehPlots(Environment):
             title=title,
             output_backend=OUTPUT_BACKEND,
 
-            lod_threshold=3000,               # downsampling enabled when the glyph has more than 3000 samples
+            lod_threshold=300,               # downsampling enabled when the glyph has more than 3000 samples
 
             border_fill_color='whitesmoke',   # TODO: this should be declared on the yaml file
             background_fill_color='whitesmoke',
@@ -248,9 +248,17 @@ class BokehPlots(Environment):
         '''
         lg.info('-- DOUBLE TAP EVENT, AXIS: {} | {}'.format(self.x, self.y))
 
+    def _lod_start_event(self, event):
+        lg.info('-- LOD START EVENT, AXIS: {} | {}'.format(self.x, self.y))
+
+    def _lod_end_event(self, event):
+        lg.info('-- LOD END EVENT, AXIS: {} | {}'.format(self.x, self.y))
+
     def _set_events(self):
         self.plot.on_event(DoubleTap, self._double_tap_event)
         self.plot.on_event(Reset, self._reset_plot)
+        self.plot.on_event(LODStart, self._lod_start_event)
+        self.plot.on_event(LODEnd, self._lod_end_event)
 
     def _set_tools(self):
         wheel_zoom = WheelZoomTool()

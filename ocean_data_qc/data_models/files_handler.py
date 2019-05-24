@@ -63,7 +63,6 @@ class FilesHandler(Environment):
         self._load_settings()
 
     def get_cols_in_tab(self, tab):
-        lg.info('-- GET TAB COLS')
         cols = []
         for p in self.env.qc_plot_tabs[tab]:
             cols.append(p['x'])
