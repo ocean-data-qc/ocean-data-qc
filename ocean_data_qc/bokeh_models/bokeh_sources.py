@@ -14,6 +14,7 @@ from bokeh.palettes import Reds3
 
 from ocean_data_qc.env import Environment
 from ocean_data_qc.constants import *
+from ocean_data_qc.data_models.tools import merge
 
 
 class BokehSources(Environment):
@@ -144,11 +145,11 @@ class BokehSources(Environment):
         for i in range(NPROF - 1, -1, -1):
             if i == NPROF - 1:          # TODO: add this to the CDS
                 colors.append(Reds3[0])
-                line_width.append(3)
+                line_width.append(2)
             else:
                 colors.append(BLUES[i])
                 line_width.append(2)
-            init_ml_profs.append([])
+            init_ml_profs.append(np.array([np.nan]))
 
         # ML SOURCE
         init_source_dict = dict(colors=colors, line_width=line_width)
@@ -232,17 +233,47 @@ class BokehSources(Environment):
         lg.info('>> ALGORITHM TIME: {}'.format(end - start))
 
     def _sync_ui_data(self, bk_plots=[]):
-        ml_df, df_fs, stt_order = self._get_ml_df()
-        prof_df = self._upd_pc_srcs(df_fs, stt_order)
-
         astk_cds = self._upd_astk_src()
         self.env.astk_src.data = astk_cds.data
 
-        ml_cds = ColumnDataSource(ml_df)
-        self.env.ml_src.data = ml_cds.data
+        ml_df, df_fs, stt_order = self._get_ml_df()
+        prof_df = self._upd_pc_srcs(df_fs, stt_order)
+
+        ml_patches = self._get_ml_src_patches(ml_df)
+        self.env.ml_src.patch(ml_patches)
+
+        # ml_cds = ColumnDataSource(ml_df)
+        # self.env.ml_src.data = ml_cds.data
 
         self.env.pc_src.patch(self._get_pc_src_patches(prof_df))
         self.env.pc_src.selected.indices = self.env.selection
+
+    def _get_ml_src_patches(self, ml_df=None):
+        lg.info('-- GET ML SRC PATCHES')
+        start = time.time()
+        ml_df.reset_index(drop=True, inplace=True)
+
+        # ml_src_df_old
+        ml_src_df_old = self.env.ml_src.to_df()
+        del ml_src_df_old['colors']          # colors and line_width are set in the initialization
+        del ml_src_df_old['line_width']
+        ml_src_df_old = ml_src_df_old.applymap(
+            lambda x: None if x == [] else np.array([np.nan])
+        )
+        ml_src_df_old = ml_src_df_old.stack().reset_index(level=0)
+        s_old = ml_src_df_old.apply(lambda x: tuple(x), axis=1)
+        d_old = s_old.groupby(s_old.index).apply(lambda x: x.tolist()).to_dict()
+
+        # ml_src_df_new
+        ml_src_df_new = ml_df.applymap(lambda x: None if x == [''] else x)  # this is a replace
+        ml_src_df_new = ml_src_df_new.stack().reset_index(level=0)
+        s_new = ml_src_df_new.apply(lambda x: tuple(x), axis=1)
+        d_new = s_new.groupby(s_new.index).apply(lambda x: x.tolist()).to_dict()
+
+        ml_patches = merge(d_old, d_new)
+        end = time.time()
+        lg.info('>> ML PATCHES TIME: {}'.format(end - start))
+        return ml_patches
 
     def _get_pc_src_patches(self, prof_df=None):
         ''' Basically this method make these steps:
@@ -342,7 +373,7 @@ class BokehSources(Environment):
         return patches
 
     def _get_ml_df(self):
-        lg.warning('-- GET ML DF')
+        lg.info('-- GET ML DF')
         df_fs = None
         stt_order = []
         if self.env.cur_partial_stt_selection != []:
@@ -372,20 +403,11 @@ class BokehSources(Environment):
 
             ml_df = ml_df.assign(**d_ml_df)
             if ml_df.index.size >= 1:
-                # NOTE: Moves the current selected station row to the end of the DF
-                stt_order = ml_df.index.drop(self.env.stt_to_select).tolist() + [self.env.stt_to_select]
-                ml_df = ml_df.reindex(stt_order)
-
-                # NOTE: This converts NaN to [''] (to keep colors order, it is maybe a bokeh bug?).
-                #       I do this here because if not I get the error: 'Cannot do inplace boolean setting on mixed-types with a non np.nan value'
-                #       If I replace by [np.nan] this error appears: Out of range float values are not JSON compliant
-                # ml_df[ml_df.isnull()] = ml_df[ml_df.isnull()].applymap(lambda x: [''])
-                ml_df = ml_df.applymap(lambda x: x if isinstance(x, list) else [''])
-
-                stt_colors = self.env.profile_colors[-len(stt_order):]
-                ml_df['colors'] = stt_colors        # [light blue, normal blue, darker blue, red]
-                # ml_df['line_width'] = [2] * (len(stt_order) - 1) + [3]
-                ml_df['line_width'] = [2] * len(stt_order)
+                stt_order = ml_df.index.drop(self.env.stt_to_select).tolist()
+                stt_order.append(self.env.stt_to_select)  # at the end
+                ml_df = ml_df.applymap(
+                    lambda x: x if isinstance(x, list) else np.array([np.nan])  # np.nan > np.array([np.nan])
+                )
             else:
                 ml_df = self._reset_ml_src()
         else:

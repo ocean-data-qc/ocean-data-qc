@@ -77,7 +77,7 @@ class BokehPlots(Environment):
             title=title,
             output_backend=OUTPUT_BACKEND,
 
-            lod_threshold=300,               # downsampling enabled when the glyph has more than 3000 samples
+            lod_threshold=3000,               # downsampling enabled when the glyph has more than 3000 samples
 
             border_fill_color='whitesmoke',   # TODO: this should be declared on the yaml file
             background_fill_color='whitesmoke',

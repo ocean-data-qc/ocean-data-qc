@@ -26,7 +26,7 @@ if oc_output[0] == 0:
     lg.info('>> OCTAVE DETECTED FROM PYTHON, VERSION: {}'.format(
         oc_output[1].split('=')[1].strip())
     )
-    import ocean_data_qc.equations as equations
+    import ocean_data_qc.octave.equations as equations
 else:
     lg.warning('>> OCTAVE UNDETECTED')
     equations = None
