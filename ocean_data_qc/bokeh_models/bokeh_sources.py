@@ -31,7 +31,7 @@ class BokehSources(Environment):
         self._init_bathymetric_map_data()
         self.env.stations = self.env.cruise_data.stations
         self.env.source = ColumnDataSource(self.env.cds_df)
-        self._init_prof_sources()
+        self._init_prof_ml_source()
         self._init_astk_src()
         self._init_all_flag_values()
 
@@ -135,7 +135,7 @@ class BokehSources(Environment):
             d = dict.fromkeys(compound_cols, np.array([np.nan] * self.env.cds_df.index.size))
         self.env.pc_src = ColumnDataSource(d)
 
-    def _init_prof_sources(self):
+    def _init_prof_ml_source(self):
         ''' Multiline ColumnDataSource Initialization '''
         colors = []
         line_width = []
@@ -211,10 +211,6 @@ class BokehSources(Environment):
             and asterisks and circles views to draw the whole profiles.
             This method should be the most efficient of the app
                 @force_selection: a new partial selection should be done from scratch
-
-            TODO: Update the sources in different phases:
-                  1. Update the current tab profiles, disable the rest of tabs
-                  2. Update the profiles of the rest of tabs, enable tabs when synchronized
         '''
         lg.info('-- UPDATE PROF SOURCES')
 
@@ -223,34 +219,32 @@ class BokehSources(Environment):
             'object': 'bokeh.calls',
             'function': 'disable_tabs',
         })
+        start = time.time()
         if self.env.cur_partial_stt_selection == [] or force_selection:
             self._set_partial_stt_selection()  # len(partial_stt_selection) <= NPROF
 
-        start = time.time()
-        self._sync_ui_data()
-
-        end = time.time()
-        lg.info('>> ALGORITHM TIME: {}'.format(end - start))
-
-    def _sync_ui_data(self, bk_plots=[]):
         astk_cds = self._upd_astk_src()
         self.env.astk_src.data = astk_cds.data
 
-        ml_df, df_fs, stt_order = self._get_ml_df()
-        prof_df = self._upd_pc_srcs(df_fs, stt_order)
+        p1 = time.time()
 
+        ml_df, df_fs, stt_order = self._get_ml_df()
         ml_patches = self._get_ml_src_patches(ml_df)
         self.env.ml_src.patch(ml_patches)
 
-        # ml_cds = ColumnDataSource(ml_df)
-        # self.env.ml_src.data = ml_cds.data
+        p2 = time.time()
 
+        prof_df = self._upd_pc_srcs(df_fs, stt_order)
         self.env.pc_src.patch(self._get_pc_src_patches(prof_df))
         self.env.pc_src.selected.indices = self.env.selection
 
+        p3 = time.time()
+        lg.info('>> TIME: ML: {} | PC: {} >> FULL ALGORITHM TIME: {}'.format(
+            round(p2 - p1, 2), round(p3 - p2, 2), round(p3 - start, 2)
+        ))
+
     def _get_ml_src_patches(self, ml_df=None):
         lg.info('-- GET ML SRC PATCHES')
-        start = time.time()
         ml_df.reset_index(drop=True, inplace=True)
 
         # ml_src_df_old
@@ -271,8 +265,6 @@ class BokehSources(Environment):
         d_new = s_new.groupby(s_new.index).apply(lambda x: x.tolist()).to_dict()
 
         ml_patches = merge(d_old, d_new)
-        end = time.time()
-        lg.info('>> ML PATCHES TIME: {}'.format(end - start))
         return ml_patches
 
     def _get_pc_src_patches(self, prof_df=None):
@@ -286,8 +278,6 @@ class BokehSources(Environment):
                       The indices must be int (Int64 throws error)
         '''
         lg.info('-- GET PC SRC PATCHES')
-        start = time.time()
-
         # TODO: merge both dataframes in a different way, check if "merge", "join", or "assign" will work
         # pc_df = self.env.pc_src.to_df()  # get values and convert to NaN, mark them with some flag??
         # merged_df = pc_df.assign(**prof_df.to_dict())
@@ -367,9 +357,6 @@ class BokehSources(Environment):
             patches = pc_src_d_new
         for key in patches.keys():
             patches[key] = trans(pd.Series(dict(patches[key])))
-
-        end = time.time()
-        lg.info('>> PATCHES TIME: {}'.format(end - start))
         return patches
 
     def _get_ml_df(self):
