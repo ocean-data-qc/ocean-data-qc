@@ -67,6 +67,7 @@ class Environment(object):
     stations = []                   # List of current stations used without duplicates
     visible_flags = []              # List of flags numbers that are currently visible
     selection = []                  # List of selected indices
+    tab_selection = {}            # List of selections by tab
     map_selection = []              # Stations selected on the map plot
     cur_partial_stt_selection = []  # Current partial stt selection
     sample_to_select = None         # Index of the current selected sample on the selection list

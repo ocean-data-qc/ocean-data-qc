@@ -14,7 +14,7 @@ from bokeh.palettes import Reds3
 
 from ocean_data_qc.env import Environment
 from ocean_data_qc.constants import *
-from ocean_data_qc.data_models.tools import merge
+import ocean_data_qc.data_models.tools as tools
 
 
 class BokehSources(Environment):
@@ -111,7 +111,7 @@ class BokehSources(Environment):
         # lg.info('>> SELF.ENV.FLAG_VIEWS: {}'.format(self.env.flag_views))
 
 
-    def _init_prof_circles_sources(self):
+    def _init_prof_circle_source(self):
         ''' Creates a CDS for the profile points. So the column names:
                 NITRAT_SALTNY_5:
                     * NITRAT >> Tab where the plot is drawn
@@ -170,7 +170,6 @@ class BokehSources(Environment):
         compound_cols = list(set(compound_cols))
         if compound_cols != []:
             d = dict.fromkeys(compound_cols, [])
-        lg.info('>> ASTERISK SOURCE COLUMNS: {}'.format(compound_cols))
         self.env.astk_src = ColumnDataSource(d)
 
     def _init_all_flag_values(self):
@@ -200,11 +199,10 @@ class BokehSources(Environment):
 
         for f in flag_vals:
             self.env.all_flags[f] = 'Flag {}'.format(f)
-        lg.info('>> INIT ALL FLAG VALUES: {}'.format(self.env.all_flags))
         if len(flag_vals)>len(CIRCLE_COLORS):
             for f in flag_vals:
                 if f > 9:
-                    CIRCLE_COLORS.update({f:CIRCLE_COLORS[9]})
+                    CIRCLE_COLORS.update({f: CIRCLE_COLORS[9]})
 
     def _upd_prof_srcs(self, force_selection=False):
         ''' Selects the points of the profile line and update the multiline data source
@@ -233,14 +231,30 @@ class BokehSources(Environment):
         self.env.ml_src.patch(ml_patches)
 
         p2 = time.time()
-
         prof_df = self._upd_pc_srcs(df_fs, stt_order)
-        self.env.pc_src.patch(self._get_pc_src_patches(prof_df))
+        p3 = time.time()
+        pc_patches = self._get_pc_src_patches(prof_df)
+        p4 = time.time()
+        self.env.pc_src.patch(pc_patches)
+        # self.env.pc_src.data = self.env.pc_src.from_df(prof_df)
+        p5 = time.time()
         self.env.pc_src.selected.indices = self.env.selection
 
-        p3 = time.time()
-        lg.info('>> TIME: ML: {} | PC: {} >> FULL ALGORITHM TIME: {}'.format(
-            round(p2 - p1, 2), round(p3 - p2, 2), round(p3 - start, 2)
+        p6 = time.time()
+        lg.warning('>> PC SOURCES: {}, {}, {}, {}, SUM = {}'.format(
+            round(p3 - p2, 2),
+            round(p4 - p3, 2),
+            round(p5 - p4, 2),
+            round(p6 - p5, 2),
+            sum([
+                round(p3 - p2, 2),
+                round(p4 - p3, 2),
+                round(p5 - p4, 2),
+                round(p6 - p5, 2)
+            ])
+        ))
+        lg.info('>> TIME: ASTERISK: {} | ML: {} | PC: {} >> FULL ALGORITHM TIME: {}'.format(
+            round(p1 - start, 2), round(p2 - p1, 2), round(p6 - p2, 2), round(p6 - start, 2)
         ))
 
     def _get_ml_src_patches(self, ml_df=None):
@@ -264,7 +278,7 @@ class BokehSources(Environment):
         s_new = ml_src_df_new.apply(lambda x: tuple(x), axis=1)
         d_new = s_new.groupby(s_new.index).apply(lambda x: x.tolist()).to_dict()
 
-        ml_patches = merge(d_old, d_new)
+        ml_patches = tools.merge(d_old, d_new)
         return ml_patches
 
     def _get_pc_src_patches(self, prof_df=None):
@@ -282,93 +296,75 @@ class BokehSources(Environment):
         # pc_df = self.env.pc_src.to_df()  # get values and convert to NaN, mark them with some flag??
         # merged_df = pc_df.assign(**prof_df.to_dict())
 
+        # prof_df.to_pickle('prof_df.pickle')
+        # self.env.pc_src.to_df().to_pickle('pc_src_df_old.pickle')
+
+        start = time.time()
+
         pc_src_df_old = self.env.pc_src.to_df()
         pc_src_d_old = {}
         for c in pc_src_df_old.columns:
-            if pc_src_df_old[c].notnull().values.any():
-                s = pc_src_df_old[pc_src_df_old[c].notnull()][c]
+            s = pc_src_df_old[pc_src_df_old[c].notnull()][c]
+            if s.index.size > 0:
                 pc_src_d_old[c] = list(zip(s.index, [np.nan] * s.index.size))
 
-        # lg.warning('>> OLD SRC VALUES: {}'.format(pc_src_d_old.get('PHSPHT_PRES_0', False)))
+        # print('>> OLD SRC VALUES: {}'.format(pc_src_d_old.get('SILCAT_PRES_1', False)))
 
         pc_src_d_new = {}
         for c in prof_df.columns:
-            if prof_df[c].notnull().values.any():
-                s = prof_df[prof_df[c].notnull()][c]
+            s = prof_df[prof_df[c].notnull()][c]
+            if s.index.size > 0:
                 pc_src_d_new[c] = list(zip(s.index, s))
 
-        # lg.warning('>> NEW SRC VALUES: {}'.format(pc_src_d_new.get('PHSPHT_PRES_0', False)))
-
-        def merge(d1, d2):          # TODO: move this to a tools.py file
-            ''' Merges two dictionarys with lists as values
-                    d1 = {
-                        'x': [(0, nan), (1, nan), (2, nan), (3, nan), (4, nan), (5, nan)],
-                        'y': [(0, nan), (2, nan), (3, nan), (4, nan), (5, nan), (6, nan)]
-                    }
-                    d2 = {
-                        'y': [(0, 0.0), (1, 6.0), (2, 76.0), (4, 0.0), (5, 1.0)],
-                        'z': [(3, 4.0)]
-                    }
-                    merge(d1, d2)
-                    >> output: {
-                        'x': [(0, nan), (1, nan), (2, nan), (3, nan), (4, nan), (5, nan)],
-                        'y': [(0, 0.0), (1, 6.0), (2, 76.0), (4, 0.0), (5, 1.0), (6, nan)],
-                        'z': [(3, 4.0)]
-                    }
-            '''
-            for c in list(set(list(d1.keys()) + list(d2.keys()))):
-                if c in d1 and c in d2:
-                    d_aux = dict(d1[c])
-                    d_aux.update(dict(d2[c]))
-                    t_list = list(zip(d_aux.keys(), list(d_aux.values())))
-                    t_list.sort(key=lambda t: t[0])
-                    d1[c] = t_list
-                elif c in d2 and c not in d1:
-                    d1[c] = d2[c]
-            return d1
-
-        def trans(ser):                     # TODO: move this to a tools.py file
-            indices = ser.index.tolist()
-            def build(last, cur, val):
-                if cur == last + 1:
-                    if np.isnan(val):
-                        return (slice(last, cur), np.array([np.nan]))
-                    else:
-                        return (last, val)
-                else:
-                    return (slice(last, cur), np.array([val] * (cur - last)))
-            last = ser.iloc[0]
-            old = last_index = indices[0]
-            resul = []
-            for i in indices[1:]:
-                val = ser[i]
-                if ((val != last) and not(np.isnan(val) and np.isnan(last))) \
-                   or i != old + 1:
-                    resul.append(build(last_index, old + 1, last))
-                    last_index = i
-                    last = val
-                old = i
-            resul.append(build(last_index, old+1, last))
-            return resul
+        # print('>> NEW SRC VALUES: {}'.format(pc_src_d_new.get('SILCAT_PRES_1', False)))
 
         if pc_src_d_old != {}:
-            patches = merge(pc_src_d_old, pc_src_d_new)
+            patches = tools.merge(pc_src_d_old, pc_src_d_new)
         else:
             patches = pc_src_d_new
         for key in patches.keys():
-            patches[key] = trans(pd.Series(dict(patches[key])))
+            patches[key] = tools.trans(dict(patches[key]))
+
+        end = time.time()
+        lg.warning('>> GET PC_SRC PATCHES: {}'.format(round(end - start, 2)))
+
         return patches
 
     def _get_ml_df(self):
         lg.info('-- GET ML DF')
         df_fs = None
         stt_order = []
-        if self.env.cur_partial_stt_selection != []:
-            ml_df = pd.DataFrame(index=self.env.cur_partial_stt_selection, columns=[])
-            df_fs = self.env.cds_df[self.env.cds_df[STNNBR].isin(self.env.cur_partial_stt_selection)]
+
+        # TODO: only one tab >> plots in the current tab
+            # self.env.tabs_flags_plots = {
+            #     'NITRAT': {
+            #         'flag': 'NITRAT_FLAG_W',       # default flag to mark in the dropdown
+            #         'plots': [0, 1, 2, 3]          # plot list in order to create the gridplot
+            #     },
+            #     'SALNTY': {
+            #         'flag': 'SALNTY_FLAG_W',
+            #         'plots': [4, 5, 6]
+            #     },
+
+            #     # [...]
+            # }
+
+        n_cur_bk_plots = self.env.tabs_flags_plots[self.cur_tab]['plots']
+        cur_bk_plots = []
+        for n in n_cur_bk_plots:
+            cur_bk_plots.append(self.env.bk_plots[n])
+        lg.warning('>> N CUR BK PLOTS: {}'.format(n_cur_bk_plots))
+        lg.warning('>> CUR BK PLOTS: {}'.format(cur_bk_plots))
+
+        stts = self.env.cur_partial_stt_selection
+        lg.warning('>> STTS: {}'.format(stts))
+
+        if stts != []:
+            ml_df = pd.DataFrame(index=stts, columns=[])
+            df_fs = self.env.cds_df[self.env.cds_df[STNNBR].isin(stts)]
 
             d_ml_df = {}
-            for bp in self.env.bk_plots:
+            for bp in cur_bk_plots:
                 df_p =  df_fs[df_fs[bp.x].notnull() & df_fs[bp.y].notnull()].sort_values([CTDPRS], ascending=[True])
 
                 # FIXME: if one of the axis is CTDPRS then it gives an error here
@@ -384,8 +380,8 @@ class BokehSources(Environment):
                     })
                 else:
                     d_ml_df.update(**{
-                        'xs{}'.format(bp.n_plot): [[''] for x in self.env.cur_partial_stt_selection],
-                        'ys{}'.format(bp.n_plot): [[''] for x in self.env.cur_partial_stt_selection],
+                        'xs{}'.format(bp.n_plot): [[''] for x in stts],
+                        'ys{}'.format(bp.n_plot): [[''] for x in stts],
                     })
 
             ml_df = ml_df.assign(**d_ml_df)
@@ -453,24 +449,25 @@ class BokehSources(Environment):
         lg.info('-- UPDATE PROFILE CIRCLE SOURCES')
         start = time.time()
         prof_df = self._get_empty_prof_df()
-        tabs = self.env.f_handler.tab_list
+        # tabs = self.env.f_handler.tab_list
+
         if df_fs is not None:
             stt_order_reversed = list(reversed(stt_order))
             d_temp = {}
             df_cur = df_fs.filter(self.env.cur_plotted_cols + [STNNBR])
-            for tab in tabs:
-                cur_cols_in_tab = self.env.f_handler.get_cols_in_tab(tab)
-                if self.env.plot_prof_invsbl_points is False:
-                    flag = self.env.tabs_flags_plots[tab]['flag']
-                    df_cur = df_fs[df_fs[flag].isin(self.env.visible_flags)]
 
-                i = NPROF - 1
-                for stt in stt_order_reversed:
-                    df_stt = df_cur[df_cur[STNNBR] == stt]
-                    for col in cur_cols_in_tab:  # TODO: only for cols that appear in the current processed tab
-                        df_aux = df_stt[col]
-                        d_temp['{}_{}_{}'.format(tab, col, i)] = df_aux
-                    i -= 1
+            cur_cols_in_tab = self.env.f_handler.get_cols_in_tab(self.env.cur_tab)
+            if self.env.plot_prof_invsbl_points is False:
+                flag = self.env.tabs_flags_plots[self.env.cur_tab]['flag']
+                df_cur = df_fs[df_fs[flag].isin(self.env.visible_flags)]
+
+            i = NPROF - 1
+            for stt in stt_order_reversed:
+                df_stt = df_cur[df_cur[STNNBR] == stt]
+                for col in cur_cols_in_tab:  # TODO: only for cols that appear in the current processed tab
+                    df_aux = df_stt[col]
+                    d_temp['{}_{}_{}'.format(self.env.cur_tab, col, i)] = df_aux
+                i -= 1
             prof_df = prof_df.assign(**d_temp)
             # prof_df.dropna(how='all', inplace=True)   # just in case there are some NaN rows lefovers
 
@@ -482,6 +479,9 @@ class BokehSources(Environment):
         # for i in self.env.selection:   # TODO: only selected points within profiles
         #     if i in prof_df.index:
         #         prof_sel.append(prof_df.index.get_loc(i))
+
+        end = time.time()
+        lg.warning('-- _upd_pc_srcs time: {}'.format(round(end - start, 2)))
         return prof_df
 
     def _get_empty_prof_df(self):

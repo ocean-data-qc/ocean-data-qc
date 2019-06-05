@@ -51,6 +51,7 @@ class BokehEvents(Environment):
         self.env.dt_manual_update = False
         if self.env.selection != new_indices and new_indices != []:
             self.env.selection = new_indices
+            self.env.tab_selection[self.env.cur_tab] = new_indices
             self.env.sample_to_select = None      # this is reselected later on `_upd_prof_srcs`
             self.env.stt_to_select = None
             self.env.cur_nearby_prof = None
@@ -64,6 +65,7 @@ class BokehEvents(Environment):
             if self.env.reset_selection:
                 lg.info('>> RESET SELECTION')
                 self.env.selection = []
+                self.env.tab_selection[self.env.cur_tab] = []
                 self.env.sample_to_select = None      # this is reselected later on `_upd_prof_srcs`
                 self.env.stt_to_select = None
                 self.env.cur_nearby_prof = None
@@ -274,6 +276,31 @@ class BokehEvents(Environment):
         def update_active_tab(attr, old, new):
             lg.info('-- UPDATE ACTIVE TAB | OLD: {} | NEW: {}'.format(old, new))
             self.env.cur_tab = self.env.tabs_widget.tabs[new].title
+
+            old_tab = self.env.tabs_widget.tabs[old].title
+            for col in self.env.ranges[self.env.cur_tab].keys():
+                if col in self.env.ranges[old_tab]:
+                    if 'x_range' in self.env.ranges[old_tab][col]:
+                        self.env.ranges[self.env.cur_tab][col]['x_range'].end = self.env.ranges[old_tab][col]['x_range'].end
+                        self.env.ranges[self.env.cur_tab][col]['x_range'].start = self.env.ranges[old_tab][col]['x_range'].start
+                    if 'y_range' in self.env.ranges[old_tab][col]:
+                        self.env.ranges[self.env.cur_tab][col]['y_range'].end = self.env.ranges[old_tab][col]['y_range'].end
+                        self.env.ranges[self.env.cur_tab][col]['y_range'].start = self.env.ranges[old_tab][col]['y_range'].start
+
+
+            # for tab in self.env.f_handler.tab_list:
+            #      self.env.ranges[old]
+
+            # TODO: save selection per tab not to trigger update_dt_source always
+
+            lg.warning('>> SELF.ENV.SELECTION = {} | SELF.ENV.TAB_SELECTION[{}] = {}'.format(
+                self.env.selection, self.env.cur_tab, self.env.tab_selection[self.env.cur_tab])
+            )
+            # if self.env.selection != self.env.tab_selection[self.env.cur_tab]:
+            #     self.env.tab_selection[self.env.cur_tab] = self.env.selection
+            #     self.env.bk_table.update_dt_source()  # prof sources is updated inside
+            self.env.bk_table.update_dt_source()  # prof sources is updated inside
+
             lg.info('>> CUR TAB: {}'.format(self.env.cur_tab))
             flag = self.env.tabs_flags_plots[self.env.cur_tab]['flag']
             if self.env.flagger_select.value != flag:

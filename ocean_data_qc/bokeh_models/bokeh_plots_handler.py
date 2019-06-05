@@ -63,11 +63,12 @@ class BokehPlotsHandler(Environment):
             }
         '''
         lg.info('-- INIT TABS LAYOUT')
-        self.env.bk_sources._init_prof_circles_sources()
+        self.env.bk_sources._init_prof_circle_source()
         self.env.bk_sources._init_flag_views()
         self._init_ranges()
         graphs = self.env.f_handler.graphs_per_tab  # property of FilesHandler object
         for tab in self.env.f_handler.tab_list:
+            self.env.tab_selection[tab] = []  # tab_selection initialization
             tab_flag = tab + FLAG_END       # TODO: tabs titles cannot be flags?
                                             #       if there is not flag available choose the first in the dropdown
             self.env.tabs_flags_plots[tab] = {
@@ -93,50 +94,77 @@ class BokehPlotsHandler(Environment):
                 self.env.tabs_flags_plots[tab]['plots'][0]
             ].add_deselect_tool()
 
+        lg.warning('>> SELF.ENV.TAB_SELECTION INITIALIZED: {}'.format(self.env.tab_selection))
+
         # lg.info('>> SELF.ENV.TABS_FLAGS_PLOTS: {}'.format(self.env.tabs_flags_plots))
 
     def _init_ranges(self):
         lg.warning('-- INIT RANGES')
-        # TODO: do no create axis for some parameters (if not needed)
         lg.warning('>> TAB LIST: {}'.format(self.env.f_handler.tab_list))
-        # for tab in self.env.f_handler.tab_list:
+        lg.warning('>> QC PLOT TABS: {}'.format(self.env.qc_plot_tabs))
 
-        for col in self.env.cur_plotted_cols:
-            # gmax = self.env.cruise_data.df[col].max()
-            # gmin = self.env.cruise_data.df[col].min()
-            # d = gmax - gmin
+        range_padding = 0.25
+        for tab in self.env.f_handler.tab_list:
+            self.env.ranges[tab] = {}
+            for p in self.env.qc_plot_tabs[tab]:
+                if p['x'] not in self.env.ranges[tab]:
+                    self.env.ranges[tab][p['x']] = {}
 
-            range_padding = 0.25
-            x_range = DataRange1d(
-                range_padding=range_padding,
-                renderers=[]
-            )
-            y_range = DataRange1d(
-                range_padding=range_padding,
-                renderers=[]
-            )
+                if 'x_range' not in self.env.ranges[tab][p['x']]:
+                    x_range = DataRange1d(
+                        range_padding=range_padding,
+                        renderers=[]
+                    )
+                    self.env.ranges[tab][p['x']]['x_range'] = x_range
 
-            # x_range = Range1d(
-            #     start=gmin,                       # bounds automatically detected with DataRange1d
-            #     end=gmax,
-            #     # max_interval=gmax + d * p,        # zoom out limit >> useful if hovers are used
-            #     # min_interval                      # zoom in limit
-            # )
-            # y_range = Range1d(
-            #     start=gmin,                       # bounds automatically detected with DataRange1d
-            #     end=gmax,
-            #     # max_interval=gmax + d * p,        # zoom out limit >> useful if hovers are used
-            #     # min_interval                      # zoom in limit
-            # )
+                if p['y'] not in self.env.ranges[tab]:
+                    self.env.ranges[tab][p['y']] = {}
+                if 'y_range' not in self.env.ranges[tab][p['y']]:
+                    y_range = DataRange1d(
+                        range_padding=range_padding,
+                        renderers=[]
+                    )
+                    self.env.ranges[tab][p['y']]['y_range'] = y_range
 
-            # lg.info('>> COLUMN: {} | X START: {} | X END: {} | Y START: {} | Y END: {}'.format(
-            #     col, gmin - d * p, gmax + d *p, gmin - d * p, gmax + d * p
-            # ))
+        lg.warning('>> RANGES: {}'.format(self.env.ranges))
 
-            if col not in self.ranges:
-                self.env.ranges[col] = {}
-                self.env.ranges[col]['x_range'] = x_range
-                self.env.ranges[col]['y_range'] = y_range
+
+            # range_padding = 0.25
+            # for col in self.env.cur_plotted_cols:
+
+            #     x_range = DataRange1d(
+            #         range_padding=range_padding,
+            #         renderers=[]
+            #     )
+
+            #     y_range = DataRange1d(
+            #         range_padding=range_padding,
+            #         renderers=[]
+            #     )
+
+                # NOTE: other way is to create ranges manually:
+
+                # gmax = self.env.cruise_data.df[col].max()
+                # gmin = self.env.cruise_data.df[col].min()
+                # d = gmax - gmin
+
+                # x_range = Range1d(
+                #     start=gmin,                       # bounds automatically detected with DataRange1d
+                #     end=gmax,
+                #     # max_interval=gmax + d * p,        # zoom out limit >> useful if hovers are used
+                #     # min_interval                      # zoom in limit
+                # )
+                # y_range = Range1d(
+                #     start=gmin,                       # bounds automatically detected with DataRange1d
+                #     end=gmax,
+                #     # max_interval=gmax + d * p,        # zoom out limit >> useful if hovers are used
+                #     # min_interval                      # zoom in limit
+                # )
+
+                # lg.info('>> COLUMN: {} | X START: {} | X END: {} | Y START: {} | Y END: {}'.format(
+                #     col, gmin - d * p, gmax + d *p, gmin - d * p, gmax + d * p
+                # ))
+
 
     def replot_color_circles(self, only_cur_tab=False):
         '''

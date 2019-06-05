@@ -4,6 +4,7 @@
 #    AUTHORS and LICENSE files at the root folder of this application   #
 #########################################################################
 
+import numpy as np
 from bokeh.util.logconfig import bokeh_logger as lg
 from ocean_data_qc.constants import *
 from ocean_data_qc.data_models.exceptions import ValidationError
@@ -37,3 +38,29 @@ def merge(d1, d2):
         elif c in d2 and c not in d1:
             d1[c] = d2[c]
     return d1
+
+def trans(d):
+    ''' This function creates a minimal structure with slices and
+        values to update the current CDS
+    '''
+    def build(last, cur, val):
+        if cur == last + 1:
+            if np.isnan(val):
+                return (slice(last, cur), np.array([np.nan]))
+            else:
+                return (last, val)
+        else:
+            return (slice(last, cur), np.array([val] * (cur - last)))
+    indices = list(d.keys())
+    last = d[indices[0]]
+    old = last_index = indices[0]
+    resul = []
+    for i in indices[1:]:
+        if ((d[i] != last) and not(np.isnan(d[i]) and np.isnan(last))) \
+            or i != old + 1:
+            resul.append(build(last_index, old + 1, last))
+            last_index = i
+            last = d[i]
+        old = i
+    resul.append(build(last_index, old+1, last))
+    return resul
