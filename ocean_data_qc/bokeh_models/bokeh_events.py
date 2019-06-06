@@ -31,10 +31,10 @@ class BokehEvents(Environment):
         self.env.source.selected.on_change('indices', self._update_selection)
         self.env.wmts_map_source.selected.on_change('indices', self._update_map_selection)
 
-        def source_data_change(attr, old, new):
-            lg.warning('>> SOURCE DATA CHANGE')
+        # def source_data_change(attr, old, new):
+        #     lg.warning('>> SOURCE DATA CHANGE')
 
-        self.env.pc_src.on_change('data', source_data_change)
+        # self.env.pc_src.on_change('data', source_data_change)
 
         self._init_cb_prof_invsbl_points()
         self._init_profile_nav()
@@ -286,7 +286,6 @@ class BokehEvents(Environment):
                     if 'y_range' in self.env.ranges[old_tab][col]:
                         self.env.ranges[self.env.cur_tab][col]['y_range'].end = self.env.ranges[old_tab][col]['y_range'].end
                         self.env.ranges[self.env.cur_tab][col]['y_range'].start = self.env.ranges[old_tab][col]['y_range'].start
-
 
             # for tab in self.env.f_handler.tab_list:
             #      self.env.ranges[old]

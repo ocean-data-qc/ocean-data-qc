@@ -246,12 +246,14 @@ class BokehSources(Environment):
             round(p4 - p3, 2),
             round(p5 - p4, 2),
             round(p6 - p5, 2),
-            sum([
-                round(p3 - p2, 2),
-                round(p4 - p3, 2),
-                round(p5 - p4, 2),
-                round(p6 - p5, 2)
-            ])
+            round(
+                sum([
+                    round(p3 - p2, 2),
+                    round(p4 - p3, 2),
+                    round(p5 - p4, 2),
+                    round(p6 - p5, 2)
+                ]), 2
+            )
         ))
         lg.info('>> TIME: ASTERISK: {} | ML: {} | PC: {} >> FULL ALGORITHM TIME: {}'.format(
             round(p1 - start, 2), round(p2 - p1, 2), round(p6 - p2, 2), round(p6 - start, 2)
