@@ -31,11 +31,6 @@ class BokehEvents(Environment):
         self.env.source.selected.on_change('indices', self._update_selection)
         self.env.wmts_map_source.selected.on_change('indices', self._update_map_selection)
 
-        def source_data_change(attr, old, new):
-            lg.warning('>> SOURCE DATA CHANGE')
-
-        self.env.pc_src.on_change('data', source_data_change)
-
         self._init_cb_prof_invsbl_points()
         self._init_profile_nav()
         self._init_nearby_prof_cb()
