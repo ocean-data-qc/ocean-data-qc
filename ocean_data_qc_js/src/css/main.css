@@ -287,6 +287,11 @@ html, body, .bokeh_iframe {
     margin-right: 0px !important;
 }
 
+.performance_help {
+    color: #337ab5;
+}
+
+
 fieldset table th {
     background-color: #337ab7;
     color: white;

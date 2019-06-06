@@ -230,17 +230,21 @@ class BokehSources(Environment):
 
         ml_df, df_fs, stt_order = self._get_ml_df()
         ml_patches = self._get_ml_src_patches(ml_df)
-        self.env.ml_src.patch(ml_patches)
 
         p2 = time.time()
 
         prof_df = self._upd_pc_srcs(df_fs, stt_order)
-        self.env.pc_src.patch(self._get_pc_src_patches(prof_df))
-        self.env.pc_src.selected.indices = self.env.selection
+        pc_patches = self._get_pc_src_patches(prof_df)
 
         p3 = time.time()
-        lg.info('>> TIME: ML: {} | PC: {} >> FULL ALGORITHM TIME: {}'.format(
-            round(p2 - p1, 2), round(p3 - p2, 2), round(p3 - start, 2)
+
+        self.env.ml_src.patch(ml_patches)
+        self.env.pc_src.patch(pc_patches)
+        self.env.pc_src.selected.indices = self.env.selection
+
+        p4 = time.time()
+        lg.info('>> TIME: ML: {} | PC: {} | SYNC: {} >> FULL ALGORITHM TIME: {}'.format(
+            round(p2 - p1, 2), round(p3 - p2, 2), round(p4 - p3, 2), round(p4 - start, 2)
         ))
 
     def _get_ml_src_patches(self, ml_df=None):

@@ -135,24 +135,20 @@ class BokehDataTable(Environment):
         def next_sample():
             lg.info('>> NEXT SAMPLE')
             if self.s < self.ns:
-                self.env.doc.hold('collect')
                 self.s += 1
                 self.sample_div.text = ' {} / {}'.format(self.s, self.ns)
                 self.env.cur_nearby_prof = None  # to reset the extra stt profile to plot
                 self.env.dt_next_sample = True
                 self._update_dt_sample()
-                self.env.doc.unhold()
 
         def previous_sample():
             lg.info('>> PREVIOUS SAMPLE')
             if self.s > 1:
-                self.env.doc.hold('collect')
                 self.s -= 1
                 self.sample_div.text = ' {} / {}'.format(self.s, self.ns)
                 self.env.cur_nearby_prof = None
                 self.env.dt_previous_sample = True
                 self._update_dt_sample()
-                self.env.doc.unhold()
 
         self.next_bt = Button(label=">", button_type="success", width=30)
         self.sample_div = Div(text='0 / 0', width=100, height=30, css_classes=['sample_div'], )

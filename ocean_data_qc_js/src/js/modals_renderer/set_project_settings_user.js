@@ -133,6 +133,15 @@ module.exports = {
                 });
             });
 
+            $('.performance_help').on('click', function() {
+                if ($('#performance_help').css('display') == 'none') {
+                    $('#performance_help').slideDown();
+                } else {
+                    $('#performance_help').slideUp();
+                }
+            });
+
+
             tools.show_default_cursor();
             $('#modal_trigger_set_project_settings').click();
         });

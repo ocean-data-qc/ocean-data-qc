@@ -9,6 +9,7 @@ from copy import deepcopy
 from os import path
 from bokeh.plotting import figure
 from bokeh.models import CustomAction
+from bokeh.models.annotations import PolyAnnotation
 from bokeh.models.sources import ColumnDataSource
 from bokeh.models.filters import GroupFilter, BooleanFilter, IndexFilter
 from bokeh.events import Reset, DoubleTap
@@ -265,6 +266,12 @@ class BokehPlots(Environment):
             renderers=self.circles,          # default = all available renderers
             select_every_mousemove=False,    # to enhance performance
         )
+
+        self.lasso_select.overlay.line_alpha=0.9
+        self.lasso_select.overlay.line_color="black"
+        self.lasso_select.overlay.fill_alpha=0.2
+        self.lasso_select.overlay.fill_color="grey"
+
         hover = self._get_hover_tool()
         self.tools = (
             pan, box_zoom, self.lasso_select, box_select,
