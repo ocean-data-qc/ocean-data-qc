@@ -127,7 +127,7 @@ if ischar(param),param=cellstr(param); end % make sure param is cellstr
 calculate_phts25p0=false;
 if ismember('pHTS25P0',param)
     co2sys_param={'AT','pH','SiOH4','PO4'};
-    misses=setdiff(param,co2sys_param);
+    misses=setdiff(co2sys_param,param);
     param=union(param,misses);
     calculate_phts25p0=true;
 end
