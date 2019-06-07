@@ -500,3 +500,8 @@ select[name='all_computed_param'] {
 .abc-checkbox label::after {
     top: 3px !important;
 }
+
+/* To select data in the Show data table form */
+.user_select_all {
+    user-select: all !important;
+}
