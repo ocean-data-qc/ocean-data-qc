@@ -140,6 +140,14 @@ module.exports = {
 
     load_buttons: function() {
         var self = this;
+        $('.performance_help').on('click', function() {
+            if ($('#performance_help').css('display') == 'none') {
+                $('#performance_help').slideDown();
+            } else {
+                $('#performance_help').slideUp();
+            }
+        });
+
         $('.add_new_tab').on('click', function() {
             var new_fieldset = $('fieldset:first').clone();
             $('fieldset:last').after(new_fieldset);

@@ -46,7 +46,7 @@ class BokehEvents(Environment):
         self.env.dt_manual_update = False
         if self.env.selection != new_indices and new_indices != []:
             self.env.selection = new_indices
-            self.env.sample_to_select = None      # this is reselected later on `update_prof_sources`
+            self.env.sample_to_select = None      # this is reselected later on `_upd_prof_srcs`
             self.env.stt_to_select = None
             self.env.cur_nearby_prof = None
             self.env.cur_partial_stt_selection = []
@@ -59,7 +59,7 @@ class BokehEvents(Environment):
             if self.env.reset_selection:
                 lg.info('>> RESET SELECTION')
                 self.env.selection = []
-                self.env.sample_to_select = None      # this is reselected later on `update_prof_sources`
+                self.env.sample_to_select = None      # this is reselected later on `_upd_prof_srcs`
                 self.env.stt_to_select = None
                 self.env.cur_nearby_prof = None
                 self.env.cur_partial_stt_selection = []
@@ -123,7 +123,7 @@ class BokehEvents(Environment):
                 self.env.plot_prof_invsbl_points = True
             else:
                 self.env.plot_prof_invsbl_points = False
-            self.env.bk_sources.update_prof_sources()
+            self.env.bk_sources._upd_prof_srcs()
 
         self.cb_prof_invsbl_points = CheckboxGroup(
             width=200, height=10,
@@ -144,7 +144,7 @@ class BokehEvents(Environment):
                         next_pos = next_pos + 1
                 if next_pos < len(self.env.stations):
                     self.env.cur_nearby_prof = s[next_pos]
-                    self.env.bk_sources.update_prof_sources(force_selection=True)
+                    self.env.bk_sources._upd_prof_srcs(force_selection=True)
                     self.nearby_prof_div.text = str(int(self.env.cur_nearby_prof))
 
                     # adjust disabled buttons
@@ -162,7 +162,7 @@ class BokehEvents(Environment):
                         previous_pos = previous_pos - 1
                 if previous_pos >= 0:
                     self.env.cur_nearby_prof = s[previous_pos]
-                    self.env.bk_sources.update_prof_sources(force_selection=True)
+                    self.env.bk_sources._upd_prof_srcs(force_selection=True)
                     self.nearby_prof_div.text = str(int(self.env.cur_nearby_prof))
 
                     # adjust disabled buttons
@@ -193,14 +193,14 @@ class BokehEvents(Environment):
             if 0 in active_list:
                 self.env.plot_nearby_prof = True
                 self.set_cur_nearby_prof()
-                self.env.bk_sources.update_prof_sources(force_selection=True)
+                self.env.bk_sources._upd_prof_srcs(force_selection=True)
             else:
                 self.env.plot_nearby_prof = False
                 self.next_prof_bt.disabled = True
                 self.previous_prof_bt.disabled = True
                 self.env.cur_nearby_prof = None
                 self.nearby_prof_div.text = 'None'
-                self.env.bk_sources.update_prof_sources(force_selection=True)
+                self.env.bk_sources._upd_prof_srcs(force_selection=True)
 
         self.nearby_prof_cb = CheckboxGroup(
             width=200, height=20,

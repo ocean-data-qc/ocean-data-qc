@@ -287,6 +287,11 @@ html, body, .bokeh_iframe {
     margin-right: 0px !important;
 }
 
+.performance_help {
+    color: #337ab5;
+}
+
+
 fieldset table th {
     background-color: #337ab7;
     color: white;
@@ -494,4 +499,9 @@ select[name='all_computed_param'] {
 
 .abc-checkbox label::after {
     top: 3px !important;
+}
+
+/* To select data in the Show data table form */
+.user_select_all {
+    user-select: all !important;
 }

@@ -62,6 +62,14 @@ class FilesHandler(Environment):
         self._load_qc_plot_tabs()
         self._load_settings()
 
+    def get_cols_in_tab(self, tab):
+        cols = []
+        for p in self.env.qc_plot_tabs[tab]:
+            cols.append(p['x'])
+            cols.append(p['y'])
+        cols = list(set(cols))
+        return cols
+
     def _load_qc_plot_tabs(self):
         ''' Load tabs from setting.json file. A structure like this:
 
@@ -92,11 +100,11 @@ class FilesHandler(Environment):
             with open(path.join(TMP, 'settings.json'), 'r') as f:
                 config = json.load(f,  object_pairs_hook=OrderedDict)
             if 'qc_plot_tabs' in config:
-                tabs = config.get('qc_plot_tabs', False)
+                self.env.qc_plot_tabs = config.get('qc_plot_tabs', False)
                 cols = []
                 i = 0
-                for tab in tabs:
-                    for graph in tabs[tab]:
+                for tab in self.env.qc_plot_tabs:
+                    for graph in self.env.qc_plot_tabs[tab]:
                         ge = Graph(i, tab, graph)
                         cols.append(graph.get('x', ''))
                         cols.append(graph.get('y', ''))
