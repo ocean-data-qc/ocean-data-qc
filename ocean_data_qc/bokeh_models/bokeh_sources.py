@@ -138,21 +138,18 @@ class BokehSources(Environment):
     def _init_prof_ml_source(self):
         ''' Multiline ColumnDataSource Initialization '''
         colors = []
-        line_width = []
         init_ml_profs = []
 
         # VIEWS
         for i in range(NPROF - 1, -1, -1):
             if i == NPROF - 1:          # TODO: add this to the CDS
                 colors.append(Reds3[0])
-                line_width.append(2)
             else:
                 colors.append(BLUES[i])
-                line_width.append(2)
             init_ml_profs.append(np.array([np.nan]))
 
         # ML SOURCE
-        init_source_dict = dict(colors=colors, line_width=line_width)
+        init_source_dict = dict(colors=colors)
         for i in range(self.env.n_plots):
             init_source_dict['xs{}'.format(i)] = init_ml_profs
             init_source_dict['ys{}'.format(i)] = init_ml_profs
@@ -215,33 +212,56 @@ class BokehSources(Environment):
         lg.info('-- UPDATE PROF SOURCES')
 
         # TODO: send signal to disable the rest of tabs
-        self.env.bk_bridge.call_js({
-            'object': 'bokeh.calls',
-            'function': 'disable_tabs',
-        })
-        start = time.time()
+        # self.env.bk_bridge.call_js({
+        #     'object': 'bokeh.calls',
+        #     'function': 'disable_tabs',
+        # })
+
         if self.env.cur_partial_stt_selection == [] or force_selection:
             self._set_partial_stt_selection()  # len(partial_stt_selection) <= NPROF
 
+        # self._sync_with_patches()
+        self._sync_with_full_df()
+
+    def _sync_with_full_df(self):
+        lg.info('-- SYNC WITH FULL DF')
+        start = time.time()
         astk_cds = self._upd_astk_src()
         self.env.astk_src.data = astk_cds.data
-
         p1 = time.time()
-
         ml_df, df_fs, stt_order = self._get_ml_df()
-        ml_patches = self._get_ml_src_patches(ml_df)
+
+        if ml_df.index.size >= 1:
+            ml_df = ml_df.reindex(stt_order)
+            stt_colors = self.env.profile_colors[-len(stt_order):]
+            ml_df['colors'] = stt_colors        # [light blue, normal blue, darker blue, red]
 
         p2 = time.time()
+        prof_df = self._upd_pc_srcs(df_fs, stt_order)
+        p3 = time.time()
+        ml_cds = ColumnDataSource(ml_df)
+        self.env.ml_src.data = ml_cds.data  # self.env.ml_src.from_df(ml_df)
+        self.env.pc_src.data = self.env.ml_src.from_df(prof_df)
+        self.env.pc_src.selected.indices = self.env.selection
+        p4 = time.time()
+        lg.info('>> TIME: ML: {} | PC: {} | SYNC: {} >> FULL ALGORITHM TIME: {}'.format(
+            round(p2 - p1, 2), round(p3 - p2, 2), round(p4 - p3, 2), round(p4 - start, 2)
+        ))
 
+    def _sync_with_patches(self):
+        start = time.time()
+        astk_cds = self._upd_astk_src()
+        self.env.astk_src.data = astk_cds.data
+        p1 = time.time()
+        ml_df, df_fs, stt_order = self._get_ml_df()
+        ml_patches = self._get_ml_src_patches(ml_df)
+        p2 = time.time()
         prof_df = self._upd_pc_srcs(df_fs, stt_order)
         pc_patches = self._get_pc_src_patches(prof_df)
-
         p3 = time.time()
-
         self.env.ml_src.patch(ml_patches)
         self.env.pc_src.patch(pc_patches)
         self.env.pc_src.selected.indices = self.env.selection
-
         p4 = time.time()
         lg.info('>> TIME: ML: {} | PC: {} | SYNC: {} >> FULL ALGORITHM TIME: {}'.format(
             round(p2 - p1, 2), round(p3 - p2, 2), round(p4 - p3, 2), round(p4 - start, 2)
@@ -253,8 +273,7 @@ class BokehSources(Environment):
 
         # ml_src_df_old
         ml_src_df_old = self.env.ml_src.to_df()
-        del ml_src_df_old['colors']          # colors and line_width are set in the initialization
-        del ml_src_df_old['line_width']
+        del ml_src_df_old['colors']          # colors are set in the initialization
         ml_src_df_old = ml_src_df_old.applymap(
             lambda x: None if x == [] else np.array([np.nan])
         )
@@ -302,34 +321,6 @@ class BokehSources(Environment):
                 pc_src_d_new[c] = list(zip(s.index, s))
 
         # lg.warning('>> NEW SRC VALUES: {}'.format(pc_src_d_new.get('PHSPHT_PRES_0', False)))
-
-        def merge(d1, d2):          # TODO: move this to a tools.py file
-            ''' Merges two dictionarys with lists as values
-                    d1 = {
-                        'x': [(0, nan), (1, nan), (2, nan), (3, nan), (4, nan), (5, nan)],
-                        'y': [(0, nan), (2, nan), (3, nan), (4, nan), (5, nan), (6, nan)]
-                    }
-                    d2 = {
-                        'y': [(0, 0.0), (1, 6.0), (2, 76.0), (4, 0.0), (5, 1.0)],
-                        'z': [(3, 4.0)]
-                    }
-                    merge(d1, d2)
-                    >> output: {
-                        'x': [(0, nan), (1, nan), (2, nan), (3, nan), (4, nan), (5, nan)],
-                        'y': [(0, 0.0), (1, 6.0), (2, 76.0), (4, 0.0), (5, 1.0), (6, nan)],
-                        'z': [(3, 4.0)]
-                    }
-            '''
-            for c in list(set(list(d1.keys()) + list(d2.keys()))):
-                if c in d1 and c in d2:
-                    d_aux = dict(d1[c])
-                    d_aux.update(dict(d2[c]))
-                    t_list = list(zip(d_aux.keys(), list(d_aux.values())))
-                    t_list.sort(key=lambda t: t[0])
-                    d1[c] = t_list
-                elif c in d2 and c not in d1:
-                    d1[c] = d2[c]
-            return d1
 
         def trans(ser):                     # TODO: move this to a tools.py file
             indices = ser.index.tolist()
@@ -476,7 +467,7 @@ class BokehSources(Environment):
                         d_temp['{}_{}_{}'.format(tab, col, i)] = df_aux
                     i -= 1
             prof_df = prof_df.assign(**d_temp)
-            # prof_df.dropna(how='all', inplace=True)   # just in case there are some NaN rows lefovers
+            prof_df.dropna(how='all', inplace=True)   # just in case there are some NaN rows lefovers
 
         # NOTE: this translates the selection indices into positional indices
         #       bokeh with each ColumnDataSource uses a new index with consecutive integers [0, 1, 2, 3, ...]
@@ -556,6 +547,5 @@ class BokehSources(Environment):
         n_plots = self.env.bk_plots_handler.current_n_plots
         columns = ['{}s{}'.format(a, i) for i in range(n_plots) for a in ['x', 'y']]
         columns.append('colors')
-        columns.append('line_width')
         ml_df = pd.DataFrame(columns=columns)
         return ml_df

@@ -78,7 +78,7 @@ class BokehPlots(Environment):
             title=title,
             output_backend=OUTPUT_BACKEND,
 
-            lod_threshold=0,               # downsampling enabled when the glyph has more than 1 sample
+            lod_threshold=2000,               # downsampling enabled when the glyph has more than ...
 
             border_fill_color='whitesmoke',   # TODO: this should be declared on the yaml file
             background_fill_color='whitesmoke',
@@ -131,7 +131,7 @@ class BokehPlots(Environment):
             color='colors',
             line_cap='round',
             line_join='round',
-            line_width='line_width',
+            line_width=2,
         )
 
     def _init_profile_lines_circles(self):
