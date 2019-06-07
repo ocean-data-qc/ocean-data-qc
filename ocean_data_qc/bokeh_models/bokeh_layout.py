@@ -24,7 +24,8 @@ class BokehLayout(Environment):
     def init_basic_layout(self):
         self.env.tabs_widget_col = column(
             name='tabs_widget_col',
-            children=[Spacer()]
+            children=[Spacer()],
+            css_classes=['tabs_widget_col']
         )
         self.env.doc.add_root(self.env.tabs_widget_col)
         self.env.sidebar = column(

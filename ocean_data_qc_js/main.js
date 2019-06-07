@@ -82,7 +82,7 @@ app.on('ready', function() {
 
     if (!is_dev) {
         // Autoupdater (running on production)
-        web_contents.send('show-loader');
+        web_contents.send('show-loader');  // TODO: is this OK here?
         updater.init(web_contents);
         updater.listeners();
         updater.check_for_updates();

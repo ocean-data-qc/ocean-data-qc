@@ -24,9 +24,7 @@ module.exports = {
     go_to_bokeh: function() {
         lg.info('-- GO TO BOKEH');
         var self = this;
-        if (typeof($('.loader_container').attr('hidden')) !== 'undefined') {
-            self.show_loader();
-        }
+        self.show_loader();
         var _checkBokehSate = setInterval(function() {
             lg.info('>> CHECK BOKEH STATE');
             if ($('body').data('bokeh_state') == 'ready' && $('body').data('ts_state') != 'checking') {  // check if bokeh is already loaded
@@ -54,20 +52,22 @@ module.exports = {
     },
 
     show_loader: function() {
-        $('#welcome_container').attr('hidden', '');
-        $('#bokeh_iframe').attr('hidden', '');
-        $('.loader_container').removeAttr('hidden');
+        $('.welcome_container').fadeOut('slow', function() {
+            $('.loader_container').fadeIn('slow');
+        });
     },
 
     hide_loader: function() {
-        $('#bokeh_iframe').removeAttr('hidden');
-        $('.loader_container').attr('hidden', '');
+        $('.loader_container').fadeOut('slow', function() {
+            $('#bokeh_iframe').fadeIn('slow');
+        });
     },
 
     go_to_welcome: function() {
         // the loader is not needed here, very fast transition
-        $('#bokeh_iframe').attr('hidden', '');
-        $('#welcome_container').removeAttr('hidden');
+        $('#bokeh_iframe').fadeOut('slow', function(){
+            $('.welcome_container').fadeIn('slow');
+        });
     },
 
     reset_bokeh: function() {

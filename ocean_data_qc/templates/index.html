@@ -115,6 +115,7 @@
                             $('.fixed_profiles_cb input').click();
                         }
                     });
+                    // console.log('FIXED PROFILES TOP: ' + $('.fixed_profiles_cb').css('top'))
                     $('.bk-fixed-profiles-cb').css('top', $('.fixed_profiles_cb').css('top'))
 
                     // ------ SHOW NEARBY STATION -----
@@ -122,6 +123,7 @@
                     var new_sns_cb = $('<div>', {
                         class: 'abc-checkbox abc-checkbox-primary bk-show-nearby-station-cb',
                     });
+
                     new_sns_cb.append(
                         $('<input>', {
                             id: 'id_show_nearby_station_cb',
@@ -143,6 +145,7 @@
                             $('.show_nearby_station_cb input').click();
                         }
                     });
+                    // console.log('show_nearby_station_cb top: ' + $('.show_nearby_station_cb').css('top'))
                     $('.bk-show-nearby-station-cb').css('top', $('.show_nearby_station_cb').css('top'))
 
                     window.top.postMessage({

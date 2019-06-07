@@ -54,11 +54,15 @@ body {
 
 .o_tabs {
     margin-right: 248px;
-    padding-top: 8px;
     padding-bottom: 30px;
     clear: both;
     overflow: auto;
     height: 100vh;
+}
+
+.tabs_widget_col {
+    margin-top: 10px !important;
+    margin-left: 10px !important;
 }
 
 .o_tabs>.bk-root>.bk>.bk>.bk {
@@ -91,7 +95,6 @@ body {
 .wrapper {
     margin: 0 auto;
     position: relative;
-    padding: 0 9px;
     min-height: 600px;
 }
 
