@@ -55,6 +55,10 @@ module.exports = {
                         $('.float_button').remove();
                     });
 
+                    // close guide if it is open
+                    if ($('#close_help_form_bt').length > 0) {
+                        $('#close_help_form_bt').click();
+                    }
 
                     tools.show_default_cursor();
                 }

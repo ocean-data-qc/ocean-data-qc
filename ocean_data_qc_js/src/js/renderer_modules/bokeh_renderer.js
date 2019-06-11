@@ -33,6 +33,7 @@ require('set_project_settings_json').init();
 require('set_project_settings_bokeh').init();
 require('add_computed_parameter').init();
 require('show_data').init();
+require('show_help_form').init();
 
 // ------------------------------- IPC SIGNAL RECEIVERS ----------------------------------------- //
 
@@ -167,3 +168,8 @@ ipcRenderer.on('show-project-saved-dialog', function() {
         function() {server_renderer.come_back_to_welcome(true); }
     );
 })
+
+ipcRenderer.on('close-embed-forms', function() {
+    lg.info('-- CLOSE EMBED FORMS')
+    tools.close_embed_forms();
+});

@@ -74,7 +74,7 @@ module.exports = {
         self.file_menu = {
             label: 'File',
             submenu: [
-                { label: 'Open File...', accelerator: 'CmdOrCtrl+O', click: () => { self.menu_actions.open_dialog(); } },
+                { label: 'Open File...', accelerator: 'CmdOrCtrl+O', click: () => { self.web_contents.send('close-embed-forms'); self.menu_actions.open_dialog(); } },
                 // { label: 'Go to stack...', accelerator: 'CmdOrCtrl+O', click: () => { self.server.go_to_stack(); } },
                 { type: 'separator' },
                 { label: "Exit", accelerator: "Command+Q", click: () => { self.menu_actions.server.close_with_exit_prompt(); } }
@@ -92,10 +92,8 @@ module.exports = {
                     }
                 },
                 {
-                    label: 'Guide to Best Practices for QC',
-                    click: function () {
-                        electron.shell.openItem(loc.help)
-                    }
+                    label: 'Guide to Best Practices for QC', accelerator: 'CmdOrCtrl+H',
+                    click: function() { self.web_contents.send('show-help-form'); }
                 }
             ]
         };
@@ -115,7 +113,7 @@ module.exports = {
                 },
                 { label: 'Export Actions History (CSV)...', accelerator: 'CmdOrCtrl+M', click: () => { self.menu_actions.export_moves(); } },
                 { type: 'separator' },
-                { label: 'Close Project', accelerator: 'CmdOrCtrl+W', click: () => { self.menu_actions.close_project(); } },
+                { label: 'Close Project', accelerator: 'CmdOrCtrl+W', click: () => { self.web_contents.send('close-embed-forms'); self.menu_actions.close_project(); } },
                 { label: "Exit", accelerator: "Command+Q", click: () => { self.menu_actions.server.close_with_exit_prompt(); } }
             ],
         }
@@ -123,11 +121,12 @@ module.exports = {
         self.bokeh_view_menu = {
             label: 'View',
             submenu: [
-                { label: 'Actions History', accelerator: 'CmdOrCtrl+A', click: () => { self.menu_actions.show_moves(); } },
-                { label: 'Edit Plot Layout', accelerator: 'CmdOrCtrl+L', click: () => { self.menu_actions.edit_plot_layout(); } }
+                { label: 'Actions History', accelerator: 'CmdOrCtrl+A', click: () => { self.web_contents.send('close-embed-forms'); self.menu_actions.show_moves(); } },
+                { label: 'Edit Plot Layout', accelerator: 'CmdOrCtrl+L', click: () => { self.web_contents.send('close-embed-forms'); self.menu_actions.edit_plot_layout(); } }
             ]
         }
 
+        // this menu is not working anymore
         self.bokeh_edit_menu = {
             label: 'Edit',
             submenu: [
@@ -146,11 +145,11 @@ module.exports = {
             submenu: [
                 {
                     label: 'Update from CSV', accelerator: 'CmdOrCtrl+U',
-                    click: () => { self.menu_actions.update_from_csv(); }
+                    click: () => { self.web_contents.send('close-embed-forms'); self.menu_actions.update_from_csv(); }
                 },
                 {
                     label: 'Calculated Parameters', accelerator: 'CmdOrCtrl+P',
-                    click: function() { self.web_contents.send('add-computed-parameter'); }
+                    click: function() { self.web_contents.send('close-embed-forms'); self.web_contents.send('add-computed-parameter'); }
                 },
                 {
                     label: 'Show Data', accelerator: 'CmdOrCtrl+D',
@@ -162,9 +161,9 @@ module.exports = {
         self.bokeh_dev_menu = {
             label: 'Development',
             submenu: [
-                { label: 'Project Settings (JSON)', accelerator: 'CmdOrCtrl+Shift+P', click: () => { self.menu_actions.edit_plot_layout_json(); } },
-                { label: 'Logger [TO-DO]', accelerator: 'CmdOrCtrl+L', click: () => { alert('Not implemented yet');} },
-                { label: 'Reload Server', accelerator: 'CmdOrCtrl+R', click: () => { self.menu_actions.server.relaunch_bokeh(); } },
+                { label: 'Project Settings (JSON)', accelerator: 'CmdOrCtrl+Shift+P', click: () => { self.web_contents.send('close-embed-forms'); self.menu_actions.edit_plot_layout_json(); } },
+                // { label: 'Logger [TO-DO]', accelerator: 'CmdOrCtrl+L', click: () => { alert('Not implemented yet');} },
+                { label: 'Reload Server', accelerator: 'CmdOrCtrl+R', click: () => { self.web_contents.send('close-embed-forms'); self.menu_actions.server.relaunch_bokeh(); } },
                 {
                     label: 'Toggle Developer Tools',
                     accelerator: process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I',

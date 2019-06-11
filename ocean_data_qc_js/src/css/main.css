@@ -243,7 +243,7 @@ html, body, .bokeh_iframe {
     left: 0;
 }
 
-.float_button {
+.float_button, .help_form_float_button {
     z-index: 10000;
     height: 100px;
     width: 150px;
@@ -252,7 +252,7 @@ html, body, .bokeh_iframe {
     left: 0;
 }
 
-.float_button #close_df_data {
+.float_button #close_df_data, .help_form_float_button #close_help_form_bt {
     margin: 15px;
 }
 
