@@ -115,8 +115,8 @@
                             $('.fixed_profiles_cb input').click();
                         }
                     });
-                    // console.log('FIXED PROFILES TOP: ' + $('.fixed_profiles_cb').css('top'))
-                    $('.bk-fixed-profiles-cb').css('top', $('.fixed_profiles_cb').css('top'))
+                    fix_prof_top = parseInt($('.flags_control_col').css('height')) + 15 + 'px'
+                    $('.bk-fixed-profiles-cb').css('top', fix_prof_top)
 
                     // ------ SHOW NEARBY STATION -----
 
@@ -145,8 +145,8 @@
                             $('.show_nearby_station_cb input').click();
                         }
                     });
-                    // console.log('show_nearby_station_cb top: ' + $('.show_nearby_station_cb').css('top'))
-                    $('.bk-show-nearby-station-cb').css('top', $('.show_nearby_station_cb').css('top'))
+                    show_near_stt_top = parseInt($('.flags_control_col').css('height')) + 35 + 'px'
+                    $('.bk-show-nearby-station-cb').css('top', show_near_stt_top)
 
                     window.top.postMessage({
                         'signal': 'on-ready',
