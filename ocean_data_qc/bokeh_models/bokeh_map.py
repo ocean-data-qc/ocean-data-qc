@@ -151,7 +151,7 @@ class BokehMap(Environment):
         self.env.wmts_map.toolbar.active_drag = pan
         self.env.wmts_map.toolbar.active_inspect = [crosshair, hover]
         self.env.wmts_map.toolbar.active_scroll = wheel_zoom
-        self.env.wmts_map.toolbar.active_tap = None
+        self.env.wmts_map.toolbar.active_tap = tap
 
 
 

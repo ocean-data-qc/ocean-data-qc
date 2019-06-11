@@ -242,7 +242,17 @@ class BokehSources(Environment):
         ml_cds = ColumnDataSource(ml_df)
         self.env.ml_src.data = ml_cds.data  # self.env.ml_src.from_df(ml_df)
         self.env.pc_src.data = self.env.ml_src.from_df(prof_df)
-        self.env.pc_src.selected.indices = self.env.selection
+
+        # NOTE: this translates the selection indices into positional indices
+        #       bokeh with each ColumnDataSource uses a new index with consecutive integers [0, 1, 2, 3, ...]
+        #       it doesn´t matter if you have a different index in the DF that you use to create the CDS
+
+        prof_sel = []
+        for i in self.env.selection:   # TODO: only selected points within profiles
+            if i in prof_df.index:
+                prof_sel.append(prof_df.index.get_loc(i))
+        self.env.pc_src.selected.indices = prof_sel
+
         p4 = time.time()
         lg.info('>> TIME: ML: {} | PC: {} | SYNC: {} >> FULL ALGORITHM TIME: {}'.format(
             round(p2 - p1, 2), round(p3 - p2, 2), round(p4 - p3, 2), round(p4 - start, 2)
@@ -468,15 +478,6 @@ class BokehSources(Environment):
                     i -= 1
             prof_df = prof_df.assign(**d_temp)
             prof_df.dropna(how='all', inplace=True)   # just in case there are some NaN rows lefovers
-
-        # NOTE: this translates the selection indices into positional indices
-        #       bokeh with each ColumnDataSource uses a new index with consecutive integers [0, 1, 2, 3, ...]
-        #       it doesn´t matter if you have a different index in the DF that you use to create the CDS
-
-        # prof_sel = []
-        # for i in self.env.selection:   # TODO: only selected points within profiles
-        #     if i in prof_df.index:
-        #         prof_sel.append(prof_df.index.get_loc(i))
         return prof_df
 
     def _get_empty_prof_df(self):
