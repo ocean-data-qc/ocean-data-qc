@@ -32,7 +32,6 @@ class BokehFlags(Environment):
     def __init__(self, **kwargs):
         self.env.bk_flags = self
         self.env.visible_flags = self.all_flags_list
-        lg.warning('>> VISIBLE FLAGS: {}'.format(self.env.visible_flags))
         self.all_flags_vb_bt = None
         self.flags_control_header_row = None
         self.flag_rows = []

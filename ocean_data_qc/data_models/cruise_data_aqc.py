@@ -19,7 +19,7 @@ class CruiseDataAQC(CruiseData):
 
     def __init__(self, original_type='', working_dir=TMP, cd_aux=False):
         lg.info('-- INIT AQC')
-        self.rollback = 'cd' if self.cd_aux is False else 'cd_update'
+        self.rollback = 'cd' if cd_aux is False else 'cd_update'
         self.working_dir = working_dir
         self.filepath_or_buffer = path.join(self.working_dir, 'data.csv')  # TODO: original.csv should exists and be the same file??
         self.skiprows = 0

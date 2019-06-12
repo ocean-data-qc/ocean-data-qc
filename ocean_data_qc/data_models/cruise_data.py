@@ -330,7 +330,7 @@ class CruiseData(CruiseDataExport):
 
     def _create_date_column(self):
         if 'DATE' not in self.df.columns.tolist():
-            lg.info('>> Generating the DATE column from YEAR MONTH and DAY columns')
+            lg.info('-- CREATE DATE COLUMN')
             try:
                 self.df = self.df.assign(
                     DATE=pd.to_datetime(self.df[['YEAR', 'MONTH', 'DAY']]).dt.strftime('%Y%m%d')
@@ -340,10 +340,9 @@ class CruiseData(CruiseDataExport):
                     'DATE column was automatically generated from the columns YEAR, MONTH and DAY'
                 )
             except Exception as e:
-                missing_columns = ', '.join(list(set(REQUIRED_COLUMNS) - set(self.get_cols_by_type('all'))))
                 raise ValidationError(
-                    'DATE column did not exist and it could not be created. And that is a required column'
-                    ' from YEAR, MONTH and DAY columns: [{}]'.format(missing_columns),
+                    'DATE column, which is a required field, does not exist. Also, it could not be created'
+                    ' from YEAR, MONTH and DAY columns because some of them do not exist.',
                     rollback=self.rollback
                 )
 

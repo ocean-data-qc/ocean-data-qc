@@ -15,7 +15,7 @@ class ValidationError(Exception, Environment):
     env = Environment
 
     def __init__(self, value, rollback=False):
-        lg.error('-- Validation error: {}'.format(value))
+        lg.error('-- VALIDATION ERROR: {}'.format(value))
         self.value = value
         if rollback == 'cd':
             self._cruise_data_rollback()
@@ -23,11 +23,13 @@ class ValidationError(Exception, Environment):
             self._cruise_data_update_rollback()
 
     def _cruise_data_rollback(self):
+        lg.warning('-- CRUISE DATA ROLLBACK')
         self.env.cruise_data = None
         self.env.f_handler.remove_tmp_folder()
         self.env.bk_bridge.show_default_cursor()
 
     def _cruise_data_update_rollback(self):
+        lg.warning('-- CRUISE DATA UPDATE ROLLBACK')
         self.env.cd_aux = None
         self.env.cd_update = None
         if os.path.isdir(UPD):

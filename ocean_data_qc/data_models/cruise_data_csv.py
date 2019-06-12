@@ -21,7 +21,7 @@ class CruiseDataCSV(CruiseData):
 
     def __init__(self, working_dir=TMP, cd_aux=False):
         lg.info('-- INIT CSV')
-        self.rollback = 'cd' if self.cd_aux is False else 'cd_update'
+        self.rollback = 'cd' if cd_aux is False else 'cd_update'
         self.working_dir = working_dir
         copyfile(
             path.join(self.working_dir, 'original.csv'),

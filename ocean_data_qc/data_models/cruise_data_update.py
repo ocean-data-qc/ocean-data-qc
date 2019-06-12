@@ -33,7 +33,6 @@ class CruiseDataUpdate(Environment):
             (the super method is not called) """
         lg.info('-- CRUISE DATA UPDATE INIT')
         self.env.cd_update = self
-
         self.cols_to_compare = [
             'param', 'param_flag', 'qc_param_flag', 'non_qc_param', 'required'
         ]
