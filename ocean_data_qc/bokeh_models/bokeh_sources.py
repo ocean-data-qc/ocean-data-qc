@@ -220,7 +220,7 @@ class BokehSources(Environment):
         if self.env.cur_partial_stt_selection == [] or force_selection:
             self._set_partial_stt_selection()  # len(partial_stt_selection) <= NPROF
 
-        # self._sync_with_patches()
+        # self._sync_with_patches()  # NOTE: sends less data but the algorythm takes longer to process
         self._sync_with_full_df()
 
     def _sync_with_full_df(self):
@@ -373,26 +373,35 @@ class BokehSources(Environment):
             df_fs = self.env.cds_df[self.env.cds_df[STNNBR].isin(self.env.cur_partial_stt_selection)]
 
             d_ml_df = {}
-            for bp in self.env.bk_plots:
-                df_p =  df_fs[df_fs[bp.x].notnull() & df_fs[bp.y].notnull()].sort_values([CTDPRS], ascending=[True])
-
-                # FIXME: if one of the axis is CTDPRS then it gives an error here
-                #       because the column is duplicated
-
-                if self.env.plot_prof_invsbl_points is False:
+            if self.env.plot_prof_invsbl_points:  # I do this outside the loop to gain efficiency
+                for bp in self.env.bk_plots:
+                    # FIXME: if one of the axis is CTDPRS then it gives an error here
+                    #       because the column is duplicated
+                    df_p =  df_fs[df_fs[bp.x].notnull() & df_fs[bp.y].notnull()].sort_values([CTDPRS], ascending=[True])
+                    if df_p.index.size >= 1:
+                        d_ml_df.update({
+                            'xs{}'.format(bp.n_plot): df_p.groupby(STNNBR).apply(lambda x: list(x[bp.x])),
+                            'ys{}'.format(bp.n_plot): df_p.groupby(STNNBR).apply(lambda x: list(x[bp.y])),
+                        })
+                    else:
+                        d_ml_df.update(**{
+                            'xs{}'.format(bp.n_plot): [np.nan for x in self.env.cur_partial_stt_selection],
+                            'ys{}'.format(bp.n_plot): [np.nan for x in self.env.cur_partial_stt_selection],
+                        })
+            else:
+                for bp in self.env.bk_plots:
+                    df_p =  df_fs[df_fs[bp.x].notnull() & df_fs[bp.y].notnull()].sort_values([CTDPRS], ascending=[True])
                     df_p = df_p[df_p[bp.flag].isin(self.env.visible_flags)]
-
-                if df_p.index.size >= 1:
-                    d_ml_df.update({
-                        'xs{}'.format(bp.n_plot): df_p.groupby(STNNBR).apply(lambda x: list(x[bp.x])),
-                        'ys{}'.format(bp.n_plot): df_p.groupby(STNNBR).apply(lambda x: list(x[bp.y])),
-                    })
-                else:
-                    d_ml_df.update(**{
-                        'xs{}'.format(bp.n_plot): [[''] for x in self.env.cur_partial_stt_selection],
-                        'ys{}'.format(bp.n_plot): [[''] for x in self.env.cur_partial_stt_selection],
-                    })
-
+                    if df_p.index.size >= 1:
+                        d_ml_df.update({
+                            'xs{}'.format(bp.n_plot): df_p.groupby(STNNBR).apply(lambda x: list(x[bp.x])),
+                            'ys{}'.format(bp.n_plot): df_p.groupby(STNNBR).apply(lambda x: list(x[bp.y])),
+                        })
+                    else:
+                        d_ml_df.update(**{
+                            'xs{}'.format(bp.n_plot): [np.nan for x in self.env.cur_partial_stt_selection],
+                            'ys{}'.format(bp.n_plot): [np.nan for x in self.env.cur_partial_stt_selection],
+                        })
             ml_df = ml_df.assign(**d_ml_df)
             if ml_df.index.size >= 1:
                 stt_order = ml_df.index.drop(self.env.stt_to_select).tolist()

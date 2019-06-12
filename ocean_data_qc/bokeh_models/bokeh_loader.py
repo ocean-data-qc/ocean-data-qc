@@ -88,13 +88,13 @@ class BokehLoader(Environment):
                     value = getattr(self.env, attr)
                     if isinstance(value, bool):
                         setattr(self.env, attr, False)
-                    if isinstance(value, str):
+                    elif isinstance(value, str):
                         setattr(self.env, attr, '')
                     elif isinstance(value, list):
                         setattr(self.env, attr, [])
                     elif isinstance(value, dict):
                         setattr(self.env, attr, {})
-                    elif isinstance(value, int):
+                    elif isinstance(value, int):  # boolean values throw True with isinstance
                         setattr(self.env, attr, 0)
                     elif isinstance(value, float):
                         setattr(self.env, attr, 0.0)

@@ -72,7 +72,7 @@ class CruiseData(CruiseDataExport):
             units_list = []
         pos = 0
         column_list = self.df.columns.tolist()
-        lg.warning('>> SELF ORIG COLS: {}'.format(self.orig_cols))
+        lg.info('>> SELF ORIG COLS: {}'.format(self.orig_cols))
         for column in column_list:
             self._add_column(column=column)
             if units_list != []:

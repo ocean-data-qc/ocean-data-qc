@@ -32,6 +32,7 @@ class BokehFlags(Environment):
     def __init__(self, **kwargs):
         self.env.bk_flags = self
         self.env.visible_flags = self.all_flags_list
+        lg.warning('>> VISIBLE FLAGS: {}'.format(self.env.visible_flags))
         self.all_flags_vb_bt = None
         self.flags_control_header_row = None
         self.flag_rows = []
@@ -302,9 +303,9 @@ class BokehFlags(Environment):
             if flag_index not in self.env.visible_flags and flag_index in to_visible_flags:
                 to_visible.append('GR_FLAG_{}'.format(flag_index))
 
-        lg.info('>> TO VISIBLE FLAGS: {}'.format(to_visible_flags))
-        lg.info('>> TO VISIBLE: {}'.format(to_visible))
-        lg.info('>> TO INVISIBLE: {}'.format(to_invisible))
+        # lg.info('>> TO VISIBLE FLAGS: {}'.format(to_visible_flags))
+        # lg.info('>> TO VISIBLE: {}'.format(to_visible))
+        # lg.info('>> TO INVISIBLE: {}'.format(to_invisible))
 
         self.env.doc.hold('collect')
         if to_visible != []:
