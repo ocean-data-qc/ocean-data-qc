@@ -255,10 +255,9 @@ class CruiseData(CruiseDataExport):
     def _set_df(self):
         """ it creates the self.df dataframe object
             taking into account if data.csv is created or not
-
-            @from_scratch: boolean to force the loading from scratch
         """
         lg.info('-- SET DF')
+        lg.warning('>> SKIPROWS: {}'.format(self.skiprows))
         try:
             delimiter=self.dialect.delimiter
         except:
@@ -283,10 +282,10 @@ class CruiseData(CruiseDataExport):
                 delimiter=delimiter,
                 skip_blank_lines=True,
                 skipinitialspace=True,
-                engine='python',                 # engine='python' is more versatile, 'c' is faster
-                dtype=str,                  # useful to make some replacements before casting to numeric values
+                engine='python',
+                dtype=str,
                 skiprows=self.skiprows
-                # verbose=False             # indicates the number of NA values placed in non-numeric columns
+                # verbose=False
             )
             lg.info('>> PANDAS using \'python\' engine')
         # lg.info('\n\n>> DF: \n\n{}'.format(self.df))
@@ -329,20 +328,52 @@ class CruiseData(CruiseDataExport):
             )
 
     def _create_date_column(self):
-        if 'DATE' not in self.df.columns.tolist():
-            lg.info('-- CREATE DATE COLUMN')
-            try:
+        # TODO: check what happens with this columns in the cd_update and self.env.cols
+
+        # TODO: check why with the file "06MT20091126.exc (codificacion Window 1552)" skiprows does not work
+
+        cols = self.df.columns.tolist()
+        if 'DATE' not in cols:
+            lg.warning('-- CREATE DATE COLUMN')
+            if 'YEAR' in cols and 'MONTH' in cols and 'DAY' in cols:
                 self.df = self.df.assign(
                     DATE=pd.to_datetime(self.df[['YEAR', 'MONTH', 'DAY']]).dt.strftime('%Y%m%d')
                 )
+                except Exception as e:
+                    raise ValidationError(
+                        'DATE column, which is a required field, does not exist. Also, it could not be created'
+                        ' from YEAR, MONTH and DAY columns possibly because some of the rows do not have any value.',
+                        rollback=self.rollback
+                    )
                 self.add_moves_element(
                     'required_column_added',
                     'DATE column was automatically generated from the columns YEAR, MONTH and DAY'
                 )
-            except Exception as e:
+            elif 'DATE_YY' in cols and 'DATE_MM' in cols and 'DATE_DD' in cols:
+                mapper = dict(zip(                      # this mapping is needed by the strftime
+                    ('DATE_YY', 'DATE_MM', 'DATE_DD'),
+                    ('YEAR', 'MONTH', 'DAY')
+                ))
+                try:
+                    self.df = self.df.assign(
+                        DATE=pd.to_datetime(
+                            self.df[['DATE_YY','DATE_MM','DATE_DD']].rename(columns=mapper)
+                        ).dt.strftime('%Y%m%d')
+                    )
+                except Exception as e:
+                    raise ValidationError(
+                        'DATE column, which is a required field, does not exist. Also, it could not be created'
+                        ' from DATE_YY, DATE_MM and DATE_DD columns possibly because some of the rows do not have any value.',
+                        rollback=self.rollback
+                    )
+                self.add_moves_element(
+                    'required_column_added',
+                    'DATE column was automatically generated from the columns DATE_YY, DATE_MM and DATE_DD'
+                )
+            else:
                 raise ValidationError(
-                    'DATE column, which is a required field, does not exist. Also, it could not be created'
-                    ' from YEAR, MONTH and DAY columns because some of them do not exist.',
+                    'DATE column, which is a required field, does not exist. Also, it could not be built'
+                    ' with other columns (usually year, month and day).',
                     rollback=self.rollback
                 )
 

@@ -42,7 +42,7 @@ class CruiseDataCSV(CruiseData):
                 spamreader = csv.reader(csvfile, self.dialect, quotechar='"')
             except:
                 csvfile.seek(0)
-                spamreader = csv.reader(csvfile, delimiter=',', quotechar='"') 
+                spamreader = csv.reader(csvfile, delimiter=',', quotechar='"')
             first_len = -1
             row_number = 1
             for row in spamreader:
