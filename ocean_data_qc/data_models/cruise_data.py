@@ -350,7 +350,7 @@ class CruiseData(CruiseDataExport):
                     'DATE column was automatically generated from the columns YEAR, MONTH and DAY'
                 )
             elif 'DATE_YY' in cols and 'DATE_MM' in cols and 'DATE_DD' in cols:
-                mapper = dict(zip(                      # this mapping is needed by the strftime
+                mapper = dict(zip(
                     ('DATE_YY', 'DATE_MM', 'DATE_DD'),
                     ('YEAR', 'MONTH', 'DAY')
                 ))
