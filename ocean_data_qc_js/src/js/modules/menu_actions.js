@@ -179,7 +179,7 @@ module.exports = {
         if (typeof(arg) !== 'undefined' && 'save_from' in arg) {
             self.save_from = arg.save_from;
         } else {
-            lg.warn('>> NO SAVE FROM (save_file')
+            lg.warn('>> NO SAVE FROM save_file')
         }
         return new Promise((resolve, reject) => {
             var settings = data.load(loc.proj_settings);  // use settings only to read

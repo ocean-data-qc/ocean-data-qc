@@ -126,7 +126,7 @@ class CruiseDataExport(Environment):
             json.dump(self.cols, fp, indent=4, sort_keys=True)
 
     def save_metadata(self):
-        lg.INFO('-- SAVE METADATA')
+        lg.info('-- SAVE METADATA')
         if not path.isfile(path.join(TMP, 'metadata')):
             with open(path.join(TMP, 'original.csv'), 'r', errors="ignore") as file:
                 meta = open(path.join(TMP, 'metadata'),'w')

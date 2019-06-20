@@ -354,19 +354,22 @@ module.exports = {
     },
 
     /** Convert a url "file:///C/..." to the path syntax "C:/..." */
-    file_to_path: function(fileUrl=false) {
+    file_to_path: function(file_url=false) {
         // TODO: check if some modification is necessary on linux and mac
-        if (fileUrl.startsWith('file:')) {
-            var p = new URL(fileUrl).pathname;
+        if (file_url.startsWith('file:')) {
+            var p = new URL(file_url).pathname;
             if (process.platform === 'win32') {
                 if (p.charAt(0) === '/') {
                     p = p.substr(1);
                 }
                 p = path.join(p, '');
             }
+            if (p.includes('%20')) {
+                p = p.replace(/%20/g, ' ');
+            }
             return p;
         } else {
-            return fileUrl;
+            return file_url;
         }
     },
 

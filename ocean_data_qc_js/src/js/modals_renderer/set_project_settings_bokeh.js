@@ -83,10 +83,8 @@ module.exports = {
 
                         // TODO: check also at least 1 element inside the tab
 
-                        data.set({
-                            'project_state': 'modified',                // because it is new, not saved yet
-                            'project_name': $('#project_name').val(),
-                        }, loc.proj_settings);
+                        data.set({'project_name': $('#project_name').val(),}, loc.proj_settings);
+                        data.set({'project_state': 'modified',}, loc.shared_data);
 
                         var first = true;
                         var qc_plot_tabs = {}
