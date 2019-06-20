@@ -64,7 +64,7 @@ class CruiseData(CruiseDataExport):
             TODO: to create less noise in the JSON structure:
                   unit and orig_name should not exist if they do not have any value
         """
-        lg.info('-- SET ATTRIBUTES FROM SCRATCH --')
+        lg.info('-- SET ATTRIBUTES FROM SCRATCH')
         if self.original_type == 'whp':
             units_list = self.df.iloc[0].values.tolist()  # TODO: how to detect if there are units or not?
                                                           #       how to fill the units fields then?
@@ -257,7 +257,6 @@ class CruiseData(CruiseDataExport):
             taking into account if data.csv is created or not
         """
         lg.info('-- SET DF')
-        lg.warning('>> SKIPROWS: {}'.format(self.skiprows))
         try:
             delimiter=self.dialect.delimiter
         except:
@@ -330,11 +329,9 @@ class CruiseData(CruiseDataExport):
     def _create_date_column(self):
         # TODO: check what happens with this columns in the cd_update and self.env.cols
 
-        # TODO: check why with the file "06MT20091126.exc (codificacion Window 1552)" skiprows does not work
-
         cols = self.df.columns.tolist()
         if 'DATE' not in cols:
-            lg.warning('-- CREATE DATE COLUMN')
+            lg.info('-- CREATE DATE COLUMN')
             if 'YEAR' in cols and 'MONTH' in cols and 'DAY' in cols:
                 try:
                     self.df = self.df.assign(
@@ -452,8 +449,6 @@ class CruiseData(CruiseDataExport):
         '''
         lg.info('-- REPLACE MISSING VALUES (-999 >> NaN)')
         self.df_str = self.df.copy(deep=True)    # TODO: this has to be synchronized when seld.df is updated
-
-        # self.df = self.df.applymap(lambda x: str.strip(x))  # trim spaces, we do  this with the raw data directly
         self.df.replace(
             to_replace=NA_REGEX_LIST,
             value='', #np.nan,
@@ -466,17 +461,20 @@ class CruiseData(CruiseDataExport):
             downcasting the resulting data to the smallest numerical dtype possible (int8 is the minimum)
 
             If the column has float values, all the column will have
-            the same number of decimals (the maximum, but the zero is not taking into account)
+            the same number of decimals (the maximum, zero in the right side is not taking into account)
 
-            If a cell of a column with dtype=np.int8 is assign to some int64 value, then the column
+            If a cell of a column with dtype=np.int8 is assigned to some int64 value, then the column
             is completely converted to int64
         '''
         self.df = self.df.apply(lambda x: pd.to_numeric(x, errors='ignore', downcast='integer'))
 
         # if the new values are float >> check the original string to make the rounding well
 
-        self.df = self.df.round(5)  # TODO: round with the original number of decimals >> float comparison
-                                    #       I think this rounding can be made by df column
+        # TODO: round with the original number of decimals >> float comparison
+        #       I think this rounding can be made by df column
+
+        self.df = self.df.round(5)
+
 
     def update_flag_values(self, column, new_flag_value, row_indices):
         """ This method is executed mainly when a flag is pressed to update the values

@@ -126,14 +126,19 @@ class CruiseDataExport(Environment):
             json.dump(self.cols, fp, indent=4, sort_keys=True)
 
     def save_metadata(self):
+        lg.warning('-- SAVE METADATA')
         if not path.isfile(path.join(TMP, 'metadata')):
             with open(path.join(TMP, 'original.csv'), 'r', errors="ignore") as file:
                 meta = open(path.join(TMP, 'metadata'),'w')
                 for line in file:
                     if line.startswith('#'):
-                        meta.write(line[2:]) # python will convert \n to os.linesep
-                                             # TODO >> if a file is firstly open with windows and then it is open with linux
-                                             # I am afraid the breaklines are not going to work well
+                        # NOTE: I strip spaces commas and breaklines in order to clean the result
+                        #       sometimes excel adds many commas at the end of each line.
+                        #       Presumably Python will convert \n to os.linesep
+                        meta.write(line.strip(', \n\r')[2:] + '\n')
+
+                        # TODO: check if a file is firstly open with windows and then it is open with linux
+                        # I am afraid the breaklines are not going to work well
 
     def save_tmp_data(self):
         lg.info('-- SAVE TMP DATA')
