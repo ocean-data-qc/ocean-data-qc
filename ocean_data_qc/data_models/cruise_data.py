@@ -336,9 +336,10 @@ class CruiseData(CruiseDataExport):
         if 'DATE' not in cols:
             lg.warning('-- CREATE DATE COLUMN')
             if 'YEAR' in cols and 'MONTH' in cols and 'DAY' in cols:
-                self.df = self.df.assign(
-                    DATE=pd.to_datetime(self.df[['YEAR', 'MONTH', 'DAY']]).dt.strftime('%Y%m%d')
-                )
+                try:
+                    self.df = self.df.assign(
+                        DATE=pd.to_datetime(self.df[['YEAR', 'MONTH', 'DAY']]).dt.strftime('%Y%m%d')
+                    )
                 except Exception as e:
                     raise ValidationError(
                         'DATE column, which is a required field, does not exist. Also, it could not be created'
