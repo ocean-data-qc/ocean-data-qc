@@ -243,8 +243,8 @@ class CruiseData(CruiseDataExport):
     def stations(self):
         return list(self.df.drop_duplicates(STNNBR)[STNNBR])
 
-    def get_units(self):
-        return [self.cols[x]['unit'] for x in self.cols]
+    def get_units(self, cols):
+        return [self.cols[x]['unit'] for x in cols]
 
     def is_flag(self, flag):
         if flag[-7:] == FLAG_END and flag in self.get_cols_by_type(['param_flag', 'qc_param_flag']):
