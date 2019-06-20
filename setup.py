@@ -63,7 +63,7 @@ if sys.platform == "win32":
 
 setup(
     name='ocean_data_qc',
-    version='1.0.0',                                    # TODO: extract the version from package.json
+    version='1.1.0',                                    # TODO: extract the version from package.json
     description='WHP file managing',
     long_description=open("README.md").read(),          # TODO: check if this is readable in this is publish in a future channel repository or
     long_description_content_type="text/markdown",      #       Python Package Index https://pypi.org/
