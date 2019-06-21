@@ -70,7 +70,7 @@
     },
     "build": {
         "appId": "atlantos.ocean.data.qc",
-        "productName": "ocean-data-qc",
+        "productName": "AtlantOS Ocean Data QC",
         "copyright": "Copyright © 2019 ${author}",
         "files": [
             "**/*",
