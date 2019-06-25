@@ -62,7 +62,11 @@ const locations = {
     // ENV BINARIES PATH
     'env_bin_win': path.join(__ocean_data_qc_js, '../env/Scripts'),
     'env_bin_mac': path.join(__ocean_data_qc_js, '../env/bin'),
-    'env_bin_lin': path.join(__ocean_data_qc_js, '../env/bin')
+    'env_bin_lin': path.join(__ocean_data_qc_js, '../env/bin'),
+
+    // PATHS TO SOLVE THIS ISSUE IN PYTHON 3.7.3
+    // https://stackoverflow.com/questions/54175042/python-3-7-anaconda-environment-import-ssl-dll-load-fail-error
+    'env_lib_bin_win': path.join(__ocean_data_qc_js, '../env/Library/bin'),
 }
 
 module.exports = locations;

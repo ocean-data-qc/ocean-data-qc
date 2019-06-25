@@ -5,18 +5,23 @@
 
 "use strict";
 
-require('dotenv').config()
 const path = require('path');
 require('app-module-path').addPath(path.join(__dirname, 'src/js/modules'));  // change folder name to "node_modules" to avoid this?
+
+const lg = require('logging');
+const loc = require('locations');
+const is_dev = require('electron-is-dev');
+if (!is_dev) {
+    // this is needed to load the .env file correctly with the dotenv library
+    process.chdir(loc.ocean_data_qc_js);
+}
+require('dotenv').config()
 
 const {app} = require('electron');
 const {BrowserWindow} = require('electron');
 const {ipcMain} = require('electron');
-const is_dev = require('electron-is-dev');
 
-const loc = require('locations');
 const data = require('data')
-const lg = require('logging');
 const server = require('server');
 const menu = require('menu');
 const menu_actions = require('menu_actions');
@@ -26,6 +31,11 @@ try {
     require('electron-debug')({showDevTools: false});
 } catch (ex) {
     lg.warn('>> ELECTRON DEBUG COULD NOT BE LOADED');
+}
+
+if (process.platform == 'win32' && !is_dev) {
+    process.env.PATH = process.env.PATH + loc.env_lib_bin_win + ';';
+    process.env.PATH = process.env.PATH + loc.env_bin_win + ';';
 }
 
 var main_window = null;      // global reference of the window object
