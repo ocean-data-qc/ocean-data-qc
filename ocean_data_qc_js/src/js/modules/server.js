@@ -317,13 +317,13 @@ module.exports = {
     set_octave_path: function() {
         var self = this;
         if (self.octave_path == false || (self.octave_path != false && !fs.existsSync(tools.file_to_path(self.octave_path)))) {
+            lg.info('-- SET OCTAVE PATH');
             var py_options = {
                 mode: 'text',
                 pythonPath: self.python_path,
                 scriptPath: loc.scripts
             };
             python_shell.run('get_octave_path.py', py_options, function (err, results) {
-                lg.info('>> Trying to find octave');
                 if (err || typeof(results) === 'undefined') {
                     lg.warn('>>Error detecting Octave executable: ' + err.message);
                     data.set({'octave_path': false }, loc.shared_data);

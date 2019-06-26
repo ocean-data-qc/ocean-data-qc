@@ -345,12 +345,16 @@ module.exports = {
     show_wait_cursor:  function() {
         // TODO: set a with maximum time (to avoid asyncronous issues)
         lg.info('>> SET CURSOR STYLE TO WAIT');
-        $('#loader_mask').removeAttr('hidden');
+        if ($('#loader_mask').css('display') == 'none') {
+            $('#loader_mask').css('display', 'block');
+        }
     },
 
     show_default_cursor:  function() {
         lg.info('>> SET CURSOR STYLE TO DEFAULT');
-        $('#loader_mask').attr('hidden', '');
+        if ($('#loader_mask').css('display') == 'block') {
+            $('#loader_mask').css('display', 'none');
+        }
     },
 
     /** Convert a url "file:///C/..." to the path syntax "C:/..." */

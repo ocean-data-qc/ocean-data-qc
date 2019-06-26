@@ -10,7 +10,7 @@ import fnmatch
 import os
 from bokeh.util.logconfig import bokeh_logger as lg
 
-
+OCTAVE_EXECUTABLE = ''
 if sys.platform == 'win32':
     base_octave = r'C:\Octave'
     if os.path.isdir(base_octave):
@@ -46,4 +46,6 @@ else:
         except:
             pass
 
-lg.info('>> [octave.py] OCTAVE_EXECUTABLE: {}'.format(OCTAVE_EXECUTABLE))
+lg.info('>> [octave.py] OCTAVE_EXECUTABLE: {}'.format(
+    OCTAVE_EXECUTABLE or 'octave command does not exist')
+)
