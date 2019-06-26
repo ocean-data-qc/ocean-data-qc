@@ -25,18 +25,16 @@ if sys.platform == 'win32':
     if OCTAVE_EXECUTABLE=='':
         if shutil.which('octave-cli.exe'):
             OCTAVE_EXECUTABLE = shutil.which('octave-cli.exe')
-        elif shutil.which('octave.exe'):
-            OCTAVE_EXECUTABLE = shutil.which('octave.exe')
 else:
-    OCTAVE_EXECUTABLE = shutil.which('octave')
-    if not shutil.which('octave'):
+    OCTAVE_EXECUTABLE = shutil.which('octave-cli')
+    if not shutil.which('octave-cli'):
         try:
-            if os.path.isfile('/usr/local/bin/octave'):
-                OCTAVE_EXECUTABLE = '/usr/local/bin/octave'
+            if os.path.isfile('/usr/local/bin/octave-cli'):
+                OCTAVE_EXECUTABLE = '/usr/local/bin/octave-cli'
             elif os.path.isdir('/Applications'):
                 for dname in os.listdir('/Applications'):
                     if fnmatch.fnmatch(dname, 'Octave-*'):
-                        OCTAVE_EXECUTABLE = os.path.join('/Applications', dname, 'Contents/Resources/usr/bin/octave')
+                        OCTAVE_EXECUTABLE = os.path.join('/Applications', dname, 'Contents/Resources/usr/bin/octave-cli')
         except:
             pass
 
