@@ -151,7 +151,11 @@ $('#enable_dev_mode').click(function() {
         $('#enable_dev_mode').removeClass('dev_mode');
     } else {
         data.set({'dev_mode': true }, loc.shared_data);
-        $('#enable_dev_mode').text('Developer mode enabled, press to disable');
+        if (!fs.existsSync(loc.log_python)) {
+            $('#enable_dev_mode').text('Developer mode enabled, press to disable. You must restart the app to show the python logger');
+        } else {
+            $('#enable_dev_mode').text('Developer mode enabled, press to disable');
+        }
         $('#enable_dev_mode').addClass('dev_mode');
     }
 });
@@ -230,28 +234,31 @@ function check_port() {
 */
 function check_previous_session() {
     var file_to_open = data.get('file_to_open', loc.shared_data);
-    if (fs.existsSync(loc.proj_files)) {
-        lg.info('-- PENDING PREVIOUS SESSION');
+    lg.info('>> FILE TO OPEN: ' + file_to_open);
+    if (file_to_open != '--updated') {
+        if (fs.existsSync(loc.proj_files)) {
+            lg.info('-- PENDING PREVIOUS SESSION');
 
-        var question = '<p>A previous session was not closed correctly. ' +
-                       'Would you like to reopen it?</p>' +
-                       '<p>If you press "No", or you close this dialog the changes will be lost.</p>'
+            var question = '<p>A previous session was not closed correctly. ' +
+                           'Would you like to reopen it?</p>' +
+                           '<p>If you press "No", or you close this dialog the changes will be lost.</p>'
 
-        if (file_to_open != false) {
-            question += '<p>Also, the file you are actually opening is going to be processed instead: </p>' +
-                        '<pre>' + file_to_open + '</pre>';
-        }
+            if (file_to_open != false) {
+                question += '<p>Also, the file you are actually opening is going to be processed instead: </p>' +
+                            '<pre>' + file_to_open + '</pre>';
+            }
 
-        show_reopen_session_modal( {
-            'title': 'Restore previous session?',
-            'url': path.join(loc.modals, 'modal_question.html'),
-            'question': question
-        });
-    } else {
-        // check if there is file to open
-        if (file_to_open != false) {
-            data.set({'file_to_open': false}, loc.shared_data);
-            ipcRenderer.send('open-file', [file_to_open]);
+            show_reopen_session_modal( {
+                'title': 'Restore previous session?',
+                'url': path.join(loc.modals, 'modal_question.html'),
+                'question': question
+            });
+        } else {
+            // check if there is file to open
+            if (file_to_open != false) {
+                data.set({'file_to_open': false}, loc.shared_data);
+                ipcRenderer.send('open-file', [file_to_open]);
+            }
         }
     }
 }

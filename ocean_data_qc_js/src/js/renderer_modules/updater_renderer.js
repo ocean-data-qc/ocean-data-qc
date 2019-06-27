@@ -28,6 +28,7 @@ ipcRenderer.on('show-update-available', (event, arg) => {
     })).removeClass().addClass('update_done');
 
     $('#update_state a').on('click', () => {
+        $('#update_state').text('Downloading updates...');
         ipcRenderer.send('download-new-update');
     })
 });
@@ -46,6 +47,8 @@ ipcRenderer.on('show-update-error', (event, arg) => {
     $('#update_state').removeClass().addClass('update_error');
 });
 
+// This is not implemented yet (windows, nsis), though I remember thet this worked in the past
+// https://github.com/electron-userland/electron-builder/issues/2521
 ipcRenderer.on('show-download-progress', (event, arg) => {
     if ('percent' in arg) {
         $('#update_state').text('Downloading updates: ' + arg['percent'] + '%').removeClass().addClass('update_working');

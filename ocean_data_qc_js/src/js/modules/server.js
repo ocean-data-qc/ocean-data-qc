@@ -165,6 +165,7 @@ module.exports = {
     set_python_shell_options: function() {
         lg.info('-- SET PYTHON SHELL OPTIONS')
         var self = this;
+
         var dev_mode = data.get('dev_mode', loc.shared_data);
         var user_options = [
             '-m', 'bokeh', 'serve',

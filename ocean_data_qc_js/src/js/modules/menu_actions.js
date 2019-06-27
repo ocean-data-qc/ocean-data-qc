@@ -133,7 +133,7 @@ module.exports = {
         } else {
             self.web_contents.send('show-modal', {   // it is impossible to get to here, because is out of domain ['csv', 'aqc']
                 'type': 'ERROR',
-                'msg': 'Wrong filetype!!<br />It must be an AQC or a CSV file'
+                'msg': 'Wrong filetype!! It must be an AQC or a CSV file'
             });
         }
     },
