@@ -235,7 +235,7 @@ function check_port() {
 function check_previous_session() {
     var file_to_open = data.get('file_to_open', loc.shared_data);
     lg.info('>> FILE TO OPEN: ' + file_to_open);
-    if (file_to_open != '--updated') {
+    if (file_to_open != '--updated') {  // if the app is not being updated
         if (fs.existsSync(loc.proj_files)) {
             lg.info('-- PENDING PREVIOUS SESSION');
 

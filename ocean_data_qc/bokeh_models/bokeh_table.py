@@ -13,6 +13,7 @@ from bokeh.models.filters import IndexFilter
 from bokeh.models.sources import ColumnDataSource
 from bokeh.models.widgets.buttons import Button
 from bokeh.models.widgets.markups import Div
+import copy
 
 from bokeh.util.logconfig import bokeh_logger as lg
 from ocean_data_qc.env import Environment
@@ -126,7 +127,7 @@ class BokehDataTable(Environment):
             scroll_to_selection=False,      # not needed
             sortable=False,                 # not needed
         )
-
+        self.old_source = ColumnDataSource(copy.deepcopy(table_cds.data))
         self.data_table.source.on_change('data', self.on_change_data_source)
 
     def _init_sample_buttons(self):
@@ -227,15 +228,14 @@ class BokehDataTable(Environment):
 
     def on_change_data_source(self, attr, old, new):
         indices = list(range(self.table_df.size))
-        # changes = [(param_name, index, old_value, new_value)]
-        changes = [(self.params[i],i,j,k) for i,j,k in zip(indices, old['flag'], new['flag']) if j != k]
+        changes = [(self.params[i],i,j,k) for i,j,k in zip(indices, self.old_source.data['flag'], self.data_table.source.data['flag']) if j != k]
+        # NOTE: changes = [(param_name, index, old_value, new_value)]
 
         # lg.info('>> CHANGES: {}'.format(changes))
         # lg.info('>> SELECTION = {} | DF_MANUAL_UPDATE = {}'.format(self.env.selection, self.env.dt_manual_update))
         # lg.info('>> DT_NEXT_SAMPLE = {} | DF_PREVIOUS_SAMPLE = {}'.format(self.env.dt_next_sample, self.env.dt_previous_sample))
 
         error = False
-
         # This happens when the DataFrame is empty (Reset button or the initial state)
         if self.env.selection == [] and self.env.dt_manual_update:
             error = True
@@ -275,6 +275,8 @@ class BokehDataTable(Environment):
 
         if error:
             self.rollback(changes)
+        else:
+            self.old_source.data = copy.deepcopy(self.data_table.source.data)
 
     def rollback(self, changes):
         lg.info('-- DATATABLE ROLLBACK')
