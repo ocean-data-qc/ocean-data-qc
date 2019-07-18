@@ -33,7 +33,12 @@ try {
     lg.warn('>> ELECTRON DEBUG COULD NOT BE LOADED');
 }
 
+// These code can be removed when this issue is fixed
+// https://stackoverflow.com/questions/54175042/python-3-7-anaconda-environment-import-ssl-dll-load-fail-error
 if (process.platform == 'win32' && !is_dev) {
+    if (process.env.PATH.slice(-1) != ';') {
+        process.env.PATH = process.env.PATH + ';'
+    }
     process.env.PATH = process.env.PATH + loc.env_lib_bin_win + ';';
     process.env.PATH = process.env.PATH + loc.env_bin_win + ';';
 }
