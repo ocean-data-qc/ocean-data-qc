@@ -281,7 +281,6 @@ module.exports = {
             'args': self.octave_path,
         }
         tools.call_promise(params).then((results) => {
-            lg.warn('>> RESULTS: ' + results)
             if (typeof(results) === 'undefined') {
                 lg.warn('>>Error detecting Octave executable: ' + err.message);
                 data.set({'octave_path': false, 'octave_version': false, }, loc.shared_data);
@@ -305,7 +304,6 @@ module.exports = {
         tools.call_promise(call_params).then((results) => {
             // TODO: send SHA1 checksum values to the iframe to update the css src
             lg.info('-- GET CSS CHECKSUMS COMPLETED');
-            // lg.warn('>> RESULTS: ' + JSON.stringify(results, null, 4));
             $.each(results, function(key, value) {
                 if (key == 'bokeh_css_path') {
                     $.each(results[key], function(file_name, hash) {
@@ -325,7 +323,7 @@ module.exports = {
     },
 
     check_tile_server_state() {
-        lg.warn('-- CHECK TILE SERVER STATE')
+        lg.info('-- CHECK TILE SERVER STATE')
         // check ArcGIS Tile Server State
         urlExists('https://server.arcgisonline.com/arcgis/rest/services/Ocean/World_Ocean_Base/MapServer/tile/0/0/0', function(err, exists) {
             if (exists) {
