@@ -76,9 +76,7 @@ window.onmessage = function(e){
         var _check_css_checksum = setInterval(function() {
             if (server_renderer.checksum_completed == true) {  // check if octave was already loaded or not
                 clearInterval(_check_css_checksum);
-                setTimeout(function() {
-                    server_renderer.set_octave_path();
-                }, 3000);
+                server_renderer.set_octave_path();
             }
         }, 100);
     }
