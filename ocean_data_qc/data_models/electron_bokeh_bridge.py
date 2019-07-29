@@ -132,8 +132,8 @@ class ElectronBokehBridge(Environment):
             method = getattr(self.env.f_handler, method_str)
         elif obj == 'bokeh.plots.handler':
             method = getattr(self.env.bk_plots_handler, method_str)
-        # elif obj == 'computed.parameter':
-        #     method = getattr(self.plot.cruisedata.cp, method)
+        elif obj == 'octave.equations':
+            method = getattr(self.env.oct_eq, method_str)
 
         result = False
         try:
@@ -167,7 +167,7 @@ class ElectronBokehBridge(Environment):
         if len(params) < 5000:
             lg.info('>> RUN JS CODE, PARAMS: {}'.format(params))
         else:
-            lg.warning('>> Very long string in params')
+            lg.warning('>> Very long string in param, skiping print')
         lg.info('>> SIGNAL: {}'.format(signal))
         js_code = """
             window.top.postMessage({{

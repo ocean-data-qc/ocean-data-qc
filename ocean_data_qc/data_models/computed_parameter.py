@@ -6,7 +6,6 @@
 
 from bokeh.util.logconfig import bokeh_logger as lg
 from ocean_data_qc.constants import *
-from ocean_data_qc.octave.octave import OCTAVE_EXECUTABLE
 from ocean_data_qc.data_models.exceptions import ValidationError
 from ocean_data_qc.env import Environment
 
@@ -17,19 +16,7 @@ from math import *
 import seawater as sw
 import types
 import subprocess as sbp
-
-# NOTE: check octave availability againg here because if we check shared_data maybe
-#       the value is not updated due to asyncronous matters
-
-oc_output = sbp.getstatusoutput('{} --eval "OCTAVE_VERSION"'.format(OCTAVE_EXECUTABLE))
-if oc_output[0] == 0:
-    lg.info('>> OCTAVE DETECTED FROM PYTHON, VERSION: {}'.format(
-        oc_output[1].split('=')[1].strip())
-    )
-    import ocean_data_qc.octave.equations as equations
-else:
-    lg.warning('>> OCTAVE UNDETECTED')
-    equations = None
+from importlib import import_module
 
 
 class ComputedParameter(Environment):
@@ -43,6 +30,23 @@ class ComputedParameter(Environment):
             self.cruise_data = cruise_data
         else:
             self.cruise_data = self.env.cruise_data
+
+        # NOTE: check octave availability again here because if we check shared_data maybe
+        #       the value is not updated due to asyncronous matters
+        self.equations = None
+        self.import_octave_equations()
+
+    def import_octave_equations(self):
+        lg.info('-- IMPORT OCTAVE EQUATIONS')
+        oc_output = sbp.getstatusoutput('{} --eval "OCTAVE_VERSION"'.format(self.env.oct_eq.oct_exe_path))
+        if oc_output[0] == 0:
+            lg.info('>> OCTAVE DETECTED FROM PYTHON, VERSION: {}'.format(
+                oc_output[1].split('=')[1].strip())
+            )
+            self.equations = self.env.oct_eq  # remove methods that are not equations
+        else:
+            lg.warning('>> OCTAVE UNDETECTED')
+            self.equations = None
 
     @property
     def proj_settings_cps(self):
@@ -221,13 +225,16 @@ class ComputedParameter(Environment):
             'dist': sw.extras.dist, 'f': sw.extras.f, 'satAr': sw.extras.satAr,
             'satN2': sw.extras.satN2, 'satO2': sw.extras.satO2, 'swvel': sw.extras.swvel,
         })
-        if equations is not None:
-            for elem_str in dir(equations):
-                elem_obj = getattr(equations, elem_str)
-                if isinstance(elem_obj, (\
-                   types.FunctionType, types.BuiltinFunctionType,
-                   types.MethodType, types.BuiltinMethodType)):
-                    local_dict.update({elem_str: elem_obj})
+        lg.warning('>> EQUATIONS LIBRARY OBJECT: {}'.format(self.equations))
+        if self.equations is not None:
+            for elem_str in dir(self.equations):
+                if elem_str[0] != '_' and elem_str not in ['guess_oct_exe_path', 'set_oct_exe_path']:
+                    elem_obj = getattr(self.equations, elem_str)
+                    if isinstance(elem_obj, (\
+                    types.FunctionType, types.BuiltinFunctionType,
+                    types.MethodType, types.BuiltinMethodType)):
+                        lg.warning('>> ACCEPTED METHOD: {}'.format(elem_str))
+                        local_dict.update({elem_str: elem_obj})
         return local_dict
 
     def _get_sandbox_vars(self, glob_dict={}):

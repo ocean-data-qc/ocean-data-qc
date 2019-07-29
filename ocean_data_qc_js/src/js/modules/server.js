@@ -16,7 +16,6 @@ const is_dev = require('electron-is-dev');
 
 const {dialog} = require('electron');
 const {app} = require('electron');
-const { spawn } = require('child_process');
 
 const loc = require('locations');
 const lg = require('logging');
@@ -35,7 +34,6 @@ module.exports = {
         self.script_env_path = ''
         self.python_path = 'python';
         self.ocean_data_qc_path = '';
-        self.octave_path = data.get('octave_path', loc.shared_data);
     },
 
     /**
@@ -310,74 +308,6 @@ module.exports = {
         } else {
             self.close_app();
         }
-    },
-
-    /* Check if the command Octave exists in the PATH environment variable
-    * If it does not exist, then Octave cannot be used
-    */
-    set_octave_path: function() {
-        var self = this;
-        if (self.octave_path == false || (self.octave_path != false && !fs.existsSync(tools.file_to_path(self.octave_path)))) {
-            lg.info('-- SET OCTAVE PATH');
-            var py_options = {
-                mode: 'text',
-                pythonPath: self.python_path,
-                scriptPath: loc.scripts
-            };
-            python_shell.run('get_octave_path.py', py_options, function (err, results) {
-                if (err || typeof(results) === 'undefined') {
-                    lg.warn('>>Error detecting Octave executable: ' + err.message);
-                    data.set({'octave_path': false }, loc.shared_data);
-                    data.set({'octave_version': false }, loc.shared_data);
-                    self.web_contents.send(
-                        'set-octave-info',
-                        {'msg': 'Undetected in PATH' }
-                    );
-                } else {
-                    try {
-                        self.octave_path = results[0];
-                        data.set({'octave_path': self.octave_path }, loc.shared_data);
-                        self.set_octave_version()
-                    } catch (err) {
-                        lg.warn('>> OCTAVE ERROR CHECKING VERSION: ' + err)
-                        data.set({'octave_path': false }, loc.shared_data);
-                        data.set({'octave_version': false }, loc.shared_data);
-                        self.web_contents.send(
-                            'set-octave-info',
-                            {'msg': 'Error checking version' }
-                        );
-                    }
-                }
-            })
-        } else {
-            lg.info('>> octave set on: ' + self.octave_path);
-            self.set_octave_version()
-            //self.web_contents.send('set-octave-info');
-        }
-    },
-
-    set_octave_version() {
-        var self = this;
-        var full_str_version = '';
-        const octave = spawn(
-            tools.file_to_path(self.octave_path),      // command >> is this working on mac an linux?
-            ['--eval', '"OCTAVE_VERSION"'],     // args
-            {'shell': true }                    // options
-        );
-        octave.stdout.on('data', (buffer) => {
-            var version = buffer.toString('utf8');
-            full_str_version += version;
-            if (full_str_version.match(/ans = [0-9]\.[0-9]\.[0-9]/g) != null) {
-                // NOTE: When the expression is full (all buffers concatenated)
-                //       Expected answer: "ans = 4.1.4"
-                full_str_version = full_str_version.split('=')[1].trim();
-                data.set({'octave_version': full_str_version}, loc.shared_data);
-                self.web_contents.send('set-octave-info');
-            }
-        });
-        octave.stderr.on('data', (data) => {
-            lg.warn(`Error detecting Octave version: ${data}`);
-        });
     },
 
     /**

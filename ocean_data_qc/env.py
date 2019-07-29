@@ -61,6 +61,8 @@ class Environment(object):
 
     # ------------------------------- VARIABLES ------------------------------------- #
 
+    oct_exe_path = ''               # path where the octave executable is
+
     n_plots = 0                     # Number of plots. This value should be updated if the number changes
                                     #    There is an alternative variable on the BokehPlotsHandler class
     ranges = {}                     # Ranges for all the plots. Each attribute should have x_range and y_range
@@ -107,3 +109,4 @@ class Environment(object):
     cd_update = None                # Cruise Data Update, update values from a similar CSV file
     cd_aux = None                   # Cruise Data Auxiliar, used to make comparisons in with cd_update
     cp_param = None                 # Computer Parameters
+    oct_eq = None                   # Octave Executable Path Manager

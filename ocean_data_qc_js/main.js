@@ -20,6 +20,7 @@ require('dotenv').config()
 const {app} = require('electron');
 const {BrowserWindow} = require('electron');
 const {ipcMain} = require('electron');
+const {dialog} = require('electron');
 
 const data = require('data')
 const server = require('server');
@@ -145,6 +146,23 @@ ipcMain.on('open-dialog', (event, arg) => {
     menu_actions.open_dialog();
 })
 
+ipcMain.on('open-octave-path-dialog', (event, arg) => {
+    dialog.showOpenDialog({
+            title: 'Setting Octave path folder...',
+            filters: [{ name: 'Octave Path Folder', }],
+            properties: ['openDirectory'],
+        }, function(file_paths) {
+            lg.info('>> OCTAVE FILE PATHS CHOSEN: ' + file_paths);
+            if (file_paths === undefined) return;
+            var file_path = file_paths[0];
+
+            var web_contents = main_window.webContents;
+            web_contents.send('set-octave-path', {'manual_octave_path': file_path});
+        }
+    );
+
+})
+
 ipcMain.on('open-file', (event, arg) => {
     lg.info('-- IPC MAIN OPEN-FILE, ARG: ' + arg);
     menu_actions.open_file(arg);
@@ -170,12 +188,6 @@ ipcMain.on('enable-watcher', function(event, args){
 ipcMain.on('disable-watcher', function(event, args){
     var web_contents = main_window.webContents;
     web_contents.send('disable-watcher');
-})
-
-ipcMain.on('set-octave-path', function(event, args){
-    server.set_octave_path();
-    var web_contents = main_window.webContents;
-    web_contents.send('set-octave-info');
 })
 
 ipcMain.on('run-tile-server', function(event, args){

@@ -23,7 +23,7 @@ const lg = require('logging');
 const data = require('data');
 const tools = require('tools');
 const server_renderer = require('server_renderer');
-const urlExists = require('url-exists');
+
 
 require('set_project_settings_user').init();
 
@@ -35,7 +35,6 @@ tools.multi_modal_fix();
 load_images();
 check_port();    // TODO: move function into tools module
 check_previous_session();
-ipcRenderer.send('set-octave-path');
 
 $(document).ready(function() {
     // NOTE: Doing this we avoid to send the form with a submit button
@@ -64,52 +63,24 @@ window.onmessage = function(e){
     if (e.data == 'bokeh-loaded') {                    // bokeh completely loaded
         lg.info('-- BOKEH LOADED');
 
-        var call_params = {
-            'object': 'files.handler',
-            'method': 'get_css_checksums',
-        }
-        tools.call_promise(call_params).then((results) => {
-            // TODO: send SHA1 checksum values to the iframe to update the css src
-            lg.info('-- GET CSS CHECKSUMS COMPLETED');
-            // lg.warn('>> RESULTS: ' + JSON.stringify(results, null, 4));
-            $.each(results, function(key, value) {
-                if (key == 'bokeh_css_path') {
-                    $.each(results[key], function(file_name, hash) {
-                        // operator $= : https://www.w3schools.com/jquery/sel_attribute_end_value.asp
-                        var css = $("#bokeh_iframe").contents().find("link[href$='" + file_name + "']");
-                        css.attr('href', css.attr('href') + '?v=' + hash);
-                    });
-                } else if (key == 'electron_css_path') {
-                    $.each(results[key], function(file_name, hash) {
-                        var css = $("link[href$='" + file_name + "']");
-                        css.attr('href', css.attr('href') + '?v=' + hash);
-                    });
-                }
-            });
-        });
+        server_renderer.get_css_checksums();
 
         $('#bokeh_info').css('color', 'green');
         $('#bokeh_state').text(bokeh_iframe.contentWindow.Bokeh.version + ' (loaded)');
         $('#bokeh_state_loader').attr('hidden', '');
         $('body').data('bokeh_state','ready');
 
-        // check ArcGIS Tile Server State
-        urlExists('https://server.arcgisonline.com/arcgis/rest/services/Ocean/World_Ocean_Base/MapServer/tile/0/0/0', function(err, exists) {
-            if (exists) {
-                lg.info('Tile server online');
-                $('body').data('ts_state', 'online');
+        // NOTE: be careful here, only one call to bokeh at the same time is possible
+        server_renderer.check_tile_server_state();
 
-                $('#argis_tile_server_state').text('Online');
-                $('#argis_tile_server_state').css('color', 'green');
-            } else {
-                lg.warn('Tile server offline, or there is no internet connection');
-                $('body').data('ts_state', 'offline');
-
-                $('#argis_tile_server_state').text('Offline');
-                $('#argis_tile_server_state').css('color', 'red');
+        var _check_css_checksum = setInterval(function() {
+            if (server_renderer.checksum_completed == true) {  // check if octave was already loaded or not
+                clearInterval(_check_css_checksum);
+                setTimeout(function() {
+                    server_renderer.set_octave_path();
+                }, 3000);
             }
-            $('#argis_tile_server_state').css('font-weight', 'bold');
-        });
+        }, 100);
     }
 
     if (typeof(e.data.signal) !== 'undefined') {
@@ -161,6 +132,10 @@ $('#enable_dev_mode').click(function() {
 });
 
 // ------------------------------- HOME LINKS ---------------------------------- //
+
+$('#set_octave_path_manually').click(function() {
+    ipcRenderer.send('open-octave-path-dialog');
+});
 
 $('#open_file').on('click', function (){
     ipcRenderer.send('open-dialog');
@@ -381,17 +356,6 @@ ipcRenderer.on('relaunch-bokeh', (event, arg) => {
     server_renderer.go_to_bokeh();
 });
 
-ipcRenderer.on('set-octave-info', (event, arg) => {
-    var octave_version = data.get('octave_version', loc.shared_data);
-    if (octave_version != false) {
-        $('#octave_version').text(octave_version);
-    } else {
-        if ('msg' in arg) {
-            $('#octave_version').text(arg['msg']);
-        } else {
-            $('#octave_version').text('Undetected');
-        }
-        $('#octave_version').css('color', 'red');
-        $('#octave_version').css('font-weight', 'bold');
-    }
-})
+ipcRenderer.on('set-octave-path', (event, arg) => {
+    server_renderer.set_octave_path(arg.manual_octave_path);
+});
