@@ -29,6 +29,8 @@ require('set_project_settings_user').init();
 
 // ---------------------------- INITIAL FUNCTIONS ----------------------------- //
 
+server_renderer.get_css_checksums();
+
 $('body').data('bokeh_state', 'not-ready');
 $('body').data('ts_state', 'checking');
 tools.multi_modal_fix();
@@ -63,8 +65,6 @@ window.onmessage = function(e){
     if (e.data == 'bokeh-loaded') {                    // bokeh completely loaded
         lg.info('-- BOKEH LOADED');
 
-        server_renderer.get_css_checksums();
-
         $('#bokeh_info').css('color', 'green');
         $('#bokeh_state').text(bokeh_iframe.contentWindow.Bokeh.version + ' (loaded)');
         $('#bokeh_state_loader').attr('hidden', '');
@@ -72,13 +72,7 @@ window.onmessage = function(e){
 
         // NOTE: be careful here, only one call to bokeh at the same time is possible
         server_renderer.check_tile_server_state();
-
-        var _check_css_checksum = setInterval(function() {
-            if (server_renderer.checksum_completed == true) {  // check if octave was already loaded or not
-                clearInterval(_check_css_checksum);
-                server_renderer.set_octave_path();
-            }
-        }, 100);
+        server_renderer.set_octave_path();
     }
 
     if (typeof(e.data.signal) !== 'undefined') {

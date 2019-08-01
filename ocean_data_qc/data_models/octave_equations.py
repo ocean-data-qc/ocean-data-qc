@@ -25,6 +25,10 @@ class OctaveEquations(Environment):
             * check octave path
             * set octave path manually
             * equations that can be used by octave
+
+        NOTE: If one new method is added to this class, its string name should be
+              added to the ComputedParameter class as well. This is to prevent from adding
+              it to the local context (local_dict)
     '''
     env = Environment
 
@@ -43,15 +47,20 @@ class OctaveEquations(Environment):
             if os.path.isdir(base_octave):
                 try:
                     odir = sorted(os.listdir(base_octave), reverse=True)
+                    possible_paths = [
+                        os.path.join(base_octave, vdir, 'mingw64', 'bin', 'octave-cli.exe'),
+                        os.path.join(base_octave, vdir, 'bin', 'octave-cli.exe'),
+                        os.path.join(base_octave, vdir, 'mingw32', 'bin', 'octave-cli.exe')
+                    ]
                     for vdir in odir:
-                        if os.path.isfile(os.path.join(base_octave, vdir, 'mingw64', 'bin', 'octave-cli.exe')):
-                            self.env.oct_exe_path = os.path.join(base_octave, vdir, 'mingw64', 'bin', 'octave-cli.exe')
+                        if os.path.isfile(possible_paths[0]):
+                            self.env.oct_exe_path = possible_paths[0]
                             break
-                        elif os.path.isfile(os.path.join(base_octave, vdir, 'bin', 'octave-cli.exe')):
-                            self.env.oct_exe_path = os.path.join(base_octave, vdir, 'bin', 'octave-cli.exe')
+                        elif os.path.isfile(possible_paths[1]):
+                            self.env.oct_exe_path = possible_paths[1]
                             break
-                        elif os.path.isfile(os.path.join(base_octave, vdir, 'mingw32', 'bin', 'octave-cli.exe')):
-                            self.env.oct_exe_path = os.path.join(base_octave, vdir, 'mingw32', 'bin', 'octave-cli.exe')
+                        elif os.path.isfile(possible_paths[2]):
+                            self.env.oct_exe_path = possible_paths[2]
                             break
                 except:
                     pass
@@ -99,7 +108,7 @@ class OctaveEquations(Environment):
         if self.env.oct_exe_path is not False:
             os.environ['OCTAVE_EXECUTABLE'] = self.env.oct_exe_path
             try:
-                oct2py_lib = importlib.import_module('oct2py')  # run this only if octave-cli is well located or >> try catch
+                oct2py_lib = importlib.import_module('oct2py')
                 self.oc = oct2py_lib.octave
                 self.oc.addpath(os.path.join(OCEAN_DATA_QC, 'octave'))
                 self.oc.addpath(os.path.join(OCEAN_DATA_QC, 'octave', 'CANYON-B'))

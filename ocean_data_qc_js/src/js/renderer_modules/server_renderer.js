@@ -16,6 +16,7 @@ const rmdir = require('rimraf');
 const urlExists = require('url-exists');
 const fs = require('fs');
 const { spawn } = require('child_process');
+const python_shell = require('python-shell');
 
 const lg = require('logging');
 const loc = require('locations');
@@ -178,7 +179,6 @@ module.exports = {
     set_octave_path: function(manual_octave_path=false) {
         lg.info('-- SET OCTAVE PATH METHOD');
         var self = this;
-        self.oct_det_end = false;
         if (manual_octave_path != false) {
             if (fs.existsSync(tools.file_to_path(manual_octave_path))) {
                 self.octave_path = manual_octave_path;
@@ -269,7 +269,6 @@ module.exports = {
                 data.set({'octave_path': self.octave_path }, loc.shared_data);
                 self.set_octave_version();
             }
-            self.oct_det_end = true;
         })
     },
 
@@ -290,35 +289,53 @@ module.exports = {
                 data.set({'octave_path': self.octave_path }, loc.shared_data);
                 self.set_octave_version();
             }
-            self.oct_det_end = true;
         });
     },
 
+    /* This method is used to add a hash file as a parameter in the links to css files.
+    *  The files will be loaded from cache only if there are no new changes.
+    *
+    *  There is a simpler solution using the timestamp, but in this case the files
+    *  would be always reloaded: https://stackoverflow.com/a/8331646/4891717
+    */
     get_css_checksums: function() {
+        lg.info('-- GET CSS CHECKSUMS');
         var self = this;
-        self.checksum_completed = false
-        var call_params = {
-            'object': 'files.handler',
-            'method': 'get_css_checksums',
-        }
-        tools.call_promise(call_params).then((results) => {
-            // TODO: send SHA1 checksum values to the iframe to update the css src
-            lg.info('-- GET CSS CHECKSUMS COMPLETED');
-            $.each(results, function(key, value) {
-                if (key == 'bokeh_css_path') {
-                    $.each(results[key], function(file_name, hash) {
-                        // operator $= : https://www.w3schools.com/jquery/sel_attribute_end_value.asp
-                        var css = $("#bokeh_iframe").contents().find("link[href$='" + file_name + "']");
-                        css.attr('href', css.attr('href') + '?v=' + hash);
-                    });
-                } else if (key == 'electron_css_path') {
-                    $.each(results[key], function(file_name, hash) {
-                        var css = $("link[href$='" + file_name + "']");
-                        css.attr('href', css.attr('href') + '?v=' + hash);
-                    });
-                }
-            });
-            self.checksum_completed = true;
+        var py_options = {
+            mode: 'text',
+            pythonPath: self.python_path,
+            scriptPath: loc.scripts,
+        };
+        self.shell = python_shell.run('get_css_checksums.py', py_options, function (err, results) {
+            if (err || typeof(results) == 'undefined') {  // The script get_module_path.py did not return the correct path
+                lg.error('Error running get_css_checksums.py: ' + err);
+            } else {
+                results = results[0]
+                results = results.replace(/'/g,'"');
+                results = results.replace('\r','');
+                results = JSON.parse(results);  // try catch ??
+                $.each(results, function(key, value) {
+                    if (key == 'electron_css_path') {
+                        $.each(results[key], function(file_name, hash) {
+                            var css = $("link[href$='" + file_name + "']");
+                            css.attr('href', css.attr('href') + '?v=' + hash);
+                        });
+                        $('.welcome_container').fadeIn(500);
+                    } else if (key == 'bokeh_css_path') {
+                        // NOTE: I need to wait for bokeh here in order to assign the hashes to the css files
+                        var _check_bokeh_loaded = setInterval(function() {
+                            if ($('body').data('bokeh_state') == 'ready') {
+                                clearInterval(_check_bokeh_loaded);
+                                $.each(results[key], function(file_name, hash) {
+                                    // operator $= : https://www.w3schools.com/jquery/sel_attribute_end_value.asp
+                                    var css = $("#bokeh_iframe").contents().find("link[href$='" + file_name + "']");
+                                    css.attr('href', css.attr('href') + '?v=' + hash);
+                                });
+                            }
+                        }, 100);
+                    }
+                });
+            }
         });
     },
 
