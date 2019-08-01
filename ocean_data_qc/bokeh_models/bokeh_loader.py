@@ -74,8 +74,9 @@ class BokehLoader(Environment):
             'bridge_row',       # bk_bridge
             'bk_bridge',
             'cruise_data',      # only if a session is closed or the opening is cancelled
-            'f_handler',     # nothing important in the __init__ method
-            'ts_state'
+            'f_handler',        # nothing important in the __init__ method
+            'ts_state',
+            'oct_eq'            # octave path manager
         ]
         if reset != []:
             for elem in reset:
@@ -112,7 +113,7 @@ class BokehLoader(Environment):
         CruiseDataHandler()
 
     def reset_env_cruise_data(self):
-        lg.warning('-- RESET ENV + CRUISE DATA')
+        lg.info('-- RESET ENV + CRUISE DATA')
         self.reset_bokeh()
         self.reset_env(reset=['cruise_data'])
 

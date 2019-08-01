@@ -37,7 +37,7 @@ class OctaveEquations(Environment):
         self.env.oct_eq = self
 
         self.oc = None
-        self.env.oct_exe_path = False
+        self.oct_exe_path = False
         self.set_oct_exe_path()
 
     def guess_oct_exe_path(self):
@@ -54,33 +54,33 @@ class OctaveEquations(Environment):
                     ]
                     for vdir in odir:
                         if os.path.isfile(possible_paths[0]):
-                            self.env.oct_exe_path = possible_paths[0]
+                            self.oct_exe_path = possible_paths[0]
                             break
                         elif os.path.isfile(possible_paths[1]):
-                            self.env.oct_exe_path = possible_paths[1]
+                            self.oct_exe_path = possible_paths[1]
                             break
                         elif os.path.isfile(possible_paths[2]):
-                            self.env.oct_exe_path = possible_paths[2]
+                            self.oct_exe_path = possible_paths[2]
                             break
                 except:
                     pass
-            if self.env.oct_exe_path is False:
+            if self.oct_exe_path is False:
                 if shutil.which('octave-cli.exe'):
-                    self.env.oct_exe_path = shutil.which('octave-cli.exe')
+                    self.oct_exe_path = shutil.which('octave-cli.exe')
         else:
-            self.env.oct_exe_path = shutil.which('octave-cli')
+            self.oct_exe_path = shutil.which('octave-cli')
             if not shutil.which('octave-cli'):
                 try:
                     if os.path.isfile('/usr/local/bin/octave-cli'):
-                        self.env.oct_exe_path = '/usr/local/bin/octave-cli'
+                        self.oct_exe_path = '/usr/local/bin/octave-cli'
                     elif os.path.isdir('/Applications'):
                         for dname in os.listdir('/Applications'):
                             if fnmatch.fnmatch(dname, 'Octave-*'):
-                                self.env.oct_exe_path = os.path.join('/Applications', dname, 'Contents/Resources/usr/bin/octave-cli')
+                                self.oct_exe_path = os.path.join('/Applications', dname, 'Contents/Resources/usr/bin/octave-cli')
                 except:
                     pass
-        if self.env.oct_exe_path is not False:
-            # self.env.oct_exe_path = pathlib.Path(self.env.oct_exe_path).as_uri()
+        if self.oct_exe_path is not False:
+            # self.oct_exe_path = pathlib.Path(self.oct_exe_path).as_uri()
             return self.set_oct_exe_path()
         else:
             return {'octave_path': False }
@@ -96,17 +96,17 @@ class OctaveEquations(Environment):
         if path is not None:
             if sys.platform == 'win32':
                 if os.path.basename(path) != 'octave-cli.exe':
-                    self.env.oct_exe_path = os.path.join(path, 'octave-cli.exe')
+                    self.oct_exe_path = os.path.join(path, 'octave-cli.exe')
                 else:
-                    self.env.oct_exe_path = path
+                    self.oct_exe_path = path
             else:
                 if os.path.basename(path) != 'octave-cli':
-                    self.env.oct_exe_path = os.path.join(path, 'octave-cli')
+                    self.oct_exe_path = os.path.join(path, 'octave-cli')
                 else:
-                    self.env.oct_exe_path = path
+                    self.oct_exe_path = path
 
-        if self.env.oct_exe_path is not False:
-            os.environ['OCTAVE_EXECUTABLE'] = self.env.oct_exe_path
+        if self.oct_exe_path is not False:
+            os.environ['OCTAVE_EXECUTABLE'] = self.oct_exe_path
             try:
                 oct2py_lib = importlib.import_module('oct2py')
                 self.oc = oct2py_lib.octave
