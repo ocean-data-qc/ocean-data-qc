@@ -59,7 +59,7 @@ h5 {
 
 #panels {
     min-height: 270px;
-    height: 300px
+    height: 350px;
 }
 
 .card {
@@ -287,7 +287,7 @@ html, body, .bokeh_iframe {
     margin-right: 0px !important;
 }
 
-.performance_help {
+.performance_help, .possible_formats {
     color: #337ab5;
 }
 

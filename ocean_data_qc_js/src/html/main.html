@@ -101,10 +101,22 @@
           <div class="card">
             <div class="card-header card-title text-white">Start <div class="fa fa-home float-right"></div></div>
             <div class="card-body">
-              <p><a id="open_file" href="#">Open file...</a></p>
+              <p><a id="open_file" href="#">Open file...    </a><i class="fa fa-question-circle possible_formats" style="cursor: pointer;"></i></p>
+              <p>
+                <div id="possible_formats" class="alert alert-primary" role="alert" style="display: none;">
+                You can open files with some of the following formats:
+                    <ul style="margin-bottom: 0;">
+                        <li>CSV files with <strong><a class="open-in-browser" href="https://www.nodc.noaa.gov/woce/woce_v3/wocedata_1/whp/exchange/exchange_format_desc.htm">WHP format</a></strong>. This file format include metadata in the header, units and some keywords to identify the format.</li>
+                        <li>Plain CSV files. Just columns and rows.</li>
+                        <li>AQC files. This application can save the project in this format. The file includes the CSV file data and some metadata.</li>
+                    </ul>
+                </div>
+              </p>
+
               <!-- <p><a id="modify_settings" href="#">Set default layout</a></p> -->
               <!-- <p><a id="add_columns" href="#">Add possible layout parameters [TO-DO]</a></p>
               <p><a id="convert_to_whp" href="#">Convert file into WHP format [TO-DO]</a></p> -->
+
               <p><strong><a class="open-in-browser" href="https://github.com/ocean-data-qc/ocean-data-qc">GitHub Repository</a></strong></p>
               <p hidden><strong><a href="#" id="enable_dev_mode">Enable developer mode</a></strong></p>
             </div>

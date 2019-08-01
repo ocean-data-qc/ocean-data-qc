@@ -71,8 +71,8 @@ app.on('ready', function() {
     }
 
     main_window = new BrowserWindow({
-        width: 1280,
-        height: 720,
+        width: 1380,
+        height: 820,
         icon: path.join(__dirname, 'src/img/icon.png'),
         title: 'AtlantOS Ocean Data QC!'  // if not the title ocean_data_qc is shown for a moment
         // backgroundColour: '#e8e8e7'              // TODO: try to give a desktop application color

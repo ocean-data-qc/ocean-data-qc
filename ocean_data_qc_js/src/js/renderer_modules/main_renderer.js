@@ -133,6 +133,14 @@ $('#open_file').on('click', function (){
     ipcRenderer.send('open-dialog');
 })
 
+$('.possible_formats').on('click', function() {
+    if ($('#possible_formats').css('display') == 'none') {
+        $('#possible_formats').slideDown();
+    } else {
+        $('#possible_formats').slideUp();
+    }
+});
+
 $('#modify_settings').on('click', function() {
     require('set_project_settings_default').init();
 });
