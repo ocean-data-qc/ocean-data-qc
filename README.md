@@ -1,4 +1,4 @@
-# AtlantOS Ocean Data QC [![DOI](https://zenodo.org/badge/161626110.svg)](https://zenodo.org/badge/latestdoi/161626110)
+# AtlantOS Ocean Data QC [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2603121.svg)](https://doi.org/10.5281/zenodo.2603121)
 
 This software is an interactive tool for making the first Quality Control (1st QC, QC1) on Hydrographic Cruise Data. It is basically built in Python, Node, JavaScript, HTML5 and related technologies, and can run on multiple platforms.
 
@@ -10,7 +10,7 @@ It's not essential for this software to run, but in order to take advantage of t
 
 ### Using built-in installers
 
-* Windows x64: [ocean-data-qc-setup-1.1.0.exe](https://github.com/ocean-data-qc/ocean-data-qc/releases/download/v1.1.0/ocean-data-qc-setup-1.1.0.exe)
+* Windows x64: [ocean-data-qc-setup-1.1.1.exe](https://github.com/ocean-data-qc/ocean-data-qc/releases/download/v1.1.1/ocean-data-qc-setup-1.1.1.exe)
 * macOS: [ocean-data-qc-1.1.0.dmg](https://github.com/ocean-data-qc/ocean-data-qc/releases/download/v1.1.0/ocean-data-qc-1.1.0.dmg)
 * GNU/linux deb (Ubuntu, Debian,...): [ocean-data-qc_1.1.0_amd64.deb](https://github.com/ocean-data-qc/ocean-data-qc/releases/download/v1.1.0/ocean-data-qc_1.1.0_amd64.deb)
 * GNU/Linux rpm (RedHat, SuSe, ...): [ocean-data-qc-1.1.0.x86_64.rpm](https://github.com/ocean-data-qc/ocean-data-qc/releases/download/v1.1.0/ocean-data-qc-1.1.0.x86_64.rpm)
@@ -18,7 +18,7 @@ It's not essential for this software to run, but in order to take advantage of t
 
 Source code:
 
-* v1.1.0: [https://github.com/ocean-data-qc/ocean-data-qc/archive/v1.1.0.tar.gz](https://github.com/ocean-data-qc/ocean-data-qc/archive/v1.1.0.tar.gz) [![DOI](https://zenodo.org/badge/161626110.svg)](https://zenodo.org/badge/latestdoi/161626110)
+* v1.1.1: [https://github.com/ocean-data-qc/ocean-data-qc/archive/v1.1.1.tar.gz](https://github.com/ocean-data-qc/ocean-data-qc/archive/v1.1.1.tar.gz) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2603121.svg)](https://doi.org/10.5281/zenodo.2603121)
 
 ### Manual Installation
 
