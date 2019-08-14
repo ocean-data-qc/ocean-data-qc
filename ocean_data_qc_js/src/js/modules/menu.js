@@ -112,6 +112,7 @@ module.exports = {
                     click: function() { self.web_contents.send('export-whp'); }
                 },
                 { label: 'Export Actions History (CSV)...', accelerator: 'CmdOrCtrl+M', click: () => { self.menu_actions.export_moves(); } },
+                { label: 'Export Plots Images as PDF...', accelerator: 'CmdOrCtrl+P', click: () => { self.menu_actions.export_pdf(); } },
                 { type: 'separator' },
                 { label: 'Close Project', accelerator: 'CmdOrCtrl+W', click: () => { self.web_contents.send('close-embed-forms'); self.menu_actions.close_project(); } },
                 { label: "Exit", accelerator: "Command+Q", click: () => { self.menu_actions.server.close_with_exit_prompt(); } }

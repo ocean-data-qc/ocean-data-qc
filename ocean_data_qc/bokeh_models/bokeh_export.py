@@ -148,7 +148,7 @@ class BokehExport(Environment):
         story = []
         story.append(table)
         doc = SimpleDocTemplate(
-            path.join(EXPORT, 'exported_plots.pdf'),
+            path.join(EXPORT, 'plot_images.pdf'),
             pagesize=landscape(A4) if LANDSCAPE else A4,
             rightself.margin=self.margin, leftself.margin=self.margin,
             topself.margin=self.margin, bottomself.margin=self.margin
