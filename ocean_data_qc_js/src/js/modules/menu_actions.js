@@ -315,43 +315,6 @@ module.exports = {
     export_pdf: function() {
         var self = this;
         lg.warn('-- EXPORT PDF FILE');
-
-        var project_name = data.get('project_name', loc.proj_settings);
-        var moves_name = '';
-        if (project_name == false) {
-            moves_name = 'plot_images.pdf';
-        } else {
-            moves_name = project_name + '_plot_images.pdf';
-        }
-        dialog.showSaveDialog({
-                title: 'Export plots in pdf',
-                defaultPath: '~/' + moves_name,
-                filters: [{ extensions: ['pdf'] }]
-            }, function (fileLocation) {
-                if (typeof(fileLocation) !== 'undefined') {
-                    var exported_pdf_path = path.join(loc.proj_export, 'plot_images.pdf')
-
-                    var read = fs.createReadStream(exported_pdf_path);
-                    read.on("error", function(err) {
-                        self.web_contents.send('show-modal', {
-                            'type': 'ERROR',
-                            'msg': 'The file could not be saved!'
-                        });
-                    });
-
-                    var write = fs.createWriteStream(fileLocation);
-                    write.on("error", function(err) {
-                        self.web_contents.send('show-modal', {
-                            'type': 'ERROR',
-                            'msg': 'The file could not be saved!'
-                        });
-                    });
-                    write.on("close", function(ex) {
-                        self.web_contents.send('show-snackbar', {'msg': 'File saved!'});
-                    });
-                    read.pipe(write);
-                }
-            }
-        );
+        self.web_contents.send('export-pdf-file');
     }
 };

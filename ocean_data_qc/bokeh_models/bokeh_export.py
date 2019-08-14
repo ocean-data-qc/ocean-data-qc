@@ -7,6 +7,15 @@
 from bokeh.util.logconfig import bokeh_logger as lg
 from os import path, mkdir
 from shutil import rmtree
+from bokeh.io import export_svgs, export_png
+
+from reportlab.lib.pagesizes import A4, landscape
+from reportlab.platypus import Table, TableStyle, SimpleDocTemplate
+from reportlab.lib import colors
+from reportlab.lib.units import mm
+from bokeh.io import export_svgs, export_png
+from svglib.svglib import svg2rlg
+
 
 from ocean_data_qc.env import Environment
 from ocean_data_qc.constants import *
@@ -34,14 +43,10 @@ class BokehExport(Environment):
     def export_pdf(self):
         lg.warning('-- GENERATE PDF')
 
-        return {'success': True}
-
         # TODO: fix font problem
 
         self._prep_directory()
-
         i = 0
-
         for p in self.env.bk_plots:
             p.output_backend = 'svg'
 
@@ -62,6 +67,8 @@ class BokehExport(Environment):
         self._set_paper_sizes()
         self._build_tables()
         self._build_story()
+
+        return {'success': True }
 
     def _prep_directory(self):
         if not path.exists(EXPORT):
@@ -150,8 +157,8 @@ class BokehExport(Environment):
         doc = SimpleDocTemplate(
             path.join(EXPORT, 'plot_images.pdf'),
             pagesize=landscape(A4) if LANDSCAPE else A4,
-            rightself.margin=self.margin, leftself.margin=self.margin,
-            topself.margin=self.margin, bottomself.margin=self.margin
+            rightMargin=self.margin, leftMargin=self.margin,
+            topMargin=self.margin, bottomMargin=self.margin
         )
         doc.build(story)
 

@@ -12,6 +12,7 @@ app_module_path.addPath(path.join(__dirname, '../modals_renderer'));
 app_module_path.addPath(__dirname);
 
 const { ipcRenderer } = require('electron');
+const { dialog } = require('electron').remote;
 const rmdir = require('rimraf');
 const urlExists = require('url-exists');
 const fs = require('fs');
@@ -280,7 +281,7 @@ module.exports = {
             'args': self.octave_path,
         }
         tools.call_promise(params).then((results) => {
-            if (typeof(results) === 'undefined') {
+            if (typeof(results) === 'undefined' || results == null) {
                 lg.warn('>>Error detecting Octave executable: ' + err.message);
                 data.set({'octave_path': false, 'octave_version': false, }, loc.shared_data);
                 self.set_octave_info('Undetected in PATH');
@@ -339,7 +340,7 @@ module.exports = {
         });
     },
 
-    check_tile_server_state() {
+    check_tile_server_state: function() {
         lg.info('-- CHECK TILE SERVER STATE')
         // check ArcGIS Tile Server State
         urlExists('https://server.arcgisonline.com/arcgis/rest/services/Ocean/World_Ocean_Base/MapServer/tile/0/0/0', function(err, exists) {
@@ -358,5 +359,60 @@ module.exports = {
             }
             $('#argis_tile_server_state').css('font-weight', 'bold');
         });
+    },
+
+    export_pdf_file: function() {
+        var self = this;
+        lg.warn('-- EXPORT PDF FILE (server_renderer.js)');
+
+        var params = {
+            'object': 'bokeh.export',
+            'method': 'export_pdf'
+        }
+        tools.call_promise(params).then((result) => {
+            if (typeof(result['success']) !== 'undefined') {
+                lg.warn('SUCCESS VALUE: ' + result['success']);
+
+                var project_name = data.get('project_name', loc.proj_settings);
+                var moves_name = '';
+                if (project_name == false) {
+                    moves_name = 'plot_images.pdf';
+                } else {
+                    moves_name = project_name + '_plot_images.pdf';
+                }
+                dialog.showSaveDialog({
+                        title: 'Export plots in pdf',
+                        defaultPath: '~/' + moves_name,
+                        filters: [{ extensions: ['pdf'] }]
+                    }, function (fileLocation) {
+                        if (typeof(fileLocation) !== 'undefined') {
+                            var exported_pdf_path = path.join(loc.proj_export, 'plot_images.pdf')
+
+                            var read = fs.createReadStream(exported_pdf_path);
+                            read.on("error", function(err) {
+                                self.web_contents.send('show-modal', {
+                                    'type': 'ERROR',
+                                    'msg': 'The file could not be saved!'
+                                });
+                            });
+
+                            var write = fs.createWriteStream(fileLocation);
+                            write.on("error", function(err) {
+                                self.web_contents.send('show-modal', {
+                                    'type': 'ERROR',
+                                    'msg': 'The file could not be saved!'
+                                });
+                            });
+                            write.on("close", function(ex) {
+                                self.web_contents.send('show-snackbar', {'msg': 'File saved!'});
+                            });
+                            read.pipe(write);
+                        }
+                    }
+                );
+            }
+
+        });
+
     }
 }

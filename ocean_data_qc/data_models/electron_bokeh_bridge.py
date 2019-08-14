@@ -134,6 +134,8 @@ class ElectronBokehBridge(Environment):
             method = getattr(self.env.bk_plots_handler, method_str)
         elif obj == 'octave.equations':
             method = getattr(self.env.oct_eq, method_str)
+        elif obj == 'bokeh.export':
+            method = getattr(self.env.bk_export, method_str)
 
         result = False
         try:

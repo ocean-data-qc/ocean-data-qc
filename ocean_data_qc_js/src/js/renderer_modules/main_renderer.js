@@ -359,3 +359,7 @@ ipcRenderer.on('relaunch-bokeh', (event, arg) => {
 ipcRenderer.on('set-octave-path', (event, arg) => {
     server_renderer.set_octave_path(arg.manual_octave_path);
 });
+
+ipcRenderer.on('export-pdf-file', (event, arg) => {
+    server_renderer.export_pdf_file();
+});

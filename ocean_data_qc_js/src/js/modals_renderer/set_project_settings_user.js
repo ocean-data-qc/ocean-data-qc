@@ -29,7 +29,7 @@ module.exports = {
             lg.info('-- SET PROJECT SETTINGS USER');
             var url = path.join(loc.modals, 'set_project_settings_user.html');
             tools.load_modal(url, function() {
-                $('#project_name').val(path.basename(args.csv_file));
+                $('#project_name').val(path.basename(args.csv_file, '.csv'));
                 self.init_files(args.csv_file);
 
                 self.original_csv_pipe.on('close', function(){
