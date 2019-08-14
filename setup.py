@@ -49,7 +49,9 @@ requires = [
     'more_itertools >=4.3.0',
     'oct2py >=4.0.6',  # this should install scipy automatically
     'scipy >=1.1.0',
-    'tilecloud'
+    'tilecloud',
+    'svglib >=0.9.2',
+    'reportlab >=2.5.23',
 ]
 
 # TODO: when python setup.py develop >> jupyter lab should be installed as well to make tests
