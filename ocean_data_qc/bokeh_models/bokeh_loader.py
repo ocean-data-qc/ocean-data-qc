@@ -13,6 +13,7 @@ from ocean_data_qc.bokeh_models.bokeh_flags import BokehFlags
 from ocean_data_qc.bokeh_models.bokeh_events import BokehEvents
 from ocean_data_qc.bokeh_models.bokeh_map import BokehMap
 from ocean_data_qc.bokeh_models.bokeh_layout import BokehLayout
+from ocean_data_qc.bokeh_models.bokeh_export import BokehExport
 
 from ocean_data_qc.data_models.cruise_data_handler import CruiseDataHandler
 
@@ -45,6 +46,7 @@ class BokehLoader(Environment):
         BokehEvents()
         BokehFlags()
         BokehMap()
+        BokehExport()
         self.env.bk_layout.init_bokeh_layout()
 
     def reset_bokeh(self):
@@ -76,7 +78,8 @@ class BokehLoader(Environment):
             'cruise_data',      # only if a session is closed or the opening is cancelled
             'f_handler',        # nothing important in the __init__ method
             'ts_state',
-            'oct_eq'            # octave path manager
+            'oct_eq',           # octave path manager
+            'bk_export',
         ]
         if reset != []:
             for elem in reset:

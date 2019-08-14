@@ -101,6 +101,7 @@ class Environment(object):
     bk_flags = None
     bk_events = None
     bk_layout = None
+    bk_export = None                # Export plots in PNG, SVG, ZIP, PDF
 
     bk_bridge = None                # Messages Bridge object
     f_handler = None                # Files handler (mainly to extract and update JSON files), tabs are managed here as well
