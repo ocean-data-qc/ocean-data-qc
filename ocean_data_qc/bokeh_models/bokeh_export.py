@@ -5,7 +5,7 @@
 #########################################################################
 
 from bokeh.util.logconfig import bokeh_logger as lg
-from os import path, mkdir
+from os import path, mkdir, unlink, listdir
 from shutil import rmtree
 from bokeh.io import export_svgs, export_png
 
@@ -52,7 +52,7 @@ class BokehExport(Environment):
 
             # export_svgs(obj, filename=None, height=None, width=None, webdriver=None, timeout=5)
             export_svgs(
-                obj=p,
+                p,
                 filename=path.join(EXPORT, 'plot{}.svg'.format(i))
             )
 
@@ -75,12 +75,12 @@ class BokehExport(Environment):
             mkdir(EXPORT)       # TODO: remove folder when the process is finished
         else:
             lg.warning('Directory {} already exists. Cleaning...'.format(EXPORT))
-            for the_file in os.listdir(EXPORT):
+            for the_file in listdir(EXPORT):
                 file_path = path.join(EXPORT, the_file)
                 try:
                     if path.isfile(file_path):
-                        os.unlink(file_path)
-                    #elif os.path.isdir(file_path): shutil.rmtree(file_path)
+                        unlink(file_path)
+                    #elif path.isdir(file_path): shutil.rmtree(file_path)
                 except Exception as e:
                     lg.warning('Directory {} could not be cleaned'.format(EXPORT))
 
