@@ -71,6 +71,7 @@ app.on('ready', function() {
     }
 
     main_window = new BrowserWindow({
+        webPreferences: { nodeIntegration: true }, // https://stackoverflow.com/a/55908510/4891717
         width: 1380,
         height: 820,
         icon: path.join(__dirname, 'src/img/icon.png'),
