@@ -47,12 +47,12 @@ class OctaveEquations(Environment):
             if os.path.isdir(base_octave):
                 try:
                     odir = sorted(os.listdir(base_octave), reverse=True)
-                    possible_paths = [
-                        os.path.join(base_octave, vdir, 'mingw64', 'bin', 'octave-cli.exe'),
-                        os.path.join(base_octave, vdir, 'bin', 'octave-cli.exe'),
-                        os.path.join(base_octave, vdir, 'mingw32', 'bin', 'octave-cli.exe')
-                    ]
                     for vdir in odir:
+                        possible_paths = [
+                            os.path.join(base_octave, vdir, 'mingw64', 'bin', 'octave-cli.exe'),
+                            os.path.join(base_octave, vdir, 'bin', 'octave-cli.exe'),
+                            os.path.join(base_octave, vdir, 'mingw32', 'bin', 'octave-cli.exe')
+                        ]
                         if os.path.isfile(possible_paths[0]):
                             self.oct_exe_path = possible_paths[0]
                             break
