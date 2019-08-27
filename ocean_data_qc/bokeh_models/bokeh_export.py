@@ -48,11 +48,12 @@ class BokehExport(Environment):
         self._prep_directory()
         i = 0
         for p in self.env.bk_plots:
-            p.output_backend = 'svg'
+            lg.warning(type(p.plot))
+            p.plot.output_backend = 'svg'
 
             # export_svgs(obj, filename=None, height=None, width=None, webdriver=None, timeout=5)
             export_svgs(
-                p,
+                p.plot,
                 filename=path.join(EXPORT, 'plot{}.svg'.format(i))
             )
 
@@ -61,7 +62,7 @@ class BokehExport(Environment):
             self.drawing_list.append(svg2rlg(
                 path.join(EXPORT, 'plot{}.svg'.format(i))
             ))
-            p.output_backend = 'webgl'
+            p.plot.output_backend = 'webgl'  # retore backed value
             i += 1
 
         self._set_paper_sizes()
