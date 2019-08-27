@@ -49,8 +49,9 @@ var main_window = null;      // global reference of the window object
 
 // ----------------------- APP EVENTS -------------------------- //
 
-// Modify this line in the future if there is a better solution
-// or if the issue is solved https://stackoverflow.com/a/57288472/4891717
+// Modify this line in the future if there is a better solution:
+// GH issue: https://github.com/electron/electron/issues/18214
+// SO solution: https://stackoverflow.com/a/57288472/4891717
 app.commandLine.appendSwitch('disable-site-isolation-trials');
 
 app.on('ready', function() {
