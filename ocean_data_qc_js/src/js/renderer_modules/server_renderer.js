@@ -282,7 +282,7 @@ module.exports = {
         }
         tools.call_promise(params).then((results) => {
             if (typeof(results) === 'undefined' || results == null) {
-                lg.warn('>>Error detecting Octave executable: ' + err.message);
+                lg.warn('>>Error detecting Octave executable');
                 data.set({'octave_path': false, 'octave_version': false, }, loc.shared_data);
                 self.set_octave_info('Undetected in PATH');
             } else {
