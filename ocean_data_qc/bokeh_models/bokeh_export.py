@@ -41,33 +41,27 @@ class BokehExport(Environment):
         self.col_height = None
 
     def export_pdf(self):
-        lg.warning('-- GENERATE PDF')
-
-        # TODO: fix font problem
-
+        lg.warning('-- GENERATE PDF WITH PLOTS IN PNG FORMAT')
         self._prep_directory()
         i = 0
         for p in self.env.bk_plots:
-            lg.warning(type(p.plot))
-            p.plot.output_backend = 'svg'
+            lg.warning('>> EXPORTING PLOT (p.plot): {}'.format(p.plot))
+            filename = path.join(EXPORT, 'plot{}.png'.format(i))
+            lg.warning('>> FILENAME: {}'.format(filename))
+            lg.warning('>> OUTPUT_BACKEND: {}'.format(p.plot.output_backend))
 
-            # export_svgs(obj, filename=None, height=None, width=None, webdriver=None, timeout=5)
-            export_svgs(
-                p.plot,
-                filename=path.join(EXPORT, 'plot{}.svg'.format(i))
-            )
+            # p.plot.background_fill_color = None  # do all of this at the same time with "select"
+            # p.plot.border_fill_color = None
+            # p.toolbar_location = None
 
-            # create a new SVG or a PDF with the new layout
-            lg.warning('Reading drawing from plot.svg...')
-            self.drawing_list.append(svg2rlg(
-                path.join(EXPORT, 'plot{}.svg'.format(i))
-            ))
-            p.plot.output_backend = 'webgl'  # retore backed value
+            # export_png(obj, filename=None, height=None, width=None, webdriver=None, timeout=5)
+            export_png(p.plot, filename=filename, height=400, width=400)
+
             i += 1
 
-        self._set_paper_sizes()
-        self._build_tables()
-        self._build_story()
+        # self._set_paper_sizes()
+        # self._build_tables()
+        # self._build_story()
 
         return {'success': True }
 
