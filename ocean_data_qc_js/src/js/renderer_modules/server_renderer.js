@@ -390,7 +390,7 @@ module.exports = {
 
                             var read = fs.createReadStream(exported_pdf_path);
                             read.on("error", function(err) {
-                                self.web_contents.send('show-modal', {
+                                tools.show_modal({
                                     'type': 'ERROR',
                                     'msg': 'The file could not be saved!'
                                 });
@@ -398,13 +398,13 @@ module.exports = {
 
                             var write = fs.createWriteStream(fileLocation);
                             write.on("error", function(err) {
-                                self.web_contents.send('show-modal', {
+                                tools.show_modal({
                                     'type': 'ERROR',
                                     'msg': 'The file could not be saved!'
                                 });
                             });
                             write.on("close", function(ex) {
-                                self.web_contents.send('show-snackbar', {'msg': 'File saved!'});
+                                tools.show_snackbar('File saved!')
                             });
                             read.pipe(write);
                         }
