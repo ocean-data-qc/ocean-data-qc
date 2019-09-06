@@ -75,9 +75,8 @@
                         var models = window.Bokeh.index[Object.keys(window.Bokeh.index)[0]].model.document._all_models;
                         var model_id = null;
                         $.each(models, function (m_id) {
-                            if (models[m_id].constructor.name == 'TextInput') {
+                            if (models[m_id].attributes.name == 'bridge_text_input') {
                                 model_id = m_id;
-                                // console.log('>> TextInput Name: ' + models[m_id].attributes.name)
                             }
                         });
                         var input_bridge_text = models[model_id];
