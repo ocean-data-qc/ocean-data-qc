@@ -16,7 +16,7 @@ from bokeh.events import Reset, DoubleTap
 from bokeh.models.renderers import GlyphRenderer
 from bokeh.models.callbacks import CustomJS
 from bokeh.models.glyphs import Line
-from bokeh.models.markers import Scatter
+from bokeh.models.markers import Circle, Asterisk
 from bokeh.palettes import Reds3
 from bokeh.models.tools import (
     PanTool, BoxZoomTool, BoxSelectTool, WheelZoomTool,
@@ -94,7 +94,7 @@ class BokehPlots(Environment):
         for key in self.env.all_flags:  # TODO: set some order (overlapping layers)
             # TODO: Waiting for the GroupFilter by numeric value https://github.com/bokeh/bokeh/issues/7524
 
-            c = self.plot.scatter(
+            c = self.plot.circle(
                 x=self.x,
                 y=self.y,
                 size=4,
@@ -108,7 +108,7 @@ class BokehPlots(Environment):
                 nonselection_fill_color=CIRCLE_COLORS[key],
                 nonselection_fill_alpha=1.0,
             )
-            c.selection_glyph = Scatter(
+            c.selection_glyph = Circle(
                 line_color=Reds3[0],
                 line_alpha=1.0,
                 fill_color='yellow',
@@ -146,7 +146,7 @@ class BokehPlots(Environment):
         # profile colors = [..., light blue, blue, dark blue, red]
         for i in range(NPROF):
             color = self.env.profile_colors[i]
-            c = self.plot.scatter(
+            c = self.plot.circle(
                 x='{}_{}_{}'.format(self.tab, self.x, i),
                 y='{}_{}_{}'.format(self.tab, self.y, i),
                 line_color=color,
@@ -159,7 +159,7 @@ class BokehPlots(Environment):
                 nonselection_line_alpha=1.0,
                 nonselection_fill_alpha=1.0
             )
-            c.selection_glyph = Scatter(
+            c.selection_glyph = Circle(
                 line_color=RED,
                 fill_color='yellow',
                 line_alpha=1.0,
@@ -172,8 +172,8 @@ class BokehPlots(Environment):
                 * self.aux_asterisk_asterisk - marked asterisk
                 * self.aux_asteris_circle - center asterisk marked
         '''
-        self.asterisk = self.plot.scatter(
-            marker='asterisk',
+        self.asterisk = self.plot.asterisk(
+            # marker='asterisk',
             x='{}_{}'.format(self.tab, self.x),
             y='{}_{}'.format(self.tab, self.y),
             size=20,
@@ -187,8 +187,8 @@ class BokehPlots(Environment):
             nonselection_fill_alpha=0.0
         )
 
-        self.aux_asterisk = self.plot.scatter(
-            marker='asterisk',
+        self.aux_asterisk = self.plot.asterisk(
+            # marker='asterisk',
             x='{}_{}'.format(self.tab, self.x),
             y='{}_{}'.format(self.tab, self.y),
             size=17,
@@ -202,7 +202,7 @@ class BokehPlots(Environment):
             nonselection_fill_alpha=0.0
         )
 
-        self.aux_asterisk_circle = self.plot.scatter(
+        self.aux_asterisk_circle = self.plot.circle(
             x='{}_{}'.format(self.tab, self.x),
             y='{}_{}'.format(self.tab, self.y),
             size=3,
