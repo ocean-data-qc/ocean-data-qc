@@ -7,22 +7,24 @@
 from bokeh.util.logconfig import bokeh_logger as lg
 from os import path, mkdir, unlink, listdir
 from shutil import rmtree
-from bokeh.io import export_svgs, export_png
+import json
+import base64
+from io import BytesIO
 
 from reportlab.lib.pagesizes import A4, landscape
 from reportlab.platypus import Table, TableStyle, SimpleDocTemplate
 from reportlab.lib import colors
 from reportlab.lib.units import mm
-from bokeh.io import export_svgs, export_png
+from bokeh.io import export_svgs, export_png, create_webdriver
 from svglib.svglib import svg2rlg
-
 
 from ocean_data_qc.env import Environment
 from ocean_data_qc.constants import *
 
+from reportlab.lib.utils import ImageReader
+from reportlab.platypus import Image
+
 # TODO: move this parameters to the shared_data.json file?
-LANDSCAPE = False
-NCOLS = 3
 
 class BokehExport(Environment):
     ''' Export plots in PNG, SVG. All files will be gathered in a ZIP file or PDF
@@ -33,6 +35,7 @@ class BokehExport(Environment):
         lg.info('-- INIT BOKEH EXPORT')
         self.env.bk_export = self
 
+        self.tab_img = {}
         self.table_list = []
         self.drawing_list = []
         self.margin = None
@@ -40,28 +43,23 @@ class BokehExport(Environment):
         self.col_width = None
         self.col_height = None
 
-    def export_pdf(self):
+    def export_pdf(self, args=None):
         lg.warning('-- GENERATE PDF WITH PLOTS IN PNG FORMAT')
+        export_pdf = self.env.f_handler.get('export_pdf', PROJ_SETTINGS)
+        lg.warning('>> PROJ_SETTINGS, EXPORT_PDF: {}'.format(export_pdf))
+
+        self.landscape = export_pdf.get('landscape', False)
+        self.ncols = export_pdf.get('ncols', 2)
+        self.width = export_pdf.get('width', 80) * mm
+
+        tabs_images = args.get('tabs_images', None)
+        self.save_png_images(tabs_images)
         self._prep_directory()
-        i = 0
-        for p in self.env.bk_plots:
-            lg.warning('>> EXPORTING PLOT (p.plot): {}'.format(p.plot))
-            filename = path.join(EXPORT, 'plot{}.png'.format(i))
-            lg.warning('>> FILENAME: {}'.format(filename))
-            lg.warning('>> OUTPUT_BACKEND: {}'.format(p.plot.output_backend))
 
-            # p.plot.background_fill_color = None  # do all of this at the same time with "select"
-            # p.plot.border_fill_color = None
-            # p.toolbar_location = None
-
-            # export_png(obj, filename=None, height=None, width=None, webdriver=None, timeout=5)
-            export_png(p.plot, filename=filename, height=400, width=400)
-
-            i += 1
-
-        # self._set_paper_sizes()
-        # self._build_tables()
-        # self._build_story()
+        self._set_paper_sizes()
+        tabs_order = args.get('tabs_order', None)
+        self._build_tables(tabs_order)
+        self._build_story()
 
         return {'success': True }
 
@@ -80,7 +78,7 @@ class BokehExport(Environment):
                     lg.warning('Directory {} could not be cleaned'.format(EXPORT))
 
     def _set_paper_sizes(self):
-        if LANDSCAPE:               # DIN A4: 210 × 297 mm
+        if self.landscape:               # DIN A4: 210 × 297 mm
             page_width = 297 * mm
         else:
             page_width = 210 * mm
@@ -89,69 +87,66 @@ class BokehExport(Environment):
         self.cell_padding = 3 * mm
 
         table_width = page_width - (self.margin * 2)      # create a similar calculation for landscape paper
-        self.col_width = int(table_width / NCOLS)         # integer value in points
-        self.col_height = int(table_width / NCOLS) + self.cell_padding * 2
+        self.col_width = int(table_width / self.ncols)         # integer value in points
+        self.col_height = int(table_width / self.ncols) + self.cell_padding * 2
 
     def _build_data(self, tab_name):
-        ''' Scale plots and create a data matrix
+        ''' Create a data matrix with the plot images
             in order to create the final table with reportlab
         '''
         lg.warning('-- BUILD DATA')
-
-        sx = sy = self.col_width / drawing.minWidth()   # drawing.minWidth() returns points as unit
-        drawing.scale(sx, sy)
-
         def group_per_chunks(l, n):
             # Yield successive n-sized chunks from l
             for i in range(0, len(l), n):
                 yield l[i:i + n]
 
-        drawing_sublist = [self.drawing_list[p] for p in self.env.tabs_flags_plots[tab_name]['plots']]
-        data = list(group_per_chunks(drawing_sublist, NCOLS))
-        if len(data[-1]) < NCOLS:
-            data[-1] = data[-1] + [None] * (NCOLS - len(data[-1]))
+        data = list(group_per_chunks(self.tab_img[tab_name], self.ncols))
+        if len(data[-1]) < self.ncols:
+            data[-1] = data[-1] + [None] * (self.ncols - len(data[-1]))
 
-        data.insert(0, [tab_name] + [None] * (NCOLS - 1))
-
-        # data.insert(1, [None] * NCOLS)  # separation
+        data.insert(0, [tab_name] + [None] * (self.ncols - 1))  # Title
+        # data.insert(1, [None] * self.ncols)  # separation
 
         print('DATA: {}'.format(data))
         return data
 
-
-    def _build_tables(self):
+    def _build_tables(self, tabs_order=None):
         lg.warning('-- BUILD DATA')
-        for tab_name in list(self.env.tabs_flags_plots.keys()):
-            data = self.build_data(tab_name)
+        if tabs_order is not None:
+            for tab_name in tabs_order:
+                data = self._build_data(tab_name)
 
-            table = Table(     # Flowable object
-                data,
-                colWidths=self.col_width,
-                rowHeights=[5 * mm + self.cell_padding] + [self.col_height] * (len(data) - 1),
-                # hAlign='LEFT',
-                repeatRows=1
-            )
+                table = Table(     # Flowable object
+                    data,
+                    colWidths=self.col_width,
+                    rowHeights=[5 * mm + self.cell_padding] + [self.col_height] * (len(data) - 1),
+                    # hAlign='LEFT',
+                    repeatRows=1
+                )
 
-            table.setStyle(TableStyle([
-                # ('GRID', (0,0), (-1,-1), 0.25, colors.black),
+                table.setStyle(TableStyle([
+                    # ('GRID', (0,0), (-1,-1), 0.25, colors.black),
 
-                # LEADING ROW
-                ('LINEBELOW', (0, 0), (NCOLS - 1, 0), 0.5, colors.black),
-                ('SPAN', (0, 0), (NCOLS - 1, 0)),                           # colspan
-                ('FONTSIZE', (0, 0), (NCOLS - 1, 0), 12),
+                    # LEADING ROW
+                    ('LINEBELOW', (0, 0), (self.ncols - 1, 0), 0.5, colors.black),
+                    ('SPAN', (0, 0), (self.ncols - 1, 0)),                           # colspan
+                    ('FONTSIZE', (0, 0), (self.ncols - 1, 0), 12),
 
-                ('BOTTOMPADDING', (0, 0), (-1, -1), self.cell_padding),
-                ('TOPPADDING', (0, 1), (-1, -1), self.cell_padding),
-            ]))
-            self.table_list.append(table)
+                    ('BOTTOMPADDING', (0, 0), (-1, -1), self.cell_padding),
+                    ('TOPPADDING', (0, 1), (-1, -1), self.cell_padding),
+                ]))
+                self.table_list.append(table)
+
+        lg.warning('>> SELF.TABLE_LIST: {}'.format(self.table_list))
 
     def _build_story(self):
         lg.warning('-- Building reportlab story')
         story = []
-        story.append(table)
+        for table in self.table_list:
+            story.append(table)
         doc = SimpleDocTemplate(
             path.join(EXPORT, 'plot_images.pdf'),
-            pagesize=landscape(A4) if LANDSCAPE else A4,
+            pagesize=landscape(A4) if self.landscape else A4,
             rightMargin=self.margin, leftMargin=self.margin,
             topMargin=self.margin, bottomMargin=self.margin
         )
@@ -170,3 +165,44 @@ class BokehExport(Environment):
                 rmtree(EXPORT)
         except Exception as e:
             lg.warning('Temp "export" directory could not be cleaned: {}'.format(e))
+
+    def scale_png_image(self, fileish, width: int) -> Image:
+        """ scales image with given width. fileish may be file or path """
+        img = ImageReader(fileish)
+        orig_width, height = img.getSize()
+        aspect = height / orig_width
+        return Image(fileish, width=width, height=width * aspect)
+
+    def save_png_images(self, tabs_images=None):
+        ''' base64_images is a string, the result to convert it in an object:
+            INPUT >>
+
+            {
+                '0': [
+                    "data:image/png;base64,iVBORw0KGgoAAAANSUh .... ",
+                    "data:image/png;base64,sdfsdgrgwergweERGWErgWERGwh .... ",
+                ]
+                '1': ["data:image/png;base64,iVBORw0KGgoAAAANSUh .... "]
+            }
+
+            OUTPUT >>
+
+            self.tab_img = {
+                'SALNTY': [
+                    Platypus Flowable Image,
+                    Platypus Flowable Image,
+                ]
+                'CTMTMP': [Image obj]
+            }
+        '''
+        lg.warning('-- SAVE PNG IMAGES')
+        if tabs_images is not None:
+            for key in tabs_images.keys():
+                self.tab_img[key] = []
+                for img in tabs_images[key]:
+                    img = bytes(img.split(',')[1], 'ascii')  # ascii is the default encoding?
+                    img = base64.b64decode(img)
+                    img_bytes = BytesIO(img)
+                    img_bytes.seek(0)
+                    scaled_image = self.scale_png_image(fileish=img_bytes, width=self.width)
+                    self.tab_img[key].append(scaled_image)

@@ -253,7 +253,13 @@ class BokehEvents(Environment):
                 toolbar_location='left',  # TODO: separate the toolbars to set some tools active by default,
                                           #       like this the hover icon can be shown as well
             )
-            panel_list.append(Panel(child=gp, title=tab))  # TODO: closable=True
+            name = 'panel_{}'.format(tab.lower())
+            lg.warning('>> PANEL NAME: {}'.format(name))
+            panel_list.append(Panel(
+                name='panel_{}'.format(tab.lower()),
+                child=gp,
+                title=tab,
+            ))  # TODO: closable=True
 
         lg.info('>> TABS WIDGET: {}'.format(self.env.tabs_widget))
         if self.env.tabs_widget is None:

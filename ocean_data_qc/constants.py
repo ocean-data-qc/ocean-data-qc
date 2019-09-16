@@ -99,7 +99,7 @@ CIRCLE_COLORS = {
     9: '#ad0ac1',         # pink
 }
 
-# ----------------------- LOCATIONS ---------------------------------- #
+# ----------------------- FILE PATHS ---------------------------------- #
 
 OCEAN_DATA_QC = path.realpath(
     path.dirname(

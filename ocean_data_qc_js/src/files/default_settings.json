@@ -7,6 +7,11 @@
         "plots_height": 300,
         "titles":false
     },
+    "export_pdf": {
+        "landscape": false,
+        "ncols": 2,
+        "width": 80
+    },
     "default_columns": [
         "EXPOCODE",
         "SECT",

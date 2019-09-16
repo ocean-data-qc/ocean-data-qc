@@ -117,7 +117,10 @@ class ElectronBokehBridge(Environment):
             )
             return
 
-        lg.info('>> OBJ: {} | METHOD: {} | ARGS: {}'.format(obj, method_str, args))
+        if len(str(args)) < 500:
+            lg.info('>> OBJ: {} | METHOD: {} | ARGS: {}'.format(obj, method_str, args))
+        else:
+            lg.info('>> OBJ: {} | METHOD: {} | ARGS VERY LONG'.format(obj, method_str))
 
         # TODO: try to return the object directly with eval, instead of creating an elif for each model
         if obj == 'cruise.data':
