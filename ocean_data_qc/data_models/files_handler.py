@@ -15,7 +15,6 @@ from os import path
 import os
 import json
 import shutil
-import hashlib
 
 
 class Graph():
