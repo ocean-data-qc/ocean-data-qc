@@ -52,10 +52,10 @@ requires = [
     'tilecloud',
 
     # libraries related to export svg, png and pdf files
-    'svglib >=0.9.2',
+    # 'svglib >=0.9.2',
     'reportlab >=2.5.23',
-    'selenium >=3.141.0',
-    'phantomjs-binary >=2.1.3',  # TODO: download directly from here: https://github.com/jayjiahua/phantomjs-bin-pip/raw/master/phantomjs_bin/bin/windows/phantomjs.exe
+    # 'selenium >=3.141.0',
+    # 'phantomjs-binary >=2.1.3',  # TODO: download directly from here: https://github.com/jayjiahua/phantomjs-bin-pip/raw/master/phantomjs_bin/bin/windows/phantomjs.exe
                                  # download pahtomjs.exe into the scripts folder and remove dependency
                                  # set BOKEH_PHANTOMJS_PATH env vble is also possible
 ]
