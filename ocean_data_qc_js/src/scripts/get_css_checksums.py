@@ -17,8 +17,9 @@ import sys
 '''
 
 file_paths = []
-filters = ('.css') #, '.js')
+filters = ('.css', '.js')
 cache_paths = {
+    'bokeh_js_path': os.path.join(OCEAN_DATA_QC, 'static', 'js'),
     'bokeh_css_path': os.path.join(OCEAN_DATA_QC, 'static', 'css'),
     'electron_css_path': os.path.join(OCEAN_DATA_QC_JS, 'src', 'css'),
     # 'electron_js_path': os.path.join(OCEAN_DATA_QC_JS, 'src', 'js'),

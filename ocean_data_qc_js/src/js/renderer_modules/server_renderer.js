@@ -315,6 +315,7 @@ module.exports = {
                 results = results.replace(/'/g,'"');
                 results = results.replace('\r','');
                 results = JSON.parse(results);  // try catch ??
+                console.log(results)
                 $.each(results, function(key, value) {
                     if (key == 'electron_css_path') {
                         $.each(results[key], function(file_name, hash) {
@@ -322,15 +323,20 @@ module.exports = {
                             css.attr('href', css.attr('href') + '?v=' + hash);
                         });
                         $('.welcome_container').fadeIn(500);
-                    } else if (key == 'bokeh_css_path') {
+                    } else if (key == 'bokeh_css_path' || key == 'bokeh_js_path') {
                         // NOTE: I need to wait for bokeh here in order to assign the hashes to the css files
                         var _check_bokeh_loaded = setInterval(function() {
                             if ($('body').data('bokeh_state') == 'ready') {
                                 clearInterval(_check_bokeh_loaded);
                                 $.each(results[key], function(file_name, hash) {
-                                    // operator $= : https://www.w3schools.com/jquery/sel_attribute_end_value.asp
-                                    var css = $("#bokeh_iframe").contents().find("link[href$='" + file_name + "']");
-                                    css.attr('href', css.attr('href') + '?v=' + hash);
+                                    if (key == 'bokeh_css_path') {
+                                        // operator $= : https://www.w3schools.com/jquery/sel_attribute_end_value.asp
+                                        var css = $("#bokeh_iframe").contents().find("link[href$='" + file_name + "']");
+                                        css.attr('href', css.attr('href') + '?v=' + hash);
+                                    } else if (key == 'bokeh_js_path') {
+                                        var js = $("#bokeh_iframe").contents().find("script[src$='" + file_name + "']");
+                                        js.attr('src', js.attr('src') + '?v=' + hash);
+                                    }
                                 });
                             }
                         }, 100);
