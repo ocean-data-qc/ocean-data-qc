@@ -15,8 +15,6 @@ from reportlab.lib.pagesizes import A4, landscape
 from reportlab.platypus import Table, TableStyle, SimpleDocTemplate
 from reportlab.lib import colors
 from reportlab.lib.units import mm
-from bokeh.io import export_svgs, export_png, create_webdriver
-from svglib.svglib import svg2rlg
 
 from ocean_data_qc.env import Environment
 from ocean_data_qc.constants import *
@@ -206,3 +204,22 @@ class BokehExport(Environment):
                     img_bytes.seek(0)
                     scaled_image = self.scale_png_image(fileish=img_bytes, width=self.width)
                     self.tab_img[key].append(scaled_image)
+
+    def prep_bigger_plots(self):
+        lg.warning('-- PREP BIGGER PLOTS')
+
+        for bp in self.env.bk_plots:
+            big_width = 2
+            bp.plot.title.text_font_size = '20pt'
+            bp.plot.xaxis.axis_line_width = big_width
+            bp.plot.yaxis.axis_line_width = big_width
+            bp.plot.xaxis.axis_label_text_font_size = '15pt'
+            bp.plot.yaxis.axis_label_text_font_size = '15pt'
+
+            bp.plot.xaxis.major_tick_line_width = big_width
+            bp.plot.yaxis.major_tick_line_width = big_width
+            bp.plot.xaxis.minor_tick_line_width = big_width
+            bp.plot.yaxis.minor_tick_line_width = big_width
+
+            bp.plot.xaxis.major_label_text_font_size = '10pt'
+            bp.plot.yaxis.major_label_text_font_size = '10pt'
