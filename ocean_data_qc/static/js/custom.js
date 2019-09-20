@@ -10,54 +10,6 @@ function get_input_bridge_text() {
     return models[model_id];
 }
 
-function screenshot() {
-    // $("#bokeh_iframe").contents().find('.tabs_widget_col').children().children().not(".bk-tabs-header");
-    console.log('-- SCREENSHOT')
-
-    // var params = {
-    //     'object': 'bokeh.export',
-    //     'method': 'prep_bigger_plots',
-    // }
-    // var input_bridge_text = get_input_bridge_text();
-    // input_bridge_text.value = JSON.stringify(params);
-    // var button = $('.bridge_button>div>button')
-    // button.click();
-    // return;
-
-
-    var tabs_title = $('.bk-tabs-header .bk-tab');
-    var tabs_order = []
-    $.each(tabs_title, function(tab_title_index, tab_title_dom) {
-        tabs_order.push($(tab_title_dom).html())
-    });
-    var tabs = $(".tabs_widget_col>div>div:not('.bk-tabs-header')");
-    var tabs_images = {}
-    $.each(tabs, function(tab_index, tab_dom){
-        var canvas_dom = $(tab_dom).find('.bk-canvas');
-        var images = []
-        $.each(canvas_dom, function(canvas_key, canvas){
-            images.push(canvas.toDataURL("image/png", 1.0));
-        });
-        tabs_images[tabs_order[tab_index]] = images;
-        images = [];
-    });
-
-    console.log(tabs_images);
-
-    var params = {
-        'object': 'bokeh.export',
-        'method': 'export_pdf',
-        'args': {
-            'tabs_images': tabs_images,
-            'tabs_order': tabs_order
-        }
-    }
-    var input_bridge_text = get_input_bridge_text();
-    input_bridge_text.value = JSON.stringify(params);
-    var button = $('.bridge_button>div>button')
-    button.click();
-}
-
 oldLog = console.log;
 console.log = function (message) {
     if(message.localeCompare('Bokeh items were rendered successfully') == 0){

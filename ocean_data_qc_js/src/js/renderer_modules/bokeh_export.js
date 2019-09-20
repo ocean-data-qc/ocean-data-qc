@@ -32,9 +32,6 @@ module.exports = {
         tools.call_promise(params).then((result) => {
             if (result != null && typeof(result['success']) !== 'undefined') {
                 lg.warn('prep_bigger_plots SUCCESS VALUE: ' + result['success']);
-
-                // TODO: how to wait for everything to be resized >> I cannot detect it
-
                 self.get_tab_images();
                 var params = {
                     'object': 'bokeh.export',
@@ -46,11 +43,8 @@ module.exports = {
                 }
                 tools.call_promise(params).then((result) => {
                     if (result != null && typeof(result['success']) !== 'undefined') {
-
                         lg.warn('SUCCESS VALUE: ' + result['success']);
-
                         self.save_pdf();
-
                     }
                 });
             }
@@ -119,6 +113,8 @@ module.exports = {
                         tools.show_snackbar('File saved!')
                     });
                     read.pipe(write);
+
+                    // TODO: reset plots values
                 }
             }
         );
