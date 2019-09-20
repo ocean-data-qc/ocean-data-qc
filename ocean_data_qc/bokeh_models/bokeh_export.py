@@ -244,3 +244,46 @@ class BokehExport(Environment):
             bp.aux_asterisk.glyph.size = 85            # 17
             bp.aux_asterisk_circle.glyph.size = 15     # 3
         return {'success': True }
+
+    def restore_plot_sizes(self):
+        lg.warning('-- RESTORE PLOT SIZES')
+        lg.warning(self.env.tabs_widget.tabs)
+
+        for bp in self.env.bk_plots:
+            bp.plot.background_fill_color = 'whitesmoke'
+            bp.plot.border_fill_color = 'whitesmoke'
+
+            # TODO: go to the figure definition in bokeh to check which are the original values
+
+            original_width = 1
+            if bp.plot.title:
+                bp.plot.title.text_font_size = '10pt'
+            bp.plot.xaxis.axis_line_width = original_width
+            bp.plot.yaxis.axis_line_width = original_width
+            bp.plot.xaxis.axis_label_text_font_size = '20pt'
+            bp.plot.yaxis.axis_label_text_font_size = '20pt'
+
+            bp.plot.xaxis.major_tick_line_width = original_width
+            bp.plot.yaxis.major_tick_line_width = original_width
+            bp.plot.xaxis.minor_tick_line_width = original_width
+            bp.plot.yaxis.minor_tick_line_width = original_width
+
+            bp.plot.xaxis.major_label_text_font_size = '5pt'
+            bp.plot.yaxis.major_label_text_font_size = '5pt'
+
+            # TODO: get values from proj_settings file
+            bp.plot.width = 300
+            bp.plot.height = 300
+
+            for c in bp.circles:
+                c.glyph.size = 4                      # original 4
+
+            bp.ml_prof_line.glyph.line_width = 2      # original 2
+
+            for p in bp.prof_line_circles:
+                p.glyph.size = 4                      # 4
+
+            bp.asterisk.glyph.size = 20               # 20
+            bp.aux_asterisk.glyph.size = 17           # 17
+            bp.aux_asterisk_circle.glyph.size = 3     # 3
+        return {'success': True }

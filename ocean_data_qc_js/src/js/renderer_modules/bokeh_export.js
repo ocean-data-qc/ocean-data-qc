@@ -114,9 +114,25 @@ module.exports = {
                     });
                     read.pipe(write);
 
-                    // TODO: reset plots values
+                    self.restore_plot_sizes();
                 }
             }
         );
+    },
+
+    restore_plot_sizes: function() {
+        lg.warn('-- RESTORE PLOT SIZES');
+        var self = this;
+        var params = {
+            'object': 'bokeh.export',
+            'method': 'restore_plot_sizes',
+        }
+        tools.call_promise(params).then((result) => {
+            if (result != null && typeof(result['success']) !== 'undefined') {
+                lg.warn('restore_plot_sizes SUCCESS VALUE: ' + result['success']);
+
+                // TODO:restore spinning here
+            }
+        });
     }
 }
