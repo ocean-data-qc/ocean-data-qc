@@ -207,19 +207,40 @@ class BokehExport(Environment):
 
     def prep_bigger_plots(self):
         lg.warning('-- PREP BIGGER PLOTS')
+        lg.warning(self.env.tabs_widget.tabs)
 
         for bp in self.env.bk_plots:
-            big_width = 2
-            bp.plot.title.text_font_size = '20pt'
+            bp.plot.background_fill_color = 'white'
+            bp.plot.border_fill_color = 'white'
+
+            big_width = 4
+            if bp.plot.title:
+                bp.plot.title.text_font_size = '30pt'
             bp.plot.xaxis.axis_line_width = big_width
             bp.plot.yaxis.axis_line_width = big_width
-            bp.plot.xaxis.axis_label_text_font_size = '15pt'
-            bp.plot.yaxis.axis_label_text_font_size = '15pt'
+            bp.plot.xaxis.axis_label_text_font_size = '25pt'
+            bp.plot.yaxis.axis_label_text_font_size = '25pt'
 
             bp.plot.xaxis.major_tick_line_width = big_width
             bp.plot.yaxis.major_tick_line_width = big_width
             bp.plot.xaxis.minor_tick_line_width = big_width
             bp.plot.yaxis.minor_tick_line_width = big_width
 
-            bp.plot.xaxis.major_label_text_font_size = '10pt'
-            bp.plot.yaxis.major_label_text_font_size = '10pt'
+            bp.plot.xaxis.major_label_text_font_size = '20pt'
+            bp.plot.yaxis.major_label_text_font_size = '20pt'
+
+            bp.plot.width = 1200
+            bp.plot.height = 1200
+
+            for c in bp.circles:
+                c.glyph.size = 20                      # original 4
+
+            bp.ml_prof_line.glyph.line_width = 10      # original 2
+
+            for p in bp.prof_line_circles:
+                p.glyph.size = 20                      # 4
+
+            bp.asterisk.glyph.size = 100               # 20
+            bp.aux_asterisk.glyph.size = 85            # 17
+            bp.aux_asterisk_circle.glyph.size = 15     # 3
+        return {'success': True }

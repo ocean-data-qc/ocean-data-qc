@@ -49,6 +49,7 @@ class BokehPlots(Environment):
 
         self.plot = None            # plot initialization, should be this a list of plots? or use this class for each plot?
         self.circles = []
+        self.prof_line_circles = []
         self.asterisk = None
         self.astk_cds = None
         self.lasso_select = None
@@ -165,6 +166,7 @@ class BokehPlots(Environment):
                 line_alpha=1.0,
                 fill_alpha=1.0
             )
+            self.prof_line_circles.append(c)
 
     def _init_asterisk(self):
         ''' The asterisk is the mark for the current selected sample

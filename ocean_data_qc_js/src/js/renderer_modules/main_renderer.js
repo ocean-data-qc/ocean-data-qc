@@ -23,6 +23,7 @@ const lg = require('logging');
 const data = require('data');
 const tools = require('tools');
 const server_renderer = require('server_renderer');
+const bokeh_export = require('bokeh_export');
 
 
 require('set_project_settings_user').init();
@@ -361,5 +362,5 @@ ipcRenderer.on('set-octave-path', (event, arg) => {
 });
 
 ipcRenderer.on('export-pdf-file', (event, arg) => {
-    server_renderer.export_pdf_file();
+    bokeh_export.export_pdf_file();
 });

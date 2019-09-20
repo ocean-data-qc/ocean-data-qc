@@ -14,17 +14,15 @@ function screenshot() {
     // $("#bokeh_iframe").contents().find('.tabs_widget_col').children().children().not(".bk-tabs-header");
     console.log('-- SCREENSHOT')
 
-    var params = {
-        'object': 'bokeh.export',
-        'method': 'prep_bigger_plots',
-    }
-    var input_bridge_text = get_input_bridge_text();
-    input_bridge_text.value = JSON.stringify(params);
-    var button = $('.bridge_button>div>button')
-    button.click();
-
-
-    return;
+    // var params = {
+    //     'object': 'bokeh.export',
+    //     'method': 'prep_bigger_plots',
+    // }
+    // var input_bridge_text = get_input_bridge_text();
+    // input_bridge_text.value = JSON.stringify(params);
+    // var button = $('.bridge_button>div>button')
+    // button.click();
+    // return;
 
 
     var tabs_title = $('.bk-tabs-header .bk-tab');
