@@ -22,7 +22,6 @@ from ocean_data_qc.constants import *
 from reportlab.lib.utils import ImageReader
 from reportlab.platypus import Image
 
-# TODO: move this parameters to the shared_data.json file?
 
 class BokehExport(Environment):
     ''' Export plots in PNG, SVG. All files will be gathered in a ZIP file or PDF
@@ -40,11 +39,11 @@ class BokehExport(Environment):
         self.cell_padding = None
         self.col_width = None
         self.col_height = None
+        self.dflt_plot_attrs = {}
 
     def export_pdf(self, args=None):
-        lg.warning('-- GENERATE PDF WITH PLOTS IN PNG FORMAT')
+        lg.info('-- GENERATE PDF WITH PLOTS IN PNG FORMAT')
         export_pdf = self.env.f_handler.get('export_pdf', PROJ_SETTINGS)
-        lg.warning('>> PROJ_SETTINGS, EXPORT_PDF: {}'.format(export_pdf))
 
         self.landscape = export_pdf.get('landscape', False)
         self.ncols = export_pdf.get('ncols', 2)
@@ -63,7 +62,7 @@ class BokehExport(Environment):
 
     def _prep_directory(self):
         if not path.exists(EXPORT):
-            mkdir(EXPORT)       # TODO: remove folder when the process is finished
+            mkdir(EXPORT)
         else:
             lg.warning('Directory {} already exists. Cleaning...'.format(EXPORT))
             for the_file in listdir(EXPORT):
@@ -84,7 +83,7 @@ class BokehExport(Environment):
         self.margin = 25 * mm
         self.cell_padding = 3 * mm
 
-        table_width = page_width - (self.margin * 2)      # create a similar calculation for landscape paper
+        table_width = page_width - (self.margin * 2)           # create a similar calculation for landscape paper
         self.col_width = int(table_width / self.ncols)         # integer value in points
         self.col_height = int(table_width / self.ncols) + self.cell_padding * 2
 
@@ -92,7 +91,7 @@ class BokehExport(Environment):
         ''' Create a data matrix with the plot images
             in order to create the final table with reportlab
         '''
-        lg.warning('-- BUILD DATA')
+        lg.info('-- BUILD DATA')
         def group_per_chunks(l, n):
             # Yield successive n-sized chunks from l
             for i in range(0, len(l), n):
@@ -104,12 +103,10 @@ class BokehExport(Environment):
 
         data.insert(0, [tab_name] + [None] * (self.ncols - 1))  # Title
         # data.insert(1, [None] * self.ncols)  # separation
-
-        print('DATA: {}'.format(data))
         return data
 
     def _build_tables(self, tabs_order=None):
-        lg.warning('-- BUILD DATA')
+        lg.info('-- BUILD DATA')
         if tabs_order is not None:
             for tab_name in tabs_order:
                 data = self._build_data(tab_name)
@@ -135,10 +132,8 @@ class BokehExport(Environment):
                 ]))
                 self.table_list.append(table)
 
-        lg.warning('>> SELF.TABLE_LIST: {}'.format(self.table_list))
-
     def _build_story(self):
-        lg.warning('-- Building reportlab story')
+        lg.info('-- Building reportlab story')
         story = []
         for table in self.table_list:
             story.append(table)
@@ -149,20 +144,6 @@ class BokehExport(Environment):
             topMargin=self.margin, bottomMargin=self.margin
         )
         doc.build(story)
-
-    def _clean(self):
-        lg.warning('-- CLEAN BOKEH EXPORT')
-        self.table_list = []
-        self.drawing_list = []
-        self.margin = None
-        self.cell_padding = None
-        self.col_width = None
-        self.col_height = None
-        try:
-            if path.exists(EXPORT):
-                rmtree(EXPORT)
-        except Exception as e:
-            lg.warning('Temp "export" directory could not be cleaned: {}'.format(e))
 
     def scale_png_image(self, fileish, width: int) -> Image:
         """ scales image with given width. fileish may be file or path """
@@ -193,7 +174,7 @@ class BokehExport(Environment):
                 'CTMTMP': [Image obj]
             }
         '''
-        lg.warning('-- SAVE PNG IMAGES')
+        lg.info('-- SAVE PNG IMAGES')
         if tabs_images is not None:
             for key in tabs_images.keys():
                 self.tab_img[key] = []
@@ -207,8 +188,7 @@ class BokehExport(Environment):
 
     def prep_bigger_plots(self):
         lg.warning('-- PREP BIGGER PLOTS')
-        lg.warning(self.env.tabs_widget.tabs)
-
+        self._store_default_values()
         for bp in self.env.bk_plots:
             bp.plot.background_fill_color = 'white'
             bp.plot.border_fill_color = 'white'
@@ -245,36 +225,60 @@ class BokehExport(Environment):
             bp.aux_asterisk_circle.glyph.size = 15     # 3
         return {'success': True }
 
-    def restore_plot_sizes(self):
-        lg.warning('-- RESTORE PLOT SIZES')
-        lg.warning(self.env.tabs_widget.tabs)
+    def _store_default_values(self):
+        lg.info('-- STORE DEFAULT VALUES')
 
         for bp in self.env.bk_plots:
-            bp.plot.background_fill_color = 'whitesmoke'
-            bp.plot.border_fill_color = 'whitesmoke'
-
-            # TODO: go to the figure definition in bokeh to check which are the original values
-
-            original_width = 1
             if bp.plot.title:
-                bp.plot.title.text_font_size = '10pt'
-            bp.plot.xaxis.axis_line_width = original_width
-            bp.plot.yaxis.axis_line_width = original_width
-            bp.plot.xaxis.axis_label_text_font_size = '20pt'
-            bp.plot.yaxis.axis_label_text_font_size = '20pt'
+                self.dflt_plot_attrs['title_font_size'] = bp.plot.title.text_font_size
 
-            bp.plot.xaxis.major_tick_line_width = original_width
-            bp.plot.yaxis.major_tick_line_width = original_width
-            bp.plot.xaxis.minor_tick_line_width = original_width
-            bp.plot.yaxis.minor_tick_line_width = original_width
+        p = self.env.bk_plots[0].plot
+        self.dflt_plot_attrs = {
+            'background_fill_color': p.background_fill_color,
+            'border_fill_color': p.border_fill_color,
 
-            bp.plot.xaxis.major_label_text_font_size = '5pt'
-            bp.plot.yaxis.major_label_text_font_size = '5pt'
+            'xaxis_line_width': p.xaxis[0].axis_line_width,
+            'yaxis_line_width': p.yaxis[0].axis_line_width,
+            'xaxis_label_text_font_size': p.xaxis[0].axis_label_text_font_size,
+            'yaxis_label_text_font_size': p.yaxis[0].axis_label_text_font_size,
+            'xmajor_tick_line_width': p.xaxis[0].major_tick_line_width,
+            'ymajor_tick_line_width': p.yaxis[0].major_tick_line_width,
+            'xminor_tick_line_width': p.xaxis[0].minor_tick_line_width,
+            'yminor_tick_line_width': p.yaxis[0].minor_tick_line_width,
+            'xmajor_label_text_font_size': p.xaxis[0].major_label_text_font_size,
+            'ymajor_label_text_font_size': p.yaxis[0].major_label_text_font_size,
 
-            # TODO: get values from proj_settings file
-            bp.plot.width = 300
-            bp.plot.height = 300
+            'plot_width': p.width,
+            'plot_height': p.height,
+        }
 
+    def restore_plot_sizes(self):
+        lg.info('-- RESTORE PLOT SIZES')
+
+        for bp in self.env.bk_plots:
+            bp.plot.background_fill_color = self.dflt_plot_attrs['background_fill_color']
+            bp.plot.border_fill_color = self.dflt_plot_attrs['border_fill_color']
+
+            if bp.plot.title:
+                bp.plot.title.text_font_size = self.dflt_plot_attrs['title_font_size']
+
+            bp.plot.xaxis[0].axis_line_width = self.dflt_plot_attrs['xaxis_line_width']
+            bp.plot.yaxis[0].axis_line_width = self.dflt_plot_attrs['yaxis_line_width']
+            bp.plot.xaxis[0].axis_label_text_font_size = self.dflt_plot_attrs['xaxis_label_text_font_size']
+            bp.plot.yaxis[0].axis_label_text_font_size = self.dflt_plot_attrs['yaxis_label_text_font_size']
+
+            bp.plot.xaxis[0].major_tick_line_width = self.dflt_plot_attrs['xmajor_tick_line_width']
+            bp.plot.yaxis[0].major_tick_line_width = self.dflt_plot_attrs['ymajor_tick_line_width']
+            bp.plot.xaxis[0].minor_tick_line_width = self.dflt_plot_attrs['xminor_tick_line_width']
+            bp.plot.yaxis[0].minor_tick_line_width = self.dflt_plot_attrs['yminor_tick_line_width']
+
+            bp.plot.xaxis[0].major_label_text_font_size = self.dflt_plot_attrs['xmajor_label_text_font_size']
+            bp.plot.yaxis[0].major_label_text_font_size = self.dflt_plot_attrs['ymajor_label_text_font_size']
+
+            bp.plot.width = self.dflt_plot_attrs['plot_width']
+            bp.plot.height = self.dflt_plot_attrs['plot_height']
+
+            # TODO: create constants for these attributes
             for c in bp.circles:
                 c.glyph.size = 4                      # original 4
 
@@ -286,4 +290,19 @@ class BokehExport(Environment):
             bp.asterisk.glyph.size = 20               # 20
             bp.aux_asterisk.glyph.size = 17           # 17
             bp.aux_asterisk_circle.glyph.size = 3     # 3
+
+        self.tab_img = {}
+        self.table_list = []
+        self.drawing_list = []
+        self.margin = None
+        self.cell_padding = None
+        self.col_width = None
+        self.col_height = None
+        self.dflt_plot_attrs = {}
+
+        try:
+            if path.exists(EXPORT):
+                rmtree(EXPORT)
+        except Exception as e:
+            lg.warning('Temp "export" directory could not be cleaned: {}'.format(e))
         return {'success': True }

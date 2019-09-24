@@ -23,7 +23,8 @@ const data = require('data');
 module.exports = {
     export_pdf_file: function() {
         var self = this;
-        lg.warn('-- EXPORT PDF FILE (server_renderer.js)');
+        lg.info('-- EXPORT PDF FILE (server_renderer.js)');
+        tools.show_loader();
 
         var params = {
             'object': 'bokeh.export',
@@ -31,7 +32,7 @@ module.exports = {
         }
         tools.call_promise(params).then((result) => {
             if (result != null && typeof(result['success']) !== 'undefined') {
-                lg.warn('prep_bigger_plots SUCCESS VALUE: ' + result['success']);
+                lg.info('prep_bigger_plots SUCCESS VALUE: ' + result['success']);
                 self.get_tab_images();
                 var params = {
                     'object': 'bokeh.export',
@@ -43,7 +44,7 @@ module.exports = {
                 }
                 tools.call_promise(params).then((result) => {
                     if (result != null && typeof(result['success']) !== 'undefined') {
-                        lg.warn('SUCCESS VALUE: ' + result['success']);
+                        lg.info('SUCCESS VALUE: ' + result['success']);
                         self.save_pdf();
                     }
                 });
@@ -54,7 +55,7 @@ module.exports = {
     },
 
     get_tab_images: function() {
-        lg.warn('-- GET TAB IMAGES');
+        lg.info('-- GET TAB IMAGES');
         var self = this;
         self.tabs_order = []
         self.tabs_images = {}
@@ -121,7 +122,7 @@ module.exports = {
     },
 
     restore_plot_sizes: function() {
-        lg.warn('-- RESTORE PLOT SIZES');
+        lg.info('-- RESTORE PLOT SIZES');
         var self = this;
         var params = {
             'object': 'bokeh.export',
@@ -129,9 +130,9 @@ module.exports = {
         }
         tools.call_promise(params).then((result) => {
             if (result != null && typeof(result['success']) !== 'undefined') {
-                lg.warn('restore_plot_sizes SUCCESS VALUE: ' + result['success']);
+                lg.info('restore_plot_sizes SUCCESS VALUE: ' + result['success']);
 
-                // TODO:restore spinning here
+                tools.hide_loader();
             }
         });
     }

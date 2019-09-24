@@ -29,7 +29,7 @@ module.exports = {
     go_to_bokeh: function() {
         lg.info('-- GO TO BOKEH');
         var self = this;
-        self.show_loader();
+        tools.show_loader();
         var _checkBokehSate = setInterval(function() {
             lg.info('>> CHECK BOKEH STATE');
             if ($('body').data('bokeh_state') == 'ready' && $('body').data('ts_state') != 'checking') {  // check if bokeh is already loaded
@@ -53,18 +53,6 @@ module.exports = {
         }
         tools.call_promise(call_params).then((result) => {
             self.run_on_ready();
-        });
-    },
-
-    show_loader: function() {
-        $('.welcome_container').fadeOut('slow', function() {
-            $('.loader_container').fadeIn('slow');
-        });
-    },
-
-    hide_loader: function() {
-        $('.loader_container').fadeOut('slow', function() {
-            $('#bokeh_iframe').fadeIn('slow');
         });
     },
 
@@ -103,7 +91,7 @@ module.exports = {
 
     reload_bokeh: function(callback=null) {
         var self = this;
-        self.show_loader();
+        tools.show_loader();
         var call_params = {
             'object': 'bokeh.loader',
             'method': 'reload_bokeh',
@@ -111,7 +99,7 @@ module.exports = {
         tools.call_promise(call_params).then((result) => {
             lg.info('-- RELOADING BOKEH');
             self.run_on_ready();
-            self.hide_loader();
+            tools.hide_loader();
             if (callback != null) {
                 callback();
             }
@@ -148,7 +136,7 @@ module.exports = {
             'set_bokeh_menu': true
         });
         tools.show_default_cursor();
-        self.hide_loader();
+        tools.hide_loader();
     },
 
     come_back_to_welcome: function(reset_cruise_data=false) {

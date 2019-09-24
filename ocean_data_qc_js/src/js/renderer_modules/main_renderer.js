@@ -349,7 +349,7 @@ ipcRenderer.on('go-to-bokeh', (event, arg) => {
 });
 
 ipcRenderer.on('show-loader', (event, arg) => {
-    server_renderer.show_loader();
+    tools.show_loader();
 });
 
 ipcRenderer.on('relaunch-bokeh', (event, arg) => {
