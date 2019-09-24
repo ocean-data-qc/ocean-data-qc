@@ -5,6 +5,7 @@
 #########################################################################
 
 from ocean_data_qc.bokeh_models.bokeh_loader import BokehLoader
+from ocean_data_qc.bokeh_models.bokeh_layout import BokehLayout
 
 BokehLoader()
-
+BokehLayout()

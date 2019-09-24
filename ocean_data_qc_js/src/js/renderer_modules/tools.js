@@ -357,6 +357,18 @@ module.exports = {
         }
     },
 
+    show_loader: function() {
+        $('.welcome_container').fadeOut('slow', function() {
+            $('.loader_container').fadeIn('slow');
+        });
+    },
+
+    hide_loader: function() {
+        $('.loader_container').fadeOut('slow', function() {
+            $('#bokeh_iframe').fadeIn('slow');
+        });
+    },
+
     /** Convert a url "file:///C/..." to the path syntax "C:/..." */
     file_to_path: function(file_url=false) {
         // TODO: check if some modification is necessary on linux and mac

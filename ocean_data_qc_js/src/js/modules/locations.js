@@ -48,6 +48,7 @@ const locations = {
     'proj_moves': path.join(__user_data, 'files/tmp/moves.csv'),
     'proj_files': path.join(__user_data, 'files/tmp'),
     'proj_upd': path.join(__user_data, 'files/tmp/update'),
+    'proj_export': path.join(__user_data, 'files/tmp/export'),
 
     // SETTINGS FILES
     'shared_data': path.join(__user_data, 'files/shared_data.json'),

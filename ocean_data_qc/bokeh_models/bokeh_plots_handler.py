@@ -53,6 +53,7 @@ class BokehPlotsHandler(Environment):
                 'NITRAT': {
                     'flag': 'NITRAT_FLAG_W',       # default flag to mark in the dropdown
                     'plots': [0, 1, 2, 3]          # plot list in order to create the gridplot
+                                                   # positions in self.env.bk_plots
                 },
                 'SALNTY': {
                     'flag': 'SALNTY_FLAG_W',

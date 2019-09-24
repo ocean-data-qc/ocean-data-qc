@@ -99,7 +99,7 @@ CIRCLE_COLORS = {
     9: '#ad0ac1',         # pink
 }
 
-# ----------------------- LOCATIONS ---------------------------------- #
+# ----------------------- FILE PATHS ---------------------------------- #
 
 OCEAN_DATA_QC = path.realpath(
     path.dirname(
@@ -123,6 +123,7 @@ if not APPDATA:
 FILES = path.join(APPDATA, 'ocean-data-qc', 'files')
 TMP = path.join(APPDATA, 'ocean-data-qc', 'files', 'tmp')
 UPD = path.join(APPDATA, 'ocean-data-qc', 'files', 'tmp', 'update')
+EXPORT = path.join(APPDATA, 'ocean-data-qc', 'files', 'tmp', 'export')
 IMG = path.join(OCEAN_DATA_QC, 'static', 'img')
 
 PROJ_SETTINGS = path.join(TMP, 'settings.json')

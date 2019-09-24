@@ -310,5 +310,11 @@ module.exports = {
                 self.web_contents.send('reset-bokeh-cruise-data');
             });
         }
+    },
+
+    export_pdf: function() {
+        var self = this;
+        lg.warn('-- EXPORT PDF FILE');
+        self.web_contents.send('export-pdf-file');
     }
 };

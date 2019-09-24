@@ -23,6 +23,7 @@ const lg = require('logging');
 const data = require('data');
 const tools = require('tools');
 const server_renderer = require('server_renderer');
+const bokeh_export = require('bokeh_export');
 
 
 require('set_project_settings_user').init();
@@ -348,7 +349,7 @@ ipcRenderer.on('go-to-bokeh', (event, arg) => {
 });
 
 ipcRenderer.on('show-loader', (event, arg) => {
-    server_renderer.show_loader();
+    tools.show_loader();
 });
 
 ipcRenderer.on('relaunch-bokeh', (event, arg) => {
@@ -358,4 +359,8 @@ ipcRenderer.on('relaunch-bokeh', (event, arg) => {
 
 ipcRenderer.on('set-octave-path', (event, arg) => {
     server_renderer.set_octave_path(arg.manual_octave_path);
+});
+
+ipcRenderer.on('export-pdf-file', (event, arg) => {
+    bokeh_export.export_pdf_file();
 });

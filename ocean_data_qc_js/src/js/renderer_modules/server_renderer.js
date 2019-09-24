@@ -12,6 +12,7 @@ app_module_path.addPath(path.join(__dirname, '../modals_renderer'));
 app_module_path.addPath(__dirname);
 
 const { ipcRenderer } = require('electron');
+const { dialog } = require('electron').remote;
 const rmdir = require('rimraf');
 const urlExists = require('url-exists');
 const fs = require('fs');
@@ -28,7 +29,7 @@ module.exports = {
     go_to_bokeh: function() {
         lg.info('-- GO TO BOKEH');
         var self = this;
-        self.show_loader();
+        tools.show_loader();
         var _checkBokehSate = setInterval(function() {
             lg.info('>> CHECK BOKEH STATE');
             if ($('body').data('bokeh_state') == 'ready' && $('body').data('ts_state') != 'checking') {  // check if bokeh is already loaded
@@ -52,18 +53,6 @@ module.exports = {
         }
         tools.call_promise(call_params).then((result) => {
             self.run_on_ready();
-        });
-    },
-
-    show_loader: function() {
-        $('.welcome_container').fadeOut('slow', function() {
-            $('.loader_container').fadeIn('slow');
-        });
-    },
-
-    hide_loader: function() {
-        $('.loader_container').fadeOut('slow', function() {
-            $('#bokeh_iframe').fadeIn('slow');
         });
     },
 
@@ -102,7 +91,7 @@ module.exports = {
 
     reload_bokeh: function(callback=null) {
         var self = this;
-        self.show_loader();
+        tools.show_loader();
         var call_params = {
             'object': 'bokeh.loader',
             'method': 'reload_bokeh',
@@ -110,7 +99,7 @@ module.exports = {
         tools.call_promise(call_params).then((result) => {
             lg.info('-- RELOADING BOKEH');
             self.run_on_ready();
-            self.hide_loader();
+            tools.hide_loader();
             if (callback != null) {
                 callback();
             }
@@ -147,7 +136,7 @@ module.exports = {
             'set_bokeh_menu': true
         });
         tools.show_default_cursor();
-        self.hide_loader();
+        tools.hide_loader();
     },
 
     come_back_to_welcome: function(reset_cruise_data=false) {
@@ -280,8 +269,8 @@ module.exports = {
             'args': self.octave_path,
         }
         tools.call_promise(params).then((results) => {
-            if (typeof(results) === 'undefined') {
-                lg.warn('>>Error detecting Octave executable: ' + err.message);
+            if (typeof(results) === 'undefined' || results == null) {
+                lg.warn('>>Error detecting Octave executable');
                 data.set({'octave_path': false, 'octave_version': false, }, loc.shared_data);
                 self.set_octave_info('Undetected in PATH');
             } else {
@@ -314,6 +303,7 @@ module.exports = {
                 results = results.replace(/'/g,'"');
                 results = results.replace('\r','');
                 results = JSON.parse(results);  // try catch ??
+                console.log(results)
                 $.each(results, function(key, value) {
                     if (key == 'electron_css_path') {
                         $.each(results[key], function(file_name, hash) {
@@ -321,15 +311,20 @@ module.exports = {
                             css.attr('href', css.attr('href') + '?v=' + hash);
                         });
                         $('.welcome_container').fadeIn(500);
-                    } else if (key == 'bokeh_css_path') {
+                    } else if (key == 'bokeh_css_path' || key == 'bokeh_js_path') {
                         // NOTE: I need to wait for bokeh here in order to assign the hashes to the css files
                         var _check_bokeh_loaded = setInterval(function() {
                             if ($('body').data('bokeh_state') == 'ready') {
                                 clearInterval(_check_bokeh_loaded);
                                 $.each(results[key], function(file_name, hash) {
-                                    // operator $= : https://www.w3schools.com/jquery/sel_attribute_end_value.asp
-                                    var css = $("#bokeh_iframe").contents().find("link[href$='" + file_name + "']");
-                                    css.attr('href', css.attr('href') + '?v=' + hash);
+                                    if (key == 'bokeh_css_path') {
+                                        // operator $= : https://www.w3schools.com/jquery/sel_attribute_end_value.asp
+                                        var css = $("#bokeh_iframe").contents().find("link[href$='" + file_name + "']");
+                                        css.attr('href', css.attr('href') + '?v=' + hash);
+                                    } else if (key == 'bokeh_js_path') {
+                                        var js = $("#bokeh_iframe").contents().find("script[src$='" + file_name + "']");
+                                        js.attr('src', js.attr('src') + '?v=' + hash);
+                                    }
                                 });
                             }
                         }, 100);
@@ -339,7 +334,7 @@ module.exports = {
         });
     },
 
-    check_tile_server_state() {
+    check_tile_server_state: function() {
         lg.info('-- CHECK TILE SERVER STATE')
         // check ArcGIS Tile Server State
         urlExists('https://server.arcgisonline.com/arcgis/rest/services/Ocean/World_Ocean_Base/MapServer/tile/0/0/0', function(err, exists) {

@@ -117,7 +117,10 @@ class ElectronBokehBridge(Environment):
             )
             return
 
-        lg.info('>> OBJ: {} | METHOD: {} | ARGS: {}'.format(obj, method_str, args))
+        if len(str(args)) < 500:
+            lg.info('>> OBJ: {} | METHOD: {} | ARGS: {}'.format(obj, method_str, args))
+        else:
+            lg.info('>> OBJ: {} | METHOD: {} | ARGS VERY LONG'.format(obj, method_str))
 
         # TODO: try to return the object directly with eval, instead of creating an elif for each model
         if obj == 'cruise.data':
@@ -134,6 +137,8 @@ class ElectronBokehBridge(Environment):
             method = getattr(self.env.bk_plots_handler, method_str)
         elif obj == 'octave.equations':
             method = getattr(self.env.oct_eq, method_str)
+        elif obj == 'bokeh.export':
+            method = getattr(self.env.bk_export, method_str)
 
         result = False
         try:

@@ -21,9 +21,9 @@
         "provider": "github"
     },
     "engines": {
-        "node": ">=10.2.0",
-        "npm": ">=5.6.0",
-        "yarn": ">=1.12.1"
+        "node": ">=12.4.0",
+        "npm": ">=6.11.2",
+        "yarn": ">=1.17.3"
     },
     "keywords": [
         "atlantos",
@@ -64,7 +64,7 @@
     },
     "devDependencies": {
         "devtron": "^1.4.0",
-        "electron": "^3.1.0",
+        "electron": "^6.0.4",
         "electron-builder": "^20.31.2",
         "electron-debug": "^2.0.0"
     },

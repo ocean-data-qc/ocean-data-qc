@@ -34,7 +34,7 @@ module.exports = {
                     'method': 'get_cruise_data_columns'
                 }
                 tools.call_promise(params).then((cols_dict) => {
-                    lg.warn('>> COLUMNS: ' + JSON.stringify(cols_dict, null, 4));
+                    // lg.warn('>> COLUMNS: ' + JSON.stringify(cols_dict, null, 4));
                     self.file_columns = cols_dict['cols'];
                     self.cps_columns = cols_dict['cps'];
                     self.params = cols_dict['params'];
