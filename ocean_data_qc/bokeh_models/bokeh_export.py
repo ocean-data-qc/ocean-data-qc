@@ -189,6 +189,9 @@ class BokehExport(Environment):
     def prep_bigger_plots(self):
         lg.warning('-- PREP BIGGER PLOTS')
         self._store_default_values()
+
+        # TODO: update this code when the following issue is solved
+        # https://github.com/bokeh/bokeh/issues/9245
         for bp in self.env.bk_plots:
             bp.plot.background_fill_color = 'white'
             bp.plot.border_fill_color = 'white'
