@@ -254,7 +254,6 @@ class BokehEvents(Environment):
                                           #       like this the hover icon can be shown as well
             )
             name = 'panel_{}'.format(tab.lower())
-            lg.warning('>> PANEL NAME: {}'.format(name))
             panel_list.append(Panel(
                 name='panel_{}'.format(tab.lower()),
                 child=gp,

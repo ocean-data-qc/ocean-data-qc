@@ -32,7 +32,11 @@ module.exports = {
         tools.show_loader();
         var _checkBokehSate = setInterval(function() {
             lg.info('>> CHECK BOKEH STATE');
-            if ($('body').data('bokeh_state') == 'ready' && $('body').data('ts_state') != 'checking') {  // check if bokeh is already loaded
+            // NOTE: check if bokeh loading, the tile server and the octave detection are already done
+            if ($('#octave_version').text() != 'Checking...') {
+                lg.warn('>> OCTAVE DETECTION IS NOT FINISHED YET')
+            }
+            if ($('body').data('bokeh_state') == 'ready' && $('body').data('ts_state') != 'checking' && $('#octave_version').text() != 'Checking...') {
                 clearInterval(_checkBokehSate);
                 if ($('body').data('ts_state') == 'offline') {
                     ipcRenderer.send('run-tile-server');
