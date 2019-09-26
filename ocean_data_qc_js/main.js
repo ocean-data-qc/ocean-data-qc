@@ -159,7 +159,7 @@ ipcMain.on('open-octave-path-dialog', (event, arg) => {
             properties: ['openDirectory'],
         }, function(file_paths) {
             lg.info('>> OCTAVE FILE PATHS CHOSEN: ' + file_paths);
-            if (file_paths === undefined) return;
+            if (JSON.stringify(file_paths) == '[]') return;
             var file_path = file_paths[0];
 
             var web_contents = main_window.webContents;

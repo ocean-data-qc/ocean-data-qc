@@ -44,7 +44,7 @@ module.exports = {
             properties: ['openFile'],
         }, function (file_paths) {
                 self.web_contents.send('show-wait-cursor');
-                if (file_paths === undefined) {
+                if (JSON.stringify(file_paths) == '[]') {
                     self.web_contents.send('show-default-cursor');
                     return;
                 }
@@ -91,7 +91,7 @@ module.exports = {
     open_file: function (file_paths) {
         lg.info('-- OPEN FILE');
         var self = this;
-        if (file_paths === undefined) return;
+        if (JSON.stringify(file_paths) == '[]') return;
         self.web_contents.send('show-wait-cursor');
         var file_path = file_paths[0];
 
