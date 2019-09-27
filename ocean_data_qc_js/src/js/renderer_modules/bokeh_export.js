@@ -24,8 +24,16 @@ module.exports = {
     export_pdf_file: function() {
         var self = this;
         lg.info('-- EXPORT PDF FILE (server_renderer.js)');
-        tools.show_loader();
 
+        $('#bokeh_iframe').fadeOut('slow', function() {
+            $('.loader_container').fadeIn('slow', function() {
+                self.prep_bigger_plots();
+            });
+        });
+    },
+
+    prep_bigger_plots: function() {
+        var self = this;
         var params = {
             'object': 'bokeh.export',
             'method': 'prep_bigger_plots',
@@ -50,8 +58,6 @@ module.exports = {
                 });
             }
         });
-
-
     },
 
     get_tab_images: function() {
@@ -133,6 +139,7 @@ module.exports = {
                 lg.info('restore_plot_sizes SUCCESS VALUE: ' + result['success']);
 
                 tools.hide_loader();
+                // tools.show_default_cursor();
             }
         });
     }

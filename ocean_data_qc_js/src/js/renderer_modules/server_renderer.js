@@ -307,7 +307,6 @@ module.exports = {
                 results = results.replace(/'/g,'"');
                 results = results.replace('\r','');
                 results = JSON.parse(results);  // try catch ??
-                console.log(results)
                 $.each(results, function(key, value) {
                     if (key == 'electron_css_path') {
                         $.each(results[key], function(file_name, hash) {

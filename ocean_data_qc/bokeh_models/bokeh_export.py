@@ -22,6 +22,7 @@ from ocean_data_qc.constants import *
 from reportlab.lib.utils import ImageReader
 from reportlab.platypus import Image
 
+from bokeh.models import LinearAxis, Title
 
 class BokehExport(Environment):
     ''' Export plots in PNG, SVG. All files will be gathered in a ZIP file or PDF
@@ -199,6 +200,7 @@ class BokehExport(Environment):
             big_width = 4
             if bp.plot.title:
                 bp.plot.title.text_font_size = '30pt'
+
             bp.plot.xaxis.axis_line_width = big_width
             bp.plot.yaxis.axis_line_width = big_width
             bp.plot.xaxis.axis_label_text_font_size = '25pt'
@@ -230,13 +232,12 @@ class BokehExport(Environment):
 
     def _store_default_values(self):
         lg.info('-- STORE DEFAULT VALUES')
-
         for bp in self.env.bk_plots:
             if bp.plot.title:
                 self.dflt_plot_attrs['title_font_size'] = bp.plot.title.text_font_size
 
         p = self.env.bk_plots[0].plot
-        self.dflt_plot_attrs = {
+        self.dflt_plot_attrs.update({
             'background_fill_color': p.background_fill_color,
             'border_fill_color': p.border_fill_color,
 
@@ -253,7 +254,7 @@ class BokehExport(Environment):
 
             'plot_width': p.width,
             'plot_height': p.height,
-        }
+        })
 
     def restore_plot_sizes(self):
         lg.info('-- RESTORE PLOT SIZES')
