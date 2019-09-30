@@ -12,7 +12,6 @@ const portscanner = require('portscanner');
 const rmdir = require('rimraf');
 const url = require('url');
 const command_exists_sync = require('command-exists').sync;
-const is_dev = require('electron-is-dev');
 
 const {dialog} = require('electron');
 const {app} = require('electron');

@@ -12,7 +12,7 @@ app_module_path.addPath(path.join(__dirname, '../modals_renderer'));
 app_module_path.addPath(__dirname);
 
 const { ipcRenderer } = require('electron');
-const { dialog } = require('electron').remote;
+const command_exists_sync = require('command-exists').sync;
 const rmdir = require('rimraf');
 const urlExists = require('url-exists');
 const fs = require('fs');
@@ -283,6 +283,87 @@ module.exports = {
                 self.set_octave_version();
             }
         });
+    },
+
+    check_python_version: function() {
+        // TODO: repeated method, move to tools.js or somewhere else
+
+        var self = this;
+        return new Promise((resolve, reject) => {
+            var py_options = {
+                mode: 'text',
+                pythonPath: self.python_path,
+                scriptPath: loc.scripts
+            };
+            python_shell.run('get_python_version.py', py_options, function (err, results) {
+                if (err) {
+                    reject('>> Error running script: ' + err);
+                } else {
+                    if (typeof(results) !== 'undefined') {
+                        try {
+                            var v = parseInt(results[0].split('.')[0])
+                        } catch(err) {
+                            reject('Version could not be parsed');
+                        }
+                        if (v == 3) {
+                            resolve(true)
+                        } else {
+                            reject('Wrong python version: ' + results[0]);
+                        }
+                    }
+                }
+            });
+        });
+    },
+
+    /** Sets the python path
+     *    1. First check if python exists in the environment
+     *    2. If not it will use the local python instaled in the system
+     *  Sets scripts python path as well
+    */
+    set_python_path: function() {
+        // TODO: repeated method, move to tools.js or somewhere else
+
+        lg.info('-- SET PYTHON PATH (server_renderer.js)')
+        var self = this;
+        if (process.platform === 'win32' && fs.existsSync(loc.python_win)) {
+            self.python_path = loc.python_win;
+            self.script_env_path = loc.env_bin_win;
+        } else if (process.platform === 'darwin' && fs.existsSync(loc.python_mac)) {
+            self.python_path = loc.python_mac;
+            self.script_env_path = loc.env_bin_mac;
+        } else if (process.platform === 'linux' && fs.existsSync(loc.python_lin)) {
+            self.python_path = loc.python_lin;
+            self.script_env_path = loc.env_bin_lin;
+        } else {
+            self.python_path = 'python';
+        }
+        lg.info('>> (SET_PYTHON_PATH) SELF.PYTHON_PATH: ' + self.python_path)
+        self.check_python_version().then(() => {
+            self.get_css_checksums();
+        }).catch((err) => {
+            lg.warn('>> WRONG PYTHON PATH: ' + self.python_path);
+            lg.warn('>> ERR: ' + err);
+            if (command_exists_sync('python')) {
+                self.python_path = 'python'
+                self.check_python_version().then(() => {
+                    self.get_css_checksums();
+                }).catch((err) => {
+                    lg.warn('>> WRONG PYTHON PATH USED: ' + self.python_path);
+                    lg.warn('>> ERR: ' + err);
+                })
+            } else {
+                if (command_exists_sync('python3')) {
+                    self.python_path = 'python3'
+                    self.check_python_version().then(() => {
+                        self.get_css_checksums();
+                    }).catch((err) => {
+                        lg.warn('>> WRONG PYTHON PATH USED: ' + self.python_path);
+                        lg.warn('>> ERR: ' + err);
+                    })
+                }
+            }
+        })
     },
 
     /* This method is used to add a hash file as a parameter in the links to css files.
