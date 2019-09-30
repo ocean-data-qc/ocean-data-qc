@@ -30,7 +30,7 @@ require('set_project_settings_user').init();
 
 // ---------------------------- INITIAL FUNCTIONS ----------------------------- //
 
-server_renderer.get_css_checksums();
+server_renderer.set_python_path();
 
 $('body').data('bokeh_state', 'not-ready');
 $('body').data('ts_state', 'checking');
