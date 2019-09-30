@@ -155,17 +155,17 @@ class OctaveEquations(Environment):
         return ret
 
     def alk_nng2_vel13(self, LONGITUDE, LATITUDE, DPTH, THETA, SAL, NITRAT, PHSPHT, SILCAT, OXY):
-        ret = np.transpose(oc.alk_nng2_vel13(
+        ret = np.transpose(self.oc.alk_nng2_vel13(
             np.vstack((LONGITUDE, LATITUDE, -1 * DPTH, THETA, SAL, NITRAT, PHSPHT, SILCAT, OXY))))
         return ret
 
     def alk_nn_bro18(self, LONGITUDE, LATITUDE, DPTH, THETA, SAL, NITRAT, PHSPHT, SILCAT, OXY):
-        ret = np.transpose(oc.alk_nn_bro18(
+        ret = np.transpose(self.oc.alk_nn_bro18(
             np.vstack((LATITUDE, np.cos(np.deg2rad(LONGITUDE)), np.sin(np.deg2rad(LONGITUDE)), -1 * DPTH, THETA, SAL, PHSPHT, NITRAT, SILCAT, OXY))))
         return ret
 
     def alk_nnw3rmse_bro18(self, LONGITUDE, LATITUDE, DPTH, THETA, SAL, NITRAT, PHSPHT, SILCAT, OXY):
-        ret = np.transpose(oc.alk_nnw3rmse_bro18(
+        ret = np.transpose(self.oc.alk_nnw3rmse_bro18(
             np.vstack((LATITUDE, np.cos(np.deg2rad(LONGITUDE)), np.sin(np.deg2rad(LONGITUDE)), -1 * DPTH, THETA, SAL, PHSPHT, NITRAT, SILCAT, OXY))))
         return ret
 
