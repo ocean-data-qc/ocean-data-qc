@@ -10,15 +10,16 @@ It's not essential for this software to run, but in order to take advantage of t
 
 ### Using built-in installers
 
-* Windows x64: [ocean-data-qc-setup-1.1.1.exe](https://github.com/ocean-data-qc/ocean-data-qc/releases/download/v1.1.1/ocean-data-qc-setup-1.1.1.exe)
+* Windows x64: [ocean-data-qc-setup-1.2.0.exe](https://github.com/ocean-data-qc/ocean-data-qc/releases/download/v1.2.0/ocean-data-qc-setup-1.2.0.exe)
 * macOS: [ocean-data-qc-1.1.0.dmg](https://github.com/ocean-data-qc/ocean-data-qc/releases/download/v1.1.0/ocean-data-qc-1.1.0.dmg)
 * GNU/linux deb (Ubuntu, Debian,...): [ocean-data-qc_1.1.0_amd64.deb](https://github.com/ocean-data-qc/ocean-data-qc/releases/download/v1.1.0/ocean-data-qc_1.1.0_amd64.deb)
 * GNU/Linux rpm (RedHat, SuSe, ...): [ocean-data-qc-1.1.0.x86_64.rpm](https://github.com/ocean-data-qc/ocean-data-qc/releases/download/v1.1.0/ocean-data-qc-1.1.0.x86_64.rpm)
 * GNU/Linux snap: [ocean-data-qc_1.1.0_amd64.snap](https://github.com/ocean-data-qc/ocean-data-qc/releases/download/v1.1.0/ocean-data-qc_1.1.0_amd64.snap)
 
 Source code:
-
-* v1.1.1: [https://github.com/ocean-data-qc/ocean-data-qc/archive/v1.1.1.tar.gz](https://github.com/ocean-data-qc/ocean-data-qc/archive/v1.1.1.tar.gz) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2603121.svg)](https://doi.org/10.5281/zenodo.2603121)
+* latest: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2603121.svg)](https://doi.org/10.5281/zenodo.2603121)
+* v1.2.0: [https://github.com/ocean-data-qc/ocean-data-qc/archive/v1.2.0.tar.gz](https://github.com/ocean-data-qc/ocean-data-qc/archive/v1.2.0.tar.gz) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.34702185.svg)](https://doi.org/10.5281/zenodo.34702185)
+* v1.1.1: [https://github.com/ocean-data-qc/ocean-data-qc/archive/v1.1.1.tar.gz](https://github.com/ocean-data-qc/ocean-data-qc/archive/v1.1.1.tar.gz) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3340975.svg)](https://doi.org/10.5281/zenodo.3340975)
 
 ### Manual Installation
 
@@ -42,12 +43,12 @@ Source code:
 1. Install the node dependencies in the `ocean_data_qc_js` folder
 
         cd ocean_data_qc_js
-        yarn install             # or yarn install
+        yarn install
 
 1. Open the GUI from the `ocean_data_qc_js` folder
 
         cd ocean_data_qc_js
-        npm start               # or yarn start
+        yarn start               # or npm start
         (first time launching delays some time, please wait)
 
 ## Technologies Used
