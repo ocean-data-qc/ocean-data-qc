@@ -18,7 +18,7 @@ It's not essential for this software to run, but in order to take advantage of t
 
 Source code:
 * latest: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2603121.svg)](https://doi.org/10.5281/zenodo.2603121)
-* v1.2.0: [https://github.com/ocean-data-qc/ocean-data-qc/archive/v1.2.0.tar.gz](https://github.com/ocean-data-qc/ocean-data-qc/archive/v1.2.0.tar.gz) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.34702185.svg)](https://doi.org/10.5281/zenodo.34702185)
+* v1.2.0: [https://github.com/ocean-data-qc/ocean-data-qc/archive/v1.2.0.tar.gz](https://github.com/ocean-data-qc/ocean-data-qc/archive/v1.2.0.tar.gz) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3470218.svg)](https://doi.org/10.5281/zenodo.3470218)
 * v1.1.1: [https://github.com/ocean-data-qc/ocean-data-qc/archive/v1.1.1.tar.gz](https://github.com/ocean-data-qc/ocean-data-qc/archive/v1.1.1.tar.gz) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3340975.svg)](https://doi.org/10.5281/zenodo.3340975)
 
 ### Manual Installation
