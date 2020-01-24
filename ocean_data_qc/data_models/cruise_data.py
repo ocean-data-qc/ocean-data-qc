@@ -99,7 +99,6 @@ class CruiseData(CruiseDataExport):
                     lg.warning('Unable to sanitize flag %s for column %s', flag, column)
 
                 # NOTE: if the flag value is NaN or is not between [0-9] > throw error or reset to 9?
-                lg.warning('>> SANITIZING COLUMN FLAG: {}: {}'.format(flag, self.df[flag].tolist()))
                 if self.df[flag].isnull().any():
                     raise ValidationError(
                         'The flag column {} has a/some null value/s in the row/s '
