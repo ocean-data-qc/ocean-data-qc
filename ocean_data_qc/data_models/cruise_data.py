@@ -98,6 +98,25 @@ class CruiseData(CruiseDataExport):
                 except:
                     lg.warning('Unable to sanitize flag %s for column %s', flag, column)
 
+                # NOTE: if the flag value is NaN or is not between [0-9] > throw error or reset to 9?
+                lg.warning('>> SANITIZING COLUMN FLAG: {}: {}'.format(flag, self.df[flag].tolist()))
+                if self.df[flag].isnull().any():
+                    raise ValidationError(
+                        'The flag column {} has a/some null value/s in the row/s '
+                        '(row position taking into account just the data cells): {}'.format(
+                            flag, str(self.df[self.df[flag].isnull()].index.tolist())[1:-1]
+                        ),
+                        rollback=self.rollback
+                    )
+                if self.df[(self.df[flag] > 9.0) | (self.df[flag] < 0)].index.any():
+                    raise ValidationError(
+                        'The flag column {} must have values between 0-9 in the row '
+                        '(row position taking into account just the data cells): {}'.format(
+                            flag, str(self.df[(self.df[flag] > 9.0) | (self.df[flag] < 0)].index.tolist())[1:-1]
+                        ),
+                        rollback=self.rollback
+                    )
+
     def _add_column(self, column='', units=False):
         ''' Adds a column to the self.cols dictionary
             This dictionary is useful to select some columns by type
