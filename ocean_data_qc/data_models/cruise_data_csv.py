@@ -46,6 +46,13 @@ class CruiseDataCSV(CruiseData):
             first_len = -1
             row_number = 1
             for row in spamreader:
+                if row[0].startswith('#'):    # the csv file should not have comments
+                    csvfile.close()
+                    raise ValidationError(
+                        'The file should not start with the # character.',
+                        rollback=self.rollback
+                    )
+                    break
                 if row_number == 1 and '' in row:
                     csvfile.close()
                     raise ValidationError(
