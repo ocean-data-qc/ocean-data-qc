@@ -42,50 +42,61 @@ module.exports = {
             title: 'Open the AQC file...',
             filters: [{ name: 'AtlantOS Ocean Data QC file', extensions: ['csv'] }],
             properties: ['openFile'],
-        }, function (file_paths) {
-                self.web_contents.send('show-wait-cursor');
-                if (JSON.stringify(file_paths) == '[]') {
-                    self.web_contents.send('show-default-cursor');
-                    return;
-                }
-                var file_path = file_paths[0];
-                if (mime.lookup(file_path) == 'text/csv') {
-                    lg.info('Importing the CSV file name to the temporal folder...');
-                    try {
-                        if (!fs.existsSync(loc.proj_upd)) {  // TODO: remove folder if it is already created
-                            fs.mkdirSync(loc.proj_upd);
-                        }
-                        data.copy(file_path, path.join(loc.proj_upd, 'original.csv'), function() {
-                            lg.info('main.js - the original.csv file in proj_upd folder was created...')
-                            self.web_contents.send('compare-data');
-                        });
-                    } catch(err) {
-                        self.web_contents.send('show-default-cursor');
-                        self.web_contents.send('show-modal', {
-                            'type': 'ERROR',
-                            'msg': 'Something went wrong importing the new CSV file'
-                        });
-                    }
-                }else{
-                    // Actually it is impossible to get to here, because is out of domain ['csv']
-                    self.web_contents.send('show-default-cursor');
-                    self.web_contents.send('show-modal', {
-                        'type': 'ERROR',
-                        'msg': 'Wrong filetype!! It must be an CSV file.'
-                    });
-                }
+        }).then(result => {
+            lg.info(result);
+            if (result['canceled'] == false) {
+                self.update_from_csv_open_file(result['filePaths']);
             }
-        );
+        });
+    },
+
+    update_from_csv_open_file: function(file_paths) {
+        var self = this;
+        self.web_contents.send('show-wait-cursor');
+        if (JSON.stringify(file_paths) == '[]') {
+            self.web_contents.send('show-default-cursor');
+            return;
+        }
+        var file_path = file_paths[0];
+        if (mime.lookup(file_path) == 'text/csv') {
+            lg.info('Importing the CSV file name to the temporal folder...');
+            try {
+                if (!fs.existsSync(loc.proj_upd)) {  // TODO: remove folder if it is already created
+                    fs.mkdirSync(loc.proj_upd);
+                }
+                data.copy(file_path, path.join(loc.proj_upd, 'original.csv'), function() {
+                    lg.info('main.js - the original.csv file in proj_upd folder was created...')
+                    self.web_contents.send('compare-data');
+                });
+            } catch(err) {
+                self.web_contents.send('show-default-cursor');
+                self.web_contents.send('show-modal', {
+                    'type': 'ERROR',
+                    'msg': 'Something went wrong importing the new CSV file'
+                });
+            }
+        }else{
+            // Actually it is impossible to get to here, because is out of domain ['csv']
+            self.web_contents.send('show-default-cursor');
+            self.web_contents.send('show-modal', {
+                'type': 'ERROR',
+                'msg': 'Wrong filetype!! It must be an CSV file.'
+            });
+        }
     },
 
     open_dialog: function() {
         var self = this;
         dialog.showOpenDialog({
-                title: 'Open the AQC file...',
-                filters: [{ name: 'AtlantOS Ocean Data QC file', extensions: ['aqc', 'csv'] }],
-                properties: ['openFile'],
-            }, function(file_paths) { self.open_file(file_paths); }
-        );
+            title: 'Open the AQC file...',
+            filters: [{ name: 'AtlantOS Ocean Data QC file', extensions: ['aqc', 'csv'] }],
+            properties: ['openFile'],
+        }).then(result => {
+            lg.info(result);
+            if (result['canceled'] == false) {
+                self.open_file(result['filePaths']);
+            }
+        });
     },
 
     open_file: function (file_paths) {
