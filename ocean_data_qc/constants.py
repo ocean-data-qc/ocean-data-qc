@@ -62,6 +62,8 @@ COL_NAMES_MAPPING = [
     ('TCARBN', 'CT'),
     ('ALKALI', 'TALK'),
     ('ALKALI', 'ALK'),
+    ('PH_TOT', 'PH_T'),
+    ('PH_TOT', 'PH_TS'),
     ('PH_TOT', 'PHTS'),
     ('PH_TOT', 'PHTS25'),
     ('PH_TOT', 'PHTS25P0'),
