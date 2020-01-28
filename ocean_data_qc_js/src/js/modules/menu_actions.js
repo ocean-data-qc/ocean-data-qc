@@ -244,7 +244,7 @@ module.exports = {
         });
     },
 
-    export_moves: function() {
+    export_moves_dialog: function() {
         var self = this;
         lg.info('-- EXPORT MOVES --');
         var project_name = data.get('project_name', loc.proj_settings);
@@ -258,33 +258,41 @@ module.exports = {
                 title: 'Save Project',
                 defaultPath: '~/' + moves_name,
                 filters: [{ extensions: ['csv'] }]
-            }, function (fileLocation) {
-                if (typeof(fileLocation) !== 'undefined') {
-                    lg.info('>> No debe entrar por aquí ??');
-                    var moves_path = path.join(loc.proj_files, 'moves.csv')
-
-                    var read = fs.createReadStream(moves_path);
-                    read.on("error", function(err) {
-                        self.web_contents.send('show-modal', {
-                            'type': 'ERROR',
-                            'msg': 'The file could not be saved!'
-                        });
-                    });
-
-                    var write = fs.createWriteStream(fileLocation);
-                    write.on("error", function(err) {
-                        self.web_contents.send('show-modal', {
-                            'type': 'ERROR',
-                            'msg': 'The file could not be saved!'
-                        });
-                    });
-                    write.on("close", function(ex) {
-                        self.web_contents.send('show-snackbar', {'msg': 'File saved!'});
-                    });
-                    read.pipe(write);
+            }).then((results) => {
+                if (results['canceled'] == false) {
+                    self.export_moves(results);
                 }
             }
         );
+    },
+
+    export_moves: function (results) {
+        var self = this;
+        var fileLocation = results['filePath'];
+        if (typeof(fileLocation) !== 'undefined') {
+            lg.info('>> No debe entrar por aquí ??');
+            var moves_path = path.join(loc.proj_files, 'moves.csv')
+
+            var read = fs.createReadStream(moves_path);
+            read.on("error", function(err) {
+                self.web_contents.send('show-modal', {
+                    'type': 'ERROR',
+                    'msg': 'The file could not be saved!'
+                });
+            });
+
+            var write = fs.createWriteStream(fileLocation);
+            write.on("error", function(err) {
+                self.web_contents.send('show-modal', {
+                    'type': 'ERROR',
+                    'msg': 'The file could not be saved!'
+                });
+            });
+            write.on("close", function(ex) {
+                self.web_contents.send('show-snackbar', {'msg': 'File saved!'});
+            });
+            read.pipe(write);
+        }
     },
 
     edit_plot_layout_json: function() {

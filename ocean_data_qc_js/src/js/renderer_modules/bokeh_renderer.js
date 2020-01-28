@@ -135,7 +135,7 @@ ipcRenderer.on('export-whp', function() {
         'method': 'export_whp'
     }
     tools.call_promise(params).then((result) => {
-        data_renderer.export_whp_format();
+        data_renderer.export_whp_format_dialog();
     });
 });
 
@@ -146,7 +146,7 @@ ipcRenderer.on('export-csv', function() {
         'method': 'export_csv'
     }
     tools.call_promise(params).then((result) => {
-        data_renderer.export_csv_format();
+        data_renderer.export_csv_format_dialog();
     });
 });
 

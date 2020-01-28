@@ -53,7 +53,7 @@ module.exports = {
                 tools.call_promise(params).then((result) => {
                     if (result != null && typeof(result['success']) !== 'undefined') {
                         lg.info('SUCCESS VALUE: ' + result['success']);
-                        self.save_pdf();
+                        self.save_pdf_dialog();
                     }
                 });
             }
@@ -84,7 +84,8 @@ module.exports = {
         });
     },
 
-    save_pdf: function() {
+    save_pdf_dialog: function() {
+        lg.warn('-- SAVE PDF')
         var self = this;
         var project_name = data.get('project_name', loc.proj_settings);
         var moves_name = '';
@@ -94,37 +95,44 @@ module.exports = {
             moves_name = project_name + '_plot_images.pdf';
         }
         dialog.showSaveDialog({
-                title: 'Export plots in pdf',
-                defaultPath: '~/' + moves_name,
-                filters: [{ extensions: ['pdf'] }]
-            }, function (fileLocation) {
-                if (typeof(fileLocation) !== 'undefined') {
-                    var exported_pdf_path = path.join(loc.proj_export, 'plot_images.pdf')
-
-                    var read = fs.createReadStream(exported_pdf_path);
-                    read.on("error", function(err) {
-                        tools.show_modal({
-                            'type': 'ERROR',
-                            'msg': 'The file could not be saved!'
-                        });
-                    });
-
-                    var write = fs.createWriteStream(fileLocation);
-                    write.on("error", function(err) {
-                        tools.show_modal({
-                            'type': 'ERROR',
-                            'msg': 'The file could not be saved!'
-                        });
-                    });
-                    write.on("close", function(ex) {
-                        tools.show_snackbar('File saved!')
-                    });
-                    read.pipe(write);
-
-                    self.restore_plot_sizes();
-                }
+            title: 'Export plots in pdf',
+            defaultPath: '~/' + moves_name,
+            filters: [{ extensions: ['pdf'] }]
+        }).then((results) => {
+            if (results['canceled'] == false) {
+                self.save_pdf(results);
             }
-        );
+        });
+    },
+
+    save_pdf: function (results) {
+        var self = this;
+        var fileLocation = results['filePath'];
+        if (typeof(fileLocation) !== 'undefined') {
+            var exported_pdf_path = path.join(loc.proj_export, 'plot_images.pdf')
+
+            var read = fs.createReadStream(exported_pdf_path);
+            read.on("error", function(err) {
+                tools.show_modal({
+                    'type': 'ERROR',
+                    'msg': 'The file could not be saved!'
+                });
+            });
+
+            var write = fs.createWriteStream(fileLocation);
+            write.on("error", function(err) {
+                tools.show_modal({
+                    'type': 'ERROR',
+                    'msg': 'The file could not be saved!'
+                });
+            });
+            write.on("close", function(ex) {
+                tools.show_snackbar('File saved!')
+            });
+            read.pipe(write);
+
+            self.restore_plot_sizes();
+        }
     },
 
     restore_plot_sizes: function() {

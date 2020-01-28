@@ -188,7 +188,7 @@ class BokehExport(Environment):
                     self.tab_img[key].append(scaled_image)
 
     def prep_bigger_plots(self):
-        lg.warning('-- PREP BIGGER PLOTS')
+        lg.info('-- PREP BIGGER PLOTS')
         self._store_default_values()
 
         # TODO: update this code when the following issue is solved
