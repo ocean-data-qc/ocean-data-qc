@@ -1,4 +1,4 @@
-function out = alk_nncanyonb_bit18(data)
+function out = alkali_nncanyonb_bit18(data)
 %myFun - Description
 %
 % Syntax: output = myFun(data)

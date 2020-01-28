@@ -1,5 +1,5 @@
-function y1 = alk_nng2_vel13(x1)
-% [y1] = talk_nnet(x1) takes these arguments:
+function y1 = alkali_nng2_vel13(x1)
+% [y1] = talkali_nnet(x1) takes these arguments:
 %   x = 9xQ matrix, input #1
 % and returns:
 %   y = 1xQ matrix, output #1

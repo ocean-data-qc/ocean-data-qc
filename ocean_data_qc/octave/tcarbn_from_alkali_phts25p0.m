@@ -1,4 +1,4 @@
-function ret = tcarbon_from_alk_phts25p0(data)
+function ret = tcarbn_from_alkali_phts25p0(data)
 % get calculated carbon from talk and phsws25p0
 ALKALI=data(:,1);
 PH_TOT=data(:,2);

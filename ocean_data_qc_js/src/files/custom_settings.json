@@ -82,110 +82,105 @@
         "O18O16_FLAG_W",
         "SF6",
         "SF6_FLAG_W",
-        "THETA"
+        "THETA",
+        "N2O"
     ],
     "computed_params": [
         {
-            "param_name": "PRES",
+            "param_name": "_PRESSURE",
             "equation": "@pressure_combined(CTDPRS, DEPTH, LATITUDE)",
             "units": false,
             "precision": "2"
         },
         {
-            "param_name": "DPTH",
+            "param_name": "_DEPTH",
             "equation": "@depth_combined(CTDPRS, DEPTH, LATITUDE)",
             "units": false,
             "precision": "2"
         },
         {
-            "param_name": "_NITRAT",
+            "param_name": "_NITRATE",
             "equation": "@nitrate_combined(NITRAT, NITRIT, NO2_NO3)",
             "units": false,
             "precision": "2"
         },
         {
-            "param_name": "SAL",
+            "param_name": "_SALINITY",
             "equation": "@salinity_combined(CTDSAL, CTDSAL_FLAG_W, SALNTY, SALNTY_FLAG_W)",
             "units": false,
             "precision": "5"
         },
         {
-            "param_name": "OXY",
+            "param_name": "_OXYGEN",
             "equation": "@oxygen_combined(CTDOXY, CTDOXY_FLAG_W, OXYGEN, OXYGEN_FLAG_W)",
             "units": false,
             "precision": "3"
         },
         {
             "param_name": "_THETA",
-            "equation": "@ptmp(SAL, CTDTMP, PRES, 0)",
+            "equation": "@ptmp(_SALINITY, CTDTMP, _PRESSURE, 0)",
             "units": false,
             "precision": "5"
         },
         {
             "param_name": "SIGMA0",
-            "equation": "@pden(SAL, CTDTMP, PRES, 0) - 1000",
+            "equation": "@pden(_SALINITY, CTDTMP, _PRESSURE, 0) - 1000",
             "units": false,
             "precision": "5"
         },
         {
             "param_name": "SIGMA1",
-            "equation": "@pden(SAL, CTDTMP, PRES, 1000) - 1000",
+            "equation": "@pden(_SALINITY, CTDTMP, _PRESSURE, 1000) - 1000",
             "units": false,
             "precision": "5"
         },
         {
             "param_name": "SIGMA2",
-            "equation": "@pden(SAL, CTDTMP, PRES, 2000) - 1000",
+            "equation": "@pden(_SALINITY, CTDTMP, _PRESSURE, 2000) - 1000",
             "units": false,
             "precision": "5"
         },
         {
             "param_name": "SIGMA3",
-            "equation": "@pden(SAL, CTDTMP, PRES, 3000) - 1000",
+            "equation": "@pden(_SALINITY, CTDTMP, _PRESSURE, 3000) - 1000",
             "units": false,
             "precision": "5"
         },
         {
             "param_name": "SIGMA4",
-            "equation": "@pden(SAL, CTDTMP, PRES, 4000) - 1000",
+            "equation": "@pden(_SALINITY, CTDTMP, _PRESSURE, 4000) - 1000",
             "units": false,
             "precision": "5"
         },
         {
             "param_name": "AOU",
-            "equation": "@satO2(SAL, _THETA) / (22.414 * @dens(SAL, _THETA, 0) * 1E-6) - OXY",
+            "equation": "@satO2(_SALINITY, _THETA) / (22.414 * @dens(_SALINITY, _THETA, 0) * 1E-6) - _OXYGEN",
             "units": false,
             "precision": "3"
         },
         {
             "param_name": "AOU_GG92",
-            "equation": "@aou_gg(SAL, _THETA, OXY)",
+            "equation": "@aou_gg(_SALINITY, _THETA, _OXYGEN)",
             "units": false,
             "precision": "3"
         },
         {
             "param_name": "PO",
-            "equation": "OXY + 135 * PHSPHT ",
+            "equation": "_OXYGEN + 135 * PHSPHT ",
             "units": false,
             "precision": "3"
         },
         {
             "param_name": "NO",
-            "equation": "OXY + 9 * _NITRAT ",
+            "equation": "_OXYGEN + 9 * NITRATE ",
             "units": false,
             "precision": "3"
         },
         {
             "param_name": "NTA",
-            "equation": "ALKALI * 35 / SAL ",
+            "equation": "ALKALI * 35 / _SALINITY ",
             "units": false,
             "precision": "3"
-        },
-        {
-            "param_name": "TCARBN_ALK_RATIO",
-            "equation": "TCARBN / ALKALI",
-            "units": false,
-            "precision": "2"
         },
         {
             "param_name": "ALK_TCARBN_1_RATIO",
@@ -195,88 +190,94 @@
         },
         {
             "param_name": "ALK_NNG2_VEL13",
-            "equation": "@alk_nng2_vel13(LONGITUDE, LATITUDE, DPTH, _THETA, SAL, _NITRAT, PHSPHT, SILCAT, OXY)",
+            "equation": "@alkali_nng2_vel13(LONGITUDE, LATITUDE, _DEPTH, _THETA, _SALINITY, NITRATE, PHSPHT, SILCAT, _OXYGEN)",
             "units": false,
             "precision": "3"
         },
         {
-            "param_name": "ALK_NN_BRO18",
-            "equation": "@alk_nn_bro18(LONGITUDE, LATITUDE, DPTH, _THETA, SAL, _NITRAT, PHSPHT, SILCAT, OXY)",
-            "units": false,
-            "precision": "3"
-        },
-        {
-            "param_name": "ALK_NN3WRMSE_BRO18",
-            "equation": "@alk_nnw3rmse_bro18(LONGITUDE, LATITUDE, DPTH, _THETA, SAL, _NITRAT, PHSPHT, SILCAT, OXY)",
+            "param_name": "ALK_NNGV2_BRO19",
+            "equation": "@alkali_nngv2_bro19(LONGITUDE, LATITUDE, _DEPTH, _THETA, _SALINITY, NITRATE, PHSPHT, SILCAT, _OXYGEN)",
             "units": false,
             "precision": "3"
         },
         {
             "param_name": "ALK_NNCANYONB_BIT18",
-            "equation": "@alk_nncanyonb_bit18(DATE, LATITUDE, LONGITUDE, PRES, CTDTMP, SAL, OXY)",
+            "equation": "@alkali_nncanyonb_bit18(DATE, LATITUDE, LONGITUDE, _PRESSURE, CTDTMP, _SALINITY, _OXYGEN)",
             "units": false,
             "precision": "3"
         },
         {
             "param_name": "TCARBN_NNCANYONB_BIT18",
-            "equation": "@dic_nncanyonb_bit18(DATE, LATITUDE, LONGITUDE, PRES, CTDTMP, SAL, OXY)",
+            "equation": "@tcarbn_nncanyonb_bit18(DATE, LATITUDE, LONGITUDE, _PRESSURE, CTDTMP, _SALINITY, _OXYGEN)",
+            "units": false,
+            "precision": "3"
+        },
+        {
+            "param_name": "TCARBN_NNGV2LDEO_BRO20",
+            "equation": "@tcarbn_nngv2_bro20(LONGITUDE, LATITUDE, _DEPTH, _THETA, _SALINITY, NITRATE, PHSPHT, SILCAT, _OXYGEN, YEAR)",
             "units": false,
             "precision": "3"
         },
         {
             "param_name": "PHTS25P0_NNCANYONB_BIT18",
-            "equation": "@phts25p0_nncanyonb_bit18(DATE, LATITUDE, LONGITUDE, PRES, CTDTMP, SAL, OXY)",
+            "equation": "@phts25p0_nncanyonb_bit18(DATE, LATITUDE, LONGITUDE, _PRESSURE, CTDTMP, _SALINITY, _OXYGEN)",
             "units": false,
             "precision": "5"
         },
         {
             "param_name": "NITRAT_NNCANYONB_BIT18",
-            "equation": "@nitrat_nncanyonb_bit18(DATE, LATITUDE, LONGITUDE, PRES, CTDTMP, SAL, OXY)",
+            "equation": "@nitrat_nncanyonb_bit18(DATE, LATITUDE, LONGITUDE, _PRESSURE, CTDTMP, _SALINITY, _OXYGEN)",
             "units": false,
             "precision": "5"
         },
         {
             "param_name": "PHSPHT_NNCANYONB_BIT18",
-            "equation": "@phspht_nncanyonb_bit18(DATE, LATITUDE, LONGITUDE, PRES, CTDTMP, SAL, OXY)",
+            "equation": "@phspht_nncanyonb_bit18(DATE, LATITUDE, LONGITUDE, _PRESSURE, CTDTMP, _SALINITY, _OXYGEN)",
             "units": false,
             "precision": "5"
         },
         {
             "param_name": "SILCAT_NNCANYONB_BIT18",
-            "equation": "@silcat_nncanyonb_bit18(DATE, LATITUDE, LONGITUDE, PRES, CTDTMP, SAL, OXY)",
+            "equation": "@silcat_nncanyonb_bit18(DATE, LATITUDE, LONGITUDE, _PRESSURE, CTDTMP, _SALINITY, _OXYGEN)",
             "units": false,
             "precision": "5"
         },
         {
             "param_name": "TCARBN_CALCULATED_SWS",
-            "equation": "@tcarbon_from_alk_phsws25p0(ALKALI, PH_SWS, SAL, SILCAT, PHSPHT)",
+            "equation": "@tcarbn_from_alkali_phsws25p0(ALKALI, PH_SWS, _SALINITY, SILCAT, PHSPHT)",
             "units": false,
             "precision": "3"
         },
         {
             "param_name": "TCARBN_CALCULATED_TS",
-            "equation": "@tcarbon_from_alk_phts25p0(ALKALI, PH_TOT, SAL, SILCAT, PHSPHT)",
+            "equation": "@tcarbn_from_alkali_phts25p0(ALKALI, PH_TOT, _SALINITY, SILCAT, PHSPHT)",
             "units": false,
             "precision": "3"
         },
         {
             "param_name": "PHTS25P0_CALCULATED",
-            "equation": "@phts25p0_from_alk_tcarbn(ALKALI, TCARBN, SAL, SILCAT, PHSPHT)",
+            "equation": "@phts25p0_from_alkali_tcarbn(ALKALI, TCARBN, _SALINITY, SILCAT, PHSPHT)",
             "units": false,
             "precision": "5"
         },
         {
-            "param_name": "DELTA_PH",
+            "param_name": "PH_TOT_DIFF",
             "equation": "PH_TOT - PHTS25P0_CALCULATED",
             "units": false,
             "precision": "5"
         },
         {
-            "param_name": "AT_DIFF",
-            "equation": " ALK_NN3WRMSE_BRO18 - ALKALI ",
+            "param_name": "ALK_DIFF",
+            "equation": " ALK_NNGV2_BRO19 - ALKALI ",
             "units": false,
             "precision": "5"
         },
+        {
+            "param_name": "TCARBN_DIFF",
+            "equation": " TCARBN_NNGV2LDEO_BRO20 - TCARBN ",
+            "units": false,
+            "precision": "5"
+        },        
         {
             "param_name": "OXY_DIFF",
             "equation": " CTDOXY - OXYGEN ",
@@ -295,17 +296,17 @@
             {
                 "title": "Temperature profiles",
                 "x": "CTDTMP",
-                "y": "PRES"
+                "y": "_PRESSURE"
             },
             {
                 "title": "Salinity profiles",
                 "x": "SALNTY",
-                "y": "PRES"
+                "y": "_PRESSURE"
             },
             {
                 "title": "CTDSAL profiles",
                 "x": "CTDSAL",
-                "y": "PRES"
+                "y": "_PRESSURE"
             },
             {
                 "title": "T/S",
@@ -318,7 +319,7 @@
                 "y": "CTDSAL"
             },
             {
-                "title": "SAL_DIFF vs PRES",
+                "title": "SAL_DIFF vs _PRESSURE",
                 "x": "SAMPNO",
                 "y": "SAL_DIFF"
             }
@@ -327,15 +328,15 @@
             {
                 "title": "Oxygen profiles",
                 "x": "OXYGEN",
-                "y": "PRES"
+                "y": "_PRESSURE"
             },
             {
                 "title": "Nitrate vs OXYGEN",
                 "x": "AOU",
-                "y": "_NITRAT"
+                "y": "_NITRATE"
             },
             {
-                "title": "OXY_DIFF vs PRES",
+                "title": "OXY_DIFF vs _PRESSURE",
                 "x": "SAMPNO",
                 "y": "OXY_DIFF"
             }
@@ -344,7 +345,7 @@
             {
                 "title": "Nitrate profiles",
                 "x": "NITRAT",
-                "y": "PRES"
+                "y": "_PRESSURE"
             },
             {
                 "title": "Nitrate vs Phosphate",
@@ -366,7 +367,7 @@
             {
                 "title": "Nitrate profiles",
                 "x": "NO2_NO3",
-                "y": "PRES"
+                "y": "_PRESSURE"
             },
             {
                 "title": "Nitrate vs Phosphate",
@@ -383,12 +384,12 @@
             {
                 "title": "Phosphate profiles",
                 "x": "PHSPHT",
-                "y": "PRES"
+                "y": "_PRESSURE"
             },
             {
                 "title": "Nitrate vs Phosphate",
                 "x": "PHSPHT",
-                "y": "_NITRAT"
+                "y": "_NITRATE"
             },
             {
                 "title": "",
@@ -400,7 +401,7 @@
             {
                 "title": "Silicate profiles",
                 "x": "SILCAT",
-                "y": "PRES"
+                "y": "_PRESSURE"
             },
             {
                 "title": "",
@@ -412,12 +413,12 @@
             {
                 "title": "Alkalinity profiles",
                 "x": "ALKALI",
-                "y": "PRES"
+                "y": "_PRESSURE"
             },
             {
                 "title": "ALKALI vs SALNTY",
                 "x": "ALKALI",
-                "y": "SAL"
+                "y": "_SALINITY"
             },
             {
                 "title": "NTA vs SILICATE",
@@ -425,9 +426,9 @@
                 "y": "SILCAT"
             },
             {
-                "title": "ALKALI vs ALK_NN3WRMSE_BRO18",
+                "title": "",
                 "x": "ALKALI",
-                "y": "ALK_NN3WRMSE_BRO18"
+                "y": "ALK_NNGV2_BRO19"
             },
             {
                 "title": "",
@@ -439,7 +440,7 @@
             {
                 "title": "Total Carbon profiles",
                 "x": "TCARBN",
-                "y": "PRES"
+                "y": "_PRESSURE"
             },
             {
                 "title": "",
@@ -455,18 +456,23 @@
                 "title": "",
                 "x": "TCARBN",
                 "y": "TCARBN_NNCANYONB_BIT18"
-            }
+            },
+            {
+                "title": "",
+                "x": "TCARBN",
+                "y": "TCARBN_NNGV2LDEO_BRO20"
+            }            
         ],
         "PH_TOT": [
             {
                 "title": "pH profiles",
                 "x": "PH_TOT",
-                "y": "PRES"
+                "y": "_PRESSURE"
             },
             {
                 "title": "pH vs Nitrate",
                 "x": "PH_TOT",
-                "y": "_NITRAT"
+                "y": "_NITRATE"
             },
             {
                 "title": "",
@@ -474,7 +480,7 @@
                 "y": "PHTS25P0_CALCULATED"
             },
             {
-                "title": "PH_TOT vs ALK_TCARBN_1_RATIO",
+                "title": "",
                 "x": "PH_TOT",
                 "y": "ALK_TCARBN_1_RATIO"
             },
@@ -486,24 +492,24 @@
             {
                 "title": "",
                 "x": "PH_TOT",
-                "y": "DELTA_PH"
+                "y": "PH_TOT_DIFF"
             }
         ],
         "PH_SWS": [
             {
                 "title": "pH profiles",
                 "x": "PH_SWS",
-                "y": "PRES"
+                "y": "_PRESSURE"
             },
             {
                 "title": "pH vs Nitrate",
                 "x": "PH_SWS",
-                "y": "_NITRAT"
+                "y": "_NITRATE"
             },
             {
-                "title": "pH vs CT/AT",
+                "title": "",
                 "x": "PH_SWS",
-                "y": "TCARBN_ALK_RATIO"
+                "y": "ALK_TCARBN_1_RATIO"
             },
             {
                 "title": "pH vs TCARBN",
@@ -515,26 +521,26 @@
             {
                 "title": "pH profiles",
                 "x": "PH",
-                "y": "PRES"
+                "y": "_PRESSURE"
             },
             {
                 "title": "pH vs Nitrate",
                 "x": "PH",
-                "y": "_NITRAT"
+                "y": "_NITRATE"
             }
         ],
         "PCO2": [
             {
                 "title": "pCO2 profiles",
                 "x": "PCO2",
-                "y": "PRES"
+                "y": "_PRESSURE"
             }
         ],
         "CFC_11": [
             {
                 "title": "profiles",
                 "x": "CFC_11",
-                "y": "PRES"
+                "y": "_PRESSURE"
             },
             {
                 "title": "",
@@ -556,7 +562,7 @@
             {
                 "title": "profiles",
                 "x": "CFC_12",
-                "y": "PRES"
+                "y": "_PRESSURE"
             },
             {
                 "title": "",
@@ -568,29 +574,36 @@
             {
                 "title": "profiles",
                 "x": "CFC113",
-                "y": "PRES"
+                "y": "_PRESSURE"
             }
         ],
         "CCL4": [
             {
                 "title": "profiles",
                 "x": "CCL4",
-                "y": "PRES"
+                "y": "_PRESSURE"
             }
         ],
         "SF6": [
             {
                 "title": "profiles",
                 "x": "SF6",
-                "y": "PRES"
+                "y": "_PRESSURE"
             }
         ],
         "CH4": [
             {
                 "title": "profiles",
                 "x": "CH4",
-                "y": "PRES"
+                "y": "_PRESSURE"
             }
-        ]
+        ],
+        "NO2": [
+            {
+                "title": "profiles",
+                "x": "N2O",
+                "y": "_PRESSURE"
+            }
+        ]        
     }
 }
