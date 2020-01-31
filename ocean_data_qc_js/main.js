@@ -99,7 +99,7 @@ app.on('ready', function() {
     app.showExitPrompt = true
     main_window.on('close', (e) => {
         lg.info('-- ON CLOSE MAIN WINDOW');
-        server.close_with_exit_prompt(e);
+        server.close_with_exit_prompt_dialog(e);
     })
 
     if (!is_dev) {
@@ -116,7 +116,7 @@ app.on('window-all-closed', function (event) {
     // to stay active until the user quits explicitly with Cmd + Q
 
     lg.info('-- WINDOWS ALL CLOSED');
-    server.close_with_exit_prompt();
+    server.close_with_exit_prompt_dialog();
 })
 
 app.on('will-quit', function (event) {

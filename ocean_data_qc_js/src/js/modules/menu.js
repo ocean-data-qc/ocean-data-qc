@@ -77,7 +77,7 @@ module.exports = {
                 { label: 'Open File...', accelerator: 'CmdOrCtrl+O', click: () => { self.web_contents.send('close-embed-forms'); self.menu_actions.open_dialog(); } },
                 // { label: 'Go to stack...', accelerator: 'CmdOrCtrl+O', click: () => { self.server.go_to_stack(); } },
                 { type: 'separator' },
-                { label: "Exit", accelerator: "Command+Q", click: () => { self.menu_actions.server.close_with_exit_prompt(); } }
+                { label: "Exit", accelerator: "Command+Q", click: () => { self.menu_actions.server.close_with_exit_prompt_dialog(); } }
             ]
         };
 
@@ -115,7 +115,7 @@ module.exports = {
                 { label: 'Export Plots Images as PDF...', accelerator: 'CmdOrCtrl+P', click: () => { self.menu_actions.export_pdf(); } },
                 { type: 'separator' },
                 { label: 'Close Project', accelerator: 'CmdOrCtrl+W', click: () => { self.web_contents.send('close-embed-forms'); self.menu_actions.close_project(); } },
-                { label: "Exit", accelerator: "Command+Q", click: () => { self.menu_actions.server.close_with_exit_prompt(); } }
+                { label: "Exit", accelerator: "Command+Q", click: () => { self.menu_actions.server.close_with_exit_prompt_dialog(); } }
             ],
         }
 

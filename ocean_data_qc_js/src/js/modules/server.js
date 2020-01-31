@@ -275,7 +275,7 @@ module.exports = {
         app.quit();  // this waits until the children (self.shell.childProcess) are killed
     },
 
-    close_with_exit_prompt: function(e) {
+    close_with_exit_prompt_dialog: function(e) {
         var self = this;
         lg.info('-- CLOSE APP DIALOG');
         if (fs.existsSync(loc.proj_files)) {
@@ -288,24 +288,30 @@ module.exports = {
                     buttons: ['Yes', 'No' ],
                     title: 'Confirm',
                     message: 'Unsaved data will be lost. Are you sure you want to quit?'
-                }, function (response) {
-                    if (response === 0) { // The following is run if 'Yes' is clicked
-                        rmdir(loc.proj_files, function(err) {
-                            if (err) {
-                                webContents.send('show-modal', {
-                                    'type': 'ERROR',
-                                    'msg': 'The project could not be discarded:<br />' + err
-                                });
-                            } else {
-                                app.showExitPrompt = false
-                                self.close_app();
-                            }
-                        });
-                    }
+                }).then((results) => {
+                    self.close_with_exit_prompt(results);
                 })
             }
         } else {
             self.close_app();
+        }
+    },
+
+    close_with_exit_prompt: function (results) {
+        var self = this;
+        lg.info(JSON.stringify(results))
+        if (results['response'] === 0) { // The following is run if 'Yes' is clicked
+            rmdir(loc.proj_files, function(err) {
+                if (err) {
+                    webContents.send('show-modal', {
+                        'type': 'ERROR',
+                        'msg': 'The project could not be discarded:<br />' + err
+                    });
+                } else {
+                    app.showExitPrompt = false
+                    self.close_app();
+                }
+            });
         }
     },
 
