@@ -144,7 +144,7 @@ class ComputedParameter(Environment):
             if i not in self.cruise_data.df.columns:  # already calculated parameters also can be use as columns
                 return {
                     'success': False,
-                    'msg': 'Some identifiers do not exist in the current dataframe',
+                    'msg': 'Some identifiers do not exist in the current dataframe: {}'.format(i),
                 }
 
         eq = '{} = {}'.format(computed_param_name, eq)
@@ -234,7 +234,7 @@ class ComputedParameter(Environment):
                     if isinstance(elem_obj, (\
                     types.FunctionType, types.BuiltinFunctionType,
                     types.MethodType, types.BuiltinMethodType)):
-                        lg.warning('>> ACCEPTED METHOD: {}'.format(elem_str))
+                        # lg.info('>> ACCEPTED METHOD: {}'.format(elem_str))
                         local_dict.update({elem_str: elem_obj})
         return local_dict
 

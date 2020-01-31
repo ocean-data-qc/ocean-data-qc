@@ -1,4 +1,4 @@
-function out = dic_nncanyonb_bit18(data)
+function out = tcarbn_nncanyonb_bit18(data)
 %myFun - Description
 %
 % Syntax: output = myFun(data)
