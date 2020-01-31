@@ -142,12 +142,12 @@ class OctaveEquations(Environment):
         ret = self.oc.aou_gg(np.transpose(np.vstack((SAL, THETA, OXY))))
         return ret
 
-    def tcarbon_from_alkali_phsws25p0(self, ALKALI, PH_SWS, SAL, SILCAT, PHSPHT):
-        ret = self.oc.tcarbon_from_alkali_phsws25p0(np.transpose(np.vstack((ALKALI, PH_SWS, SAL, SILCAT, PHSPHT))))
+    def tcarbn_from_alkali_phsws25p0(self, ALKALI, PH_SWS, SAL, SILCAT, PHSPHT):
+        ret = self.oc.tcarbn_from_alkali_phsws25p0(np.transpose(np.vstack((ALKALI, PH_SWS, SAL, SILCAT, PHSPHT))))
         return ret
 
-    def tcarbon_from_alkali_phts25p0(self, ALKALI, PH_TOT, SAL, SILCAT, PHSPHT):
-        ret = self.oc.tcarbon_from_alkali_phts25p0(np.transpose(np.vstack((ALKALI, PH_TOT, SAL, SILCAT, PHSPHT))))
+    def tcarbn_from_alkali_phts25p0(self, ALKALI, PH_TOT, SAL, SILCAT, PHSPHT):
+        ret = self.oc.tcarbn_from_alkali_phts25p0(np.transpose(np.vstack((ALKALI, PH_TOT, SAL, SILCAT, PHSPHT))))
         return ret
 
     def phts25p0_from_alkali_tcarbn(self, ALKALI, TCARBN, SAL, SILCAT, PHSPHT):

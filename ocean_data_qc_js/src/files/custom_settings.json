@@ -172,13 +172,13 @@
         },
         {
             "param_name": "NO",
-            "equation": "_OXYGEN + 9 * NITRATE ",
+            "equation": "_OXYGEN + 9 * _NITRATE",
             "units": false,
             "precision": "3"
         },
         {
             "param_name": "NTA",
-            "equation": "ALKALI * 35 / _SALINITY ",
+            "equation": "ALKALI * 35 / _SALINITY",
             "units": false,
             "precision": "3"
         },
@@ -190,13 +190,13 @@
         },
         {
             "param_name": "ALK_NNG2_VEL13",
-            "equation": "@alkali_nng2_vel13(LONGITUDE, LATITUDE, _DEPTH, _THETA, _SALINITY, NITRATE, PHSPHT, SILCAT, _OXYGEN)",
+            "equation": "@alkali_nng2_vel13(LONGITUDE, LATITUDE, _DEPTH, _THETA, _SALINITY, _NITRATE, PHSPHT, SILCAT, _OXYGEN)",
             "units": false,
             "precision": "3"
         },
         {
             "param_name": "ALK_NNGV2_BRO19",
-            "equation": "@alkali_nngv2_bro19(LONGITUDE, LATITUDE, _DEPTH, _THETA, _SALINITY, NITRATE, PHSPHT, SILCAT, _OXYGEN)",
+            "equation": "@alkali_nngv2_bro19(LONGITUDE, LATITUDE, _DEPTH, _THETA, _SALINITY, _NITRATE, PHSPHT, SILCAT, _OXYGEN)",
             "units": false,
             "precision": "3"
         },
@@ -214,7 +214,7 @@
         },
         {
             "param_name": "TCARBN_NNGV2LDEO_BRO20",
-            "equation": "@tcarbn_nngv2_bro20(LONGITUDE, LATITUDE, _DEPTH, _THETA, _SALINITY, NITRATE, PHSPHT, SILCAT, _OXYGEN, YEAR)",
+            "equation": "@tcarbn_nngv2ldeo_bro20(LONGITUDE, LATITUDE, _DEPTH, _THETA, _SALINITY, _NITRATE, PHSPHT, SILCAT, _OXYGEN, YEAR)",
             "units": false,
             "precision": "3"
         },
@@ -277,7 +277,7 @@
             "equation": " TCARBN_NNGV2LDEO_BRO20 - TCARBN ",
             "units": false,
             "precision": "5"
-        },        
+        },
         {
             "param_name": "OXY_DIFF",
             "equation": " CTDOXY - OXYGEN ",
@@ -461,7 +461,7 @@
                 "title": "",
                 "x": "TCARBN",
                 "y": "TCARBN_NNGV2LDEO_BRO20"
-            }            
+            }
         ],
         "PH_TOT": [
             {
@@ -604,6 +604,6 @@
                 "x": "N2O",
                 "y": "_PRESSURE"
             }
-        ]        
+        ]
     }
 }
