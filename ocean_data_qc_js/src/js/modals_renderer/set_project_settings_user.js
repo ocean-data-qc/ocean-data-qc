@@ -29,63 +29,83 @@ module.exports = {
             lg.info('-- SET PROJECT SETTINGS USER');
             var url = path.join(loc.modals, 'set_project_settings_user.html');
             tools.load_modal(url, function() {
-                $('#project_name').val(path.basename(args.csv_file, '.csv'));
-                self.init_files(args.csv_file);
-
-                self.original_csv_pipe.on('close', function(){
-                    var _checkBokehSate = setInterval(function() {
-                        if ($('body').data('bokeh_state') == 'ready') {  // check if bokeh is already loaded
-                            clearInterval(_checkBokehSate);
-                            self.init_form();
-                        }
-                    }, 100);
-                });
+                self.csv_file = args.csv_file;  // csv_file has always a value
+                $('#project_name').val(path.basename(self.csv_file, '.csv'));
+                self.init_files(self.csv_file);
             });
         });
     },
 
-    init_files: function(csv_file=false) {
-        // TODO: Try to move all this initialization to python, as much as possible
+    init_files: function() {
         var self = this;
 
         // TMP FOLDER
-        if (!fs.existsSync(loc.proj_files)) {
-            fs.mkdirSync(loc.proj_files);
-        }
+        fs.mkdir(loc.proj_files, function(err) {
+            if (err) {
+                if (err.code == 'EEXIST') cb(null);     // ignore the error if the folder already exists
+                else {
+                    tools.showModal('ERROR', 'Something went wrong creating the temp folder');
+                }
+            } else {  // successfully created folder
+                self.cp_original_csv();
+            }
+        });
+    },
 
-        // ORIGINAL.CSV
-        if (csv_file != false) {
-            self.original_csv_pipe = fs.createReadStream(csv_file).pipe(
-                fs.createWriteStream(
-                    path.join(loc.proj_files, 'original.csv')
-                )
-            );
-            self.original_csv_pipe.on('error', function() {
-                lg.error('The file could not be opened!!');
-                tools.showModal(
-                    'ERROR',
-                    'The file could not be opened!<br />It could not be copied to the temp folder'
-                );
-            })
-        }
+    /** Copy and create original csv file in the temp folder */
+    cp_original_csv: function() {
+        var self = this;
+        var a = fs.createReadStream(self.csv_file)
+        var c = fs.createWriteStream(path.join(loc.proj_files, 'original.csv'))
 
-        // MOVES.CSV
-        fs.closeSync(fs.openSync(path.join(loc.proj_files, 'moves.csv'), 'w'));
+        a.on('error', (err) => {
+            tools.showModal('ERROR', 'The file you have opened could not be read');
+        });
+        c.on('error', (err) => {
+            tools.showModal('ERROR', 'Some error writing to the file');
+        });
+        var p = a.pipe(c);
 
-        // CUSTOM_SETTINGS.CSV  >>  PROJ_SETTINGS
-        self.custom_settings_copy = fs.createReadStream(path.join(loc.custom_settings)).pipe(
-            fs.createWriteStream(
-                path.join(loc.proj_settings)
-            )
-        );
-        self.custom_settings_copy.on('error', function() {
-            lg.error('The file could not be opened!!');
-            tools.showModal(
-                'ERROR',
-                'The file could not be opened!<br />' +
-                'The default settings file could not be opened'
-            );
+        p.on('close', function(){
+            self.create_moves_csv();
+        });
+    },
+
+    /** Creates the empry moves csv file in the temp folder */
+    create_moves_csv: function() {
+        var self = this;
+        fs.open(path.join(loc.proj_files, 'moves.csv'), "w", function (err, f) {
+            if (err) tools.showModal('ERROR', 'Some problem found creating moves.csv file');
+            fs.close(f, function (err) {
+                if (err) tools.showModal('ERROR', 'Some problem found creating moves.csv file');
+                else {
+                    self.cp_custom_json();
+                }
+            });
+        });
+
+    },
+
+    /** Copy custom_settings.json into settings.json in the project temp folder */
+    cp_custom_json: function() {
+        var self = this;
+        var cs_rs = fs.createReadStream(path.join(loc.custom_settings));
+        var cs_ws = fs.createWriteStream(path.join(loc.proj_settings));
+        cs_rs.on('error', function() {
+            tools.showModal('ERROR', 'The custom settings file could not be read');
         })
+        cs_ws.on('error', function() {
+            tools.showModal('ERROR', 'The project settings file could not be written');
+        })
+        var cs_p = cs_rs.pipe(cs_ws);
+        cs_p.on('close', function(){
+            var _checkBokehSate = setInterval(function() {
+                if ($('body').data('bokeh_state') == 'ready') {  // checks if bokeh is already loaded
+                    clearInterval(_checkBokehSate);
+                    self.init_form();
+                }
+            }, 100);
+        });
     },
 
     init_form: function() {

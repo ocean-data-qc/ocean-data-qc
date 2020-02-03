@@ -54,6 +54,7 @@ module.exports = {
                 modal.find('.modal-body').append(
                     $('<p>', { text : msg })
                 );
+                if (type == 'ERROR') lg.error(msg);
             }
             if (code != '') {
                 modal.find('.modal-dialog').addClass('modal-lg');
