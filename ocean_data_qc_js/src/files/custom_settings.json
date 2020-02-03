@@ -1,6 +1,7 @@
 {
     "project_name": "default_settings",
     "project_file": false,
+    "json_version": "1.0.0",
     "layout": {
         "plots_per_row": 3,
         "plots_width": 300,
@@ -480,7 +481,7 @@
                 "y": "PHTS25P0_CALCULATED"
             },
             {
-                "title": "",
+                "title": "PH_TOT vs ALK_TCARBN_1_RATIO",
                 "x": "PH_TOT",
                 "y": "ALK_TCARBN_1_RATIO"
             },
@@ -507,7 +508,7 @@
                 "y": "_NITRATE"
             },
             {
-                "title": "",
+                "title": "pH vs CT/AT",
                 "x": "PH_SWS",
                 "y": "ALK_TCARBN_1_RATIO"
             },
@@ -515,6 +516,23 @@
                 "title": "pH vs TCARBN",
                 "x": "PH_SWS",
                 "y": "TCARBN"
+            }
+        ],
+        "PH_NBS": [
+            {
+                "title": "pH profiles",
+                "x": "PH_NBS",
+                "y": "PRES"
+            },
+            {
+                "title": "pH vs Nitrate",
+                "x": "PH_NBS",
+                "y": "_NITRAT"
+            },
+            {
+                "title": "pH vs phosphate",
+                "x": "PH_NBS",
+                "y": "PHSPHT"
             }
         ],
         "PH": [
