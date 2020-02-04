@@ -40,7 +40,6 @@ module.exports = {
                 })
             );
             $('#close_help_form_bt').click(function() {
-                lg.warn('Closing df_data');
                 // $('.df_data').fadeOut('slow');        // TODO: too heavy to make animation?
                 // $('.float_button').fadeOut('slow');
                 $('.help_form_iframe').remove();
