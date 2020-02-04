@@ -190,19 +190,19 @@
             "precision": "5"
         },
         {
-            "param_name": "ALK_NNG2_VEL13",
+            "param_name": "ALKALI_NNG2_VEL13",
             "equation": "@alkali_nng2_vel13(LONGITUDE, LATITUDE, _DEPTH, _THETA, _SALINITY, _NITRATE, PHSPHT, SILCAT, _OXYGEN)",
             "units": false,
             "precision": "3"
         },
         {
-            "param_name": "ALK_NNGV2_BRO19",
+            "param_name": "ALKALI_NNGV2_BRO19",
             "equation": "@alkali_nngv2_bro19(LONGITUDE, LATITUDE, _DEPTH, _THETA, _SALINITY, _NITRATE, PHSPHT, SILCAT, _OXYGEN)",
             "units": false,
             "precision": "3"
         },
         {
-            "param_name": "ALK_NNCANYONB_BIT18",
+            "param_name": "ALKALI_NNCANYONB_BIT18",
             "equation": "@alkali_nncanyonb_bit18(DATE, LATITUDE, LONGITUDE, _PRESSURE, CTDTMP, _SALINITY, _OXYGEN)",
             "units": false,
             "precision": "3"
@@ -244,19 +244,19 @@
             "precision": "5"
         },
         {
-            "param_name": "TCARBN_CALCULATED_SWS",
+            "param_name": "TCARBN_FROM_ALKALI_PHSWS25P0",
             "equation": "@tcarbn_from_alkali_phsws25p0(ALKALI, PH_SWS, _SALINITY, SILCAT, PHSPHT)",
             "units": false,
             "precision": "3"
         },
         {
-            "param_name": "TCARBN_CALCULATED_TS",
+            "param_name": "TCARBN_FROM_ALKALI_PHTS25P0",
             "equation": "@tcarbn_from_alkali_phts25p0(ALKALI, PH_TOT, _SALINITY, SILCAT, PHSPHT)",
             "units": false,
             "precision": "3"
         },
         {
-            "param_name": "PHTS25P0_CALCULATED",
+            "param_name": "PHTS25P0_FROM_ALKALI_TCARBN",
             "equation": "@phts25p0_from_alkali_tcarbn(ALKALI, TCARBN, _SALINITY, SILCAT, PHSPHT)",
             "units": false,
             "precision": "5"
