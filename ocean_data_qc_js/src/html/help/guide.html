@@ -446,8 +446,8 @@ for both the data file itself and on the performed QC.</span></p>
 
 <p class=MsoNormal style='text-align:justify'><span lang=EN-GB>As the actual
 de-facto standard format for reporting oceanographic data from cruise sections
-is the <i>WHP exchange bottle</i> format (<a
-href="https://github.com/cchdo/exchange/"><span style='color:#1155CC'>https://github.com/cchdo/exchange/</span></a>),
+is the <i>WHP exchange bottle</i> format (<a target="_blank"
+href="https://exchange-format.readthedocs.io/en/latest/bottle.html#bottle-specific"><span style='color:#1155CC'>https://exchange-format.readthedocs.io</span></a>),
 used and recommended
 by GO-SHIP and the data centre of the network, CCHDO, we will use it for defining the name
 of parameters and the quality flags of the application. A full description of these names and
@@ -461,6 +461,186 @@ designed to try to translate some other common naming schemes to their WHP
 equivalent, facilitating the usage of the application. When exporting to WHP
 format, the <i>WHP exchange bottle</i> names will be used, thus allowing the
 user to convert some common names to their WHP equivalent.</span></p>
+
+<p class=MsoNormal style='text-align:justify'><span lang=EN-GB>&nbsp;</span></p>
+
+<h2 style='text-align:justify'><a name="_Toc666666"></a><a name="_x0mp6ldj5j25"></a><span
+lang=EN-GB>Format</span></h2>
+
+<p class=MsoNormal style='text-align:justify'><span lang=EN-GB>&nbsp;</span></p>
+
+<p class=MsoNormal style='text-align:justify'><span lang=EN-GB>The following parameters are REQUIRED to be present in exchange bottle files where the parameter name occurs within the Parameter and Unit Lines and their values be present in the Data Lines.</span></p>
+
+<p class=MsoNormal style='text-align:justify'><span lang=EN-GB>
+    <ul>
+        <li>EXPOCODE</li>
+        <li>STNNBR</li>
+        <li>CASTNO</li>
+        <li>DATE</li>
+        <li>LATITUDE</li>
+        <li>LONGITUDE</li>
+        <li>CTDPRS</li>
+        <li>SAMPNO</li>
+    </ul>
+</span></p>
+
+<p class=MsoNormal style='text-align:justify'><span lang=EN-GB></span>
+More information about these parameters <a target="_blank" href="https://exchange-format.readthedocs.io/en/latest/bottle.html#bottle-specific">here</a>
+</span></p>
+
+<p class=MsoNormal style='text-align:justify'><span lang=EN-GB>&nbsp;</span></p>
+
+<p class=MsoNormal style='text-align:justify'><span lang=EN-GB></span>Common parameters:</span></p>
+
+<p class=MsoNormal style='text-align:justify'><span lang=EN-GB>&nbsp;</span></p>
+
+<table class="hlist"><tbody><tr><td><ul class="simple">
+    <li>EXPOCODE</li>
+    <li>SECT_ID</li>
+    <li>STNNBR</li>
+    <li>CASTNO</li>
+    <li>BIOS_CASTID</li>
+    <li>SAMPNO</li>
+    <li>GEOTR_EVENT</li>
+    <li>GEOTR_SAMPNO</li>
+    <li>BIONBR</li>
+    <li>BTLNBR</li>
+    <li>DATE</li>
+    <li>TIME</li>
+    <li>LATITUDE</li>
+    <li>LONGITUDE</li>
+    <li>DEPTH (METERS)</li>
+    <li>CTDPRS (DBAR)</li>
+    <li>CTDRAW (DBAR)</li>
+    <li>CTDTMP (ITS-90)</li>
+    <li>CTDSAL (PSS-78)</li>
+    <li>SALNTY (PSS-78)</li>
+    <li>CTDOXY (UMOL/KG)</li>
+    <li>OXYGEN (UMOL/KG)</li>
+    <li>SILCAT (UMOL/KG)</li>
+    <li>NH4 (UMOL/KG)</li>
+    <li>NITRAT (UMOL/KG)</li>
+    <li>NITRIT (UMOL/KG)</li>
+    <li>PHSPHT (UMOL/KG)</li>
+    <li>NO2+NO3 (UMOL/KG)</li>
+    <li>CFC-11 (PMOL/KG)</li>
+    <li>CFC-12 (PMOL/KG)</li>
+    <li>CFC113 (PMOL/KG)</li>
+    <li>SF6 (FMOL/KG)</li>
+    <li>TCARBN (UMOL/KG)</li>
+    <li>ALKALI (UMOL/KG)</li>
+    <li>FCO2 (UATM)</li>
+    <li>FCO2TMP (DEG C)</li>
+    <li>PCO2 (UATM)</li>
+    <li>PCO2TMP (DEG C)</li>
+    <li>PH_TOT</li>
+    <li>PH_SWS</li>
+    <li>PH_TMP (DEG C)</li>
+    <li>DOC (UMOL/KG)</li>
+    <li>TRITUM (TU)</li>
+    <li>TRITER (TU)</li>
+    </ul>
+    </td><td><ul class="simple">
+    <li>HELIUM (NMOL/KG)</li>
+    <li>DELHE3 (PERCNT)</li>
+    <li>REFTMP (ITS-90)</li>
+    <li>REVPRS (DBAR)</li>
+    <li>REVTMP (ITS-90)</li>
+    <li>DELC13 (/MILLE)</li>
+    <li>DELC14 (/MILLE)</li>
+    <li>DON (UMOL/KG)</li>
+    <li>TOC</li>
+    <li>POC (UG/KG)</li>
+    <li>PON (UG/KG)</li>
+    <li>TDN (UMOL/KG)</li>
+    <li>TON</li>
+    <li>NEON (NMOL/KG)</li>
+    <li>NEONER (NMOL/KG)</li>
+    <li>DELO18 (/MILLE)</li>
+    <li>CCL4 (PMOL/KG)</li>
+    <li>CCL4ER</li>
+    <li>NI</li>
+    <li>ALUMIN (NMOL/L)</li>
+    <li>BARIUM (NMOL/KG)</li>
+    <li>CU</li>
+    <li>FE (NMOL/L)</li>
+    <li>MN (NMOL/L)</li>
+    <li>CTDFLUOR (MG/M^3)</li>
+    <li>PAR</li>
+    <li>I-129</li>
+    <li>RA-226 (DM/.1MG)</li>
+    <li>RA-228 (DM/.1MG)</li>
+    <li>CTDXMISS (%TRANS)</li>
+    <li>CTDBEAMCP (/METER)</li>
+    <li>AR-39 (PCTMOD)</li>
+    <li>CS-137 (DM/.1MG)</li>
+    <li>KR-85 (DM/MG)</li>
+    <li>SR-90 (DM/.1MG)</li>
+    <li>N2O (NMOL/KG)</li>
+    <li>RA-8/6 (DM/.1MG)</li>
+    <li>RA-8/6E (DM/.1MG)</li>
+    <li>QUALT2</li>
+    <li>QUALT1</li>
+    <li>I129ER</li>
+    <li>MCHFRM (PMOL/KG)</li>
+    <li>IODATE (NMOL/KG)</li>
+    <li>IODIDE (NMOL/KG)</li>
+    </ul>
+    </td><td><ul class="simple">
+    <li>CHLORA (UG/KG)</li>
+    <li>PPHYTN (UG/KG)</li>
+    <li>CH3CL (PMOL/KG)</li>
+    <li>CH4 (NMOL/KG)</li>
+    <li>DMS</li>
+    <li>AZOTE</li>
+    <li>CALCIUM</li>
+    <li>ARGON (UMOL/KG)</li>
+    <li>14C-DOC (/MILLE)</li>
+    <li>D15N_NO3</li>
+    <li>TOT_CHL_A (MG/M^3)</li>
+    <li>TOT_CHL_B (MG/M^3)</li>
+    <li>TOT_CHL_C (MG/M^3)</li>
+    <li>ALPHA-BETA-CAR (MG/M^3)</li>
+    <li>BUT-FUCO (MG/M^3)</li>
+    <li>HEX-FUCO (MG/M^3)</li>
+    <li>ALLO (MG/M^3)</li>
+    <li>DIADINO (MG/M^3)</li>
+    <li>DIATO (MG/M^3)</li>
+    <li>HFUCO (MG/M^3)</li>
+    <li>PERID (MG/M^3)</li>
+    <li>ZEA (MG/M^3)</li>
+    <li>MV_CHL_A (MG/M^3)</li>
+    <li>DV_CHL_A (MG/M^3)</li>
+    <li>CHLIDE_A (MG/M^3)</li>
+    <li>MV_CHL_B (MG/M^3)</li>
+    <li>DV_CHL_B (MG/M^3)</li>
+    <li>CHL_C1C2 (MG/M^3)</li>
+    <li>CHL_C3 (MG/M^3)</li>
+    <li>LUT (MG/M^3)</li>
+    <li>NEO (MG/M^3)</li>
+    <li>VIOLA (MG/M^3)</li>
+    <li>PHYTIN_A (MG/M^3)</li>
+    <li>PHIDE_A (MG/M^3)</li>
+    <li>PRAS (MG/M^3)</li>
+    <li>GYRO (MG/M^3)</li>
+    <li>BTL_DATE</li>
+    <li>BTL_TIME</li>
+    <li>BTL_LAT</li>
+    <li>CTDNOBS</li>
+    <li>CTDETIME (SECONDS)</li>
+    <li>BTL_LON</li>
+    <li>THETA (DEG C)</li>
+    </ul>
+    </td></tr></tbody></table>
+
+    <p class=MsoNormal style='text-align:justify'><span lang=EN-GB>&nbsp;</span></p>
+
+<p class=MsoNormal style='text-align:justify'><span lang=EN-GB></span>
+    More information about these other parameters <a target="_blank" href="https://exchange-format.readthedocs.io/en/latest/parameters.html#common-parameters">here</a>
+</span></p>
+
+
+
 
 <p class=MsoNormal style='text-align:justify'><span lang=EN-GB>&nbsp;</span></p>
 
