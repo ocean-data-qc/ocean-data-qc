@@ -167,16 +167,15 @@ module.exports = {
 
     /* Checks if the command Octave exists in the PATH environment variable
     *  If it does not exist, then Octave cannot be used
-    *       @manual_octave_path != false: The path is being set manually
+    *       @manual_octave_folder_path != false: The path is being set manually
     */
-    set_octave_path: function(manual_octave_path=false) {
+    set_octave_path: function(manual_octave_folder_path=false) {
         lg.info('-- SET OCTAVE PATH METHOD');
         var self = this;
-        if (manual_octave_path != false) {
-            if (fs.existsSync(tools.file_to_path(manual_octave_path))) {
-                self.octave_path = manual_octave_path;
-                self.set_octave_exe_path();
-            }
+        if (manual_octave_folder_path != false) {  // manual_octave_folder_path is always going to exist
+                                                   // but the octave-cli.exe may not exist in that folder
+            self.octave_path = manual_octave_folder_path;
+            self.set_octave_exe_path();
         } else {
             self.octave_path = data.get('octave_path', loc.shared_data);
             if (self.octave_path == false || (self.octave_path != false && !fs.existsSync(tools.file_to_path(self.octave_path)))) {
@@ -266,6 +265,7 @@ module.exports = {
     },
 
     set_octave_exe_path: function() {
+        lg.info('-- SET OCTAVE EXE PATH');
         var self = this;
         var params = {
             'object': 'octave.equations',
@@ -278,6 +278,13 @@ module.exports = {
                 data.set({'octave_path': false, 'octave_version': false, }, loc.shared_data);
                 self.set_octave_info('Undetected in PATH');
             } else {
+                if (results['octave_path'] == false) {
+                    tools.showModal(
+                        'ERROR',
+                        'Octave was not found in the selected folder with the names: octave-cli.exe or octave-cli. ' +
+                        'Therefore, the library "oct2py" could not be imported. Please, select the correct folder.'
+                    );
+                }
                 self.octave_path = results['octave_path'];
                 data.set({'octave_path': self.octave_path }, loc.shared_data);
                 self.set_octave_version();
