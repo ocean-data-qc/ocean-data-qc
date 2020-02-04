@@ -31,7 +31,7 @@ REQUIRED_COLUMNS = [
 ]
 
 NON_QC_PARAMS = [                                # discovered by usage
-    'DEPTH',
+    'CTDPRS', 'DEPTH',
     'SECT', 'SECT_ID', 'TIME', 'PH_TMP',
     'DAY', 'MONTH', 'YEAR', 'HOUR', 'MINUTE',
     'DATE_DD', 'DATE_MM', 'DATE_YY',
