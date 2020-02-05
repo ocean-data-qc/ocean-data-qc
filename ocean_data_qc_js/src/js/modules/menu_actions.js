@@ -198,15 +198,17 @@ module.exports = {
                     title: 'Save Project',
                     defaultPath: '~/examples/' + settings.project_name + '.aqc',    // TODO >> previuos opened folder?? https://github.com/electron/electron/issues/1541
                     filters: [{ extensions: ['aqc'] }]
-                }, function (fileLocation) {
-                    lg.info('Saving project at: ' + fileLocation);
-                    if (typeof(fileLocation) !== 'undefined') {
+            }).then((results) => {
+                if (results['canceled'] == false) {
+                    var file_path = results['filePath'];
+                    lg.info('Saving project at: ' + file_path);
+                    if (typeof(file_path) !== 'undefined') {
                         try {
                             // data.set({'project_state': 'saved', }, loc.proj_settings);
-                            zip.zipSync(loc.proj_files, fileLocation);
-                            fileLocation = file_url(fileLocation);
+                            zip.zipSync(loc.proj_files, file_path);
+                            file_path = file_url(file_path);
                             self.web_contents.send('disable-watcher');  // I do not why, but this is necessary
-                            data.write_promise({'project_file': fileLocation }).then((value) => {
+                            data.write_promise({'project_file': file_path }).then((value) => {
                                 // https://blog.risingstack.com/mastering-async-await-in-nodejs/
                                 if (value == true) {  // if everything was OK >> di this with reject and catch(err)...
                                     self.web_contents.send('enable-watcher', {'mark': 'saved'});
@@ -228,9 +230,9 @@ module.exports = {
                             reject(new Error('fail'));
                         }
                     }
-                    resolve(true);
                 }
-            );
+                resolve(true);
+            });
         });
     },
 
