@@ -106,7 +106,7 @@
                 <div id="possible_formats" class="alert alert-primary" role="alert" style="display: none;">
                 You can open files with some of the following formats:
                     <ul style="margin-bottom: 0;">
-                        <li>CSV files with <strong><a class="open-in-browser" href="https://www.nodc.noaa.gov/woce/woce_v3/wocedata_1/whp/exchange/exchange_format_desc.htm">WHP format</a></strong>. This file format include metadata in the header, units and some keywords to identify the format.</li>
+                        <li>CSV files with <strong><a class="open-in-browser" href="https://exchange-format.readthedocs.io/en/latest/bottle.html">WHP format</a></strong>. This file format include metadata in the header, units and some keywords to identify the format.</li>
                         <li>Plain CSV files. Just columns and rows.</li>
                         <li>AQC files. This application can save the project in this format. The file includes the CSV file data and some metadata.</li>
                     </ul>
@@ -119,6 +119,10 @@
 
               <p><strong><a class="open-in-browser" href="https://github.com/ocean-data-qc/ocean-data-qc">GitHub Repository</a></strong></p>
               <p hidden><strong><a href="#" id="enable_dev_mode">Enable developer mode</a></strong></p>
+              <p>
+                <span id="json_template_state" class="json_template_orange"><strong>Checking templates versions...</strong></span>
+                <span id="json_template_restore_to_default" class="json_template_orange" hidden><a href="#"><strong>Restore to default settings (Calculated Parameters included)</strong></a></span>
+              </p>
             </div>
           </div>
 

@@ -30,6 +30,7 @@ require('set_project_settings_user').init();
 
 // ---------------------------- INITIAL FUNCTIONS ----------------------------- //
 
+server_renderer.init();
 server_renderer.set_python_path();
 
 $('body').data('bokeh_state', 'not-ready');
@@ -122,6 +123,13 @@ $('#enable_dev_mode').click(function() {
         }
         $('#enable_dev_mode').addClass('dev_mode');
     }
+});
+
+// ------------------------------- OVERWRITE CUSTOM SETTINGS ---------------------------------- //
+
+$('#json_template_restore_to_default>a').click(function() {
+    lg.warn('-- JSON TEMPLATE RETORE TO DEFAULT CLICK')
+    server_renderer.json_template_restore_to_default();
 });
 
 // ------------------------------- HOME LINKS ---------------------------------- //
@@ -363,4 +371,22 @@ ipcRenderer.on('set-octave-path', (event, arg) => {
 
 ipcRenderer.on('export-pdf-file', (event, arg) => {
     bokeh_export.export_pdf_file();
+});
+
+ipcRenderer.on('show-custom-settings-replace', (event, arg) => {
+    lg.warn('-- SHOW-CUSTOM-SETTINGS-REPLACEMENT, args: ' + JSON.stringify(arg));
+    if (arg['result'] == 'should_update') {  // ask question to the user, replace or keep file?
+        $('#json_template_state').addAttr('hidden');
+
+        $('#json_template_restore_to_default').removeClass('json_template_orange');
+        $('#json_template_restore_to_default').addClass('json_template_green');
+        $('#json_template_restore_to_default').text('Replace custom settings file with the new version? (calculated parameters included)');
+    } else if (arg['result'] == 'should_restore') {  // should update false, but are custom and default files equal?
+        $('#json_template_state').attr('hidden', '');
+        $('#json_template_restore_to_default').removeAttr('hidden');
+    } else { // result == 'sync'
+        $('#json_template_state>strong').text('Settings have not been modified by the user. Nothing to restore');
+        $('#json_template_state').removeClass('json_template_orange');
+        $('#json_template_state').addClass('json_template_blue');
+    }
 });
