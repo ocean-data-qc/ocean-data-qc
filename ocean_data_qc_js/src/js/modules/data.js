@@ -6,8 +6,6 @@
 "use strict";
 
 const fs = require('fs');  // fs-extra already includes this module
-const fs_extra = require('fs-extra');
-const loc = require('locations');
 const lg = require('logging');
 
 module.exports = {
@@ -165,24 +163,4 @@ module.exports = {
         });
         read.pipe(write);
     },
-
-    /** DEPRECATED >> trying to do things asynchronously
-     *  Also this is not taking into account the template versions
-     */
-    // init_user_data: function() {
-    //     var self = this;
-    //     if (!fs.existsSync(loc.files)) {
-    //         fs.mkdirSync(loc.files);
-    //         fs_extra.copySync(
-    //             loc.default_files,  // TOCHECK: does it work within the asar file?
-    //             loc.files
-    //         )
-    //     }
-    //     if (!fs.existsSync(loc.logs_folder)) {
-    //         fs.mkdirSync(loc.logs_folder);
-    //     }
-    // },
-
-
-
 }

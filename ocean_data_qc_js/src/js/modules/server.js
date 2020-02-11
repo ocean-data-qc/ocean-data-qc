@@ -45,6 +45,13 @@ module.exports = {
         ]);
     },
 
+    create_log_folder: function() {
+        // TODO: do this asynchronously
+        // if (!fs.existsSync(loc.logs_folder)) {
+        //     fs.mkdirSync(loc.logs_folder);
+        // }
+    },
+
     check_json_shared_data: function() {
         lg.warn('-- CHECK JSON SHARED DATA');
         var self = this;
