@@ -54,10 +54,16 @@ class BokehSources(Environment):
         return(x, y)
 
     def _init_bathymetric_map_data(self):
-        x_wm, y_wm = self._epsg4326_to_epsg3857(
-            self.env.cds_df.LONGITUDE.as_matrix(),
-            self.env.cds_df.LATITUDE.as_matrix()
-        )
+        try:
+            x_wm, y_wm = self._epsg4326_to_epsg3857(
+                self.env.cds_df.LONGITUDE.to_numpy(),
+                self.env.cds_df.LATITUDE.to_numpy()
+            )
+        except:  # deprecated since 0.23.0
+            x_wm, y_wm = self._epsg4326_to_epsg3857(
+                self.env.cds_df.LONGITUDE.as_matrix(),
+                self.env.cds_df.LATITUDE.as_matrix()
+            )
         aux_df = pd.DataFrame(dict(
             X_WMTS=x_wm,
             Y_WMTS=y_wm,
