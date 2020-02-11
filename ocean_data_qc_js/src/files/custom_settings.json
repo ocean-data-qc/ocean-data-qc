@@ -6,7 +6,7 @@
         "plots_per_row": 3,
         "plots_width": 300,
         "plots_height": 300,
-        "titles":false
+        "titles": false
     },
     "export_pdf": {
         "landscape": false,
@@ -618,7 +618,7 @@
         ],
         "NO2": [
             {
-                "title": "profiles",
+                "title": "profiles test",
                 "x": "N2O",
                 "y": "_PRESSURE"
             }

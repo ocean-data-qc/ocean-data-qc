@@ -177,6 +177,16 @@ module.exports = {
         var self = this;
         lg.warn('-- JSON TEMPLATE RESTORE TO DEFAULT')
         self.overwrite_json_file(loc.default_settings_src, loc.custom_settings);
+
+        self.overwrite_json_file(loc.default_settings_src, loc.custom_settings).then((result) => {
+            lg.warn('>> CORRECTLY OVERWRITTEN');
+            self.web_contents.send('show-custom-settings-replace', {'result': 'restored'});
+        }).catch((error) => {
+            self.web_contents.send('show-modal', {
+                'type': 'ERROR',
+                'msg': 'JSON file could not be overwritten: <br />' + error
+            });
+        });
     },
 
     json_templates_compare_custom_default: function() {

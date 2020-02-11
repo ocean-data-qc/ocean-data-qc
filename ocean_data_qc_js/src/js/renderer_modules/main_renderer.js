@@ -384,9 +384,19 @@ ipcRenderer.on('show-custom-settings-replace', (event, arg) => {
     } else if (arg['result'] == 'should_restore') {  // should update false, but are custom and default files equal?
         $('#json_template_state').attr('hidden', '');
         $('#json_template_restore_to_default').removeAttr('hidden');
+    } else if (arg['result'] == 'restored') {
+        $('#json_template_state>strong').text('Default Settings correctly restored');
+        $('#json_template_state').removeClass('json_template_orange');
+        $('#json_template_state').addClass('json_template_blue');
+
+        $('#json_template_restore_to_default').attr('hidden', '');
+        $('#json_template_state').removeAttr('hidden');
     } else { // result == 'sync'
         $('#json_template_state>strong').text('Settings have not been modified by the user. Nothing to restore');
         $('#json_template_state').removeClass('json_template_orange');
         $('#json_template_state').addClass('json_template_blue');
+
+        $('#json_template_restore_to_default').attr('hidden', '');
+        $('#json_template_state').removeAttr('hidden');
     }
 });

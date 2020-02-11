@@ -457,10 +457,16 @@ module.exports = {
             'title': 'Overwrite Settings?',
             'msg': 'Are you sure that you want to overwrite the Settings File with the default values?' +
                     ' The changes that you may have done will be lost.',
-            'calback_yes': function(ipcRenderer) {
-                self.ipc_renderer.send('json-template-restore-to-default');
-            },
+            'callback_yes': self.json_template_send_restore_to_default_signal,
             'self': self
         })
+    },
+
+    json_template_send_restore_to_default_signal: function(self=false) {
+        lg.warn('JSON TEMPLATE SEND RESTORE TO DEFAULT SIGNAL');
+        if (self == false) {
+            var self = this;
+        }
+        self.ipc_renderer.send('json-template-restore-to-default');
     }
 }
