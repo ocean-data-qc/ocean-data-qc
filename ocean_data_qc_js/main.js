@@ -58,11 +58,6 @@ var main_window = null;      // global reference of the window object
 app.commandLine.appendSwitch('disable-site-isolation-trials');
 
 app.on('ready', function() {
-    // try {
-    //     data.init_user_data()
-    // } catch(err) {
-    //     lg.error('ERROR INITIALIZING FILES: ' + err);
-    // }
     main_window = new BrowserWindow({
         webPreferences: { nodeIntegration: true, }, // https://stackoverflow.com/a/55908510/4891717
         width: 1380,
@@ -77,6 +72,7 @@ app.on('ready', function() {
     server.web_contents = web_contents;
 
     Promise.all([
+        // server.check_log_folder(),
         server.check_json_shared_data(),
         server.check_json_default_settings(),
         server.check_json_custom_settings()

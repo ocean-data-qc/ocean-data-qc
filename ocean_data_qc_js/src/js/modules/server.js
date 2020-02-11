@@ -25,7 +25,6 @@ const tools = require('../renderer_modules/tools');
 module.exports = {
     init: function(menu) {
         var self = this;
-        // self.web_contents = web_contents;
         self.menu = menu;
         self.shell = null;
         self.ts_shell = null;
@@ -35,17 +34,7 @@ module.exports = {
         self.ocean_data_qc_path = '';
     },
 
-    init_user_data: function() {
-        lg.warn('-- INIT USER DATA');
-        var self = this;
-        return Promise.all([
-            self.check_json_shared_data(),
-            self.check_json_default_settings(),
-            self.check_json_custom_settings()
-        ]);
-    },
-
-    create_log_folder: function() {
+    check_log_folder: function() {
         // TODO: do this asynchronously
         // if (!fs.existsSync(loc.logs_folder)) {
         //     fs.mkdirSync(loc.logs_folder);
