@@ -6,7 +6,7 @@
         "plots_per_row": 3,
         "plots_width": 300,
         "plots_height": 300,
-        "titles":false
+        "titles": false
     },
     "export_pdf": {
         "landscape": false,
@@ -184,7 +184,7 @@
             "precision": "3"
         },
         {
-            "param_name": "ALK_TCARBN_1_RATIO",
+            "param_name": "ALKALI_TCARBN_1_RATIO",
             "equation": "ALKALI / TCARBN -1",
             "units": false,
             "precision": "5"
@@ -290,6 +290,12 @@
             "equation": " CTDSAL - SALNTY ",
             "units": false,
             "precision": "5"
+        },
+        {
+            "param_name": "N_STAR",
+            "equation": " _NITRATE - 16 * PHSPHT + 2",
+            "units": false,
+            "precision": "5"
         }
     ],
     "qc_plot_tabs": {
@@ -320,9 +326,9 @@
                 "y": "CTDSAL"
             },
             {
-                "title": "SAL_DIFF vs _PRESSURE",
-                "x": "SAMPNO",
-                "y": "SAL_DIFF"
+                "title": "SAL_DIFF vs SAMPNO",
+                "x": "SAL_DIFF",
+                "y": "SAMPNO"
             }
         ],
         "OXYGEN": [
@@ -332,14 +338,24 @@
                 "y": "_PRESSURE"
             },
             {
-                "title": "Nitrate vs OXYGEN",
-                "x": "AOU",
+                "title": "CTDOXY vs _PRESSURE",
+                "x": "CTDOXY",
+                "y": "_PRESSURE"
+            },
+            {
+                "title": "OXY_DIFF vs SAMPNO",
+                "x": "OXY_DIFF",
+                "y": "SAMPNO"
+            },
+            {
+                "title": "OXYGEN vs _NITRATE",
+                "x": "OXYGEN",
                 "y": "_NITRATE"
             },
             {
-                "title": "OXY_DIFF vs _PRESSURE",
-                "x": "SAMPNO",
-                "y": "OXY_DIFF"
+                "title": "CTDOXY vs _NITRATE",
+                "x": "CTDOXY",
+                "y": "_NITRATE"
             }
         ],
         "NITRAT": [
@@ -354,9 +370,24 @@
                 "y": "PHSPHT"
             },
             {
-                "title": "Nitrate vs OXYGEN",
+                "title": "NITRAT vs PH_TOT",
                 "x": "NITRAT",
-                "y": "AOU"
+                "y": "PH_TOT"
+            },
+            {
+                "title": "NITRAT vs _OXYGEN",
+                "x": "NITRAT",
+                "y": "AOU_GG92"
+            },
+            {
+                "title": "N_STAR vs _PRESSURE",
+                "x": "N_STAR",
+                "y": "_PRESSURE"
+            },
+            {
+                "title": "N_STAR vs SAMPNO",
+                "x": "N_STAR",
+                "y": "SAMPNO"
             },
             {
                 "title": "",
@@ -376,9 +407,29 @@
                 "y": "PHSPHT"
             },
             {
-                "title": "Nitrate vs OXYGEN",
+                "title": "NITRAT vs PH_TOT",
                 "x": "NO2_NO3",
-                "y": "AOU"
+                "y": "PH_TOT"
+            },
+            {
+                "title": "NITRAT vs _OXYGEN",
+                "x": "NO2_NO3",
+                "y": "AOU_GG92"
+            },
+            {
+                "title": "N_STAR vs _PRESSURE",
+                "x": "N_STAR",
+                "y": "_PRESSURE"
+            },
+            {
+                "title": "N_STAR vs SAMPNO",
+                "x": "N_STAR",
+                "y": "SAMPNO"
+            },
+            {
+                "title": "",
+                "x": "NO2_NO3",
+                "y": "NITRAT_NNCANYONB_BIT18"
             }
         ],
         "PHSPHT": [
@@ -393,7 +444,17 @@
                 "y": "_NITRATE"
             },
             {
-                "title": "",
+                "title": "PHSPHT vs PH_TOT",
+                "x": "PHSPHT",
+                "y": "PH_TOT"
+            },
+            {
+                "title": "PHSPHT vs AOU_GG92",
+                "x": "PHSPHT",
+                "y": "AOU_GG92"
+            },
+            {
+                "title": "PHSPHT vs PHSPHT_NNCANYONB_BIT18",
                 "x": "PHSPHT",
                 "y": "PHSPHT_NNCANYONB_BIT18"
             }
@@ -405,7 +466,17 @@
                 "y": "_PRESSURE"
             },
             {
-                "title": "",
+                "title": "SILCAT vs SAMPNO",
+                "x": "SILCAT",
+                "y": "SAMPNO"
+            },
+            {
+                "title": "SILCAT vs NTA",
+                "x": "SILCAT",
+                "y": "NTA"
+            },
+            {
+                "title": "SILCAT vs SILCAT_NNCANYONB_BIT18",
                 "x": "SILCAT",
                 "y": "SILCAT_NNCANYONB_BIT18"
             }
@@ -427,15 +498,20 @@
                 "y": "SILCAT"
             },
             {
-                "title": "",
+                "title": "ALKALI vs ALKALI_NNCANYONB_BIT18",
                 "x": "ALKALI",
-                "y": "ALK_NNGV2_BRO19"
+                "y": "ALKALI_NNCANYONB_BIT18"
+            },
+            {
+                "title": "ALKALI vs ALKALI_NNGV2_BRO19",
+                "x": "ALKALI",
+                "y": "ALKALI_NNGV2_BRO19"
             },
             {
                 "title": "",
-                "x": "ALKALI",
-                "y": "ALK_NNCANYONB_BIT18"
-            }
+                "x": "ALK_DIFF",
+                "y": "SAMPNO"
+            }     
         ],
         "TCARBN": [
             {
@@ -462,7 +538,12 @@
                 "title": "",
                 "x": "TCARBN",
                 "y": "TCARBN_NNGV2LDEO_BRO20"
-            }
+            },
+            {
+                "title": "",
+                "x": "TCARBN_DIFF",
+                "y": "SAMPNO"
+            }                
         ],
         "PH_TOT": [
             {
@@ -481,9 +562,9 @@
                 "y": "PHTS25P0_CALCULATED"
             },
             {
-                "title": "PH_TOT vs ALK_TCARBN_1_RATIO",
+                "title": "PH_TOT vs ALKALI_TCARBN_1_RATIO",
                 "x": "PH_TOT",
-                "y": "ALK_TCARBN_1_RATIO"
+                "y": "ALKALI_TCARBN_1_RATIO"
             },
             {
                 "title": "",
@@ -492,8 +573,8 @@
             },
             {
                 "title": "",
-                "x": "PH_TOT",
-                "y": "PH_TOT_DIFF"
+                "x": "PH_TOT_DIFF",
+                "y": "SAMPNO"
             }
         ],
         "PH_SWS": [
@@ -508,31 +589,21 @@
                 "y": "_NITRATE"
             },
             {
-                "title": "pH vs CT/AT",
+                "title": "pH vs ALKALI_TCARBN_1_RATIO",
                 "x": "PH_SWS",
-                "y": "ALK_TCARBN_1_RATIO"
-            },
-            {
-                "title": "pH vs TCARBN",
-                "x": "PH_SWS",
-                "y": "TCARBN"
+                "y": "ALKALI_TCARBN_1_RATIO"
             }
         ],
         "PH_NBS": [
             {
                 "title": "pH profiles",
                 "x": "PH_NBS",
-                "y": "PRES"
+                "y": "_PRESSURE"
             },
             {
                 "title": "pH vs Nitrate",
                 "x": "PH_NBS",
-                "y": "_NITRAT"
-            },
-            {
-                "title": "pH vs phosphate",
-                "x": "PH_NBS",
-                "y": "PHSPHT"
+                "y": "_NITRATE"
             }
         ],
         "PH": [
