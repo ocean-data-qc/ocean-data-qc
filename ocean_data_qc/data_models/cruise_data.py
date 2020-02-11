@@ -491,7 +491,7 @@ class CruiseData(CruiseDataExport):
         # TODO: round with the original number of decimals >> float comparison
         #       I think this rounding can be made by df column
 
-        self.df = self.df.round(5)
+        self.df = self.df.round(10)
 
 
     def update_flag_values(self, column, new_flag_value, row_indices):
