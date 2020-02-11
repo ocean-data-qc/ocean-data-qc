@@ -170,19 +170,19 @@ class OctaveEquations(Environment):
         return ret
 
     def nitrat_nncanyonb_bit18(self, DATE, LATITUDE, LONGITUDE, PRES, CTDTMP, SAL, OXY):
-        return self.oc.nitrat_nncanyonb_bit18(np.transpose(np.vstack((DATE.get_values() // 10000, LATITUDE, LONGITUDE, -1 * PRES, CTDTMP, SAL, OXY))))
+        return self.oc.nitrat_nncanyonb_bit18(np.transpose(np.vstack((DATE.to_numpy() // 10000, LATITUDE, LONGITUDE, -1 * PRES, CTDTMP, SAL, OXY))))
 
     def phspht_nncanyonb_bit18(self, DATE, LATITUDE, LONGITUDE, PRES, CTDTMP, SAL, OXY):
-        return self.oc.phspht_nncanyonb_bit18(np.transpose(np.vstack((DATE.get_values() // 10000, LATITUDE, LONGITUDE, -1 * PRES, CTDTMP, SAL, OXY))))
+        return self.oc.phspht_nncanyonb_bit18(np.transpose(np.vstack((DATE.to_numpy() // 10000, LATITUDE, LONGITUDE, -1 * PRES, CTDTMP, SAL, OXY))))
 
     def silcat_nncanyonb_bit18(self, DATE, LATITUDE, LONGITUDE, PRES, CTDTMP, SAL, OXY):
-        return self.oc.silcat_nncanyonb_bit18(np.transpose(np.vstack((DATE.get_values()//10000, LATITUDE, LONGITUDE, -1 * PRES, CTDTMP, SAL, OXY))))
+        return self.oc.silcat_nncanyonb_bit18(np.transpose(np.vstack((DATE.to_numpy() // 10000, LATITUDE, LONGITUDE, -1 * PRES, CTDTMP, SAL, OXY))))
 
     def alkali_nncanyonb_bit18(self, DATE, LATITUDE, LONGITUDE, PRES, CTDTMP, SAL, OXY):
-        return self.oc.alkali_nncanyonb_bit18(np.transpose(np.vstack((DATE.get_values()//10000, LATITUDE, LONGITUDE, -1 * PRES, CTDTMP, SAL, OXY))))
+        return self.oc.alkali_nncanyonb_bit18(np.transpose(np.vstack((DATE.to_numpy() // 10000, LATITUDE, LONGITUDE, -1 * PRES, CTDTMP, SAL, OXY))))
 
     def tcarbn_nncanyonb_bit18(self, DATE, LATITUDE, LONGITUDE, PRES, CTDTMP, SAL, OXY):
-        return self.oc.tcarbn_nncanyonb_bit18(np.transpose(np.vstack((DATE.get_values()//10000, LATITUDE, LONGITUDE, -1 * PRES, CTDTMP, SAL, OXY))))
+        return self.oc.tcarbn_nncanyonb_bit18(np.transpose(np.vstack((DATE.to_numpy() // 10000, LATITUDE, LONGITUDE, -1 * PRES, CTDTMP, SAL, OXY))))
 
     def phts25p0_nncanyonb_bit18(self, DATE, LATITUDE, LONGITUDE, PRES, CTDTMP, SAL, OXY):
-        return self.oc.phts25p0_nncanyonb_bit18(np.transpose(np.vstack((DATE.get_values() // 10000, LATITUDE, LONGITUDE, -1 * PRES, CTDTMP, SAL, OXY))))
+        return self.oc.phts25p0_nncanyonb_bit18(np.transpose(np.vstack((DATE.to_numpy() // 10000, LATITUDE, LONGITUDE, -1 * PRES, CTDTMP, SAL, OXY))))
