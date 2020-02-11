@@ -5,8 +5,8 @@
 
 "use strict";
 
-const fs = require('fs')
-const fs_extra = require('fs-extra')
+const fs = require('fs');  // fs-extra already includes this module
+const fs_extra = require('fs-extra');
 const loc = require('locations');
 const lg = require('logging');
 
@@ -50,7 +50,7 @@ module.exports = {
                 return self.data[attr];
             }
         } else {
-            lg.error('-- GET >> data.js: The attribute "' + attr + '" is not in the object stored in the path: ' + self.path);
+            lg.warn('-- GET >> data.js: The attribute "' + attr + '" is not in the object stored in the path: ' + self.path);
             return false;
         }
     },
@@ -166,22 +166,22 @@ module.exports = {
         read.pipe(write);
     },
 
-    /** Copies the needed data to start the logger and
-     *  start to use the user data configurations
+    /** DEPRECATED >> trying to do things asynchronously
+     *  Also this is not taking into account the template versions
      */
-    init_user_data: function() {
-        var self = this;
-        if (!fs.existsSync(loc.files)) {
-            fs.mkdirSync(loc.files);
-            fs_extra.copySync(
-                loc.default_files,  // TOCHECK: does it work within the asar file?
-                loc.files
-            )
-        }
-        if (!fs.existsSync(loc.logs_folder)) {
-            fs.mkdirSync(loc.logs_folder);
-        }
-    },
+    // init_user_data: function() {
+    //     var self = this;
+    //     if (!fs.existsSync(loc.files)) {
+    //         fs.mkdirSync(loc.files);
+    //         fs_extra.copySync(
+    //             loc.default_files,  // TOCHECK: does it work within the asar file?
+    //             loc.files
+    //         )
+    //     }
+    //     if (!fs.existsSync(loc.logs_folder)) {
+    //         fs.mkdirSync(loc.logs_folder);
+    //     }
+    // },
 
 
 

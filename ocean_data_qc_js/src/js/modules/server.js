@@ -12,6 +12,7 @@ const portscanner = require('portscanner');
 const rmdir = require('rimraf');
 const url = require('url');
 const command_exists_sync = require('command-exists').sync;
+const is_dev = require('electron-is-dev');
 
 const {dialog} = require('electron');
 const {app} = require('electron');
@@ -22,11 +23,10 @@ const data = require('data');
 const tools = require('../renderer_modules/tools');
 
 module.exports = {
-    init: function(web_contents, menu) {
+    init: function(menu) {
         var self = this;
-        self.web_contents = web_contents;
+        // self.web_contents = web_contents;
         self.menu = menu;
-        self.bokeh_port = data.get('bokeh_port', loc.shared_data);
         self.shell = null;
         self.ts_shell = null;
         self.python_options = {};
@@ -35,13 +35,179 @@ module.exports = {
         self.ocean_data_qc_path = '';
     },
 
+    init_user_data: function() {
+        lg.warn('-- INIT USER DATA');
+        var self = this;
+        return Promise.all([
+            self.check_json_shared_data(),
+            self.check_json_default_settings(),
+            self.check_json_custom_settings()
+        ]);
+    },
+
+    check_json_shared_data: function() {
+        lg.warn('-- CHECK JSON SHARED DATA');
+        var self = this;
+
+        return new Promise((resolve, reject) => {
+            // if the default.json are differents versions, replace it
+            var v_src = data.get('json_version', loc.shared_data_src);  // new version if the app is updated
+            var v_appdata = data.get('json_version', loc.shared_data);
+            lg.warn('V SRC: ' + v_src);
+            lg.warn('V APPDATA: ' + v_appdata);
+            if (v_appdata == false) {       // then: v < 1.3.0
+                self.overwrite_json_file(loc.shared_data_src, loc.shared_data).then((result) => {
+                    resolve(true);
+                }).catch((msg) => {reject(msg)});
+            } else {
+                if (v_src != v_appdata) {
+                    self.overwrite_json_file(loc.shared_data_src, loc.shared_data).then((result) => {
+                        resolve(true);
+                    }).catch((msg) => {reject(msg)});
+                } else {
+                    resolve(true);
+                }
+            }
+        });
+    },
+
+    check_json_default_settings: function() {
+        lg.warn('-- CHECK JSON DEFAULT SETTINGS')
+        var self = this;
+
+        return new Promise((resolve, reject) => {
+            // if the default.json are differents versions, replace it
+            var v_src = data.get('json_version', loc.default_settings_src);  // new version if the app is updated
+            var v_appdata = data.get('json_version', loc.default_settings);
+            lg.warn('V SRC: ' + v_src);
+            lg.warn('V APPDATA: ' + v_appdata);
+            if (v_appdata == false) {       // then: v < 1.3.0
+                self.overwrite_json_file(loc.default_settings_src, loc.default_settings).then((result) => {
+                    resolve(true);
+                }).catch((msg) => {reject(msg)});
+            } else {
+                if (v_src != v_appdata) {
+                    self.overwrite_json_file(loc.default_settings_src, loc.default_settings).then((result) => {
+                        resolve(true);
+                    }).catch((msg) => {reject(msg)});
+                } else {
+                    resolve(true);
+                }
+            }
+        });
+    },
+
+    /** Checks if the default template json file that is in the src/files folder
+     *  has the same version than the one in the app data to replace it
+     *
+     *  Show a message if the custom.json has a different version and replace it
+     */
+    check_json_custom_settings: function() {
+        lg.warn('-- CHECK JSON CUSTOM SETTINGS')
+        var self = this;
+
+        return new Promise((resolve, reject) => {
+            // if the default.json are differents versions, replace it
+            var v_src = data.get('json_version', loc.default_settings_src);  // new version if the app is updated
+            var v_appdata = data.get('json_version', loc.custom_settings);
+            lg.warn('V SRC: ' + v_src);
+            lg.warn('V APPDATA: ' + v_appdata);
+            if (v_appdata == false) {       // then: v < 1.3.0
+                self.overwrite_json_file(loc.default_settings_src, loc.custom_settings).then((result) => {
+                    lg.warn('>> CORRECTLY OVERWRITTEN')
+                    resolve(true);
+                }).catch((msg) => { reject(msg); });
+            } else {
+                if (v_src != v_appdata) {
+                    self.web_contents.on('dom-ready', () => {
+                        self.web_contents.send('show-custom-settings-replace', {'result': 'should_update' });
+                    });
+                    resolve(true);
+                } else {
+                    self.json_templates_compare_custom_default().then((result) => {
+                        lg.warn('>> COMPARISON FINISHED: ' + JSON.stringify(result))
+                        if (result == true) {
+                            lg.warn('>> CUSTOM AND DEFAULT FILES ARE EQUAL')
+                            try {
+                                self.web_contents.on('dom-ready', () => {
+                                    self.web_contents.send('show-custom-settings-replace', {'result': 'sync' });
+                                });
+                            } catch(err) {
+                                lg.error('ERROR: ' + err);
+                            }
+
+                        } else {
+                            lg.warn('>> CUSTOM AND DEFAULT FILES ARE NON EQUAL')
+                            try {
+                                self.web_contents.on('dom-ready', () => {
+                                    self.web_contents.send('show-custom-settings-replace', {'result': 'should_restore' });
+                                });
+                            } catch(err) {
+                                lg.error('ERROR: ' + err);
+                            }
+                        }
+                        lg.warn('>> RESOLVING...');
+                        resolve(true);
+                    }).catch((msg) => {
+                        reject(msg);
+                    });
+                }
+
+            }
+        });
+    },
+
+    overwrite_json_file: function(src, dst) {
+        // TODO: move this to data.js ??
+        lg.warn('-- OVERWRITE JSON FILE WITH SRC: ' + src);
+        return new Promise((resolve, reject) => {
+            var a = fs.createReadStream(src);
+            var c = fs.createWriteStream(dst);
+            a.on('error', (err) => {
+                reject('The file you have opened could not be read (override_json_file method)');
+            });
+            c.on('error', (err) => {
+                reject('The file you have opened could not be read (override_json_file method)');
+            });
+            var p = a.pipe(c);
+            p.on('close', function(){
+                lg.warn('>> OVERWRITE JSON TEMPLATE FILES CLOSED');
+                resolve(true);
+            });
+        });
+    },
+
+    json_template_restore_to_default: function() {
+        var self = this;
+        lg.warn('-- JSON TEMPLATE RESTORE TO DEFAULT')
+        self.overwrite_json_file(loc.default_settings_src, loc.custom_settings);
+    },
+
+    json_templates_compare_custom_default: function() {
+        lg.warn('-- JSON TEMPLATES COMPARE CUSTOM DEFAULT');
+        return new Promise((resolve, reject) => {
+            fs.readFile(loc.custom_settings, (err, data1) => {
+                if (err) reject(err);
+                fs.readFile(loc.default_settings_src, (err, data2) => {
+                    if (err) reject(err);
+                    if (data1.equals(data2)) {
+                        resolve(true);  // nothing happens >> show sync message, replace is not needed
+                    } else {
+                        resolve(false);  // offer to the user the chance to restore to default
+                    }
+                });
+            });
+        });
+    },
+
     /**
      * Launches bokeh server application.
      * Checks if the developer mode is enabled before.
      */
     launch_bokeh: function() {
-        var self = this;
         lg.info('-- LAUNCHING BOKEH');
+        var self = this;
+        self.bokeh_port = data.get('bokeh_port', loc.shared_data);
         self.set_python_path();
     },
 
@@ -228,10 +394,9 @@ module.exports = {
 
     load_bokeh_on_iframe: function() {
         var self = this;
-        var bokeh_port = data.get('bokeh_port', loc.shared_data);
         var ensure_one = false;
         var _checkBokehPort = setInterval(function() {
-            portscanner.checkPortStatus(bokeh_port, function(error, status) {
+            portscanner.checkPortStatus(self.bokeh_port, function(error, status) {
                 if (status == 'open') {
                     clearInterval(_checkBokehPort);
                     if (ensure_one == false) {
@@ -350,5 +515,23 @@ module.exports = {
             }
         }, 100);
 
+    },
+
+    set_file_to_open: function() {
+        lg.warn('-- SET FILE TO OPEN')
+        if (is_dev) {
+            var file_to_open = process.argv[2];  // the process.argv[1] is the ocean_data_qc_js folder
+        } else {
+            var file_to_open = process.argv[1];
+        }
+        if (typeof(file_to_open) !== 'undefined') {
+            // TODO: Is file_to_open a relative path when it is open with the mouse??
+            data.set({'file_to_open': file_to_open }, loc.shared_data);
+        } else {
+            // NOTE: Just in case the previous session was closed by force
+            data.set({'file_to_open': false }, loc.shared_data);
+
+            // TODO: Show the main loader here
+        }
     },
 }

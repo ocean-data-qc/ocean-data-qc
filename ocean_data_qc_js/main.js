@@ -6,7 +6,9 @@
 "use strict";
 
 const path = require('path');
-require('app-module-path').addPath(path.join(__dirname, 'src/js/modules'));  // change folder name to "node_modules" to avoid this?
+const app_module_path = require('app-module-path');
+app_module_path.addPath(path.join(__dirname, 'src/js/modules'));  // change folder name to "node_modules" to avoid this?
+app_module_path.addPath(path.join(__dirname, 'src/js/renderer_modules'));
 
 const lg = require('logging');
 const loc = require('locations');
@@ -22,7 +24,8 @@ const {BrowserWindow} = require('electron');
 const {ipcMain} = require('electron');
 const {dialog} = require('electron');
 
-const data = require('data')
+const data = require('data');
+const tools = require('tools');
 const server = require('server');
 const menu = require('menu');
 const menu_actions = require('menu_actions');
@@ -55,26 +58,11 @@ var main_window = null;      // global reference of the window object
 app.commandLine.appendSwitch('disable-site-isolation-trials');
 
 app.on('ready', function() {
-    try {
-        data.init_user_data()
-    } catch(err) {
-        lg.error('ERROR INITIALIZING FILES: ' + err);
-    }
-    if (is_dev) {
-        var file_to_open = process.argv[2];  // the process.argv[1] is the ocean_data_qc_js folder
-    } else {
-        var file_to_open = process.argv[1];
-    }
-    if (typeof(file_to_open) !== 'undefined') {
-        // TODO: Is file_to_open a relative path when it is open with the mouse??
-        data.set({'file_to_open': file_to_open }, loc.shared_data);
-    } else {
-        // NOTE: Just in case the previous session was closed by force
-        data.set({'file_to_open': false }, loc.shared_data);
-
-        // TODO: Show the main loader here
-    }
-
+    // try {
+    //     data.init_user_data()
+    // } catch(err) {
+    //     lg.error('ERROR INITIALIZING FILES: ' + err);
+    // }
     main_window = new BrowserWindow({
         webPreferences: { nodeIntegration: true, }, // https://stackoverflow.com/a/55908510/4891717
         width: 1380,
@@ -85,30 +73,50 @@ app.on('ready', function() {
     })
     //main_window.maximize();
     var web_contents = main_window.webContents;          // TODO: avoid globals
-    //web_contents.openDevTools();     // TODO: "chromium DevTools" >> add this options to development menu (toggle)
+    // web_contents.openDevTools();     // TODO: "chromium DevTools" >> add this options to development menu (toggle)
+    server.web_contents = web_contents;
 
-    menu_actions.init(web_contents, server);
-    menu.init(web_contents, menu_actions, server);
+    Promise.all([
+        server.check_json_shared_data(),
+        server.check_json_default_settings(),
+        server.check_json_custom_settings()
+    ]).then((result) => {
+        lg.warn('>> INIT USER DATA FINISHED');
+        lg.warn('>> PROMISE ALL RESULT: ' + result);
+        server.set_file_to_open();
+        lg.warn('>> FILE TO OPEN FINISHED');
 
-    menu.set_main_menu();
-    server.init(web_contents, menu);
-    server.go_to_welcome_window();
-    server.launch_bokeh();  // bokeh initialization on the background
-    server.load_bokeh_on_iframe();
+        menu_actions.init(web_contents, server);
+        menu.init(web_contents, menu_actions, server);
+        menu.set_main_menu();
 
-    app.showExitPrompt = true
-    main_window.on('close', (e) => {
-        lg.info('-- ON CLOSE MAIN WINDOW');
-        server.close_with_exit_prompt_dialog(e);
-    })
+        server.init(menu);
+        server.go_to_welcome_window();
+        server.launch_bokeh();  // bokeh initialization on the background
+        server.load_bokeh_on_iframe();
 
-    if (!is_dev) {
-        // Autoupdater (running on production)
-        web_contents.send('show-loader');  // TODO: is this OK here?
-        updater.init(web_contents);
-        updater.listeners();
-        updater.check_for_updates();
-    }
+        app.showExitPrompt = true
+        main_window.on('close', (e) => {
+            lg.info('-- ON CLOSE MAIN WINDOW');
+            server.close_with_exit_prompt_dialog(e);
+        })
+
+        if (!is_dev) {
+            // Autoupdater (running on production)
+            web_contents.send('show-loader');  // TODO: is this OK here?
+            updater.init(web_contents);
+            updater.listeners();
+            updater.check_for_updates();
+        }
+
+        server.web_contents.send('show-custom-settings-replace');
+    }).catch((msg) => {
+        lg.error('ERROR in the promise all: ' + msg);
+        // TODO: I need dom-ready event to run this
+        // or running it in the renderer side
+        // tools.showModal('ERROR', msg);
+    });
+
 });
 
 app.on('window-all-closed', function (event) {
@@ -195,6 +203,10 @@ ipcMain.on('disable-watcher', function(event, args){
 
 ipcMain.on('run-tile-server', function(event, args){
     server.run_tile_server();
+})
+
+ipcMain.on('json-template-restore-to-default', function(event, args){
+    server.json_template_restore_to_default();
 })
 
 
