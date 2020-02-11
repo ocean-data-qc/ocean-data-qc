@@ -44,7 +44,7 @@ def get_package_data():
 
 requires = [
     'bokeh >=1.4.0',
-    'pandas >=0.25.3',
+    'pandas >=1.0.1',
     'seawater >=3.3.4',
     'more_itertools >=4.3.0',
     'oct2py >=4.0.6',
