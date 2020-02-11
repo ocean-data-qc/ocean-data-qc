@@ -34,7 +34,7 @@ class CruiseDataExport(Environment):
         with open(path.join(TMP, 'export_whp.csv'), 'w') as f_out:
             if self.env.cruise_data.original_type == 'whp':
                 with open(path.join(TMP, 'original.csv')) as f_in:
-                    f_out.write(f_in.readline())    # get the first line "BOTTLE..."
+                    f_out.write(f_in.readline().rstrip().rstrip(',')+'\n')    # get the first line "BOTTLE..." and remove ending ,,, if any
             elif self.env.cruise_data.original_type == 'csv':
                 f_out.write('BOTTLE,{}{}\n'.format(
                     datetime.now().strftime('%Y%m%d'),
