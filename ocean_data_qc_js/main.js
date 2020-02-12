@@ -74,7 +74,6 @@ app.on('ready', function() {
     Promise.all([
         server.check_log_folder(),
         server.check_json_shared_data(),
-        server.check_json_default_settings(),
         server.check_json_custom_settings()
     ]).then((result) => {
         lg.warn('>> INIT USER DATA FINISHED');

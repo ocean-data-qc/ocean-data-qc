@@ -382,11 +382,10 @@ ipcRenderer.on('export-pdf-file', (event, arg) => {
 ipcRenderer.on('show-custom-settings-replace', (event, arg) => {
     lg.warn('-- SHOW-CUSTOM-SETTINGS-REPLACEMENT, args: ' + JSON.stringify(arg));
     if (arg['result'] == 'should_update') {  // ask question to the user, replace or keep file?
-        $('#json_template_state').addAttr('hidden');
+        $('#json_template_state').attr('hidden', '');
 
-        $('#json_template_restore_to_default').removeClass('json_template_orange');
-        $('#json_template_restore_to_default').addClass('json_template_green');
-        $('#json_template_restore_to_default').text('Replace custom settings file with the new version? (calculated parameters included)');
+        $('#json_template_restore_to_default>strong').text('Replace custom settings file with the new version? (calculated parameters included)');
+        $('#json_template_restore_to_default').removeAttr('hidden');
     } else if (arg['result'] == 'should_restore') {  // should update false, but are custom and default files equal?
         $('#json_template_state').attr('hidden', '');
         $('#json_template_restore_to_default').removeAttr('hidden');

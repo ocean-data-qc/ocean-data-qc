@@ -75,32 +75,6 @@ module.exports = {
         });
     },
 
-    check_json_default_settings: function() {
-        lg.warn('-- CHECK JSON DEFAULT SETTINGS')
-        var self = this;
-
-        return new Promise((resolve, reject) => {
-            // if the default.json are differents versions, replace it
-            var v_src = data.get('json_version', loc.default_settings);  // new version if the app is updated
-            var v_appdata = data.get('json_version', loc.default_settings);
-            lg.warn('V SRC: ' + v_src);
-            lg.warn('V APPDATA: ' + v_appdata);
-            if (v_appdata == false) {       // then: v < 1.3.0
-                self.overwrite_json_file(loc.default_settings, loc.default_settings).then((result) => {
-                    resolve(true);
-                }).catch((msg) => {reject(msg)});
-            } else {
-                if (v_src != v_appdata) {
-                    self.overwrite_json_file(loc.default_settings, loc.default_settings).then((result) => {
-                        resolve(true);
-                    }).catch((msg) => {reject(msg)});
-                } else {
-                    resolve(true);
-                }
-            }
-        });
-    },
-
     /** Checks if the default template json file that is in the src/files folder
      *  has the same version than the one in the app data to replace it
      *
@@ -116,48 +90,41 @@ module.exports = {
             var v_appdata = data.get('json_version', loc.custom_settings);
             lg.warn('V SRC: ' + v_src);
             lg.warn('V APPDATA: ' + v_appdata);
-            if (v_appdata == false) {       // then: v < 1.3.0
-                self.overwrite_json_file(loc.default_settings, loc.custom_settings).then((result) => {
-                    lg.warn('>> CORRECTLY OVERWRITTEN')
-                    resolve(true);
-                }).catch((msg) => { reject(msg); });
+            if (v_src != v_appdata || v_appdata == false) {  // if v_appdata = false, then: v < 1.3.0
+                self.web_contents.on('dom-ready', () => {
+                    self.web_contents.send('show-custom-settings-replace', {'result': 'should_update' });
+                });
+                resolve(true);
             } else {
-                if (v_src != v_appdata) {
-                    self.web_contents.on('dom-ready', () => {
-                        self.web_contents.send('show-custom-settings-replace', {'result': 'should_update' });
-                    });
-                    resolve(true);
-                } else {
-                    self.json_templates_compare_custom_default().then((result) => {
-                        lg.warn('>> COMPARISON FINISHED: ' + JSON.stringify(result))
-                        if (result == true) {
-                            lg.warn('>> CUSTOM AND DEFAULT FILES ARE EQUAL')
-                            try {
-                                self.web_contents.on('dom-ready', () => {
-                                    self.web_contents.send('show-custom-settings-replace', {'result': 'sync' });
-                                });
-                            } catch(err) {
-                                lg.error('ERROR: ' + err);
-                            }
-
-                        } else {
-                            lg.warn('>> CUSTOM AND DEFAULT FILES ARE NON EQUAL')
-                            try {
-                                self.web_contents.on('dom-ready', () => {
-                                    self.web_contents.send('show-custom-settings-replace', {'result': 'should_restore' });
-                                });
-                            } catch(err) {
-                                lg.error('ERROR: ' + err);
-                            }
+                self.json_templates_compare_custom_default().then((result) => {
+                    lg.warn('>> COMPARISON FINISHED: ' + JSON.stringify(result))
+                    if (result == true) {
+                        lg.warn('>> CUSTOM AND DEFAULT FILES ARE EQUAL')
+                        try {
+                            self.web_contents.on('dom-ready', () => {
+                                self.web_contents.send('show-custom-settings-replace', {'result': 'sync' });
+                            });
+                        } catch(err) {
+                            lg.error('ERROR: ' + err);
                         }
-                        lg.warn('>> RESOLVING...');
-                        resolve(true);
-                    }).catch((msg) => {
-                        reject(msg);
-                    });
-                }
 
+                    } else {
+                        lg.warn('>> CUSTOM AND DEFAULT FILES ARE NON EQUAL')
+                        try {
+                            self.web_contents.on('dom-ready', () => {
+                                self.web_contents.send('show-custom-settings-replace', {'result': 'should_restore' });
+                            });
+                        } catch(err) {
+                            lg.error('ERROR: ' + err);
+                        }
+                    }
+                    lg.warn('>> RESOLVING...');
+                    resolve(true);
+                }).catch((msg) => {
+                    reject(msg);
+                });
             }
+
         });
     },
 
