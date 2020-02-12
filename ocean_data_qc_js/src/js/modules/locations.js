@@ -56,6 +56,7 @@ const locations = {
     // SETTINGS FILES IN APPDATA FOLDER
     'shared_data': path.join(__user_data, 'files/shared_data.json'),
     'custom_settings': path.join(__user_data, 'files/custom_settings.json'),
+    'default_settings_old': path.join(__user_data, 'files/default_settings.json'),  // deprecated
 
     // PYTHON EXECUTABLE
     'python_win': path.join(__ocean_data_qc_js, '../env/python.exe'),

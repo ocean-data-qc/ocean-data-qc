@@ -35,6 +35,7 @@ module.exports = {
     },
 
     check_log_folder: function() {
+        lg.info('-- CHECK LOG FOLDER')
         return new Promise((resolve, reject) => {
             fs.access(loc.logs_folder, fs.constants.F_OK, (err) => {
                 if (err) {
@@ -49,16 +50,31 @@ module.exports = {
         });
     },
 
+    /** In previous versions there used to be a default_settings.json */
+    check_json_old_default_settings: function() {
+        lg.info('-- CHECK JSON OLD DEFAULT SETTINGS');
+        return new Promise((resolve, reject) => {
+            fs.access(loc.default_settings_old, fs.constants.F_OK, (err) => {
+                if (err) {
+                    resolve(true);
+                } else {
+                    fs.unlink(loc.default_settings_old, (err) => {
+                        if (err) reject(err);
+                        else resolve(true);
+                    });
+                }
+            });
+        });
+    },
+
     check_json_shared_data: function() {
-        lg.warn('-- CHECK JSON SHARED DATA');
+        lg.info('-- CHECK JSON SHARED DATA');
         var self = this;
 
         return new Promise((resolve, reject) => {
             // if the default.json are differents versions, replace it
             var v_src = data.get('json_version', loc.shared_data_src);  // new version if the app is updated
             var v_appdata = data.get('json_version', loc.shared_data);
-            lg.warn('V SRC: ' + v_src);
-            lg.warn('V APPDATA: ' + v_appdata);
             if (v_appdata == false) {       // then: v < 1.3.0
                 self.overwrite_json_file(loc.shared_data_src, loc.shared_data).then((result) => {
                     resolve(true);
@@ -81,15 +97,13 @@ module.exports = {
      *  Show a message if the custom.json has a different version and replace it
      */
     check_json_custom_settings: function() {
-        lg.warn('-- CHECK JSON CUSTOM SETTINGS')
+        lg.info('-- CHECK JSON CUSTOM SETTINGS')
         var self = this;
 
         return new Promise((resolve, reject) => {
             // if the default.json are differents versions, replace it
             var v_src = data.get('json_version', loc.default_settings);  // new version if the app is updated
             var v_appdata = data.get('json_version', loc.custom_settings);
-            lg.warn('V SRC: ' + v_src);
-            lg.warn('V APPDATA: ' + v_appdata);
             if (v_src != v_appdata || v_appdata == false) {  // if v_appdata = false, then: v < 1.3.0
                 self.web_contents.on('dom-ready', () => {
                     self.web_contents.send('show-custom-settings-replace', {'result': 'should_update' });
@@ -97,9 +111,7 @@ module.exports = {
                 resolve(true);
             } else {
                 self.json_templates_compare_custom_default().then((result) => {
-                    lg.warn('>> COMPARISON FINISHED: ' + JSON.stringify(result))
                     if (result == true) {
-                        lg.warn('>> CUSTOM AND DEFAULT FILES ARE EQUAL')
                         try {
                             self.web_contents.on('dom-ready', () => {
                                 self.web_contents.send('show-custom-settings-replace', {'result': 'sync' });
@@ -109,7 +121,6 @@ module.exports = {
                         }
 
                     } else {
-                        lg.warn('>> CUSTOM AND DEFAULT FILES ARE NON EQUAL')
                         try {
                             self.web_contents.on('dom-ready', () => {
                                 self.web_contents.send('show-custom-settings-replace', {'result': 'should_restore' });
@@ -118,7 +129,6 @@ module.exports = {
                             lg.error('ERROR: ' + err);
                         }
                     }
-                    lg.warn('>> RESOLVING...');
                     resolve(true);
                 }).catch((msg) => {
                     reject(msg);
@@ -130,7 +140,7 @@ module.exports = {
 
     overwrite_json_file: function(src, dst) {
         // TODO: move this to data.js ??
-        lg.warn('-- OVERWRITE JSON FILE WITH SRC: ' + src);
+        lg.info('-- OVERWRITE JSON FILE WITH SRC: ' + src);
         return new Promise((resolve, reject) => {
             var a = fs.createReadStream(src);
             var c = fs.createWriteStream(dst);
@@ -150,11 +160,10 @@ module.exports = {
 
     json_template_restore_to_default: function() {
         var self = this;
-        lg.warn('-- JSON TEMPLATE RESTORE TO DEFAULT')
+        lg.info('-- JSON TEMPLATE RESTORE TO DEFAULT')
         self.overwrite_json_file(loc.default_settings, loc.custom_settings);
 
         self.overwrite_json_file(loc.default_settings, loc.custom_settings).then((result) => {
-            lg.warn('>> CORRECTLY OVERWRITTEN');
             self.web_contents.send('show-custom-settings-replace', {'result': 'restored'});
         }).catch((error) => {
             self.web_contents.send('show-modal', {
@@ -165,7 +174,7 @@ module.exports = {
     },
 
     json_templates_compare_custom_default: function() {
-        lg.warn('-- JSON TEMPLATES COMPARE CUSTOM DEFAULT');
+        lg.info('-- JSON TEMPLATES COMPARE CUSTOM DEFAULT');
         return new Promise((resolve, reject) => {
             fs.readFile(loc.custom_settings, (err, data1) => {
                 if (err) reject(err);
@@ -499,7 +508,7 @@ module.exports = {
     },
 
     set_file_to_open: function() {
-        lg.warn('-- SET FILE TO OPEN')
+        lg.info('-- SET FILE TO OPEN')
         if (is_dev) {
             var file_to_open = process.argv[2];  // the process.argv[1] is the ocean_data_qc_js folder
         } else {

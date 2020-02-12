@@ -74,12 +74,11 @@ app.on('ready', function() {
     Promise.all([
         server.check_log_folder(),
         server.check_json_shared_data(),
+        server.check_json_old_default_settings(),
         server.check_json_custom_settings()
     ]).then((result) => {
-        lg.warn('>> INIT USER DATA FINISHED');
-        lg.warn('>> PROMISE ALL RESULT: ' + result);
+        lg.info('>> PROMISE ALL RESULT: ' + result);
         server.set_file_to_open();
-        lg.warn('>> FILE TO OPEN FINISHED');
 
         menu_actions.init(web_contents, server);
         menu.init(web_contents, menu_actions, server);

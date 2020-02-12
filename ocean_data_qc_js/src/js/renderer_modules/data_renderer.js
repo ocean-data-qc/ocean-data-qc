@@ -101,8 +101,8 @@ module.exports = {
     },
 
     download_custom_json_template: function() {
-        var self = this;
         lg.info('-- DOWNLOAD CUSTOM SETTINGS JSON TEMPLATE');
+        var self = this;
         var datetime = new Date();
         dialog.showSaveDialog({
             title: 'Export Project as WHP CSV file',

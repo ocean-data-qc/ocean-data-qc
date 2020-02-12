@@ -129,12 +129,10 @@ $('#enable_dev_mode').click(function() {
 // ------------------------------- CUSTOM SETTINGS ---------------------------------- //
 
 $('#json_template_restore_to_default>a').click(function() {
-    lg.warn('-- JSON TEMPLATE RETORE TO DEFAULT CLICK')
     server_renderer.json_template_restore_to_default();
 });
 
 $('#json_template_download_custom>a').click(function() {
-    lg.warn('-- JSON TEMPLATES DOWNLOAD CLICK')
     data_renderer.download_custom_json_template();
 });
 
@@ -380,7 +378,7 @@ ipcRenderer.on('export-pdf-file', (event, arg) => {
 });
 
 ipcRenderer.on('show-custom-settings-replace', (event, arg) => {
-    lg.warn('-- SHOW-CUSTOM-SETTINGS-REPLACEMENT, args: ' + JSON.stringify(arg));
+    lg.info('-- SHOW-CUSTOM-SETTINGS-REPLACEMENT, args: ' + JSON.stringify(arg));
     if (arg['result'] == 'should_update') {  // ask question to the user, replace or keep file?
         $('#json_template_state').attr('hidden', '');
 
