@@ -72,7 +72,7 @@ app.on('ready', function() {
     server.web_contents = web_contents;
 
     Promise.all([
-        // server.check_log_folder(),
+        server.check_log_folder(),
         server.check_json_shared_data(),
         server.check_json_default_settings(),
         server.check_json_custom_settings()

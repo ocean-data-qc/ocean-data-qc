@@ -35,10 +35,18 @@ module.exports = {
     },
 
     check_log_folder: function() {
-        // TODO: do this asynchronously
-        // if (!fs.existsSync(loc.logs_folder)) {
-        //     fs.mkdirSync(loc.logs_folder);
-        // }
+        return new Promise((resolve, reject) => {
+            fs.access(loc.logs_folder, fs.constants.F_OK, (err) => {
+                if (err) {
+                    fs.mkdir(loc.logs_folder, { recursive: true }, (err) => {
+                        if (err) reject(err);
+                        else resolve(true);
+                    });
+                } else {
+                    resolve(true);
+                }
+            });
+        });
     },
 
     check_json_shared_data: function() {
