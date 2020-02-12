@@ -73,17 +73,17 @@ module.exports = {
 
         return new Promise((resolve, reject) => {
             // if the default.json are differents versions, replace it
-            var v_src = data.get('json_version', loc.default_settings_src);  // new version if the app is updated
+            var v_src = data.get('json_version', loc.default_settings);  // new version if the app is updated
             var v_appdata = data.get('json_version', loc.default_settings);
             lg.warn('V SRC: ' + v_src);
             lg.warn('V APPDATA: ' + v_appdata);
             if (v_appdata == false) {       // then: v < 1.3.0
-                self.overwrite_json_file(loc.default_settings_src, loc.default_settings).then((result) => {
+                self.overwrite_json_file(loc.default_settings, loc.default_settings).then((result) => {
                     resolve(true);
                 }).catch((msg) => {reject(msg)});
             } else {
                 if (v_src != v_appdata) {
-                    self.overwrite_json_file(loc.default_settings_src, loc.default_settings).then((result) => {
+                    self.overwrite_json_file(loc.default_settings, loc.default_settings).then((result) => {
                         resolve(true);
                     }).catch((msg) => {reject(msg)});
                 } else {
@@ -104,12 +104,12 @@ module.exports = {
 
         return new Promise((resolve, reject) => {
             // if the default.json are differents versions, replace it
-            var v_src = data.get('json_version', loc.default_settings_src);  // new version if the app is updated
+            var v_src = data.get('json_version', loc.default_settings);  // new version if the app is updated
             var v_appdata = data.get('json_version', loc.custom_settings);
             lg.warn('V SRC: ' + v_src);
             lg.warn('V APPDATA: ' + v_appdata);
             if (v_appdata == false) {       // then: v < 1.3.0
-                self.overwrite_json_file(loc.default_settings_src, loc.custom_settings).then((result) => {
+                self.overwrite_json_file(loc.default_settings, loc.custom_settings).then((result) => {
                     lg.warn('>> CORRECTLY OVERWRITTEN')
                     resolve(true);
                 }).catch((msg) => { reject(msg); });
@@ -176,9 +176,9 @@ module.exports = {
     json_template_restore_to_default: function() {
         var self = this;
         lg.warn('-- JSON TEMPLATE RESTORE TO DEFAULT')
-        self.overwrite_json_file(loc.default_settings_src, loc.custom_settings);
+        self.overwrite_json_file(loc.default_settings, loc.custom_settings);
 
-        self.overwrite_json_file(loc.default_settings_src, loc.custom_settings).then((result) => {
+        self.overwrite_json_file(loc.default_settings, loc.custom_settings).then((result) => {
             lg.warn('>> CORRECTLY OVERWRITTEN');
             self.web_contents.send('show-custom-settings-replace', {'result': 'restored'});
         }).catch((error) => {
@@ -194,7 +194,7 @@ module.exports = {
         return new Promise((resolve, reject) => {
             fs.readFile(loc.custom_settings, (err, data1) => {
                 if (err) reject(err);
-                fs.readFile(loc.default_settings_src, (err, data2) => {
+                fs.readFile(loc.default_settings, (err, data2) => {
                     if (err) reject(err);
                     if (data1.equals(data2)) {
                         resolve(true);  // nothing happens >> show sync message, replace is not needed

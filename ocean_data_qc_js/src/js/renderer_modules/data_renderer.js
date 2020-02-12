@@ -98,5 +98,21 @@ module.exports = {
                 tools.showModal('ERROR', 'The file could not be saved!', 'ERROR', false, err);
             }
         }
-    }
+    },
+
+    download_custom_json_template: function() {
+        var self = this;
+        lg.info('-- DOWNLOAD CUSTOM SETTINGS JSON TEMPLATE');
+        var datetime = new Date();
+        dialog.showSaveDialog({
+            title: 'Export Project as WHP CSV file',
+            defaultPath: '~/custom_settings_' + datetime.toISOString().slice(0,10) + '.json',
+            filters: [{ extensions: ['json'] }]
+        }).then((results) => {
+            if (results['canceled'] == false) {
+                self.export_whp_format(results);
+            }
+        });
+
+    },
 }

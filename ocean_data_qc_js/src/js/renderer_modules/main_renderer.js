@@ -21,6 +21,7 @@ const is_dev = require('electron-is-dev');
 const loc = require('locations');
 const lg = require('logging');
 const data = require('data');
+const data_renderer = require('data_renderer');
 const tools = require('tools');
 const server_renderer = require('server_renderer');
 const bokeh_export = require('bokeh_export');
@@ -125,11 +126,16 @@ $('#enable_dev_mode').click(function() {
     }
 });
 
-// ------------------------------- OVERWRITE CUSTOM SETTINGS ---------------------------------- //
+// ------------------------------- CUSTOM SETTINGS ---------------------------------- //
 
 $('#json_template_restore_to_default>a').click(function() {
     lg.warn('-- JSON TEMPLATE RETORE TO DEFAULT CLICK')
     server_renderer.json_template_restore_to_default();
+});
+
+$('#json_template_download_custom>a').click(function() {
+    lg.warn('-- JSON TEMPLATES DOWNLOAD CLICK')
+    data_renderer.download_custom_json_template();
 });
 
 // ------------------------------- HOME LINKS ---------------------------------- //

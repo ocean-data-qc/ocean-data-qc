@@ -33,8 +33,7 @@ const locations = {
 
     // SETTINGS FILES IN SRC FOLDER
     'shared_data_src': path.join(__ocean_data_qc_js, 'src/files/shared_data.json'),
-    'custom_settings_src': path.join(__ocean_data_qc_js, 'src/files/custom_settings.json'),
-    'default_settings_src': path.join(__ocean_data_qc_js, 'src/files/default_settings.json'),
+    'default_settings': path.join(__ocean_data_qc_js, 'src/files/default_settings.json'),
 
     // TILE SERVICES
     //'basemap_offile_tile': path.join(__ocean_data_qc_js, 'src/tiles/world_ocean_base_z4.zip'),
@@ -57,7 +56,6 @@ const locations = {
     // SETTINGS FILES IN APPDATA FOLDER
     'shared_data': path.join(__user_data, 'files/shared_data.json'),
     'custom_settings': path.join(__user_data, 'files/custom_settings.json'),
-    'default_settings': path.join(__user_data, 'files/default_settings.json'),
 
     // PYTHON EXECUTABLE
     'python_win': path.join(__ocean_data_qc_js, '../env/python.exe'),

@@ -130,7 +130,7 @@ IMG = path.join(OCEAN_DATA_QC, 'static', 'img')
 
 PROJ_SETTINGS = path.join(TMP, 'settings.json')
 CUSTOM_SETTINGS = path.join(FILES, 'custom_settings.json')
-DEFAULT_SETTINGS = path.join(FILES, 'default_settings.json')
+DEFAULT_SETTINGS = path.join(OCEAN_DATA_QC_JS, 'src', 'files', 'default_settings.json')
 
 SHARED_DATA = path.join(FILES, 'shared_data.json')
 
