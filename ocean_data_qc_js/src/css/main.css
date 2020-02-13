@@ -127,6 +127,22 @@ h5 {
     color: #e07714;
 }
 
+.json_template_blue {
+    color: #337ab7;
+}
+
+.json_template_green {
+    color: #5cb85c;
+}
+
+.json_template_red {
+    color: red;
+}
+
+.json_template_orange, .json_template_orange>a {
+    color: #e07714;
+}
+
 /* MODAL WINDOW */
 
 .modal-body {

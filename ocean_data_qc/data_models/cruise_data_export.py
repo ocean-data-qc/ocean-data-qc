@@ -49,7 +49,8 @@ class CruiseDataExport(Environment):
                 for line in f_in:
                     f_out.write('# {}'.format(line))
 
-            columns = self.get_cols_by_type(  # column order?
+            # TODO: check if this exports the correct column order? which is the correct order?
+            columns = self.get_cols_by_type(
                 ['required', 'param', 'non_qc_param', 'qc_param_flag', 'param_flag']
             )
             columns_row = ','.join(columns)

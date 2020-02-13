@@ -98,5 +98,86 @@ module.exports = {
                 tools.showModal('ERROR', 'The file could not be saved!', 'ERROR', false, err);
             }
         }
-    }
+    },
+
+    download_custom_json_template: function() {
+        lg.info('-- DOWNLOAD CUSTOM SETTINGS JSON TEMPLATE');
+        var self = this;
+        var datetime = new Date();
+        dialog.showSaveDialog({
+            title: 'Export Project as WHP CSV file',
+            defaultPath: '~/custom_settings_' + datetime.toISOString().slice(0,10) + '.json',
+            filters: [{ extensions: ['json'] }]
+        }).then((results) => {
+            if (results['canceled'] == false) {
+                var file_path = results['filePath'];
+                lg.warn('>> FILE DOWNLOADED IN: ' + file_path);
+                var a = fs.createReadStream(loc.custom_settings);
+                var c = fs.createWriteStream(file_path);
+
+                a.on('error', (err) => {
+                    tools.showModal('ERROR', 'The file you have opened could not be read');
+                });
+                c.on('error', (err) => {
+                    tools.showModal('ERROR', 'Some error writing to the file');
+                });
+                var p = a.pipe(c);
+
+                p.on('close', function(){
+                    tools.show_modal({
+                        'type': 'INFO',
+                        'msg': 'Custom Settings downloaded in: ' + file_path
+                    });
+                });
+            }
+        });
+
+    },
+
+    upload_custom_json_template: function() {
+        lg.info('-- UPLOAD CUSTOM SETTINGS JSON TEMPLATE')
+        var self = this;
+        dialog.showOpenDialog({
+            title: 'Open the AQC Settings file...',
+            filters: [{ name: 'AtlantOS Ocean Data QC Settings file', extensions: ['json'] }],
+            properties: ['openFile'],
+        }).then(result => {
+            lg.info(result);
+            if (result['canceled'] == false) {
+                var file_path = result['filePaths'][0];
+                fs.readFile(file_path, (err, data) => {
+                    if (err) throw err;
+                    try {
+                        JSON.parse(data);
+                    } catch(err) {
+                        tools.show_modal({
+                            'type': 'VALIDATION ERROR',
+                            'msg': 'JSON file could not be parsed. '
+                                   + 'Check if the syntax is right and try to upload it again'
+                        });
+                        return;  // is this working OK?
+                    }
+
+                    var a = fs.createReadStream(file_path);
+                    var c = fs.createWriteStream(loc.custom_settings);
+
+                    a.on('error', (err) => {
+                        tools.showModal('ERROR', 'The file you have opened could not be read');
+                    });
+                    c.on('error', (err) => {
+                        tools.showModal('ERROR', 'Some error writing to the file');
+                    });
+                    var p = a.pipe(c);
+
+                    p.on('close', function(){
+                        self.ipc_renderer.send('check-json-custom-settings');
+                        tools.show_modal({
+                            'type': 'INFO',
+                            'msg': 'Custom Settings correctly updated.'
+                        });
+                    });
+                });
+            }
+        });
+    },
 }

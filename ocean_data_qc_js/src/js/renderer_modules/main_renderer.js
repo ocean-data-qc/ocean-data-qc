@@ -21,6 +21,7 @@ const is_dev = require('electron-is-dev');
 const loc = require('locations');
 const lg = require('logging');
 const data = require('data');
+const data_renderer = require('data_renderer');
 const tools = require('tools');
 const server_renderer = require('server_renderer');
 const bokeh_export = require('bokeh_export');
@@ -30,7 +31,9 @@ require('set_project_settings_user').init();
 
 // ---------------------------- INITIAL FUNCTIONS ----------------------------- //
 
+server_renderer.init();
 server_renderer.set_python_path();
+data_renderer.ipc_renderer = ipcRenderer;
 
 $('body').data('bokeh_state', 'not-ready');
 $('body').data('ts_state', 'checking');
@@ -122,6 +125,20 @@ $('#enable_dev_mode').click(function() {
         }
         $('#enable_dev_mode').addClass('dev_mode');
     }
+});
+
+// ------------------------------- CUSTOM SETTINGS ---------------------------------- //
+
+$('#json_template_restore_to_default>a').click(function() {
+    server_renderer.json_template_restore_to_default();
+});
+
+$('#json_template_download_custom>a').click(function() {
+    data_renderer.download_custom_json_template();
+});
+
+$('#json_template_upload_custom>a').click(function() {
+    data_renderer.upload_custom_json_template();
 });
 
 // ------------------------------- HOME LINKS ---------------------------------- //
@@ -341,7 +358,7 @@ ipcRenderer.on('show-default-cursor', () => {
 ipcRenderer.on('load-bokeh-on-iframe', (event, arg) => {
     lg.info('-- LOAD BOKEH ON IFRAME');
     var bokeh_port = data.get('bokeh_port', loc.shared_data);
-    $('#bokeh_iframe').attr('src', 'http://localhost:' + bokeh_port + '/ocean_data_qc?backend=webgl')
+    $('#bokeh_iframe').attr('src', 'http://localhost:' + bokeh_port + '/ocean_data_qc')
 });
 
 ipcRenderer.on('go-to-bokeh', (event, arg) => {
@@ -363,4 +380,31 @@ ipcRenderer.on('set-octave-path', (event, arg) => {
 
 ipcRenderer.on('export-pdf-file', (event, arg) => {
     bokeh_export.export_pdf_file();
+});
+
+ipcRenderer.on('show-custom-settings-replace', (event, arg) => {
+    lg.info('-- SHOW-CUSTOM-SETTINGS-REPLACEMENT, args: ' + JSON.stringify(arg));
+    if (arg['result'] == 'should_update') {  // ask question to the user, replace or keep file?
+        $('#json_template_state').attr('hidden', '');
+
+        $('#json_template_restore_to_default>strong').text('Replace custom settings file with the new version? (calculated parameters included)');
+        $('#json_template_restore_to_default').removeAttr('hidden');
+    } else if (arg['result'] == 'should_restore') {  // should update false, but are custom and default files equal?
+        $('#json_template_state').attr('hidden', '');
+        $('#json_template_restore_to_default').removeAttr('hidden');
+    } else if (arg['result'] == 'restored') {
+        $('#json_template_state>strong').text('Default Settings correctly restored');
+        $('#json_template_state').removeClass('json_template_orange');
+        $('#json_template_state').addClass('json_template_blue');
+
+        $('#json_template_restore_to_default').attr('hidden', '');
+        $('#json_template_state').removeAttr('hidden');
+    } else { // result == 'sync'
+        $('#json_template_state>strong').text('Settings have not been modified by the user. Nothing to restore');
+        $('#json_template_state').removeClass('json_template_orange');
+        $('#json_template_state').addClass('json_template_blue');
+
+        $('#json_template_restore_to_default').attr('hidden', '');
+        $('#json_template_state').removeAttr('hidden');
+    }
 });
