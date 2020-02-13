@@ -71,6 +71,8 @@ app.on('ready', function() {
     // web_contents.openDevTools();     // TODO: "chromium DevTools" >> add this options to development menu (toggle)
     server.web_contents = web_contents;
 
+
+
     Promise.all([
         server.check_log_folder(),
         server.check_json_shared_data(),
@@ -85,6 +87,9 @@ app.on('ready', function() {
         menu.set_main_menu();
 
         server.init(menu);
+        web_contents.on('dom-ready', () => {
+            server.dom_ready = true;
+        });
         server.go_to_welcome_window();
         server.launch_bokeh();  // bokeh initialization on the background
         server.load_bokeh_on_iframe();
@@ -201,6 +206,14 @@ ipcMain.on('run-tile-server', function(event, args){
 
 ipcMain.on('json-template-restore-to-default', function(event, args){
     server.json_template_restore_to_default();
+})
+
+ipcMain.on('check-json-custom-settings', function(event, args){
+    server.check_json_custom_settings().then((results) => {
+        lg.info('>> PROMISE FINISHED')
+    }).catch((err) => {
+        lg.error('>> ERROR IN PROMISE: ' + err);
+    });
 })
 
 

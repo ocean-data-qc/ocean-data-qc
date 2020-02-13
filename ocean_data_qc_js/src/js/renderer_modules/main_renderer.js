@@ -33,6 +33,7 @@ require('set_project_settings_user').init();
 
 server_renderer.init();
 server_renderer.set_python_path();
+data_renderer.ipc_renderer = ipcRenderer;
 
 $('body').data('bokeh_state', 'not-ready');
 $('body').data('ts_state', 'checking');
@@ -134,6 +135,10 @@ $('#json_template_restore_to_default>a').click(function() {
 
 $('#json_template_download_custom>a').click(function() {
     data_renderer.download_custom_json_template();
+});
+
+$('#json_template_upload_custom>a').click(function() {
+    data_renderer.upload_custom_json_template();
 });
 
 // ------------------------------- HOME LINKS ---------------------------------- //
@@ -353,7 +358,7 @@ ipcRenderer.on('show-default-cursor', () => {
 ipcRenderer.on('load-bokeh-on-iframe', (event, arg) => {
     lg.info('-- LOAD BOKEH ON IFRAME');
     var bokeh_port = data.get('bokeh_port', loc.shared_data);
-    $('#bokeh_iframe').attr('src', 'http://localhost:' + bokeh_port + '/ocean_data_qc?backend=webgl')
+    $('#bokeh_iframe').attr('src', 'http://localhost:' + bokeh_port + '/ocean_data_qc')
 });
 
 ipcRenderer.on('go-to-bokeh', (event, arg) => {

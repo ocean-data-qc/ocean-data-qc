@@ -32,6 +32,7 @@ module.exports = {
         self.script_env_path = ''
         self.python_path = 'python';
         self.ocean_data_qc_path = '';
+        self.dom_ready = false;
     },
 
     check_log_folder: function() {
@@ -105,26 +106,37 @@ module.exports = {
             var v_src = data.get('json_version', loc.default_settings);  // new version if the app is updated
             var v_appdata = data.get('json_version', loc.custom_settings);
             if (v_src != v_appdata || v_appdata == false) {  // if v_appdata = false, then: v < 1.3.0
-                self.web_contents.on('dom-ready', () => {
+                if (self.dom_ready) {
                     self.web_contents.send('show-custom-settings-replace', {'result': 'should_update' });
-                });
+                } else {
+                    self.web_contents.on('dom-ready', () => {
+                        self.web_contents.send('show-custom-settings-replace', {'result': 'should_update' });
+                    });
+                }
                 resolve(true);
             } else {
                 self.json_templates_compare_custom_default().then((result) => {
                     if (result == true) {
                         try {
-                            self.web_contents.on('dom-ready', () => {
+                            if (self.dom_ready) {
                                 self.web_contents.send('show-custom-settings-replace', {'result': 'sync' });
-                            });
+                            } else {
+                                self.web_contents.on('dom-ready', () => {
+                                    self.web_contents.send('show-custom-settings-replace', {'result': 'sync' });
+                                });
+                            }
                         } catch(err) {
                             lg.error('ERROR: ' + err);
                         }
-
                     } else {
                         try {
-                            self.web_contents.on('dom-ready', () => {
+                            if (self.dom_ready) {
                                 self.web_contents.send('show-custom-settings-replace', {'result': 'should_restore' });
-                            });
+                            } else {
+                                self.web_contents.on('dom-ready', () => {
+                                    self.web_contents.send('show-custom-settings-replace', {'result': 'should_restore' });
+                                });
+                            }
                         } catch(err) {
                             lg.error('ERROR: ' + err);
                         }
@@ -152,7 +164,6 @@ module.exports = {
             });
             var p = a.pipe(c);
             p.on('close', function(){
-                lg.warn('>> OVERWRITE JSON TEMPLATE FILES CLOSED');
                 resolve(true);
             });
         });
