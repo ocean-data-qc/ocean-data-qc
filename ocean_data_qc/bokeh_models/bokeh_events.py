@@ -145,7 +145,7 @@ class BokehEvents(Environment):
                 if next_pos < len(self.env.stations):
                     self.env.cur_nearby_prof = s[next_pos]
                     self.env.bk_sources._upd_prof_srcs(force_selection=True)
-                    self.nearby_prof_div.text = str(int(self.env.cur_nearby_prof))
+                    self.nearby_prof_div.text = str(self.env.cur_nearby_prof)
 
                     # adjust disabled buttons
                     if next_pos + 1 == len(self.env.stations):
@@ -163,7 +163,7 @@ class BokehEvents(Environment):
                 if previous_pos >= 0:
                     self.env.cur_nearby_prof = s[previous_pos]
                     self.env.bk_sources._upd_prof_srcs(force_selection=True)
-                    self.nearby_prof_div.text = str(int(self.env.cur_nearby_prof))
+                    self.nearby_prof_div.text = str(self.env.cur_nearby_prof)
 
                     # adjust disabled buttons
                     if previous_pos == 0:
