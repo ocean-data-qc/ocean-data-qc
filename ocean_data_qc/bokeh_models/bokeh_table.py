@@ -115,7 +115,7 @@ class BokehDataTable(Environment):
         table_cds = ColumnDataSource(self.table_df)
         self.data_table = DataTable(
             width=190,
-            height=125,
+            height=225,
             source=table_cds,
             columns=columns,
             editable=True,                  # TODO: check if there is a better way than https://stackoverflow.com/a/49424647/4891717
