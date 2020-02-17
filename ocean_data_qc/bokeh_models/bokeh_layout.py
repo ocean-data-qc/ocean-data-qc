@@ -62,7 +62,7 @@ class BokehLayout(Environment):
         prof_nav = row(
             children=[
                 be.previous_prof_bt,
-                be.nearby_prof_div,
+                be.nearby_prof_select,
                 be.next_prof_bt,
             ],
             css_classes=['prof_nav']

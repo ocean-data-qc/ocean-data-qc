@@ -41,9 +41,14 @@ body {
     display: none !important;
 }
 
-.sample_div>div, .cur_stt>div  {
+.sample_div>div {
     padding-left: 25px !important;
     padding-top: 8px !important;
+}
+
+.nearby_prof_select>div  {
+    padding-left: 0px !important;
+    padding-top: 0px !important;
 }
 
 .flagger_bts .bk-widget-box {
