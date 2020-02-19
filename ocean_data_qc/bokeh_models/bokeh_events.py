@@ -52,6 +52,7 @@ class BokehEvents(Environment):
             self.env.cur_nearby_prof = None
             self.env.cur_partial_stt_selection = []
             self._update_map_selection_prog(new_indices)
+            self._nearby_prof_select_remove_on_change()
             self.env.bk_table.update_dt_source()  # prof sources is updated inside
             if self.env.plot_nearby_prof:
                 self._update_nearby_prof_select_opts()
@@ -66,14 +67,14 @@ class BokehEvents(Environment):
                 self.env.cur_nearby_prof = None
                 self.env.cur_partial_stt_selection = []
                 if self.env.plot_nearby_prof:
-                    self._update_nearby_prof_select_opts(reset=True)
+                    self._reset_nearby_prof_select_opts()
                 self.env.reset_selection = False
             else:
                 lg.info('>> KEEP SELECTION')
                 self.env.source.selected.indices = self.env.selection   # keep selection
         elif self.env.selection == [] and new_indices == []:  # in case deselect_tool is run
             if self.env.plot_nearby_prof:
-                self._update_nearby_prof_select_opts(reset=True)
+                self._reset_nearby_prof_select_opts()
 
         self.env.dt_manual_update = True  # reactivate the manual update of the datatable
 
@@ -145,33 +146,24 @@ class BokehEvents(Environment):
         def next_profile():
             lg.info('-- NEXT PROFILE')
             if self.nearby_prof_cb:
-                s = self.env.stations  # TODO: use the string list self.nearby_prof_select_opts instead
-                next_pos = s.index(self.env.cur_nearby_prof) + 1
-                if next_pos < len(self.nearby_prof_select.options):
-                    if s[next_pos] == self.env.stt_to_select:   # to skip the selected station (in red)
-                        next_pos = next_pos + 1
-                    self.env.cur_nearby_prof = s[next_pos]
-                    self.env.bk_sources._upd_prof_srcs(force_selection=True)
-                    self.nearby_prof_select.value = '{0:g}'.format(     # g removes trailing zeroes
-                        self.env.cur_nearby_prof
-                    )
-                    self._check_profile_limits()
+                s = self.nearby_prof_select.options
+                next_pos = s.index('{0:g}'.format(self.env.cur_nearby_prof)) + 1
+                if next_pos < len(s):
+                    self.nearby_prof_select.value = s[next_pos]
+                    self.env.cur_nearby_prof = float(s[next_pos])
+                    if (self.env.cur_nearby_prof).is_integer():
+                        self.env.cur_nearby_prof = int(self.env.cur_nearby_prof)
 
         def previous_profile():
             lg.info('-- PREVIOUS PROFILE')
             if self.nearby_prof_cb:
-                s = self.env.stations
-                previous_pos = s.index(self.env.cur_nearby_prof) - 1
+                s = self.nearby_prof_select.options
+                previous_pos = s.index('{0:g}'.format(self.env.cur_nearby_prof)) - 1
                 if previous_pos >= 0:
-                    if s[previous_pos] == self.env.stt_to_select:
-                        previous_pos = previous_pos - 1
-
-                    self.env.cur_nearby_prof = s[previous_pos]
-                    self.env.bk_sources._upd_prof_srcs(force_selection=True)
-                    self.nearby_prof_select.value = '{0:g}'.format(     # g removes trailing zeroes
-                        self.env.cur_nearby_prof
-                    )
-                    self._check_profile_limits()
+                    self.nearby_prof_select.value = s[previous_pos]
+                    self.env.cur_nearby_prof = float(s[previous_pos])
+                    if (self.env.cur_nearby_prof).is_integer():
+                        self.env.cur_nearby_prof = int(self.env.cur_nearby_prof)
 
         self.next_prof_bt = Button(
             width=30, disabled=True,
@@ -189,10 +181,10 @@ class BokehEvents(Environment):
         )
         self.next_prof_bt.on_click(next_profile)
         self.previous_prof_bt.on_click(previous_profile)
-        self.nearby_prof_select.on_change('value', self._on_change_nearby_prof_select)
 
     def _on_change_nearby_prof_select(self, attr, old, new):
         lg.info('-- ON CHANGE NEARBY PROF SELECT')
+        # TODO: dont trigger this the first time
         if isinstance(self.env.stt_to_select, int):  # str to number >> to make it work with '2.2' or '2'
             new_value = int(new)
         else:
@@ -201,6 +193,8 @@ class BokehEvents(Environment):
         s = self.env.stations
         new_pos = s.index(new_value)
         self.env.cur_nearby_prof = s[new_pos]
+
+        # NOTE: trigger this just in case there is a manual change
         self.env.bk_sources._upd_prof_srcs(force_selection=True)
         self._check_profile_limits()
 
@@ -209,11 +203,10 @@ class BokehEvents(Environment):
             when the checkbox of showing nearby station is not ticked
         '''
         lg.info('-- CHECK PROFILE LIMITS')
-        if self.nearby_prof_select.options == ['None']:
+        if self.nearby_prof_select.options == ['None'] or len(self.nearby_prof_select.options) == 1:
             self.previous_prof_bt.disabled = True
             self.next_prof_bt.disabled = True
             return
-
         if self.nearby_prof_select.value == self.nearby_prof_select.options[-1]:
             self.next_prof_bt.disabled = True
         else:
@@ -224,33 +217,47 @@ class BokehEvents(Environment):
         else:
             self.previous_prof_bt.disabled = False
 
-    def _update_nearby_prof_select_opts(self, reset=False):
+    def _nearby_prof_select_remove_on_change(self):
+        lg.info('-- NEARBY PROF SELECT REMOVE ON CHANGE')
+        try:
+            self.nearby_prof_select.remove_on_change('value', self._on_change_nearby_prof_select)
+        except Exception as e:
+            lg.warning('Select callback could not be removed')
+
+    def _reset_nearby_prof_select_opts(self):
+        ''' Removes callback when the onchange method in the dropdown is triggeres
+            Disable navigation buttons and remove option values in the select widget
+        '''
+        lg.info(f'-- RESET NEARBY PROF SELECT OPTS')
+        self._nearby_prof_select_remove_on_change()
+        self.nearby_prof_select.options = ['None']
+        self.nearby_prof_select.disabled = True
+        self.next_prof_bt.disabled = True
+        self.previous_prof_bt.disabled = True
+
+    def _update_nearby_prof_select_opts(self):
         lg.info(f'-- UPDATE NEARBY PROF SELECT OPTS | STT TO SELECT: {self.env.stt_to_select}')
-        if reset is True:
-            self.nearby_prof_select.options = ['None']
-            self.nearby_prof_select.disabled = True
-            self.next_prof_bt.disabled = True
-            self.previous_prof_bt.disabled = True
-            return
         options_sorted = sorted(self.env.stations)
         if self.env.stt_to_select is not None:
             options_sorted.remove(self.env.stt_to_select)
             self.nearby_prof_select.options = ['{0:g}'.format(s) for s in options_sorted]
+            self.nearby_prof_select.on_change('value', self._on_change_nearby_prof_select)
+            self.nearby_prof_select.disabled = False
+            self._check_profile_limits()
 
     def _init_nearby_prof_cb(self):
         def on_click_nearby_prof(active_list):
             lg.info('-- ONCLICK NEARBY PROF')
             lg.info('>> SELECTED STT: {}'.format(self.env.stt_to_select))
             if 0 in active_list:
+                self.env.plot_nearby_prof = True
                 if self.env.stt_to_select is not None:
-                    self.nearby_prof_select.disabled = False
-                    self.env.plot_nearby_prof = True
                     self.set_cur_nearby_prof()
                     self.env.bk_sources._upd_prof_srcs(force_selection=True)
                     self._update_nearby_prof_select_opts()
-                    self._check_profile_limits()
             else:
                 self.env.plot_nearby_prof = False
+                self._nearby_prof_select_remove_on_change()
                 self.nearby_prof_select.options = ['None']
                 self.nearby_prof_select.disabled = True
                 self.next_prof_bt.disabled = True
@@ -267,21 +274,21 @@ class BokehEvents(Environment):
         self.nearby_prof_cb.on_click(on_click_nearby_prof)
 
     def set_cur_nearby_prof(self):
+        ''' Stores in self.env.cur_nearby_prof the default extra station.
+            The next one if it exists, if not, the previous one
+        '''
         lg.info('-- SET CUR NEARBY PROF')
-        self.next_prof_bt.disabled = False          # TODO: if the database has only one station?
+        self.next_prof_bt.disabled = False
         self.previous_prof_bt.disabled = False
-
-        # NOTE: get the default extra station: the next one if exists
-        #       if not, the previous one
         if self.env.stt_to_select is not None:
-            next_pos = self.env.stations.index(self.env.stt_to_select)
-            if next_pos < len(self.env.stations):
-                self.env.cur_nearby_prof = self.env.stations[next_pos + 1]
+            nearby_pos = self.env.stations.index(self.env.stt_to_select)
+            if nearby_pos < len(self.env.stations) - 1:
+                self.env.cur_nearby_prof = self.env.stations[nearby_pos + 1]
                 self.nearby_prof_select.value = '{0:g}'.format(self.env.cur_nearby_prof)
             else:
-                previous_pos = self.env.stations.index(self.env.stt_to_select) - 1
-                if previous_pos >= 0:
-                    self.env.cur_nearby_prof = self.env.stations[previous_pos]
+                nearby_pos = nearby_pos - 1
+                if nearby_pos >= 0:
+                    self.env.cur_nearby_prof = self.env.stations[nearby_pos]
                     self.nearby_prof_select.value = '{0:g}'.format(self.env.cur_nearby_prof)
             self._check_profile_limits()
 
