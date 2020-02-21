@@ -10,14 +10,15 @@ It's not essential for this software to run, but in order to take advantage of t
 
 ### Using built-in installers
 
-* Windows x64: [ocean-data-qc-setup-1.2.0.exe](https://github.com/ocean-data-qc/ocean-data-qc/releases/download/v1.2.0/ocean-data-qc-setup-1.2.0.exe)
-* macOS: [ocean-data-qc-1.1.0.dmg](https://github.com/ocean-data-qc/ocean-data-qc/releases/download/v1.1.0/ocean-data-qc-1.1.0.dmg)
+* Windows x64: [ocean-data-qc-setup-1.3.0.exe](https://github.com/ocean-data-qc/ocean-data-qc/releases/download/v1.3.0/ocean-data-qc-setup-1.3.0.exe)
+* macOS: [ocean-data-qc-1.3.0.dmg](https://github.com/ocean-data-qc/ocean-data-qc/releases/download/v1.3.0/ocean-data-qc-1.3.0.dmg)
 * GNU/linux deb (Ubuntu, Debian,...): [ocean-data-qc_1.1.0_amd64.deb](https://github.com/ocean-data-qc/ocean-data-qc/releases/download/v1.1.0/ocean-data-qc_1.1.0_amd64.deb)
 * GNU/Linux rpm (RedHat, SuSe, ...): [ocean-data-qc-1.1.0.x86_64.rpm](https://github.com/ocean-data-qc/ocean-data-qc/releases/download/v1.1.0/ocean-data-qc-1.1.0.x86_64.rpm)
 * GNU/Linux snap: [ocean-data-qc_1.1.0_amd64.snap](https://github.com/ocean-data-qc/ocean-data-qc/releases/download/v1.1.0/ocean-data-qc_1.1.0_amd64.snap)
 
 Source code:
 * latest: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2603121.svg)](https://doi.org/10.5281/zenodo.2603121)
+* v1.3.0: [https://github.com/ocean-data-qc/ocean-data-qc/archive/v1.3.0.tar.gz](https://github.com/ocean-data-qc/ocean-data-qc/archive/v1.3.0.tar.gz)
 * v1.2.0: [https://github.com/ocean-data-qc/ocean-data-qc/archive/v1.2.0.tar.gz](https://github.com/ocean-data-qc/ocean-data-qc/archive/v1.2.0.tar.gz) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3470218.svg)](https://doi.org/10.5281/zenodo.3470218)
 * v1.1.1: [https://github.com/ocean-data-qc/ocean-data-qc/archive/v1.1.1.tar.gz](https://github.com/ocean-data-qc/ocean-data-qc/archive/v1.1.1.tar.gz) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3340975.svg)](https://doi.org/10.5281/zenodo.3340975)
 
@@ -84,7 +85,7 @@ This project is licensed under the GPLv3 License - see the LICENSE file for deta
 * [CANYON-B](https://github.com/HCBScienceProducts/CANYON-B). Adapted to run in this application
     >Bittig et al. (2018). An alternative to static climatologies: Robust estimation of open ocean CO2 variables and nutrient concentrations from T, S and O2 data using Bayesian neural networks. Front. Mar. Sci. 5:328. [http://dx.doi.org/10.3389/fmars.2018.00328](http://dx.doi.org/10.3389/fmars.2018.00328).
 
-* Broullón, D., Pérez, F. F., Velo, A., Hoppema, M., Olsen, A., Takahashi, T., Key, R. M., González-Dávila, M., Tanhua, T., Jeansson, E., Kozyr, A., and van Heuven, S. M. A. C.: [A global monthly climatology of total alkalinity: a neural network approach](https://doi.org/10.5194/essd-2018-111), Earth Syst. Sci. Data Discuss., [https://doi.org/10.5194/essd-2018-111](https://doi.org/10.5194/essd-2018-111), in review, 2018.
+* Broullón, D., Pérez, F. F., Velo, A., Hoppema, M., Olsen, A., Takahashi, T., Key, R. M., Tanhua, T., González-Dávila, M., Jeansson, E., Kozyr, A.: [A global monthly climatology of total alkalinity: a neural network approach](https://doi.org/10.5194/essd-11-1109-2019), Earth Syst. Sci. Data, 11, 1109-1127, 2019 [https://doi.org/10.5194/essd-11-1109-2019](https://doi.org/10.5194/essd-11-1109-2019)
 
 * Velo, A., Pérez, F.F., Tanhua, T., Gilcoto, M., Ríos, A.F., Key, R.M., 2013. [Total alkalinity estimation using MLR and neural network techniques](https://doi.org/10.1016/j.jmarsys.2012.09.002). Journal of Marine Systems 111–112, 0, 11–18. [https://doi.org/10.1016/j.jmarsys.2012.09.002](https://doi.org/10.1016/j.jmarsys.2012.09.002)
 
