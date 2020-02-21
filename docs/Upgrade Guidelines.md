@@ -18,15 +18,27 @@ Create the tag in that commit
 
 To create an environment from scratch and install the `ocean-data-qc` package
 
+* Windows x64 + Conda
+
     conda create --prefix env python=3.7.3     # same level as ocean_data_qc and ocean_data_qc_js folders
     activate .\env
     python -m pip install --upgrade pip
     pip install --upgrade setuptools
 
+* Linux + Virtualenv
+
+    virtualenv --python=/usr/bin/python3 env
+    source env/bin/activate
+
+## 3. Install Packages
+
+    cd ocean_data_qc_js
+    yarn install                               # create a fresh yarn install
+
     cd ocean_data_qc
     python setup.py install                    # run this in the ocean-data-qc folder where setup.py is stored
 
-## 3. Create the executable and upload it to GutHub
+## 4. Create the executable and upload it to GutHub
 
 Create the installable in the current Operating System. Use yarn
 
@@ -41,8 +53,10 @@ Create a new Release in GitHub using the tag you have created and upload the fol
     ocean-data-qc-setup-1.3.0.exe
     lates.yml
 
-I think the blockmap file is not needed to make it work
+I think the blockmap file is not needed to make it work.
 
-## 4. Tests
+Update the installers in the `README.md`
+
+## 5. Tests
 
 Before uploading to GitHub you may want to install in your computer just to be sure that everything works well.
