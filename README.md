@@ -12,9 +12,9 @@ It's not essential for this software to run, but in order to take advantage of t
 
 * Windows x64: [ocean-data-qc-setup-1.3.0.exe](https://github.com/ocean-data-qc/ocean-data-qc/releases/download/v1.3.0/ocean-data-qc-setup-1.3.0.exe)
 * macOS: [ocean-data-qc-1.3.0.dmg](https://github.com/ocean-data-qc/ocean-data-qc/releases/download/v1.3.0/ocean-data-qc-1.3.0.dmg)
-* GNU/linux deb (Ubuntu, Debian,...): [ocean-data-qc_1.1.0_amd64.deb](https://github.com/ocean-data-qc/ocean-data-qc/releases/download/v1.1.0/ocean-data-qc_1.1.0_amd64.deb)
-* GNU/Linux rpm (RedHat, SuSe, ...): [ocean-data-qc-1.1.0.x86_64.rpm](https://github.com/ocean-data-qc/ocean-data-qc/releases/download/v1.1.0/ocean-data-qc-1.1.0.x86_64.rpm)
-* GNU/Linux snap: [ocean-data-qc_1.1.0_amd64.snap](https://github.com/ocean-data-qc/ocean-data-qc/releases/download/v1.1.0/ocean-data-qc_1.1.0_amd64.snap)
+* GNU/linux deb (Ubuntu, Debian,...): [ocean-data-qc_1.3.0_amd64.deb](https://github.com/ocean-data-qc/ocean-data-qc/releases/download/v1.3.0/ocean-data-qc_1.3.0_amd64.deb)
+* GNU/Linux rpm (RedHat, SuSe, ...): [ocean-data-qc-1.3.0.x86_64.rpm](https://github.com/ocean-data-qc/ocean-data-qc/releases/download/v1.3.0/ocean-data-qc-1.3.0.x86_64.rpm)
+* GNU/Linux snap: [ocean-data-qc_1.3.0_amd64.snap](https://github.com/ocean-data-qc/ocean-data-qc/releases/download/v1.3.0/ocean-data-qc_1.3.0_amd64.snap)
 
 Source code:
 * latest: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2603121.svg)](https://doi.org/10.5281/zenodo.2603121)
