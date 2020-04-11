@@ -112,7 +112,7 @@ module.exports = {
                     click: function() { self.web_contents.send('export-whp'); }
                 },
                 { label: 'Export Actions History (CSV)...', accelerator: 'CmdOrCtrl+M', click: () => { self.menu_actions.export_moves_dialog(); } },
-                { label: 'Export Plots Images as PDF...', accelerator: 'CmdOrCtrl+P', click: () => { self.menu_actions.export_pdf(); } },
+                { label: 'Export Plots Images as PDF...', accelerator: 'CmdOrCtrl+P', click: () => { self.web_contents.send('export-pdf-file'); } },
                 { type: 'separator' },
                 { label: 'Close Project', accelerator: 'CmdOrCtrl+W', click: () => { self.web_contents.send('close-embed-forms'); self.menu_actions.close_project(); } },
                 { label: "Exit", accelerator: "Command+Q", click: () => { self.menu_actions.server.close_with_exit_prompt_dialog(); } }
@@ -122,8 +122,8 @@ module.exports = {
         self.bokeh_view_menu = {
             label: 'View',
             submenu: [
-                { label: 'Actions History', accelerator: 'CmdOrCtrl+A', click: () => { self.web_contents.send('close-embed-forms'); self.menu_actions.show_moves(); } },
-                { label: 'Edit Plot Layout', accelerator: 'CmdOrCtrl+L', click: () => { self.web_contents.send('close-embed-forms'); self.menu_actions.edit_plot_layout(); } }
+                { label: 'Actions History', accelerator: 'CmdOrCtrl+A', click: () => { self.web_contents.send('close-embed-forms'); self.web_contents.send('show-moves'); } },
+                { label: 'Edit Plot Layout', accelerator: 'CmdOrCtrl+L', click: () => { self.web_contents.send('close-embed-forms'); self.web_contents.send('project-settings-bokeh'); } }
             ]
         }
 
@@ -155,6 +155,10 @@ module.exports = {
                 {
                     label: 'Show Data', accelerator: 'CmdOrCtrl+D',
                     click: function() { self.web_contents.send('show-data'); }
+                },
+                {
+                    label: 'Edit Metadata', accelerator: 'CmdOrCtrl+M',
+                    click: function() { self.web_contents.send('close-embed-forms'); self.web_contents.send('edit-metadata'); }
                 }
             ]
         }
@@ -162,7 +166,7 @@ module.exports = {
         self.bokeh_dev_menu = {
             label: 'Development',
             submenu: [
-                { label: 'Project Settings (JSON)', accelerator: 'CmdOrCtrl+Shift+P', click: () => { self.web_contents.send('close-embed-forms'); self.menu_actions.edit_plot_layout_json(); } },
+                { label: 'Project Settings (JSON)', accelerator: 'CmdOrCtrl+Shift+P', click: () => { self.web_contents.send('close-embed-forms'); self.web_contents.send('set-project-settings-json'); } },
                 // { label: 'Logger [TO-DO]', accelerator: 'CmdOrCtrl+L', click: () => { alert('Not implemented yet');} },
                 { label: 'Reload Server', accelerator: 'CmdOrCtrl+R', click: () => { self.web_contents.send('close-embed-forms'); self.menu_actions.server.relaunch_bokeh(); } },
                 {

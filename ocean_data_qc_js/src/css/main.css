@@ -285,8 +285,8 @@ html, body, .bokeh_iframe {
 /* CODEMIRROR TEXTAREA, JSON EDITOR */
 
 .CodeMirror {
-    margin-top: 10px;
-    height: 500px !important;
+    /* margin-top: 10px; */
+    height: 400px !important;
     /* with monokai theme this is not necessary */
     /* border: 1px solid black;  */
 }
@@ -405,7 +405,7 @@ select[name='added_computed_param'] { /* left select */
 
 /* add_computed_parameter help form */
 
-#add_computed_parameter_help_form pre {
+#add_computed_parameter_help_form pre, .edit_metadata_label pre {
     color: #0c5460;
     background-color: #d1ecf1;
     border-color: #bee5eb;

@@ -30,11 +30,6 @@ module.exports = {
         self.server = server;
     },
 
-    show_moves: function() {
-        var self = this;
-        self.web_contents.send('show-moves');
-    },
-
     update_from_csv: function() {
         var self = this;
         lg.info('-- UPDATE FROM CSV')
@@ -297,18 +292,6 @@ module.exports = {
         }
     },
 
-    edit_plot_layout_json: function() {
-        var self = this;
-        lg.info('-- EDIT PROJECT SETTINGS (JSON)');
-        self.web_contents.send('set-project-settings-json');
-    },
-
-    edit_plot_layout: function() {
-        var self = this;
-        lg.info('-- EDIT PROJECT SETTINGS USER');
-        self.web_contents.send('project-settings-bokeh');
-    },
-
     close_project: function() {
         var self = this;
         lg.info('-- CLOSE PROJECT');
@@ -332,10 +315,4 @@ module.exports = {
             });
         }
     },
-
-    export_pdf: function() {
-        var self = this;
-        lg.warn('-- EXPORT PDF FILE');
-        self.web_contents.send('export-pdf-file');
-    }
 };

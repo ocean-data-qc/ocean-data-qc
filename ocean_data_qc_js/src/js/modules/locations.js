@@ -52,6 +52,7 @@ const locations = {
     'proj_files': path.join(__user_data, 'files/tmp'),
     'proj_upd': path.join(__user_data, 'files/tmp/update'),
     'proj_export': path.join(__user_data, 'files/tmp/export'),
+    'proj_metadata': path.join(__user_data, 'files/tmp/metadata'),
 
     // SETTINGS FILES IN APPDATA FOLDER
     'shared_data': path.join(__user_data, 'files/shared_data.json'),

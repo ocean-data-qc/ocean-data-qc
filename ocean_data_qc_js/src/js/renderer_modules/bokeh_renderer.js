@@ -34,6 +34,7 @@ require('set_project_settings_bokeh').init();
 require('add_computed_parameter').init();
 require('show_data').init();
 require('show_help_form').init();
+require('edit_metadata').init();
 
 // ------------------------------- IPC SIGNAL RECEIVERS ----------------------------------------- //
 

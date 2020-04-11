@@ -23,7 +23,7 @@ module.exports = {
         return self.data;                       // TODO > do not return the object, return a copy
     },
 
-    get: function(attr, path=false) {
+    get: function(attr='', path=false) {
         // Return the value or values of the attribute stored in the path argument
         //  * attr: string or list of strings (Array) with the atributes to retrieve
         //  * path: path where the json file is stored
@@ -52,6 +52,7 @@ module.exports = {
             return false;
         }
     },
+
     set: function(attrs, path=false) {
         // Update the values of json files
         //  * attrs: object with the attributes and the new values

@@ -1,0 +1,46 @@
+
+<button id="modal_trigger_edit_metadata" type="button" class="btn btn-info btn-lg"
+        data-toggle="modal" data-target="#edit_metadata" style="display: none;">Open Modal</button>
+
+<div id="edit_metadata" data-backdrop="static" data-keyboard="false" class="modal fade modal-form" role="dialog" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Metadata</h6>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <form id="edit_metadata" class="form-horizontal">
+                    <div class="form-group">
+                        <label class="control-label col-12 edit_metadata_label" for="new_port" style="text-align: left">
+                            <p>When the file is exported as WHP, a new line is added at the beginning of the file with this format:</p>
+                            <pre># {date} Edited by AtlantOS Ocean Data QC</pre>
+                            <p>This metadata is going to be written at the beginning of the WHP csv file or in the second page if you export a xlsx file:</p>
+                        </label>
+                        <div class="col-12" style="padding-left: 0px;">
+                            <textarea id="edit_metadata_text" rows="300" cols="100" class="col-12" ></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="accept_edit_metadata" type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
+                <button type="button" class="btn btn-light" data-dismiss="modal">Discard</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+#add_computed_parameter_help_form pre {
+    color: #0c5460;
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+    position: relative;
+    padding: 0.75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+}
