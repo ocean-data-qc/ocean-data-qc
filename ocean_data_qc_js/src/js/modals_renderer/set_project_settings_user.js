@@ -14,6 +14,7 @@ app_module_path.addPath(__dirname);
 const {ipcRenderer} = require('electron');
 const fs = require('fs');                             // file system module
 const rmdir = require('rimraf');
+const xlsx = require('xlsx');
 
 const loc = require('locations');
 const lg = require('logging');
@@ -29,9 +30,13 @@ module.exports = {
             lg.info('-- SET PROJECT SETTINGS USER');
             var url = path.join(loc.modals, 'set_project_settings_user.html');
             tools.load_modal(url, function() {
-                self.csv_file = args.csv_file;  // csv_file has always a value
-                $('#project_name').val(path.basename(self.csv_file, '.csv'));
-                self.init_files(self.csv_file);
+                self.file_path = args.file_path;
+                self.file_type = args.file_type;
+                $('#project_name').val(path.basename(
+                    self.file_path,
+                    path.extname(self.file_path)
+                ));
+                self.init_files();
             });
         });
     },
@@ -52,22 +57,66 @@ module.exports = {
         });
     },
 
-    /** Copy and create original csv file in the temp folder */
+    /** Copy and create original csv file in the temp folder
+     *  xlsx and ods files >
+     *
+    */
     cp_original_csv: function() {
         var self = this;
-        var a = fs.createReadStream(self.csv_file)
-        var c = fs.createWriteStream(path.join(loc.proj_files, 'original.csv'))
+        if (['xlsx', 'ods'].includes(self.file_type)) {
+            self.cp_original_csv_from_excel();
+        } else{
+            var a = fs.createReadStream(self.file_path)
+            var c = fs.createWriteStream(path.join(loc.proj_files, 'original.csv'))
 
-        a.on('error', (err) => {
-            tools.showModal('ERROR', 'The file you have opened could not be read');
-        });
-        c.on('error', (err) => {
-            tools.showModal('ERROR', 'Some error writing to the file');
-        });
-        var p = a.pipe(c);
+            a.on('error', (err) => {
+                tools.showModal('ERROR', 'The file you have opened could not be read');
+            });
+            c.on('error', (err) => {
+                tools.showModal('ERROR', 'Some error writing to the file');
+            });
+            var p = a.pipe(c);
 
-        p.on('close', function(){
-            self.create_moves_csv();
+            p.on('close', function(){
+                self.create_moves_csv();
+            });
+        }
+    },
+
+    cp_original_csv_from_excel: function() {
+        lg.warn('-- CP ORIGINAL CSV FROM EXCEL');
+        var self = this;
+        var workbook = xlsx.readFile(self.file_path);
+        var sheet_name_list = workbook.SheetNames;
+
+        var md_json = xlsx.utils.sheet_to_json(
+            workbook.Sheets[sheet_name_list[1]], {'header': 1}
+        );
+        var md_json_flat = md_json.map(function(val) {
+            return val[0];
+        });
+        var metadata = '';
+        $.each(md_json_flat, function(key, val) {
+            metadata += val + '\n';
+        });
+        lg.warn('>> METADATA JSON FULL STRING: \n' + metadata);
+
+        var output_file_name = path.join(loc.proj_files, 'original.csv');
+        var stream = xlsx.stream.to_csv(workbook.Sheets[sheet_name_list[0]]);  // suggested by the library docs
+        var s = stream.pipe(fs.createWriteStream(output_file_name), {encoding: 'utf8'});
+
+        s.on('error', (err) => {
+            tools.showModal('ERROR', 'The first worksheet could not be read');
+        });
+        s.on('close', function(){
+            fs.writeFile(loc.proj_metadata, metadata, 'utf8', (err) => {
+                if (err) {
+                    tools.showModal('ERROR', 'Some error writing metadata worksheet to a text file');
+                } else {
+                    lg.warn('>> DONE');
+                    // self.create_moves_csv();
+                }
+            });
         });
     },
 

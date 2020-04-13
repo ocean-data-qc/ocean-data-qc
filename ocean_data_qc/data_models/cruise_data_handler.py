@@ -70,6 +70,7 @@ class CruiseDataHandler(Environment):
             working_dir = TMP
             cd_aux = False
         original_path = path.join(working_dir, 'original.csv')
+
         if path.isfile(original_path):
             if self._is_plain_text(original_path):
                 cd = None
