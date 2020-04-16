@@ -30,16 +30,16 @@ class CruiseData(CruiseDataExport):
 
     def __init__(self, original_type='', cd_aux=False):
         lg.info('-- INIT CRUISE DATA PARENT')
-        self.original_type = original_type      # original.csv type (whp, csv)
+        self.original_type = original_type        # original.csv type (whp, csv)
         self.cd_aux = cd_aux
-        self.df = None                          # numeric DataFrame
-        self.df_str = None                      # string DataFrame
+        self.df = None                            # numeric DataFrame
+        self.df_str = None                        # string DataFrame
         self.moves = None
         self.cols = {}
         self.orig_cols = {}
 
         self._validate_original_data()
-        self._set_moves()                       # TODO: this is not needed for cd_update
+        self._set_moves()                         # TODO: this is not needed for cd_update
         self._set_df()
         self._prep_df_columns()
         self.cp_param = ComputedParameter(self)
@@ -61,31 +61,57 @@ class CruiseData(CruiseDataExport):
                     }
                 }
 
-            TODO: to create less noise in the JSON structure:
+            TODO: store less garbage in the JSON structure:
                   unit and orig_name should not exist if they do not have any value
         """
-        lg.info('-- SET ATTRIBUTES FROM SCRATCH')
-        if self.original_type == 'whp':
-            units_list = self.df.iloc[0].values.tolist()  # TODO: how to detect if there are units or not?
-                                                          #       how to fill the units fields then?
-        else:
-            units_list = []
+        lg.info('-- SET COLS ATTRIBUTES FROM SCRATCH')
         pos = 0
         column_list = self.df.columns.tolist()
         lg.info('>> SELF ORIG COLS: {}'.format(self.orig_cols))
-        for column in column_list:
-            self._add_column(column=column)
-            if units_list != []:
+        units_list = self._check_unit_row()
+
+        if len(units_list) > 0:
+            for column in column_list:
+                self._add_column(column=column)
                 if str(units_list[pos]) == 'nan':
                     self.cols[column]['unit'] = False
                 else:
                     self.cols[column]['unit'] = units_list[pos]
-            pos += 1
+                pos += 1
+        else:
+            for column in column_list:
+                self._add_column(column=column)
 
         # lg.info(json.dumps(self.cols, sort_keys=True, indent=4))
 
-        if self.original_type == 'whp':
-            self.df = self.df[1:-1].reset_index(drop=True)          # rewrite index column and remove the units row
+    def _check_unit_row(self):
+        ''' Checks if the file has an units row or not.
+            The df should have all strings and nan values
+                * if there is at least one nan in the row               > unit row
+                * if all the cells are strings                          > unit row
+                * if there is at least one number (stored as string)    > no unit row
+        '''
+        lg.info('-- UNIT ROW EXISTS')
+        exp = re.compile("^-?\d+?\.\d+?$")
+        def is_number(s):
+            ''' Returns True if the string is a number:
+                    float or integer
+            '''
+            if exp.match(s) is None:
+                return s.isdigit()  # to check if all are digits
+            return True
+
+        units = self.df.iloc[0].values.tolist()
+        no_unit_row = False
+        for u in units:  # the loop continues only if it is a string and not number
+            if not isinstance(u, str) and np.isnan(u):
+                break
+            if is_number(u):
+                no_unit_row = True
+                break
+        if no_unit_row is False:
+            self.df = self.df[1:-1].reset_index(drop=True)  # rewrite index column and remove the units row
+        return units
 
     def _sanitize_flags(self):
         lg.info('-- SANITIZING FLAGS --')

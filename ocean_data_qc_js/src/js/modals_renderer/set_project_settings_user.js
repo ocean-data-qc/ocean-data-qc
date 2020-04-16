@@ -114,7 +114,7 @@ module.exports = {
                     tools.showModal('ERROR', 'Some error writing metadata worksheet to a text file');
                 } else {
                     lg.warn('>> DONE');
-                    // self.create_moves_csv();
+                    self.create_moves_csv();
                 }
             });
         });
