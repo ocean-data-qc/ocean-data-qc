@@ -13,7 +13,10 @@ app_module_path.addPath(__dirname);
 
 const { dialog } = require('electron').remote;
 const fs = require('fs');
+const xlsx = require('xlsx');
+const csv_parse = require('csv-parse');  // it is included in csv nodejs package
 
+const data_renderer = require('data_renderer');
 const lg = require('logging');
 const loc = require('locations');
 const tools = require('tools');
@@ -21,6 +24,77 @@ const data = require('data');
 
 
 module.exports = {
+    export_excel: function(format='xlsx') {
+        lg.info('-- EXPORT EXCEL')
+        var self = this;
+        self.format = format;
+        self.wb = xlsx.utils.book_new();
+
+        var data_path = path.join(loc.proj_files, 'export_data.csv');
+        fs.readFile(data_path, (err, buffer) => {
+            if (err) {
+                tools.show_modal({
+                    'msg_type': 'text',
+                    'type': 'ERROR',
+                    'msg': 'The data.csv file could not be read.',
+                });
+            } else {
+                // var s = buffer.toString('utf8');
+                var options = {
+                    comment: '#',
+                    trim: true,
+                    skip_empty_lines: true,
+                    delimiter: ','
+                };
+                csv_parse(buffer, options, function(err, records){      // TODO: check if utf8?
+                    if (err) {
+                        tools.show_modal({
+                            'msg_type': 'text',
+                            'type': 'ERROR',
+                            'msg': 'The data.csv file could not be converted to JSON in order to export it.'
+                        });
+                    } else {
+                        var ws = xlsx.utils.aoa_to_sheet(records);
+                        xlsx.utils.book_append_sheet(self.wb, ws, 'Sheet1');
+                        self.append_metadata();
+                    }
+                });
+            }
+        });
+    },
+
+    append_metadata: function() {
+        var self = this;
+        fs.readFile(loc.proj_metadata, (err, chunk) => {
+            if (err) {
+                tools.show_modal({
+                    'msg_type': 'text',
+                    'type': 'ERROR',
+                    'msg': 'The metadata file could not be read.',
+                });
+            } else {
+                var s = chunk.toString('utf8');
+                if (process.platform == 'win32') {
+                    var arr = s.split('\r\n');
+                } else {
+                    var arr = s.split('\n');
+                }
+                var new_arr = []
+                $.each(arr, function(key, value) {
+                    if (value != '') new_arr.push(['# ' + value]);
+                });
+                var ws_meta = xlsx.utils.aoa_to_sheet(new_arr);
+                xlsx.utils.book_append_sheet(self.wb, ws_meta, 'Sheet2');
+
+                xlsx.writeFile(self.wb, path.join(loc.proj_files, 'export_data.xlsx'), {
+                    type: 'file',           // >> write in buffer?
+                    bookType: self.format
+                });
+                data_renderer.export_excel_format_dialog('xlsx');
+            }
+        });
+    },
+
     export_pdf_file: function() {
         var self = this;
         lg.info('-- EXPORT PDF FILE (server_renderer.js)');

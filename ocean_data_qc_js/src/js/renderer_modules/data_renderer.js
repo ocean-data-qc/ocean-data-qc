@@ -62,8 +62,8 @@ module.exports = {
     },
 
     export_csv_format_dialog: function() {
-        var self = this;
         lg.info('-- EXPORT CSV DATA');
+        var self = this;
         dialog.showSaveDialog({
             title: 'Export Project as CSV file',
             defaultPath: '~/' + data.get('project_name', loc.proj_settings) + '_export_data.csv',
@@ -91,6 +91,58 @@ module.exports = {
                 write.on("close", function(ex) {
                     fs.unlinkSync(path.join(loc.proj_files, 'export_data.csv'))
                     tools.show_snackbar('File exported!');
+                });
+                read.pipe(write);
+
+            } catch(err) {
+                tools.showModal('ERROR', 'The file could not be saved!', 'ERROR', false, err);
+            }
+        }
+    },
+
+    export_excel_format_dialog: function(format='xlsx') {
+        lg.info('-- EXPORT EXCEL FORMAT DIALOG');
+        var self = this;
+        dialog.showSaveDialog({
+            title: 'Export Project as xlsx file',
+            defaultPath: '~/' + data.get('project_name', loc.proj_settings) + '_export_data.' + format,
+            filters: [{ extensions: [format] }]
+        }).then((results) => {
+            if (results['canceled'] == false) {
+                self.export_excel_format(results, format);
+            }
+        });
+    },
+
+    export_excel_format: function (results, format='xlsx') {
+        var fileLocation = results['filePath'];
+        lg.info('Saving plain xlsx data file at: ' + fileLocation);
+        if (typeof(fileLocation) !== 'undefined') {
+            try {
+                var xlsx_path = path.join(loc.proj_files, 'export_data.' + format);
+                lg.warn('>> XLSX PATH: ' + xlsx_path);
+                var read = fs.createReadStream(xlsx_path);
+                read.on("error", function(err) {
+                    tools.showModal('ERROR', 'The file could not be read!', 'ERROR', false, err)
+                });
+                var write = fs.createWriteStream(fileLocation);
+                write.on("error", function(err) {
+                    tools.showModal('ERROR', 'The file could not be exported!', 'ERROR', false, err);
+                });
+                write.on("close", function(ex) {
+                    fs.unlink(xlsx_path, (err) => {
+                        if (err) {
+                            tools.showModal('ERROR', 'The file could not be removed from the TMP folder!', 'ERROR', false, err);
+                        } else {
+                            fs.unlink(path.join(loc.proj_files, 'export_data.csv'), (err) => {
+                                if (err) {
+                                    tools.showModal('ERROR', 'The file could not be removed from the TMP folder!', 'ERROR', false, err);
+                                } else {
+                                    tools.show_snackbar('File exported!');
+                                }
+                            });
+                        }
+                    });
                 });
                 read.pipe(write);
 

@@ -51,7 +51,10 @@ module.exports = {
         });
     },
 
-    /** In previous versions there used to be a default_settings.json */
+    /** In previous versions there used to be a default_settings.json
+     *  in the appdata folder. Now it is just a template in the app folder.
+     *  So this method removes the file if it exists in the appdata folder
+    */
     check_json_old_default_settings: function() {
         lg.info('-- CHECK JSON OLD DEFAULT SETTINGS');
         return new Promise((resolve, reject) => {

@@ -13,7 +13,7 @@ app_module_path.addPath(__dirname);
 
 const {ipcRenderer} = require('electron');
 const fs = require('fs');
-const csv = require('node-csv').createParser();
+const csv = require('node-csv').createParser();  // TODO: migrate to csv-parser module
 
 // ---------------------------- REQUIRE OWN MODULES ------------------------------------------------ //
 
@@ -24,6 +24,7 @@ const tools = require('tools');
 const watcher = require('watcher_renderer');
 const data_renderer = require('data_renderer');
 const server_renderer = require('server_renderer');
+const bokeh_export = require('bokeh_export');
 
 // ---------------------------- REQUIRE MODAL RENDERERS -------------------------------------------- //
 
@@ -129,6 +130,17 @@ ipcRenderer.on('show-moves', (event) => {
     });
 });
 
+ipcRenderer.on('export-csv', function() {
+    lg.info('-- EXPORT CSV');
+    var params = {
+        'object': 'cruise.data',
+        'method': 'export_csv'
+    }
+    tools.call_promise(params).then((result) => {
+        data_renderer.export_csv_format_dialog();
+    });
+});
+
 ipcRenderer.on('export-whp', function() {
     lg.info('-- EXPORT WHP');
     var params = {
@@ -140,14 +152,14 @@ ipcRenderer.on('export-whp', function() {
     });
 });
 
-ipcRenderer.on('export-csv', function() {
-    lg.info('-- EXPORT CSV');
+ipcRenderer.on('export-xlsx', function() {
+    lg.warn('-- EXPORT XLSX');
     var params = {
         'object': 'cruise.data',
-        'method': 'export_csv'
+        'method': 'export_csv'  // to create the csv file to add to the spreadsheet
     }
     tools.call_promise(params).then((result) => {
-        data_renderer.export_csv_format_dialog();
+        bokeh_export.export_excel('xlsx');
     });
 });
 

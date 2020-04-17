@@ -106,11 +106,11 @@ module.exports = {
                 { label: 'Save', accelerator: 'CmdOrCtrl+S', click: () => { self.menu_actions.save_file(); } },
                 { label: 'Save As...', accelerator: 'CmdOrCtrl+Shift+S', click: () => { self.menu_actions.save_file_as_caught(); } },
                 { type: 'separator' },
+
                 { label: 'Export Data (CSV)...', accelerator: 'CmdOrCtrl+D', click: () => { self.web_contents.send('export-csv'); } },
-                {
-                    label: 'Export Data (WHP)...', accelerator: 'CmdOrCtrl+E',
-                    click: function() { self.web_contents.send('export-whp'); }
-                },
+                { label: 'Export Data (WHP)...', accelerator: 'CmdOrCtrl+E', click: function() { self.web_contents.send('export-whp'); } },
+                { label: 'Export Data (XLSX)...', accelerator: 'CmdOrCtrl+O', click: function() { self.web_contents.send('export-xlsx'); } },
+
                 { label: 'Export Actions History (CSV)...', accelerator: 'CmdOrCtrl+M', click: () => { self.menu_actions.export_moves_dialog(); } },
                 { label: 'Export Plots Images as PDF...', accelerator: 'CmdOrCtrl+P', click: () => { self.web_contents.send('export-pdf-file'); } },
                 { type: 'separator' },

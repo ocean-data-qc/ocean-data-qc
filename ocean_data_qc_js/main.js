@@ -71,8 +71,6 @@ app.on('ready', function() {
     // web_contents.openDevTools();     // TODO: "chromium DevTools" >> add this options to development menu (toggle)
     server.web_contents = web_contents;
 
-
-
     Promise.all([
         server.check_log_folder(),
         server.check_json_shared_data(),
