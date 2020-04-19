@@ -51,9 +51,6 @@ requires = [
     'scipy >=1.1.0',  # oct2py needs it, though it is not a direct dependency
     'tilecloud',
 
-    'xlrd >=1.2.0',
-    'odfpy >=1.4.1',
-
     # libraries related to export svg, png and pdf files
     # 'svglib >=0.9.2',
     'reportlab >=2.5.23',
