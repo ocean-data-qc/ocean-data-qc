@@ -51,7 +51,6 @@
         "jquery": "^3.3.4",
         "mime-db": "^1.26.0",
         "mime-type": "^3.0.5",
-        "node-csv": "^0.1.2",
         "node-watch": "^0.5.4",
         "popper.js": "^1.14.7",
         "portscanner": "^2.1.1",
