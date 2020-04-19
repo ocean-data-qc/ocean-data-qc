@@ -76,6 +76,11 @@ module.exports = {
                 var s = chunk.toString('utf8');
                 s = s.replace('\r', '');
                 var arr = s.split('\n')
+
+                //                  col1            col2
+                // aoa structure: [['elem1', ...], ['elem2', ...]]
+                // alternative, json structure: {'A1': ['elem1', 'elem2', ...]}
+
                 var new_arr = []
                 $.each(arr, function(key, line) {
                     line = line.trim();
