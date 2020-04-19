@@ -182,7 +182,6 @@ module.exports = {
                 });
             }
         });
-
     },
 
     upload_custom_json_template: function() {
@@ -230,5 +229,5 @@ module.exports = {
                 });
             }
         });
-    },
+    }
 }

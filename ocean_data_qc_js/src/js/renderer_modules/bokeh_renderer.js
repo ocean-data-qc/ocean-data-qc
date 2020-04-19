@@ -12,8 +12,6 @@ app_module_path.addPath(path.join(__dirname, '../modals_renderer'));
 app_module_path.addPath(__dirname);
 
 const {ipcRenderer} = require('electron');
-const fs = require('fs');
-const csv = require('node-csv').createParser();  // TODO: migrate to csv-parser module
 
 // ---------------------------- REQUIRE OWN MODULES ------------------------------------------------ //
 
@@ -25,6 +23,7 @@ const watcher = require('watcher_renderer');
 const data_renderer = require('data_renderer');
 const server_renderer = require('server_renderer');
 const bokeh_export = require('bokeh_export');
+const action_history = require('action_history');
 
 // ---------------------------- REQUIRE MODAL RENDERERS -------------------------------------------- //
 
@@ -101,32 +100,7 @@ ipcRenderer.on('compare-data', function() {
 ipcRenderer.on('show-moves', (event) => {
     var url = path.join(loc.modals, 'modal_moves.html');
     tools.load_modal(url, () => {
-        fs.stat(path.join(loc.proj_files, 'moves.csv'), function (err, stats) {
-            if (stats.size != 0) {
-                csv.mapFile(path.join(loc.proj_files, 'moves.csv'), function(err, data) {
-                    if (err) {
-                        lg.info('ERROR loading moves.csv')
-                    }
-                    for (var i = 0; i < data.length; i++) {
-                        // null values are empty strings => ''
-                        var row = [
-                            '<tr>',
-                            '<th scope="row">' + data[i].index + '</th>',
-                            '<td>' + data[i].date + '</td>',
-                            '<td>' + data[i].action + '</td>',
-                            '<td>' + data[i].description + '</td>',
-                            '</tr>'
-                        ];
-                        lg.info('FILA: ' + row.join(''));
-                        $('#table_moves tbody').append(row.join(''));
-                    }
-                    $('#modal_trigger_moves').click();
-                });
-            } else {
-                $('#div_table_moves').text('There is no changes to show');
-                $('#modal_trigger_moves').click();
-            }
-        });
+        action_history.load();
     });
 });
 

@@ -113,7 +113,7 @@ module.exports = {
                 { label: 'Export Data (ODS)...', accelerator: 'CmdOrCtrl+O', click: function() { self.web_contents.send('export-ods'); } },
                 { type: 'separator' },
 
-                { label: 'Export Actions History (CSV)...', accelerator: 'CmdOrCtrl+M', click: () => { self.menu_actions.export_moves_dialog(); } },
+                { label: 'Export Action History (CSV)...', accelerator: 'CmdOrCtrl+M', click: () => { self.menu_actions.export_moves_dialog(); } },
                 { label: 'Export Plots Images as PDF...', accelerator: 'CmdOrCtrl+P', click: () => { self.web_contents.send('export-pdf-file'); } },
                 { type: 'separator' },
                 { label: 'Close Project', accelerator: 'CmdOrCtrl+W', click: () => { self.web_contents.send('close-embed-forms'); self.menu_actions.close_project(); } },
@@ -124,7 +124,7 @@ module.exports = {
         self.bokeh_view_menu = {
             label: 'View',
             submenu: [
-                { label: 'Actions History', accelerator: 'CmdOrCtrl+A', click: () => { self.web_contents.send('close-embed-forms'); self.web_contents.send('show-moves'); } },
+                { label: 'Action History', accelerator: 'CmdOrCtrl+A', click: () => { self.web_contents.send('close-embed-forms'); self.web_contents.send('show-moves'); } },
                 { label: 'Edit Plot Layout', accelerator: 'CmdOrCtrl+L', click: () => { self.web_contents.send('close-embed-forms'); self.web_contents.send('project-settings-bokeh'); } }
             ]
         }
