@@ -108,8 +108,10 @@ module.exports = {
                 { type: 'separator' },
 
                 { label: 'Export Data (CSV)...', accelerator: 'CmdOrCtrl+D', click: () => { self.web_contents.send('export-csv'); } },
-                { label: 'Export Data (WHP)...', accelerator: 'CmdOrCtrl+E', click: function() { self.web_contents.send('export-whp'); } },
-                { label: 'Export Data (XLSX)...', accelerator: 'CmdOrCtrl+O', click: function() { self.web_contents.send('export-xlsx'); } },
+                { label: 'Export Data (WHP)...', accelerator: 'CmdOrCtrl+W', click: function() { self.web_contents.send('export-whp'); } },
+                { label: 'Export Data (XLSX)...', accelerator: 'CmdOrCtrl+E', click: function() { self.web_contents.send('export-xlsx'); } },
+                { label: 'Export Data (ODS)...', accelerator: 'CmdOrCtrl+O', click: function() { self.web_contents.send('export-ods'); } },
+                { type: 'separator' },
 
                 { label: 'Export Actions History (CSV)...', accelerator: 'CmdOrCtrl+M', click: () => { self.menu_actions.export_moves_dialog(); } },
                 { label: 'Export Plots Images as PDF...', accelerator: 'CmdOrCtrl+P', click: () => { self.web_contents.send('export-pdf-file'); } },

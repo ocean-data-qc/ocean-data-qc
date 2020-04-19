@@ -84,7 +84,7 @@ module.exports = {
     },
 
     cp_original_csv_from_excel: function() {
-        lg.warn('-- CP ORIGINAL CSV FROM EXCEL');
+        lg.info('-- CP ORIGINAL CSV FROM EXCEL');
         var self = this;
         var workbook = xlsx.readFile(self.file_path);
         var sheet_name_list = workbook.SheetNames;
@@ -97,9 +97,9 @@ module.exports = {
         });
         var metadata = '';
         $.each(md_json_flat, function(key, val) {
+            val = val.replace(/^# /g, '');
             metadata += val + '\n';
         });
-        lg.warn('>> METADATA JSON FULL STRING: \n' + metadata);
 
         var output_file_name = path.join(loc.proj_files, 'original.csv');
         var stream = xlsx.stream.to_csv(workbook.Sheets[sheet_name_list[0]]);  // suggested by the library docs

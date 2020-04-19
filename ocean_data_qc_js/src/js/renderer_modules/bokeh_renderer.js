@@ -153,13 +153,24 @@ ipcRenderer.on('export-whp', function() {
 });
 
 ipcRenderer.on('export-xlsx', function() {
-    lg.warn('-- EXPORT XLSX');
+    lg.info('-- EXPORT XLSX');
     var params = {
         'object': 'cruise.data',
         'method': 'export_csv'  // to create the csv file to add to the spreadsheet
     }
     tools.call_promise(params).then((result) => {
         bokeh_export.export_excel('xlsx');
+    });
+});
+
+ipcRenderer.on('export-ods', function() {
+    lg.info('-- EXPORT ODS');
+    var params = {
+        'object': 'cruise.data',
+        'method': 'export_csv'  // to create the csv file to add to the spreadsheet
+    }
+    tools.call_promise(params).then((result) => {
+        bokeh_export.export_excel('ods');
     });
 });
 

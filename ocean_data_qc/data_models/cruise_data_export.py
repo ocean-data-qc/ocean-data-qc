@@ -142,8 +142,9 @@ class CruiseDataExport(Environment):
                             )
                         )
 
-                        # TODO: check if a file is firstly open with windows and then it is open with linux
-                        # I am afraid the breaklines are not going to work well
+                        # TODO: check what happends if a file is firstly open with windows,
+                        #       and later, it is open with linux again. Because I am afraid
+                        #       the breaklines are not going to work well
 
     def save_tmp_data(self):
         lg.info('-- SAVE TMP DATA')

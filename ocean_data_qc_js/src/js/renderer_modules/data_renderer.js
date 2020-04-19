@@ -116,11 +116,10 @@ module.exports = {
 
     export_excel_format: function (results, format='xlsx') {
         var fileLocation = results['filePath'];
-        lg.info('Saving plain xlsx data file at: ' + fileLocation);
+        lg.info('Saving plain ' + format + ' data file at: ' + fileLocation);
         if (typeof(fileLocation) !== 'undefined') {
             try {
                 var xlsx_path = path.join(loc.proj_files, 'export_data.' + format);
-                lg.warn('>> XLSX PATH: ' + xlsx_path);
                 var read = fs.createReadStream(xlsx_path);
                 read.on("error", function(err) {
                     tools.showModal('ERROR', 'The file could not be read!', 'ERROR', false, err)

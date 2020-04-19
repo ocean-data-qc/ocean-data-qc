@@ -74,23 +74,28 @@ module.exports = {
                 });
             } else {
                 var s = chunk.toString('utf8');
-                if (process.platform == 'win32') {
-                    var arr = s.split('\r\n');
-                } else {
-                    var arr = s.split('\n');
-                }
+                s = s.replace('\r', '');
+                var arr = s.split('\n')
                 var new_arr = []
-                $.each(arr, function(key, value) {
-                    if (value != '') new_arr.push(['# ' + value]);
+                $.each(arr, function(key, line) {
+                    line = line.trim();
+                    if (line != '') {
+                        if (line.substring(0, 2) != '# ') {
+                            new_arr.push(['# ' + line]);
+                        } else {
+                            new_arr.push([line]);
+                        }
+                    }
                 });
                 var ws_meta = xlsx.utils.aoa_to_sheet(new_arr);
                 xlsx.utils.book_append_sheet(self.wb, ws_meta, 'Sheet2');
 
-                xlsx.writeFile(self.wb, path.join(loc.proj_files, 'export_data.xlsx'), {
+                var export_path = path.join(loc.proj_files, 'export_data') + '.' + self.format;
+                xlsx.writeFile(self.wb, export_path, {
                     type: 'file',           // >> write in buffer?
                     bookType: self.format
                 });
-                data_renderer.export_excel_format_dialog('xlsx');
+                data_renderer.export_excel_format_dialog(self.format);
             }
         });
     },
