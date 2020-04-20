@@ -41,8 +41,33 @@ class CruiseData(CruiseDataExport):
         self._validate_original_data()
         self._set_moves()                         # TODO: this is not needed for cd_update
         self._set_df()
+        self._rmv_empty_columns()
         self._prep_df_columns()
         self.cp_param = ComputedParameter(self)
+
+    def _rmv_empty_columns(self):
+        lg.info('-- REMOVE EMPTY COLUMNS (all values with -999)')
+        cols_to_rmv = []
+        flags_to_rmv = []
+        for col in self.df:
+            if self.df[col].str.contains(NA_REGEX).all():
+                cols_to_rmv.append(col)
+                if f'{col}_FLAG_W' in self.df:
+                    flags_to_rmv.append(f'{col}_FLAG_W')
+        if len(cols_to_rmv) > 0:
+            lg.warning(f'>> THE FOLLOWING COLUMNS WERE REMOVED DUE TO -999: {",".join(cols_to_rmv)}')
+            self.add_moves_element(
+                'cols_removed',
+                f'{",".join(cols_to_rmv)} param columns were removed'
+            )
+        if len(flags_to_rmv):
+            lg.warning(f'>> THE FOLLOWING COLUMNS FLAGS WERE REMOVED DUE TO -999: {",".join(flags_to_rmv)}')
+            self.add_moves_element(
+                'flags_cols_removed',
+                f'{",".join(flags_to_rmv)} flag columns were removed'
+            )
+        cols_to_rmv.extend(flags_to_rmv)
+        self.df = self.df.drop(columns=cols_to_rmv)
 
     def _set_cols_from_scratch(self):
         """ The main attributes of the object are filled:
@@ -340,29 +365,26 @@ class CruiseData(CruiseDataExport):
         self.df.columns = self._map_col_names(self.df.columns)
 
         cur_cols = self.df.columns.tolist()
-        for i in range(len(self.df.columns)):
+        for i in range(len(cur_cols)):
             self.orig_cols[cur_cols[i]] = aux_cols[i]
 
         self._create_btlnbr_or_sampno_column()
         self._create_date_column()
 
     def _create_btlnbr_or_sampno_column(self):
-        # TODO: create cols in self.cols with _add_column method and test it
-
-        cols = self.df.columns.tolist()
-        if 'BTLNBR' in cols and not 'SAMPNO' in cols:
+        if 'BTLNBR' in self.df and not 'SAMPNO' in self.df:
             self.df['SAMPNO'] = self.df['BTLNBR']
             self.add_moves_element(
                 'sampno_column_added',
                 'SAMPNO column was automatically generated from the column BTLNBR'
             )
-        elif not 'BTLNBR' in cols and 'SAMPNO' in cols:
+        elif not 'BTLNBR' in self.df and 'SAMPNO' in self.df:
             self.df['BTLNBR'] = self.df['SAMPNO']
             self.add_moves_element(
                 'sampno_column_added',
                 'BTLNBR column was automatically generated from the column SAMPNO'
             )
-        elif not 'BTLNBR' in cols and not 'SAMPNO' in cols:
+        elif not 'BTLNBR' in self.df and not 'SAMPNO' in self.df:
             self.df['BTLNBR'] = range(self.df.index.size)
             self.df['SAMPNO'] = range(self.df.index.size)
             self.add_moves_element(

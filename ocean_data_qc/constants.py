@@ -24,6 +24,7 @@ CTDPRS = 'CTDPRS'           # Pressure
 FLAG_END = '_FLAG_W'        # Flag distinctive
 
 NA_REGEX_LIST = [r'^-999[9]?[\.0]*?$']
+NA_REGEX = '^-999[9]?[\.0]*?$'
 
 REQUIRED_COLUMNS = [
     'EXPOCODE', 'STNNBR', 'CASTNO', 'DATE',
@@ -33,7 +34,7 @@ REQUIRED_COLUMNS = [
 NON_QC_PARAMS = [                                # discovered by usage
     'CTDPRS', 'DEPTH',
     'SECT', 'SECT_ID', 'TIME', 'PH_TMP',
-    'DAY', 'MONTH', 'YEAR', 'HOUR', 'MINUTE', 'SECOND', 
+    'DAY', 'MONTH', 'YEAR', 'HOUR', 'MINUTE', 'SECOND',
     'DATE_DD', 'DATE_MM', 'DATE_YY',
 ] + REQUIRED_COLUMNS                            # TODO: Sometimes there is a BTLNBR_FLAG_W ???
 
