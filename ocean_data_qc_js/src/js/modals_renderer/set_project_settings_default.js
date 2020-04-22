@@ -111,12 +111,13 @@ module.exports = {
     load_layout: function(type='custom') {
         var self = this;
         lg.info('-- LOAD DEFAULT LAYOUT');
-        self.file_columns = data.get('default_columns', loc.default_settings);
         var qc_plot_tabs = {};
         if (type == 'default') {
             qc_plot_tabs = data.get('qc_plot_tabs', loc.default_settings);
+            self.file_columns = data.get('columns', loc.default_settings);
         } else {
             qc_plot_tabs = data.get('qc_plot_tabs', loc.custom_settings);
+            self.file_columns = data.get('columns', loc.custom_settings);
         }
         var qc_plot_tabs_final = {};
         Object.keys(qc_plot_tabs).forEach(function(tab) {
