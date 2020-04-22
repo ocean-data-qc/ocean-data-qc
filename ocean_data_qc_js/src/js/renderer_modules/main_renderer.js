@@ -159,7 +159,7 @@ $('.possible_formats').on('click', function() {
     }
 });
 
-$('#modify_settings').on('click', function() {
+$('#modify_default_settings').on('click', function() {
     require('set_project_settings_default').init();
 });
 

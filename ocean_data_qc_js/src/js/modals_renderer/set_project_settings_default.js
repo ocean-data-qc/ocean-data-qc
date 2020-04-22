@@ -12,7 +12,7 @@ app_module_path.addPath(path.join(__dirname, '../renderer_modules'));
 app_module_path.addPath(__dirname);
 
 const loc = require('locations');
-const logger = require('logging');
+const lg = require('logging');
 const data = require('data');
 const tools = require('tools');
 
@@ -30,7 +30,7 @@ module.exports = {
             });
 
             $('#discard_plotting').on('click', function() {
-                logger.info('~~ DISCARD CHANGES');
+                lg.info('~~ DISCARD CHANGES');
             });
 
             $('.add_new_tab').on('click', function() {
@@ -58,7 +58,7 @@ module.exports = {
                     if (first == true) {
                         first = false;
                     } else {
-                        logger.info('>> QC TABS TABLE ID: ' + $(this).attr('id'));
+                        lg.info('>> QC TABS TABLE ID: ' + $(this).attr('id'));
                         $(this).attr('id', 'qc_tabs_table-' + index);
                         index++;
                     }
@@ -110,7 +110,7 @@ module.exports = {
 
     load_layout: function(type='custom') {
         var self = this;
-        logger.info('-- LOAD DEFAULT LAYOUT');
+        lg.info('-- LOAD DEFAULT LAYOUT');
         self.file_columns = data.get('default_columns', loc.default_settings);
         var qc_plot_tabs = {};
         if (type == 'default') {
@@ -130,6 +130,9 @@ module.exports = {
                 }
             });
         });
+
+        lg.warn('>> QC PLOT TABS FINAL' + qc_plot_tabs_final);
+        lg.warn('>> SELF.FILE COLUMNS' + self.file_columns);
 
         // build the form with qc_plot_tabs_final
         set_project_settings_user.create_qc_tab_tables(qc_plot_tabs_final, self.file_columns);
