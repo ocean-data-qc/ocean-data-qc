@@ -97,7 +97,7 @@ class BokehPlotsHandler(Environment):
         # lg.info('>> SELF.ENV.TABS_FLAGS_PLOTS: {}'.format(self.env.tabs_flags_plots))
 
     def _init_ranges(self):
-        lg.warning('-- INIT RANGES')
+        lg.info('-- INIT RANGES')
         # TODO: do no create axis for some parameters (if not needed)
         # lg.warning('>> TAB LIST: {}'.format(self.env.f_handler.tab_list))
         # for tab in self.env.f_handler.tab_list:

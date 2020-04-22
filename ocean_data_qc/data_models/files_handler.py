@@ -202,3 +202,5 @@ class FilesHandler(Environment):
             return json_content[attr]
         else:
             lg.warning('>> The attribute {} is not in the JSON file: {}'.format(attr, f_path))
+
+    # TODO: add a method to set data to the json file

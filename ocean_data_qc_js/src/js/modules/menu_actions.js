@@ -110,7 +110,7 @@ module.exports = {
         );
 
         var mime_type = mime.lookup(file_path);
-        lg.warn('>> MIME TYPE: ' + mime_type);
+        lg.info('>> MIME TYPE: ' + mime_type);
 
         if (mime_type == 'application/aqc') {
             //var outPath = path.join(__dirname, '../tmp')    // It will extract the content to the "files" folder

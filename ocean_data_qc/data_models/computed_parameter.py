@@ -226,7 +226,6 @@ class ComputedParameter(Environment):
             'dist': sw.extras.dist, 'f': sw.extras.f, 'satAr': sw.extras.satAr,
             'satN2': sw.extras.satN2, 'satO2': sw.extras.satO2, 'swvel': sw.extras.swvel,
         })
-        lg.warning('>> EQUATIONS LIBRARY OBJECT: {}'.format(self.equations))
         if self.equations is not None:
             for elem_str in dir(self.equations):
                 if elem_str[0] != '_' and elem_str not in ['guess_oct_exe_path', 'set_oct_exe_path']:
