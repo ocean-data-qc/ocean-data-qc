@@ -106,6 +106,6 @@ class CruiseDataCSV(CruiseData):
             if c['param_name'] not in self.cols:
                 self.cp_param.add_computed_parameter({
                     'value': c['param_name'],
-                    'prevent_save': True  # to avoid save_attributes all the times, once is enough
+                    'prevent_save': True  # to avoid save_col_attribs all the times, once is enough
                 })
-        self.save_attributes()
+        self.save_col_attribs()

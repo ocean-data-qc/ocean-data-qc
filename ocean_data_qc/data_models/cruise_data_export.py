@@ -120,11 +120,10 @@ class CruiseDataExport(Environment):
                 index_label='index',
             )
 
-    def save_attributes(self):
-        """ The file columns.json is created """
-        lg.info('-- SAVE ATTRIBUTES to JSON')
-        with open(path.join(TMP,'columns.json'), 'w') as fp:
-            json.dump(self.cols, fp, indent=4, sort_keys=True)
+    def save_col_attribs(self):
+        """ The columns and their attributes are saved """
+        lg.warning('-- SAVE COLUMNS AND ATTRIBUTES TO SETTINGS.JSON FILE')
+        self.env.f_handler.set('columns', self.cols, path.join(TMP,'settings.json'))
 
     def save_metadata(self):
         lg.info('-- SAVE METADATA')
@@ -150,5 +149,5 @@ class CruiseDataExport(Environment):
         lg.info('-- SAVE TMP DATA')
         self.save_moves()
         self.save_csv_data()
-        self.save_attributes()
+        self.save_col_attribs()
         self.save_metadata()

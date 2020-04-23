@@ -39,45 +39,45 @@
         },
         "STNNBR": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "integer",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 0
         },
         "CASTNO": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "integer",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 0
         },
         "BTLNBR": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "integer",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 0
         },
         "BTLNBR_FLAG_W": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "integer",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 0
         },
         "SAMPNO": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "integer",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 0
         },
         "SAMPNO_FLAG_W": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "integer",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 0
         },
         "DATE": {
             "orig_name": "",
@@ -95,17 +95,17 @@
         },
         "LATITUDE": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "float",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 4
         },
         "LONGITUDE": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "float",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 4
         },
         "DEPTH": {
             "orig_name": "",
@@ -116,115 +116,115 @@
         },
         "CTDPRS": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "float",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 4
         },
         "CTDTMP": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "float",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 4
         },
         "CTDSAL": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "float",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 4
         },
         "CTDSAL_FLAG_W": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "integer",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 0
         },
         "SALNTY": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "float",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 4
         },
         "SALNTY_FLAG_W": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "integer",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 0
         },
         "CTDOXY": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "float",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 2
         },
         "CTDOXY_FLAG_W": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "integer",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 0
         },
         "OXYGEN": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "float",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 2
         },
         "OXYGEN_FLAG_W": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "integer",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 0
         },
         "SILCAT": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "float",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 2
         },
         "SILCAT_FLAG_W": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "integer",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 0
         },
         "NITRAT": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "float",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 2
         },
         "NITRAT_FLAG_W": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "integer",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 0
         },
         "NITRIT": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "float",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 2
         },
         "NITRIT_FLAG_W": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "integer",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 0
         },
         "NO2_NO3": {
             "orig_name": "",
@@ -235,52 +235,52 @@
         },
         "NO2_NO3_FLAG_W": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "integer",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 0
         },
         "PHSPHT": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "float",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 2
         },
         "PHSPHT_FLAG_W": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "integer",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 0
         },
         "ALKALI": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "float",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 2
         },
         "ALKALI_FLAG_W": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "integer",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 0
         },
         "TCARBN": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "float",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 2
         },
         "TCARBN_FLAG_W": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "integer",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 0
         },
         "PH": {
             "orig_name": "",
@@ -291,10 +291,10 @@
         },
         "PH_FLAG_W": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "integer",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 0
         },
         "PH_TOT": {
             "orig_name": "",
@@ -305,10 +305,10 @@
         },
         "PH_TOT_FLAG_W": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "integer",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 0
         },
         "PH_SWS": {
             "orig_name": "",
@@ -319,10 +319,10 @@
         },
         "PH_SWS_FLAG_W": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "integer",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 0
         },
         "PH_TMP": {
             "orig_name": "",
@@ -340,108 +340,129 @@
         },
         "PCO2_FLAG_W": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "integer",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 0
         },
         "CFC_11": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "float",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 3
         },
         "CFC_11_FLAG_W": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "integer",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 0
         },
         "CFC_12": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "float",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 3
         },
         "CFC_12_FLAG_W": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "integer",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 0
         },
         "CFC113": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "float",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 2
         },
         "CFC113_FLAG_W": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "integer",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 0
         },
         "CCL4": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "float",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 2
         },
         "CCL4_FLAG_W": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "integer",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 0
         },
         "TRITIUM": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "float",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 3
         },
         "TRITIUM_FLAG_W": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "integer",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 0
+        },
+        "TRITIUM_ERR": {
+            "orig_name": "",
+            "data_type": "float",
+            "types": [],
+            "unit": "",
+            "precision": 3
         },
         "HELIUM": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "float",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 2
         },
         "HELIUM_FLAG_W": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "integer",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 0
+        },
+        "HELIUM_ERR": {
+            "orig_name": "",
+            "data_type": "float",
+            "types": [],
+            "unit": "",
+            "precision": 2
         },
         "DELHE3": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "float",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 2
         },
         "DELHE3_FLAG_W": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "integer",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 0
+        },
+        "DELHE3_ERR": {
+            "orig_name": "",
+            "data_type": "float",
+            "types": [],
+            "unit": "",
+            "precision": 2
         },
         "DELC14": {
             "orig_name": "",
@@ -452,10 +473,10 @@
         },
         "DELC14_FLAG_W": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "integer",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 0
         },
         "DELC13": {
             "orig_name": "",
@@ -466,10 +487,10 @@
         },
         "DELC13_FLAG_W": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "integer",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 0
         },
         "O18O16": {
             "orig_name": "",
@@ -480,24 +501,31 @@
         },
         "O18O16_FLAG_W": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "integer",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 0
+        },
+        "PHTS25P0": {
+            "orig_name": "",
+            "data_type": "float",
+            "types": [],
+            "unit": "",
+            "precision": 4
         },
         "SF6": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "float",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 2
         },
         "SF6_FLAG_W": {
             "orig_name": "",
-            "data_type": "",
+            "data_type": "integer",
             "types": [],
             "unit": "",
-            "precision": -1
+            "precision": 0
         },
         "THETA": {
             "orig_name": "",
@@ -512,6 +540,20 @@
             "types": [],
             "unit": "",
             "precision": -1
+        },
+        "NEON": {
+            "orig_name": "",
+            "data_type": "float",
+            "types": [],
+            "unit": "",
+            "precision": 4
+        },
+        "NEON_ERR": {
+            "orig_name": "",
+            "data_type": "float",
+            "types": [],
+            "unit": "",
+            "precision": 4
         }
     },
     "computed_params": [

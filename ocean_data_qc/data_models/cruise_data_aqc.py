@@ -36,7 +36,7 @@ class CruiseDataAQC(CruiseData):
 
     def load_file(self):
         lg.info('-- LOAD FILE AQC >> LOAD FROM FILES')
-        self._set_cols_from_json_file()
+        self.get_cols_from_settings_file()
         self._replace_nan_values()         # '-999' >> NaN
         self._convert_data_to_number()
         self._set_hash_ids()

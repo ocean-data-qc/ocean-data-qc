@@ -241,13 +241,11 @@ class CruiseData(CruiseDataExport):
                     )
                 self._add_column(column=pname, units=False)
 
-    def _set_cols_from_json_file(self):
-        """ The columns are set directly from the columns.json file """
-        lg.info('-- SET ATTRIBUTES FROM JSON FILE --')
-        if path.isfile(path.join(TMP, 'columns.json')):
-            with open(path.join(TMP, 'columns.json'), 'r') as f:
-                attr = json.load(f)
-            self.cols = attr
+    def get_cols_from_settings_file(self):
+        """ The columns are set directly from the settings.json file """
+        lg.warning('-- SET COLS FROM SETTINGS FILE --')
+        self.cols = self.env.f_handler.get('columns', path.join(TMP, 'settings.json'))
+        lg.warning(f'>> COLS: {self.cols}')
 
     def get_col_type(self, column=''):
         ''' Return a list of column types associated to the column argument '''
@@ -291,7 +289,7 @@ class CruiseData(CruiseDataExport):
             prepaired_list = [(col_positions[x], x) for x in res]
         except Exception:
             raise ValidationError(
-                'Some column in the columns.json file or '
+                'Some columns in the settings.json file or '
                 'self.cols object is not in the DataFrame'
             )
         sorted_list = sorted(prepaired_list, key=lambda elem: elem[0])  # reordering
@@ -613,4 +611,4 @@ class CruiseData(CruiseDataExport):
                         cps_to_rmv.append(c['param_name'])
         if cps_to_rmv != []:
             self.env.f_handler.remove_cols_from_qc_plot_tabs(cps_to_rmv)
-        self.env.cruise_data.save_attributes()
+        self.env.cruise_data.save_col_attribs()

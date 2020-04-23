@@ -88,7 +88,7 @@ class ComputedParameter(Environment):
                         'unit': cp.get('units', False),
                     }
                     if prevent_save is False:
-                        self.cruise_data.save_attributes()
+                        self.cruise_data.save_col_attribs()
                     lg.info('>> CP <<{}>> ADDED'.format(val))
                 else:
                     msg = ''

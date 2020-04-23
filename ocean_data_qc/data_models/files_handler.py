@@ -201,6 +201,19 @@ class FilesHandler(Environment):
         if attr in json_content:
             return json_content[attr]
         else:
-            lg.warning('>> The attribute {} is not in the JSON file: {}'.format(attr, f_path))
+            lg.warning(f'>> The attribute {attr} is not in the JSON file: {f_path}')
 
-    # TODO: add a method to set data to the json file
+    def set(self, attr, value, f_path):
+        ''' Store attribute data to some json file
+            * attr: attribute to set
+            * value: new value to set
+            * f_path: file path where the file is located
+        '''
+        with open(f_path, 'r') as f:
+            json_content = json.load(f)
+        if attr in json_content:
+            json_content[attr] = value
+            with open(f_path, 'w') as fp:
+                json.dump(json_content, fp, indent=4, sort_keys=True)
+        else:
+            lg.warning(f'>> The attribute {attr} is not in the JSON file: {f_path}')
