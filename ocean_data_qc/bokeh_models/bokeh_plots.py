@@ -72,8 +72,8 @@ class BokehPlots(Environment):
             # height=600,
             x_range=self.env.ranges[self.x]['x_range'],
             y_range=self.env.ranges[self.y]['y_range'],
-            x_axis_label=self.x,
-            y_axis_label=self.y,
+            x_axis_label=self._get_axis_label(self.x),
+            y_axis_label=self._get_axis_label(self.y),
             toolbar_location=None,
             tools='',
             title=title,
@@ -86,6 +86,13 @@ class BokehPlots(Environment):
         )
         self.plot.yaxis.axis_label_text_font_style = 'normal'
         self.plot.xaxis.axis_label_text_font_style = 'normal'
+
+    def _get_axis_label(self, col):
+        unit = self.cruise_data.cols[col]['unit']
+        if unit is not False:
+            return f'{col} ({unit})'
+        else:
+            return col
 
     def _init_color_circles(self):
         ''' Plot different circles depending on their flag

@@ -116,8 +116,8 @@ class CruiseData(CruiseDataExport):
                 * if all the cells are strings                          > unit row
                 * if there is at least one number (stored as string)    > no unit row
         '''
-        lg.info('-- UNIT ROW EXISTS')
-        exp = re.compile("^-?\d+?\.\d+?$")
+        lg.info('-- CHECK IF THE UNIT ROW EXISTS')
+        exp = re.compile("^-?\d+?(\.\d+)?$")
         def is_number(s):
             ''' Returns True if the string is a number:
                     float or integer
@@ -130,13 +130,17 @@ class CruiseData(CruiseDataExport):
         no_unit_row = False
         for u in units:  # the loop continues only if it is a string and not number
             if not isinstance(u, str) and np.isnan(u):
+                lg.warning('>> NAN IN UNITS ROW')
                 break
             if is_number(u):
+                lg.warning('>> NUMBER IN UNITS ROW')
                 no_unit_row = True
                 break
         if no_unit_row is False:
             self.df = self.df[1:-1].reset_index(drop=True)  # rewrite index column and remove the units row
-        return units
+            return units
+        else:
+            return []
 
     def _sanitize_flags(self):
         lg.info('-- SANITIZING FLAGS --')
