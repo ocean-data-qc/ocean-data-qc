@@ -183,9 +183,10 @@ class CruiseData(CruiseDataExport):
         '''
         if column not in self.get_cols_by_type('all'):
             self.cols[column] = {
+                'orig_name': self.orig_cols.get(column, column),
                 'types': [],
                 'unit': units,
-                'orig_name': self.orig_cols.get(column, column),
+                'precision': False,
             }
             if column.endswith(FLAG_END):
                 self.cols[column]['types'] += ['param_flag']
@@ -517,6 +518,7 @@ class CruiseData(CruiseDataExport):
         '''
         lg.info('-- REPLACE MISSING VALUES (-999 >> NaN)')
         self.df_str = self.df.copy(deep=True)    # TODO: this has to be synchronized when seld.df is updated
+                                                 #       or should not be used anymore
         self.df.replace(
             to_replace=NA_REGEX_LIST,
             value='', #np.nan,
@@ -535,14 +537,52 @@ class CruiseData(CruiseDataExport):
             is completely converted to int64
         '''
         self.df = self.df.apply(lambda x: pd.to_numeric(x, errors='ignore', downcast='integer'))
+        float_prec_dict = self._set_col_precisions()
 
-        # if the new values are float >> check the original string to make the rounding well
+        # NOTE: Round each column by the original number of decimal places, if the value is shown somewhere
+        #       or the float comparison, made in cruise_data_update.py, will work better
+        self.df = self.df.round(float_prec_dict)
 
-        # TODO: round with the original number of decimals >> float comparison
-        #       I think this rounding can be made by df column
+    def _set_col_precisions(self):
+        ''' Set the precision of all the columns in self.cols['precision']
+                * get the columns with float values > precision = X
+                * get the columns with int values   > precision = 0
+                * get the columns with str values   > precision = False
+        '''
+        lg.info('-- SET COL PRECISIONS')
 
-        self.df = self.df.round(10)
+        pd_precision = 0
+        float_prec_dict = {}
+        for c in self.df.select_dtypes(include=['float64']):
+            if not self.df[c].isnull().all():
+                df_tmp = self.df_str[c].str.contains(pat='\.', na=False)  # fills na values with False
+                df_tmp = self.df_str[c][df_tmp]
 
+                if df_tmp.index.size == 0:  # are all integer and NaN mixed
+                    precisions[c] = 0
+                    continue
+
+                p = int(df_tmp.str.rsplit(pat='.', n=1, expand=True)[1].str.len().max())  # always has one '.'
+                if p > pd_precision:
+                    pd_precision = p
+                self.cols[c]['precision'] = p
+                float_prec_dict[c] = p
+            else:
+                self.cols[c]['precision'] = False
+
+        for c in self.df.select_dtypes(include=['int8', 'int16', 'int32', 'int64']):
+            self.cols[c]['precision'] = 0
+
+        for c in self.df.select_dtypes(include=['object']):  # or exclude=['int8', 'int16', 'int32', 'int64', 'float64']
+            self.cols[c]['precision'] = False
+
+        if pd_precision > 15:
+            pd_precision = 15
+
+        lg.info(f'>> GLOBAL PRECISION: {pd_precision}')
+
+        pd.set_option('precision', pd_precision)
+        return float_prec_dict
 
     def update_flag_values(self, column, new_flag_value, row_indices):
         """ This method is executed mainly when a flag is pressed to update the values

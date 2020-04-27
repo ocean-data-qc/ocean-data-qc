@@ -83,9 +83,12 @@ class ComputedParameter(Environment):
                 }
                 result = self.compute_equation(new_cp)
                 if result.get('success', False):
+
                     self.cruise_data.cols[val] = {
+                        'orig_name': cp['param_name'],
                         'types': ['computed'],
                         'unit': cp.get('units', False),
+                        'precision': int(cp['precision']),
                     }
                     if prevent_save is False:
                         self.cruise_data.save_col_attribs()
