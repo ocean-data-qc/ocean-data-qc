@@ -28,14 +28,19 @@ module.exports = {
         //  * attr: string or list of strings (Array) with the atributes to retrieve
         //  * path: path where the json file is stored
         //  * return: string or object with the requested data
-
         var self = this;
         if (path != false) {
             self.path = path;
             // lg.info('>> FILE PATH: ' + self.path);
-            var data = fs.readFileSync(self.path, 'utf8');       // TODO: if I use require, is it updated?
-            // lg.info('>> DATA CONTENT: ' + data)
-            self.data = JSON.parse(data);
+            var data = false;
+            try {
+                data = fs.readFileSync(self.path, 'utf8');       // TODO: if I use require, is it updated?
+                // lg.info('>> DATA CONTENT: ' + data)
+                self.data = JSON.parse(data);
+            } catch(err) {
+                lg.warn('>> (data.js) COULD NOT READ THE FILE: ' + self.path + ' | ' + err);
+                return false;
+            }
         }
         if (attr in self.data){
             if (attr.constructor === Array) {

@@ -37,8 +37,8 @@ try {
     lg.warn('>> ELECTRON DEBUG COULD NOT BE LOADED');
 }
 
-// These code can be removed when this issue is fixed
-// https://stackoverflow.com/questions/54175042/python-3-7-anaconda-environment-import-ssl-dll-load-fail-error
+// NOTE: These code can be removed when this issue is fixed
+//       https://stackoverflow.com/questions/54175042/python-3-7-anaconda-environment-import-ssl-dll-load-fail-error
 if (process.platform == 'win32' && !is_dev) {
     if (process.env.PATH.slice(-1) != ';') {
         process.env.PATH = process.env.PATH + ';'
@@ -71,48 +71,60 @@ app.on('ready', function() {
     // web_contents.openDevTools();     // TODO: "chromium DevTools" >> add this options to development menu (toggle)
     server.web_contents = web_contents;
 
-    Promise.all([
-        server.check_log_folder(),
-        server.check_json_shared_data(),
-        server.check_json_old_default_settings(),
-        server.check_json_custom_settings()
-    ]).then((result) => {
-        lg.info('>> PROMISE ALL RESULT: ' + result);
-        server.set_file_to_open();
+    server.check_files_folder().then((result) => {
+        if (result == true) {
+            Promise.all([
+                server.check_log_folder(),
+                server.check_json_shared_data(),
+                server.check_json_old_default_settings(),
+                server.check_json_custom_settings()
+            ]).then((result) => {
+                lg.info('>> PROMISE ALL RESULT: ' + result);
+                server.set_file_to_open();
 
-        menu_actions.init(web_contents, server);
-        menu.init(web_contents, menu_actions, server);
-        menu.set_main_menu();
+                menu_actions.init(web_contents, server);
+                menu.init(web_contents, menu_actions, server);
+                menu.set_main_menu();
 
-        server.init(menu);
-        web_contents.on('dom-ready', () => {
-            server.dom_ready = true;
-        });
-        server.go_to_welcome_window();
-        server.launch_bokeh();  // bokeh initialization on the background
-        server.load_bokeh_on_iframe();
+                server.init(menu);
+                web_contents.on('dom-ready', () => {
+                    server.dom_ready = true;
+                });
+                server.go_to_welcome_window();
+                server.launch_bokeh();  // bokeh initialization on the background
+                server.load_bokeh_on_iframe();
 
-        app.showExitPrompt = true
-        main_window.on('close', (e) => {
-            lg.info('-- ON CLOSE MAIN WINDOW');
-            server.close_with_exit_prompt_dialog(e);
-        })
+                app.showExitPrompt = true
+                main_window.on('close', (e) => {
+                    lg.info('-- ON CLOSE MAIN WINDOW');
+                    server.close_with_exit_prompt_dialog(e);
+                })
 
-        if (!is_dev) {
-            // Autoupdater (running on production)
-            web_contents.send('show-loader');  // TODO: is this OK here?
-            updater.init(web_contents);
-            updater.listeners();
-            updater.check_for_updates();
+                if (!is_dev) {
+                    // Autoupdater (running on production)
+                    web_contents.send('show-loader');  // TODO: is this OK here?
+                    updater.init(web_contents);
+                    updater.listeners();
+                    updater.check_for_updates();
+                }
+
+                server.web_contents.send('show-custom-settings-replace');
+            }).catch((msg) => {
+                lg.error('ERROR in the promise all: ' + msg);
+                // TODO: I need dom-ready event to run this
+                // or running it in the renderer side
+                // tools.showModal('ERROR', msg);
+            });
+        } else {
+            tools.show_modal({
+                'msg_type': 'text',
+                'type': 'ERROR',
+                'msg': 'The files folder in appdata could be checked or created.',
+            });
         }
+    })
 
-        server.web_contents.send('show-custom-settings-replace');
-    }).catch((msg) => {
-        lg.error('ERROR in the promise all: ' + msg);
-        // TODO: I need dom-ready event to run this
-        // or running it in the renderer side
-        // tools.showModal('ERROR', msg);
-    });
+
 
 });
 

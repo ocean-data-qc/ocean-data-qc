@@ -35,6 +35,22 @@ module.exports = {
         self.dom_ready = false;
     },
 
+    check_files_folder: function() {
+        lg.info('-- CHECK FILES FOLDER')
+        return new Promise((resolve, reject) => {
+            fs.access(loc.files, fs.constants.F_OK, (err) => {
+                if (err) {
+                    fs.mkdir(loc.files, { recursive: true }, (err) => {
+                        if (err) reject(err);
+                        else resolve(true);
+                    });
+                } else {
+                    resolve(true);
+                }
+            });
+        });
+    },
+
     check_log_folder: function() {
         lg.info('-- CHECK LOG FOLDER')
         return new Promise((resolve, reject) => {
@@ -105,6 +121,53 @@ module.exports = {
         var self = this;
 
         return new Promise((resolve, reject) => {
+            fs.access(loc.custom_settings, fs.constants.F_OK, (err) => {
+                if (err) {
+                    var a = fs.createReadStream(loc.default_settings);
+                    var c = fs.createWriteStream(loc.custom_settings);
+
+                    a.on('error', (err) => {
+                        tools.showModal('ERROR', 'The default settings file could not be read');
+                        reject(err);
+                    });
+                    c.on('error', (err) => {
+                        tools.showModal('ERROR', 'Some error copying the custom settings file');
+                        reject(err);
+                    });
+                    var p = a.pipe(c);
+
+                    p.on('close', function(){
+                        try {
+                            if (self.dom_ready) {
+                                self.web_contents.send('show-custom-settings-replace', {'result': 'sync' });
+                            } else {
+                                self.web_contents.on('dom-ready', () => {
+                                    self.web_contents.send('show-custom-settings-replace', {'result': 'sync' });
+                                });
+                            }
+                        } catch(err) {
+                            lg.error(err);
+                        }
+                        resolve(true);
+                    });
+
+                } else {
+                    self.check_json_custom_settings_version().then((res) => {
+                        if (res == true) {
+                            resolve(true);
+                        } else {
+                            reject(res);
+                        }
+                    });
+                }
+            });
+        });
+    },
+
+    check_json_custom_settings_version: function() {
+        var self = this;
+        lg.info('-- CHECK JSON CUSTOM SETTINGS VERSION');
+        return new Promise((resolve, reject) => {
             // if the default.json are differents versions, replace it
             var v_src = data.get('json_version', loc.default_settings);  // new version if the app is updated
             var v_appdata = data.get('json_version', loc.custom_settings);
@@ -129,7 +192,7 @@ module.exports = {
                                 });
                             }
                         } catch(err) {
-                            lg.error('ERROR: ' + err);
+                            lg.error(err);
                         }
                     } else {
                         try {
@@ -141,7 +204,7 @@ module.exports = {
                                 });
                             }
                         } catch(err) {
-                            lg.error('ERROR: ' + err);
+                            lg.error(err);
                         }
                     }
                     resolve(true);
@@ -149,7 +212,7 @@ module.exports = {
                     reject(msg);
                 });
             }
-
+            resolve(true);
         });
     },
 
