@@ -21,21 +21,21 @@
                 "required"
             ],
             "unit": false,
-            "precision": -1
+            "precision": false
         },
         "SECT": {
             "orig_name": "",
             "data_type": "",
             "types": [],
             "unit": false,
-            "precision": -1
+            "precision": false
         },
         "SECT_ID": {
             "orig_name": "",
             "data_type": "",
             "types": [],
             "unit": false,
-            "precision": -1
+            "precision": false
         },
         "STNNBR": {
             "orig_name": "",
@@ -84,14 +84,14 @@
             "data_type": "",
             "types": [],
             "unit": false,
-            "precision": -1
+            "precision": false
         },
         "TIME": {
             "orig_name": "",
             "data_type": "",
             "types": [],
             "unit": false,
-            "precision": -1
+            "precision": false
         },
         "LATITUDE": {
             "orig_name": "",
@@ -112,7 +112,7 @@
             "data_type": "",
             "types": [],
             "unit": false,
-            "precision": -1
+            "precision": false
         },
         "CTDPRS": {
             "orig_name": "",
@@ -231,7 +231,7 @@
             "data_type": "",
             "types": [],
             "unit": false,
-            "precision": -1
+            "precision": false
         },
         "NO2_NO3_FLAG_W": {
             "orig_name": "",
@@ -287,7 +287,7 @@
             "data_type": "",
             "types": [],
             "unit": false,
-            "precision": -1
+            "precision": false
         },
         "PH_FLAG_W": {
             "orig_name": "",
@@ -301,7 +301,7 @@
             "data_type": "",
             "types": [],
             "unit": false,
-            "precision": -1
+            "precision": false
         },
         "PH_TOT_FLAG_W": {
             "orig_name": "",
@@ -315,7 +315,7 @@
             "data_type": "",
             "types": [],
             "unit": false,
-            "precision": -1
+            "precision": false
         },
         "PH_SWS_FLAG_W": {
             "orig_name": "",
@@ -329,14 +329,14 @@
             "data_type": "",
             "types": [],
             "unit": false,
-            "precision": -1
+            "precision": false
         },
         "PCO2": {
             "orig_name": "",
             "data_type": "",
             "types": [],
             "unit": false,
-            "precision": -1
+            "precision": false
         },
         "PCO2_FLAG_W": {
             "orig_name": "",
@@ -469,7 +469,7 @@
             "data_type": "",
             "types": [],
             "unit": false,
-            "precision": -1
+            "precision": false
         },
         "DELC14_FLAG_W": {
             "orig_name": "",
@@ -483,7 +483,7 @@
             "data_type": "",
             "types": [],
             "unit": false,
-            "precision": -1
+            "precision": false
         },
         "DELC13_FLAG_W": {
             "orig_name": "",
@@ -497,7 +497,7 @@
             "data_type": "",
             "types": [],
             "unit": false,
-            "precision": -1
+            "precision": false
         },
         "O18O16_FLAG_W": {
             "orig_name": "",
@@ -532,14 +532,14 @@
             "data_type": "",
             "types": [],
             "unit": false,
-            "precision": -1
+            "precision": false
         },
         "N2O": {
             "orig_name": "",
             "data_type": "",
             "types": [],
             "unit": false,
-            "precision": -1
+            "precision": false
         },
         "NEON": {
             "orig_name": "",

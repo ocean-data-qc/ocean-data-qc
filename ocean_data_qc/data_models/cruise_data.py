@@ -559,7 +559,7 @@ class CruiseData(CruiseDataExport):
                 df_tmp = self.df_str[c][df_tmp]
 
                 if df_tmp.index.size == 0:  # are all integer and NaN mixed
-                    precisions[c] = 0
+                    self.cols[c]['precision'] = 0
                     continue
 
                 p = int(df_tmp.str.rsplit(pat='.', n=1, expand=True)[1].str.len().max())  # always has one '.'

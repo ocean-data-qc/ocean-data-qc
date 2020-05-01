@@ -1,0 +1,46 @@
+
+<button id="modal_col_settings" type="button" class="btn btn-info btn-lg"
+        data-toggle="modal" data-target="#col_settings_win" style="display: none;">Open Modal</button>
+
+<div id="col_settings_win" data-backdrop="static" data-keyboard="false" class="modal fade modal-form" role="dialog" tabindex="-1">
+    <div class="modal-dialog modal-lg wide-modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Column Settings</h6>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+
+            <!-- Table of movements -->
+            <div id="div_col_settings">
+                <table id="table_col_settings" class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">Name (original name)</th>
+                            <th style="width: 50px;">Data type</th>
+                            <th style="width: 50px;">Types</th>
+
+                            <!-- Precision -->
+                            <th style="width: 20px;">Current precision</th>
+                            <th style="width: 20px;">Default precision</th>
+                            <th style="width: 20px;">Use default to export ?</th>
+
+                            <!-- Units -->
+                            <th style="width: 20px;">Current unit</th>
+                            <th style="width: 20px;">Default unit</th>
+                            <th style="width: 20px;">Use default to export ?</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            </div>
+            <div class="modal-footer">
+                <button id="save_column_settings" type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
+                <button id="discard_changes" type="button" class="btn btn-light" data-dismiss="modal">Discard</button>
+            </div>
+        </div>
+
+    </div>
+</div>
