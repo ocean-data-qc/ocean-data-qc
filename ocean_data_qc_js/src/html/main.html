@@ -176,11 +176,13 @@
     <script>
         window.$ = window.jQuery = require('jquery');
 
-        require('../../node_modules/popper.js/dist/umd/popper.min.js');    // umd version needed for bootstrap v4
-        require('../../node_modules/bootstrap/dist/js/bootstrap.min.js');  // dependencies: https://stackoverflow.com/a/47470007/4891717
+        require('../js/external_resources/jquery-ui.min.js');                     // jquery-ui: it is needed for the accordion widget
+        require('../../node_modules/popper.js/dist/umd/popper.min.js');           // umd version needed for bootstrap v4
+        require('../../node_modules/bootstrap/dist/js/bootstrap.min.js');         // dependencies: https://stackoverflow.com/a/47470007/4891717
+        // require('../../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js');  // alternative to require popper an bootstrap at the same time
+
         require('../js/renderer_modules/main_renderer.js');
         require('../js/renderer_modules/bokeh_renderer.js');
         require('../js/renderer_modules/updater_renderer.js');
-        require('../js/external_resources/jquery-ui.min.js');  // jquery-ui: it is needed for the accordion widget
     </script>
 </html>

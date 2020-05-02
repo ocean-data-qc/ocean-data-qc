@@ -58,11 +58,10 @@ module.exports = {
             //     "precision": false
             // },
 
-            var name = ''
+            var name = cols[i];
+            var orig_name = '';
             if (cols[i] != self.pj_cols[cols[i]]['orig_name']) {
-                name = cols[i] + ' (' + self.pj_cols[cols[i]]['orig_name'] + ')';
-            } else {
-                name = cols[i]
+                orig_name = self.pj_cols[cols[i]]['orig_name'];
             }
             var types = self.pj_cols[cols[i]]['types'].join(', ');  // translate to icons or extract just some of them?
 
@@ -144,19 +143,25 @@ module.exports = {
             });
 
             var tr = $('<tr>');
-            tr.append($('<th>', {scope: 'row', text: name}));
-            tr.append($('<td>', {text: self.pj_cols[cols[i]]['data_type'] }));
-            tr.append($('<td>', {text: types }));
+            tr.append(
+                $('<td>', {text: name}),
+                $('<td>', {text: orig_name}),
+                $('<td>', {text: self.pj_cols[cols[i]]['data_type'] }),
+                $('<td>', {text: types }),
 
-            tr.append($('<td>', {html: sel_cur_prec }));  // disable select if false
-            tr.append($('<td>', {html: sel_df_prec }));
-            tr.append($('<td>', {html: cb_prec }));
+                $('<td>', {html: sel_cur_prec }),  // disable select if false
+                $('<td>', {html: sel_df_prec }),
+                $('<td>', {html: cb_prec }),
 
-            tr.append($('<td>', {html: txt_cur_unit }));  // disable select if false
-            tr.append($('<td>', {html: txt_df_unit }));  // enabled even if unit is false
-            tr.append($('<td>', {html: cb_unit }));
+                $('<td>', {html: txt_cur_unit }),  // disable select if false
+                $('<td>', {html: txt_df_unit }),  // enabled even if unit is false
+                $('<td>', {html: cb_unit }),
+            );
 
             $('#table_col_settings tbody').append(tr);
+
+            // $('[data-toggle="tooltip"]').tooltip();
+
         }
         $('#modal_col_settings').click();
     }

@@ -38,7 +38,7 @@
     "dependencies": {
         "app-module-path": "^2.2.0",
         "awesome-bootstrap-checkbox": "^1.0.1",
-        "bootstrap": "4.3.1",
+        "bootstrap": "4.4.1",
         "codemirror": "^5.29.0",
         "command-exists": "^1.2.8",
         "cross-zip": "^2.1.5",
@@ -52,7 +52,7 @@
         "mime-db": "^1.26.0",
         "mime-type": "^3.0.5",
         "node-watch": "^0.5.4",
-        "popper.js": "^1.14.7",
+        "popper.js": "1.16.0",
         "portscanner": "^2.1.1",
         "python-shell": "^0.4.0",
         "request-promise": "^3.0.0",

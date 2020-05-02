@@ -16,9 +16,10 @@
                 <table id="table_col_settings" class="table table-striped">
                     <thead>
                         <tr>
-                            <th style="width: 50px;">Name (original name)</th>
+                            <th style="width: 50px;">Sanitized Name</th>
+                            <th style="width: 50px;">Original name (used to export if it is set)</th>
                             <th style="width: 50px;">Data type</th>
-                            <th style="width: 50px;">Types</th>
+                            <th style="width: 50px;">Column types</th>
 
                             <!-- Precision -->
                             <th style="width: 20px;">Current precision</th>
@@ -37,8 +38,18 @@
 
             </div>
             <div class="modal-footer">
-                <button id="save_column_settings" type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
-                <button id="discard_changes" type="button" class="btn btn-light" data-dismiss="modal">Discard</button>
+                <button id="save_column_settings"
+                        type="button"
+                        class="btn btn-primary arrow"
+                        data-dismiss="modal"
+                        data-toggle="tooltip"
+                        title="Example">Save</button>
+
+                        <button id="discard_changes" type="button"
+                        class="btn btn-light" data-dismiss="modal">Discard</button>
+
+                        <button id="example" type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="top" title="Tooltip on bottom">Tooltip on bottom</button>
+
             </div>
         </div>
 

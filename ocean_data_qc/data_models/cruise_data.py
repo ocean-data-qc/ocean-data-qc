@@ -560,21 +560,25 @@ class CruiseData(CruiseDataExport):
 
                 if df_tmp.index.size == 0:  # are all integer and NaN mixed
                     self.cols[c]['precision'] = 0
+                    self.cols[c]['data_type'] = 'integer'
                     continue
 
                 p = int(df_tmp.str.rsplit(pat='.', n=1, expand=True)[1].str.len().max())  # always has one '.'
                 if p > pd_precision:
                     pd_precision = p
-                self.cols[c]['precision'] = p
                 float_prec_dict[c] = p
-            else:
+                self.cols[c]['precision'] = p
+                self.cols[c]['data_type'] = 'float'
+            else:  # empty column
                 self.cols[c]['precision'] = False
 
         for c in self.df.select_dtypes(include=['int8', 'int16', 'int32', 'int64']):
             self.cols[c]['precision'] = 0
+            self.cols[c]['data_type'] = 'integer'
 
         for c in self.df.select_dtypes(include=['object']):  # or exclude=['int8', 'int16', 'int32', 'int64', 'float64']
             self.cols[c]['precision'] = False
+            self.cols[c]['data_type'] = 'string'
 
         if pd_precision > 15:
             pd_precision = 15

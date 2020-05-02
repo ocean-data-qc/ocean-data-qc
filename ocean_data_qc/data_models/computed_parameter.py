@@ -76,19 +76,20 @@ class ComputedParameter(Environment):
 
         for cp in self.proj_settings_cps:  # NOTE: list of dicts, I need to iterate over all the items to get the cp to add
             if cp['param_name'] == val:
+                prec = int(cp['precision'])
                 new_cp = {
                     'eq': cp['equation'],
                     'computed_param_name': cp['param_name'],
-                    'precision': int(cp['precision']),
+                    'precision': prec,
                 }
                 result = self.compute_equation(new_cp)
                 if result.get('success', False):
-
                     self.cruise_data.cols[val] = {
                         'orig_name': cp['param_name'],
+                        'data_type': 'integer' if prec == 0 else 'float',
                         'types': ['computed'],
                         'unit': cp.get('units', False),
-                        'precision': int(cp['precision']),
+                        'precision': prec,
                     }
                     if prevent_save is False:
                         self.cruise_data.save_col_attribs()
