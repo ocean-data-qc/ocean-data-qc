@@ -246,6 +246,7 @@ module.exports = {
 
         $.get(url, function(data) {
             $(data).prependTo('body');
+            $('[data-toggle="tooltip"]').tooltip();
             if (callback != false) {
                 callback();
             }

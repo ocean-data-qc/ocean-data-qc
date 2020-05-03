@@ -160,8 +160,6 @@ module.exports = {
 
             $('#table_col_settings tbody').append(tr);
 
-            // $('[data-toggle="tooltip"]').tooltip();
-
         }
         $('#modal_col_settings').click();
     }

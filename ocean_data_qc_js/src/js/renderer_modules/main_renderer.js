@@ -17,6 +17,7 @@ const portscanner = require('portscanner')
 const rmdir = require('rimraf');
 const fs = require('fs');
 const is_dev = require('electron-is-dev');
+const popper = require('popper.js');
 
 const loc = require('locations');
 const lg = require('logging');
@@ -30,6 +31,9 @@ const bokeh_export = require('bokeh_export');
 require('set_project_settings_user').init();
 
 // ---------------------------- INITIAL FUNCTIONS ----------------------------- //
+
+// To prevent blurred text in tooltips: https://github.com/twbs/bootstrap/issues/22610
+popper.Defaults.modifiers.computeStyle.gpuAcceleration = !(window.devicePixelRatio < 1.5 && /Win/.test(navigator.platform));
 
 server_renderer.init();
 server_renderer.set_python_path();

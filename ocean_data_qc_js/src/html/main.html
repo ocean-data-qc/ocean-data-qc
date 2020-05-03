@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="../css/arrows.css">
     <link rel="stylesheet" href="../css/snackbar.css">
     <link rel="stylesheet" href="../css/df_data.css">
+    <link rel="stylesheet" href="../css/tooltips.css">
 
     <!-- CODE MIRROR: JSON EDITOR -->
     <script src="../../node_modules/codemirror/lib/codemirror.js"></script>
@@ -175,6 +176,10 @@
   </body>
     <script>
         window.$ = window.jQuery = require('jquery');
+
+        // NOTE: Leave the order of the following requires is very important to keep everything working well
+        //       For instance jquery ui should be before popper and bootstrap to keep the tooltips working well
+        //       https://stackoverflow.com/questions/56738842/bootstrap-4-3-0-tooltip-conflicts-with-jquery-ui-1-12-1
 
         require('../js/external_resources/jquery-ui.min.js');                     // jquery-ui: it is needed for the accordion widget
         require('../../node_modules/popper.js/dist/umd/popper.min.js');           // umd version needed for bootstrap v4
