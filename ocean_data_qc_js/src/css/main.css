@@ -542,3 +542,13 @@ select[name='all_computed_param'] {
 .wide-modal-dialog {
     max-width: 90% !important;
 }
+
+/* FONT SIZE */
+
+body, .form-control-sm, .btn {
+    font-size: 0.7rem !important;
+}
+
+.btn {
+    line-height: 1.2 !important;
+}

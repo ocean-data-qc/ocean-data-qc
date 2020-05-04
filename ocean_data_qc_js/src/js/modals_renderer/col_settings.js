@@ -32,7 +32,7 @@ module.exports = {
         lg.warn('>> CUSTOM SETTINGS COLS: ' + JSON.stringify(self.cs_cols, null, 4));
 
         if (Object.keys(self.pj_cols).length > 1 && Object.keys(self.pj_cols).length > 1 ) {
-            var url = path.join(loc.modals, 'col_settings.html');
+            var url = path.join(loc.modals, 'col_settings_proj.html');
             tools.load_modal(url, function() {
                 self.parse_data();
             });
@@ -49,6 +49,7 @@ module.exports = {
         lg.warn('-- PARSE DATA COL SETTINGS')
         var self = this;
         var cols = Object.keys(self.pj_cols);  // are they sorted?
+
         for (var i = 1; i < cols.length; i++) {
             // "SECT_ID": {
             //     "orig_name": "",
@@ -68,14 +69,8 @@ module.exports = {
             // TODO: some column can be in self.pj_cols and not in self.cs_cols
             //       in that case
 
-            var cb_prec = $('<input>', {
-                name: 'cb_prec',
-                type: 'checkbox',
-                checked: true
-            })
-
-            var cb_unit = $('<input>', {
-                name: 'cb_unit',
+            var cb_export = $('<input>', {
+                name: 'cb_export',
                 type: 'checkbox',
                 checked: true
             })
@@ -84,41 +79,33 @@ module.exports = {
             var sel_cur_prec = $('<select>', {
                 class: 'form-control form-control-sm',
                 name: 'sel_cur_prec',
-                // disabled: true
+                disabled: true
             })
-            for (var j = 0; j < 16; j++) {
-                var opt = $('<option>', {
-                    value: j,
-                    text: j
-                });
-                if (tmp_prec === j) {
-                    // lg.warn('>> SEL: ' + self.pj_cols[cols[i]]['precision'] + ' | ' + parseInt(j))
-                    opt.attr("selected","selected");
-                    sel_cur_prec.attr('disabled', false);
+            if (tmp_prec !== false) {
+
+                for (var j = 0; j < 16; j++) {
+                    var opt = $('<option>', {
+                        value: j,
+                        text: j
+                    });
+                    if (tmp_prec === j) {
+                        // lg.warn('>> SEL: ' + self.pj_cols[cols[i]]['precision'] + ' | ' + parseInt(j))
+                        opt.attr("selected","selected");
+                        sel_cur_prec.attr('disabled', false);
+                    }
+                    sel_cur_prec.append(opt);
                 }
-                sel_cur_prec.append(opt);
+                if (sel_cur_prec.find('option:selected').text() == 'None') {
+                    sel_cur_prec.attr('disabled', true);
+                }
+            } else {
+                sel_cur_prec.append($('<option>', {
+                    value: 'none',
+                    text: 'None',
+                }))
             }
 
-            var tmp_df_prec = false;
-            if (cols[i] in self.cs_cols) {
-                tmp_df_prec = self.cs_cols[cols[i]]['precision'];
-            }
-            var sel_df_prec = $('<select>', {
-                class: 'form-control form-control-sm',
-                name: 'sel_df_prec',
-                // disabled: true
-            })
-            for (var j = 0; j < 16; j++) {
-                var opt = $('<option>', {
-                    value: j,
-                    text: j
-                });
-                if (tmp_df_prec === j) {
-                    opt.attr("selected","selected");
-                    sel_df_prec.attr('disabled', false);
-                }
-                sel_df_prec.append(opt);
-            }
+
 
             var cur_unit = '';
             if (self.pj_cols[cols[i]]['unit'] !== false) {
@@ -131,34 +118,77 @@ module.exports = {
                 val: cur_unit
             });
 
-            var df_unit = '';
+            var whp_df_unit = false;
             if (cols[i] in self.cs_cols && self.cs_cols[cols[i]]['unit'] !== false) {
-                df_unit = self.cs_cols[cols[i]]['unit'];
+                whp_df_unit = self.cs_cols[cols[i]]['unit'];
             }
-            var txt_df_unit = $('<input>', {
-                name: 'txt_df_unit',
-                class: 'form-control form-control-sm',
-                type: 'text',
-                val: df_unit
-            });
+
+            var whp_df_prec = false;
+            if (cols[i] in self.cs_cols) {
+                whp_df_prec = self.cs_cols[cols[i]]['precision'];
+            }
+
+            var set_bt_title = []
+            var set_bt_disabled = true;
+            if (whp_df_unit !== false) {
+                set_bt_title.push('Unit: ' + whp_df_unit);
+                set_bt_disabled = false;
+            }
+            if (whp_df_prec !== false) {
+                set_bt_title.push('Precision: ' + whp_df_prec);
+                set_bt_disabled = false;
+            }
+            var set_bt_title_str = set_bt_title.join(' | ')
+
+            var set_bt = $('<button>', {
+                'id': 'set_whp_row_' + i,
+                'type': 'button',
+                'class': 'btn btn-primary arrow set_whp',
+                'text': 'Set',
+                'disabled': set_bt_disabled,
+                'title': set_bt_title_str,
+                'data-toggle': 'tooltip',
+                'data-placement': 'bottom',
+                'unit': whp_df_unit,
+                'precision': whp_df_prec
+            })
+
+            if (set_bt_disabled === false) {
+                set_bt.on('click', function() {
+                    var p = parseInt($(this).attr('precision'));
+                    var u = $(this).attr('unit');
+                    lg.warn('>> PRECS' + p);
+                    lg.warn('>> UNITS' + u);
+
+                    if (u !== 'false') {
+                        $(this).parent().prev().find('input[name="txt_cur_unit"]').val(u);
+                    }
+                    if (p !== 'false') {
+                        $(this).parent().prev().prev().find('select[name="sel_cur_prec"]').val(p)
+                    }
+
+                })
+            }
 
             var tr = $('<tr>');
             tr.append(
+                $('<td>', {html: cb_export}),
                 $('<td>', {text: name}),
                 $('<td>', {text: orig_name}),
                 $('<td>', {text: self.pj_cols[cols[i]]['data_type'] }),
                 $('<td>', {text: types }),
 
                 $('<td>', {html: sel_cur_prec }),  // disable select if false
-                $('<td>', {html: sel_df_prec }),
-                $('<td>', {html: cb_prec }),
+                // $('<td>', {html: sel_df_prec }),
 
                 $('<td>', {html: txt_cur_unit }),  // disable select if false
-                $('<td>', {html: txt_df_unit }),  // enabled even if unit is false
-                $('<td>', {html: cb_unit }),
+                // $('<td>', {html: txt_df_unit }),  // enabled even if unit is false
+
+                $('<td>', {html: set_bt })
             );
 
             $('#table_col_settings tbody').append(tr);
+            $('[data-toggle="tooltip"]').tooltip();
 
         }
         $('#modal_col_settings').click();

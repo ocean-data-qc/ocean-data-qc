@@ -246,7 +246,8 @@ module.exports = {
 
         $.get(url, function(data) {
             $(data).prependTo('body');
-            $('[data-toggle="tooltip"]').tooltip();
+            $('[data-toggle="tooltip"]').tooltip();  // this affects just the elements defined in the form
+                                                     // you will need to run this again if you add elements by JS
             if (callback !== false) {
                 callback();
             }
