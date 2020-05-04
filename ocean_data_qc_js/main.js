@@ -175,7 +175,7 @@ ipcMain.on('open-octave-path-dialog', (event, arg) => {
             filters: [{ name: 'Octave Path Folder', }],
             properties: ['openDirectory'],
     }).then((results) => {
-        if (results['canceled'] == false) {
+        if (results['canceled']=== false) {
             var file_path = results['filePaths'][0];
             var web_contents = main_window.webContents;
             web_contents.send('set-octave-path', {'manual_octave_folder_path': file_path});

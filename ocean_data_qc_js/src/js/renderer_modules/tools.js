@@ -63,7 +63,7 @@ module.exports = {
                 );
             }
 
-            if (callback != false) {
+            if (callback !== false) {
                 $('#modal_message_close').click(callback);
             }
             self.show_default_cursor();
@@ -166,7 +166,7 @@ module.exports = {
                 );
             }
 
-            if (callback != false) {
+            if (callback !== false) {
                 $('#modal_message_close').click(callback);
             }
             self.show_default_cursor();
@@ -247,7 +247,7 @@ module.exports = {
         $.get(url, function(data) {
             $(data).prependTo('body');
             $('[data-toggle="tooltip"]').tooltip();
-            if (callback != false) {
+            if (callback !== false) {
                 callback();
             }
         });
@@ -288,7 +288,7 @@ module.exports = {
             $('#modal_question .modal-title-text').text(args.title);
 
             $('#modal_yes').on('click', function() {
-                if (args.callback_yes != false && typeof(args.callback_yes) === 'function') {
+                if (args.callback_yes !== false && typeof(args.callback_yes) === 'function') {
                     if ('self' in args) {
                         args.callback_yes(args.self);
                     } else {
@@ -298,7 +298,7 @@ module.exports = {
             });
 
             $('#modal_no').on('click', function() {
-                if (args.callback_no != false && typeof(args.callback_no) === 'function') {
+                if (args.callback_no !== false && typeof(args.callback_no) === 'function') {
                     args.callback_no();
                 }
             });

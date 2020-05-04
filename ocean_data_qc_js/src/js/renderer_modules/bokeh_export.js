@@ -173,7 +173,7 @@ module.exports = {
         var self = this;
         var project_name = data.get('project_name', loc.proj_settings);
         var moves_name = '';
-        if (project_name == false) {
+        if (project_name=== false) {
             moves_name = 'plot_images.pdf';
         } else {
             moves_name = project_name + '_plot_images.pdf';
@@ -183,7 +183,7 @@ module.exports = {
             defaultPath: '~/' + moves_name,
             filters: [{ extensions: ['pdf'] }]
         }).then((results) => {
-            if (results['canceled'] == false) {
+            if (results['canceled']=== false) {
                 self.save_pdf(results);
             }
         });

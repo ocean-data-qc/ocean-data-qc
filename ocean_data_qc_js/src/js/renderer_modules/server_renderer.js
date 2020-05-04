@@ -133,7 +133,7 @@ module.exports = {
 
         var project_file = data.get('project_file', loc.proj_settings);
         var project_state = 'modified';
-        if (project_file != false) {
+        if (project_file !== false) {
             data.set({'project_state': 'saved'}, loc.shared_data);  // although it should be saved already
             project_state = 'saved';
         } else {
@@ -172,18 +172,18 @@ module.exports = {
 
     /* Checks if the command Octave exists in the PATH environment variable
     *  If it does not exist, then Octave cannot be used
-    *       @manual_octave_folder_path != false: The path is being set manually
+    *       @manual_octave_folder_path !== false: The path is being set manually
     */
     set_octave_path: function(manual_octave_folder_path=false) {
         lg.info('-- SET OCTAVE PATH METHOD');
         var self = this;
-        if (manual_octave_folder_path != false) {  // manual_octave_folder_path is always going to exist
+        if (manual_octave_folder_path !== false) {  // manual_octave_folder_path is always going to exist
                                                    // but the octave-cli.exe may not exist in that folder
             self.octave_path = manual_octave_folder_path;
             self.set_octave_exe_path();
         } else {
             self.octave_path = data.get('octave_path', loc.shared_data);
-            if (self.octave_path == false || (self.octave_path != false && !fs.existsSync(tools.file_to_path(self.octave_path)))) {
+            if (self.octave_path=== false || (self.octave_path !== false && !fs.existsSync(tools.file_to_path(self.octave_path)))) {
                 self.guess_octave_exe_path();
             } else {  // path is already set
                 self.set_octave_exe_path();
@@ -196,7 +196,7 @@ module.exports = {
         var self = this;
         self.octave_version = false;
 
-        if (self.octave_path == false) {
+        if (self.octave_path=== false) {
             self.set_octave_info('Undetected');
             data.set({'octave_version': false}, loc.shared_data);
             data.set({'octave_path': false}, loc.shared_data);
@@ -230,14 +230,14 @@ module.exports = {
     set_octave_info: function(msg=false) {
         lg.info('-- SET OCTAVE INFO')
         var self = this;
-        if (self.octave_version != false) {
+        if (self.octave_version !== false) {
             $('#octave_version').text(self.octave_version);
             $('#octave_version').css('color', 'black');
             $('#octave_version').css('font-weight', 'normal');
             $('#set_octave_path_manually').css('display', 'none');
         } else {
             lg.warn('>> OCTAVE UNDETECTED');
-            if (msg != false) {
+            if (msg !== false) {
                 $('#octave_version').text(msg + '. ');
             } else {
                 $('#octave_version').text('Undetected. ');
@@ -283,7 +283,7 @@ module.exports = {
                 data.set({'octave_path': false, 'octave_version': false, }, loc.shared_data);
                 self.set_octave_info('Undetected in PATH');
             } else {
-                if (results['octave_path'] == false) {
+                if (results['octave_path']=== false) {
                     tools.showModal(
                         'ERROR',
                         'Octave was not found in the selected folder with the names: octave-cli.exe or octave-cli. ' +
@@ -464,7 +464,7 @@ module.exports = {
 
     json_template_send_restore_to_default_signal: function(self=false) {
         lg.warn('JSON TEMPLATE SEND RESTORE TO DEFAULT SIGNAL');
-        if (self == false) {
+        if (self=== false) {
             var self = this;
         }
         self.ipc_renderer.send('json-template-restore-to-default');

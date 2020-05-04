@@ -59,7 +59,7 @@ ipcRenderer.on('show-modal-close-project-form', (event, arg) => {
         $('#modal_yes').on('click', function() {
             tools.show_wait_cursor();
             var proj_settings = data.load(loc.proj_settings);
-            if (proj_settings.project_file == false) {
+            if (proj_settings.project_file=== false) {
                 ipcRenderer.send('save-file-as', {'save_from': 'closing_process'});
             } else {
                 ipcRenderer.send('save-file', {'save_from': 'closing_process'});

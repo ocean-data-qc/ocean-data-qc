@@ -79,7 +79,7 @@ module.exports = {
                     if (dep != {} && dep != null) {
                         self.all_computed_params_list.find('option').each(function() {
                             if ($(this).val() in dep) {
-                                if (dep[$(this).val()] == false) {
+                                if (dep[$(this).val()]=== false) {
                                     if ($(this).hasClass('default_param')) {
                                         $(this).removeClass('default_param');
                                     }
@@ -144,7 +144,7 @@ module.exports = {
                 var proj_cps = data.get('computed_params', loc.proj_settings);
                 proj_cps.every(function (elem, index){
                     if ('param_name' in elem && elem['param_name'] == value) {
-                        if (elem['units'] == false) {
+                        if (elem['units']=== false) {
                             self.units.val('');
                         } else{
                             self.units.val(elem['units']);
@@ -180,7 +180,7 @@ module.exports = {
         $('#save_expr').click(() => {
             var self = this;
             var expr_name = self.comp_param_name.val();
-            if (self.validate_expr_name(expr_name) == false) {
+            if (self.validate_expr_name(expr_name)=== false) {
                 return;
             }
 
@@ -331,7 +331,7 @@ module.exports = {
                 if (result != {} && result != null) {
                     self.all_computed_params_list.find('option').each(function() {
                         if ($(this).val() in result) {
-                            if (result[$(this).val()] == false) {
+                            if (result[$(this).val()]=== false) {
                                 if ($(this).hasClass('default_param')) {
                                     $(this).removeClass('default_param');
                                 }
@@ -407,7 +407,7 @@ module.exports = {
         var self = this;
         var pat = new RegExp('[0-9a-zA-Z_]+');
         var res = pat.test(expr_name)
-        if (pat.test(expr_name) == false) {
+        if (pat.test(expr_name)=== false) {
             tools.showModal('ERROR', 'Write a valid expression name. ([a-zA-Z0-9_]+)');
             return false;
         } else if (expr_name == 'AUX') {
@@ -425,7 +425,7 @@ module.exports = {
 
     compute_cp: function(self=false) {
         lg.info('-- COMPUTE CP');
-        if (self == false) {
+        if (self=== false) {
             var self = this;
         }
         var expr_name = self.comp_param_name.val();
@@ -457,7 +457,7 @@ module.exports = {
                 self.all_computed_params_list.val(expr_name);
                 self.all_computed_params_list.click();
             } else if (result != null) {
-                if ('msg' in result && 'success' in result && result['success'] == false) {
+                if ('msg' in result && 'success' in result && result['success']=== false) {
                     tools.showModal('ERROR', result.msg, 'Validation Error', false, result.error);
                 }
             }

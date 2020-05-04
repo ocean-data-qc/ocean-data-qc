@@ -29,7 +29,7 @@ module.exports = {
         //  * path: path where the json file is stored
         //  * return: string or object with the requested data
         var self = this;
-        if (path != false) {
+        if (path !== false) {
             self.path = path;
             // lg.info('>> FILE PATH: ' + self.path);
             var data = false;
@@ -69,7 +69,7 @@ module.exports = {
 
         var self = this;
         try {
-            if (path != false) {
+            if (path !== false) {
                 self.path = path;
                 var data = fs.readFileSync(self.path, 'utf8');
                 self.data = JSON.parse(data);
@@ -163,7 +163,7 @@ module.exports = {
             });
         });
         write.on("close", function(err) {
-            if (typeof(callback_close) !== 'undefined' && callback_close != false) {
+            if (typeof(callback_close) !== 'undefined' && callback_close !== false) {
                 callback_close();
             }
         });

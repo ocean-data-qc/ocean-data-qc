@@ -154,13 +154,13 @@ module.exports = {
                     tr.append($('<td>', {text : values.btlnbr }));
                     tr.append($('<td>', {text : values.latitude }));
                     tr.append($('<td>', {text : values.longitude }));
-                    if (typeof(values.old_param_value) !== 'undefined' && values.old_param_value != false) {
+                    if (typeof(values.old_param_value) !== 'undefined' && values.old_param_value !== false) {
                         tr.append($('<td>', { text : values.old_param_value }));
                     } else {
                         tr.append($('<td>', { text : 'NaN' }));
                     }
 
-                    if (typeof(values.new_param_value) !== 'undefined' && values.new_param_value != false) {
+                    if (typeof(values.new_param_value) !== 'undefined' && values.new_param_value !== false) {
                         tr.append($('<td>', { text : values.new_param_value }));
                     } else {
                         tr.append($('<td>', { text : 'NaN' }));
@@ -193,12 +193,12 @@ module.exports = {
                     );
                     tr.append($('<td>').append(param_check_div));
 
-                    if (typeof(values.old_flag_value) !== 'undefined' && values.old_flag_value != false) {       // NaN values
+                    if (typeof(values.old_flag_value) !== 'undefined' && values.old_flag_value !== false) {       // NaN values
                         tr.append($('<td>', { text : values.old_flag_value }));
                     } else {
                         tr.append($('<td>', { text : 'NaN' }));
                     }
-                    if (typeof(values.new_flag_value) !== 'undefined' && values.old_flag_value != false) {       // NaN values
+                    if (typeof(values.new_flag_value) !== 'undefined' && values.old_flag_value !== false) {       // NaN values
                         tr.append($('<td>', { text : values.new_flag_value }));
                     } else {
                         tr.append($('<td>', { text : 'NaN' }));

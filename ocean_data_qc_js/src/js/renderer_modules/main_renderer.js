@@ -240,7 +240,7 @@ function check_previous_session() {
                            'Would you like to reopen it?</p>' +
                            '<p>If you press "No", or you close this dialog the changes will be lost.</p>'
 
-            if (file_to_open != false) {
+            if (file_to_open !== false) {
                 question += '<p>Also, the file you are actually opening is going to be processed instead: </p>' +
                             '<pre>' + file_to_open + '</pre>';
             }
@@ -252,7 +252,7 @@ function check_previous_session() {
             });
         } else {
             // check if there is file to open
-            if (file_to_open != false) {
+            if (file_to_open !== false) {
                 data.set({'file_to_open': false}, loc.shared_data);
                 ipcRenderer.send('open-file', [file_to_open]);
             }
@@ -271,7 +271,7 @@ function show_reopen_session_modal(arg) {
         rmdir(loc.proj_files, function () {
             // TODO: if an error occur, then the window is shown again, or an error appears
             lg.info('Directory files removed');
-            if (file_to_open != false) {
+            if (file_to_open !== false) {
                 ipcRenderer.send('open-file', [file_to_open]);
             }
         });
