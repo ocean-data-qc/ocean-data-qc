@@ -13,6 +13,9 @@ app_module_path.addPath(__dirname);
 
 const fs = require('fs');
 const csv_parse = require('csv-parse');
+require( 'datatables.net-bs4' )(window, $);
+require( 'datatables.net-colreorder-bs4' )(window, $);
+require( 'datatables.net-fixedheader-bs4' )(window, $);
 
 const loc = require('locations');
 const lg = require('logging');
@@ -51,29 +54,52 @@ module.exports = {
         var cols = Object.keys(self.pj_cols);  // are they sorted?
 
         for (var i = 1; i < cols.length; i++) {
-            // "SECT_ID": {
-            //     "orig_name": "",
-            //     "data_type": "",
-            //     "types": [],
-            //     "unit": false,
-            //     "precision": false
-            // },
-
             var name = cols[i];
-            var orig_name = '';
+            var name_row = $('<td>', {
+                text: name
+            });
             if (cols[i] != self.pj_cols[cols[i]]['orig_name']) {
-                orig_name = self.pj_cols[cols[i]]['orig_name'];
+                name_row.append(
+                    $('<i>', {
+                        'class': 'fa fa-info-circle',
+                        'style': 'cursor: pointer; color: #337ab5; margin-left: 8px; font-size: 0.8rem;',
+                        'title': '<b>Original name:</b><br />' + self.pj_cols[cols[i]]['orig_name'],
+                        'data-toggle': 'tooltip',
+                        'data-placement': 'bottom',
+                        'data-html': 'true',
+                    })
+                );
             }
+
             var types = self.pj_cols[cols[i]]['types'].join(', ');  // translate to icons or extract just some of them?
 
-            // TODO: some column can be in self.pj_cols and not in self.cs_cols
-            //       in that case
+            // <div class="form-check abc-checkbox abc-checkbox-primary">
+            //     <input id="add_cols_input" class="form-check-input" name="add_cols" type="checkbox">
+            //     <label class="form-check-label" for="add_cols_input"></label>
+            // </div>
 
-            var cb_export = $('<input>', {
-                name: 'cb_export',
-                type: 'checkbox',
-                checked: true
-            })
+            var checked = true;
+            if (types.includes('computed')) {
+                checked = false;
+            }
+
+            var cb_export = $('<div>', {
+                class: 'form-check abc-checkbox abc-checkbox-primary'
+            }).append(
+                $('<input>', {
+                    id: 'cb_export_row_' + i,
+                    class: 'form-check-input',
+                    name: 'cb_export',
+                    type: 'checkbox',
+                    checked: checked
+                })
+            ).append(
+                $('<label>', {
+                    for: 'cb_export_row_' + i,
+                    class: 'form-check-label'
+                })
+            );
+
 
             var tmp_prec = self.pj_cols[cols[i]]['precision'];
             var sel_cur_prec = $('<select>', {
@@ -130,15 +156,15 @@ module.exports = {
 
             var set_bt_title = []
             var set_bt_disabled = true;
-            if (whp_df_unit !== false) {
-                set_bt_title.push('Unit: ' + whp_df_unit);
-                set_bt_disabled = false;
-            }
             if (whp_df_prec !== false) {
-                set_bt_title.push('Precision: ' + whp_df_prec);
+                set_bt_title.push('<b>Precision:</b> ' + whp_df_prec);
                 set_bt_disabled = false;
             }
-            var set_bt_title_str = set_bt_title.join(' | ')
+            if (whp_df_unit !== false) {
+                set_bt_title.push('<b>Unit:</b> ' + whp_df_unit);
+                set_bt_disabled = false;
+            }
+            var set_bt_title_str = set_bt_title.join('<br />')
 
             var set_bt = $('<button>', {
                 'id': 'set_whp_row_' + i,
@@ -149,6 +175,7 @@ module.exports = {
                 'title': set_bt_title_str,
                 'data-toggle': 'tooltip',
                 'data-placement': 'bottom',
+                'data-html': 'true',
                 'unit': whp_df_unit,
                 'precision': whp_df_prec
             })
@@ -173,24 +200,34 @@ module.exports = {
             var tr = $('<tr>');
             tr.append(
                 $('<td>', {html: cb_export}),
-                $('<td>', {text: name}),
-                $('<td>', {text: orig_name}),
+                name_row,
                 $('<td>', {text: self.pj_cols[cols[i]]['data_type'] }),
                 $('<td>', {text: types }),
 
-                $('<td>', {html: sel_cur_prec }),  // disable select if false
-                // $('<td>', {html: sel_df_prec }),
-
-                $('<td>', {html: txt_cur_unit }),  // disable select if false
-                // $('<td>', {html: txt_df_unit }),  // enabled even if unit is false
+                $('<td>', {html: sel_cur_prec }),
+                $('<td>', {html: txt_cur_unit }),
 
                 $('<td>', {html: set_bt })
             );
 
             $('#table_col_settings tbody').append(tr);
-            $('[data-toggle="tooltip"]').tooltip();
 
+            $('[data-toggle="tooltip"]').tooltip();
         }
         $('#modal_col_settings').click();
+
+        $('#col_settings_win').on('shown.bs.modal', function (e) {
+            lg.warn('-- MODAL LOADED');
+            $('#table_col_settings').DataTable( {
+                scrollY: 400,
+                scrollCollapse: true,
+                paging: false,
+                searching: true,
+                ordering: true,
+                info: false,
+                // deferRender: true
+            });
+        });
+
     }
 }

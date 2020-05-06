@@ -111,28 +111,28 @@
             "orig_name": "",
             "data_type": "",
             "types": [],
-            "unit": false,
+            "unit": "METERS",
             "precision": false
         },
         "CTDPRS": {
             "orig_name": "",
             "data_type": "float",
             "types": [],
-            "unit": false,
+            "unit": "DBAR",
             "precision": 4
         },
         "CTDTMP": {
             "orig_name": "",
             "data_type": "float",
             "types": [],
-            "unit": false,
+            "unit": "ITS-90",
             "precision": 4
         },
         "CTDSAL": {
             "orig_name": "",
             "data_type": "float",
             "types": [],
-            "unit": false,
+            "unit": "PSS-78",
             "precision": 4
         },
         "CTDSAL_FLAG_W": {
@@ -146,7 +146,7 @@
             "orig_name": "",
             "data_type": "float",
             "types": [],
-            "unit": false,
+            "unit": "PSS-78",
             "precision": 4
         },
         "SALNTY_FLAG_W": {
@@ -160,7 +160,7 @@
             "orig_name": "",
             "data_type": "float",
             "types": [],
-            "unit": false,
+            "unit": "UMOL/KG",
             "precision": 2
         },
         "CTDOXY_FLAG_W": {
@@ -174,7 +174,7 @@
             "orig_name": "",
             "data_type": "float",
             "types": [],
-            "unit": false,
+            "unit": "UMOL/KG",
             "precision": 2
         },
         "OXYGEN_FLAG_W": {
@@ -188,7 +188,7 @@
             "orig_name": "",
             "data_type": "float",
             "types": [],
-            "unit": false,
+            "unit": "UMOL/KG",
             "precision": 2
         },
         "SILCAT_FLAG_W": {
@@ -202,7 +202,7 @@
             "orig_name": "",
             "data_type": "float",
             "types": [],
-            "unit": false,
+            "unit": "UMOL/KG",
             "precision": 2
         },
         "NITRAT_FLAG_W": {
@@ -244,7 +244,7 @@
             "orig_name": "",
             "data_type": "float",
             "types": [],
-            "unit": false,
+            "unit": "UMOL/KG",
             "precision": 2
         },
         "PHSPHT_FLAG_W": {
@@ -328,7 +328,7 @@
             "orig_name": "",
             "data_type": "",
             "types": [],
-            "unit": false,
+            "unit": "DEGC",
             "precision": false
         },
         "PCO2": {
@@ -349,7 +349,7 @@
             "orig_name": "",
             "data_type": "float",
             "types": [],
-            "unit": false,
+            "unit": "PMOL/KG",
             "precision": 3
         },
         "CFC_11_FLAG_W": {
@@ -363,7 +363,7 @@
             "orig_name": "",
             "data_type": "float",
             "types": [],
-            "unit": false,
+            "unit": "PMOL/KG",
             "precision": 3
         },
         "CFC_12_FLAG_W": {
@@ -531,7 +531,7 @@
             "orig_name": "",
             "data_type": "",
             "types": [],
-            "unit": false,
+            "unit": "DEGC",
             "precision": false
         },
         "N2O": {

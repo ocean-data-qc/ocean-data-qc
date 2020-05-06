@@ -237,8 +237,8 @@ function check_previous_session() {
             lg.info('-- PENDING PREVIOUS SESSION');
 
             var question = '<p>A previous session was not closed correctly. ' +
-                           'Would you like to reopen it?</p>' +
-                           '<p>If you press "No", or you close this dialog the changes will be lost.</p>'
+                           'Would you like to reopen it? ' +
+                           'If you press "No", or you close this dialog the changes will be lost.</p>'
 
             if (file_to_open !== false) {
                 question += '<p>Also, the file you are actually opening is going to be processed instead: </p>' +

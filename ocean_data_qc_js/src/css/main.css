@@ -150,9 +150,10 @@ h5 {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5) !important;
 }
 
-.table th, .table td {
+ /* This does not work well with the datatable widget */
+/* .table th, .table td {
     padding: 0.4rem !important;
-}
+} */
 
 .modal-body p{
     margin: 7px 0px 7px 0px;
@@ -546,9 +547,17 @@ select[name='all_computed_param'] {
 /* FONT SIZE */
 
 body, .form-control-sm, .btn {
-    font-size: 0.7rem !important;
+    font-size: 0.8rem !important;
 }
 
 .btn {
     line-height: 1.2 !important;
+}
+
+.tooltip-inner {
+    font-size: 0.8rem !important;
+}
+
+.modal-title>fa, .modal-title-text {
+    font-size: 0.9rem !important
 }
