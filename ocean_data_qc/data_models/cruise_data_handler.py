@@ -179,4 +179,6 @@ class CruiseDataHandler(Environment):
         # TODO: I did not find any better way to do this:
         html = html.replace('<th>', '<th class="rotate"><div><div><span>')
         html = html.replace('</th>', '</span></div></div>')
+
+        # TODO: store in a tmp file. It should work faster
         return html

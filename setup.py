@@ -55,10 +55,6 @@ requires = [
     # 'svglib >=0.9.2',
     'reportlab >=2.5.23',
     # 'selenium >=3.141.0',
-    # 'phantomjs-binary >=2.1.3',  # TODO: download directly from here: https://github.com/jayjiahua/phantomjs-bin-pip/raw/master/phantomjs_bin/bin/windows/phantomjs.exe
-                                 # download pahtomjs.exe into the scripts folder and remove dependency
-                                 # set BOKEH_PHANTOMJS_PATH env vble is also possible
-]
 
 # TODO: when python setup.py develop >> jupyter lab should be installed as well to make tests
 
