@@ -11,7 +11,7 @@ from bokeh.plotting import figure
 from bokeh.models.sources import ColumnDataSource
 from bokeh.models.callbacks import CustomJS
 from bokeh.models.widgets import Button, TextInput
-from bokeh.layouts import widgetbox, row, layout
+from bokeh.layouts import column, row, layout
 from ocean_data_qc.env import Environment
 from ocean_data_qc.constants import *
 import json
@@ -27,7 +27,6 @@ class ElectronBokehBridge(Environment):
     bridge_plot = None
     bridge_text = None
     bridge_button = None
-    bridge_box = None
     bridge_plot_callback = None
 
     def __init__(self):
@@ -77,7 +76,7 @@ class ElectronBokehBridge(Environment):
         self.bridge_text.css_classes = ['bridge_text']
 
     def _init_curdoc(self):
-        self.bridge_box = widgetbox(
+        bridge_col = column(
             width=300,
             height=200,
             children=[
@@ -88,7 +87,7 @@ class ElectronBokehBridge(Environment):
         )
         self.env.bridge_row = row(
             name='bridge_row',
-            children=[self.bridge_plot, self.bridge_box, ]
+            children=[self.bridge_plot, bridge_col]
         )
         self.env.bridge_row.css_classes = ['bridge_row']
 

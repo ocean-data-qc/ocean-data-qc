@@ -276,7 +276,8 @@ class BokehDataTable(Environment):
         if error:
             self.rollback(changes)
         else:
-            self.old_source.data = copy.deepcopy(self.data_table.source.data)
+            dt_df = self.data_table.source.to_df()
+            self.old_source.data = self.old_source.from_df(dt_df)
 
     def rollback(self, changes):
         lg.info('-- DATATABLE ROLLBACK')

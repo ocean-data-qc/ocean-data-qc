@@ -6,11 +6,9 @@
 
 from bokeh.util.logconfig import bokeh_logger as lg
 from bokeh.models.widgets.buttons import Button
-from bokeh.models.callbacks import Callback
 from bokeh.models.renderers import GlyphRenderer
 from bokeh.models.widgets.markups import Div
 from bokeh.models.widgets import Slider, CheckboxGroup, Select
-from bokeh.models.callbacks import CustomJS
 from bokeh.layouts import gridplot
 from bokeh.models.widgets.panels import Panel, Tabs
 

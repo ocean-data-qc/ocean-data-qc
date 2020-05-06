@@ -150,3 +150,8 @@ body {
 .bk-fixed-profiles-cb label, .bk-show-nearby-station-cb label {
     padding-top: 4px;
 }
+
+.bk-root .slick-header-columns, .bk-root .slick-header-column, .bk-root .slick-header-column:hover {
+    background-image: none !important;
+    background: initial !important;
+}

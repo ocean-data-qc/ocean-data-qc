@@ -43,17 +43,17 @@ def get_package_data():
     }
 
 requires = [
-    'bokeh >=1.4.0',
-    'pandas >=1.0.1',
+    'bokeh >=2.0.2',
+    'pandas >=1.0.3',
     'seawater >=3.3.4',
-    'more_itertools >=4.3.0',
-    'oct2py >=4.0.6',
-    'scipy >=1.1.0',  # oct2py needs it, though it is not a direct dependency
-    'tilecloud',
+    'more_itertools >=8.2.0',
+    'oct2py >=5.0.4',
+    'scipy >=1.4.1',  # oct2py needs it, though it is not a direct dependency
+    'tilecloud >=1.1.0',
 
     # libraries related to export svg, png and pdf files
     # 'svglib >=0.9.2',
-    'reportlab >=2.5.23',
+    'reportlab >=3.5.42',
     # 'selenium >=3.141.0',
 
 # TODO: when python setup.py develop >> jupyter lab should be installed as well to make tests

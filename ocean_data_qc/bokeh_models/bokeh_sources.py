@@ -232,8 +232,8 @@ class BokehSources(Environment):
     def _sync_with_full_df(self):
         lg.info('-- SYNC WITH FULL DF')
         start = time.time()
-        astk_cds = self._upd_astk_src()
-        self.env.astk_src.data = astk_cds.data
+        astk_df = self._upd_astk_src()
+        self.env.astk_src.data = self.env.astk_src.from_df(astk_df)
         p1 = time.time()
         ml_df, df_fs, stt_order = self._get_ml_df()
 
@@ -245,8 +245,7 @@ class BokehSources(Environment):
         p2 = time.time()
         prof_df = self._upd_pc_srcs(df_fs, stt_order)
         p3 = time.time()
-        ml_cds = ColumnDataSource(ml_df)
-        self.env.ml_src.data = ml_cds.data  # self.env.ml_src.from_df(ml_df)
+        self.env.ml_src.data = self.env.ml_src.from_df(ml_df)
         self.env.pc_src.data = self.env.ml_src.from_df(prof_df)
 
         # NOTE: this translates the selection indices into positional indices
@@ -266,8 +265,8 @@ class BokehSources(Environment):
 
     def _sync_with_patches(self):
         start = time.time()
-        astk_cds = self._upd_astk_src()
-        self.env.astk_src.data = astk_cds.data
+        astk_df = self._upd_astk_src()
+        self.env.astk_src.data = self.env.astk_src.from_df(astk_df)
         p1 = time.time()
         ml_df, df_fs, stt_order = self._get_ml_df()
         ml_patches = self._get_ml_src_patches(ml_df)
@@ -556,8 +555,7 @@ class BokehSources(Environment):
             if 'index' in column_names:
                 column_names.remove('index')
             df = pd.DataFrame(columns=column_names)
-        astk_cds = ColumnDataSource(df)
-        return astk_cds
+        return df
 
     def _reset_ml_src(self):
         n_plots = self.env.bk_plots_handler.current_n_plots
