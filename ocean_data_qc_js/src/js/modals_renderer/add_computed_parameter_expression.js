@@ -190,7 +190,6 @@ module.exports = {
             var expr_name = self.comp_param_name.val();
             var res = self.validate_expr_name(expr_name);
             if (res !== true) {
-                // TODO: this does not work for some reason
                 $('input[name="expr_name"]').css('border-color', '#721c24');
                 $('input[name="expr_name"]').css('box-shadow', '0 0 0 0.2rem #f8d7da');
                 self.comp_param_name.attr('data-original-title', res);
@@ -374,8 +373,8 @@ module.exports = {
 
         self.comp_param_name.on('keyup change', () => {
             self.comp_param_name.tooltip('hide');
-            $('input[name="expr_name"]').css('border-color', '');  //'#80bdff');
-            $('input[name="expr_name"]').css('box-shadow', '');    // '0 0 0 0.2rem rgba(0, 123, 255, 0.25)');
+            $('input[name="expr_name"]').css('border-color', '');
+            $('input[name="expr_name"]').css('box-shadow', '');
 
             var new_value = self.comp_param_name.val();
             if (new_value == '') {
