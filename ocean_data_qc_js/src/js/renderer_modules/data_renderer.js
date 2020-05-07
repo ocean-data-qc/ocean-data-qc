@@ -29,7 +29,7 @@ module.exports = {
             defaultPath: '~/' + data.get('project_name', loc.proj_settings) + '_export_whp.csv',
             filters: [{ extensions: ['csv'] }]
         }).then((results) => {
-            if (results['canceled']=== false) {
+            if (results['canceled'] === false) {
                 self.export_whp_format(results);
             }
         });
@@ -69,7 +69,7 @@ module.exports = {
             defaultPath: '~/' + data.get('project_name', loc.proj_settings) + '_export_data.csv',
             filters: [{ extensions: ['csv'] }]
         }).then((results) => {
-            if (results['canceled']=== false) {
+            if (results['canceled'] === false) {
                 self.export_csv_format(results);
             }
         });
@@ -108,7 +108,7 @@ module.exports = {
             defaultPath: '~/' + data.get('project_name', loc.proj_settings) + '_export_data.' + format,
             filters: [{ extensions: [format] }]
         }).then((results) => {
-            if (results['canceled']=== false) {
+            if (results['canceled'] === false) {
                 self.export_excel_format(results, format);
             }
         });
@@ -160,7 +160,7 @@ module.exports = {
             defaultPath: '~/custom_settings_' + datetime.toISOString().slice(0,10) + '.json',
             filters: [{ extensions: ['json'] }]
         }).then((results) => {
-            if (results['canceled']=== false) {
+            if (results['canceled'] === false) {
                 var file_path = results['filePath'];
                 lg.warn('>> FILE DOWNLOADED IN: ' + file_path);
                 var a = fs.createReadStream(loc.custom_settings);
@@ -193,7 +193,7 @@ module.exports = {
             properties: ['openFile'],
         }).then(result => {
             lg.info(result);
-            if (result['canceled']=== false) {
+            if (result['canceled'] === false) {
                 var file_path = result['filePaths'][0];
                 fs.readFile(file_path, (err, data) => {
                     if (err) throw err;

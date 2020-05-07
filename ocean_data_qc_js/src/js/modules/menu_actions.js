@@ -39,7 +39,7 @@ module.exports = {
             properties: ['openFile'],
         }).then(result => {
             lg.info(result);
-            if (result['canceled']=== false) {
+            if (result['canceled'] === false) {
                 self.update_from_csv_open_file(result['filePaths']);
             }
         });
@@ -88,7 +88,7 @@ module.exports = {
             properties: ['openFile'],
         }).then(result => {
             lg.info(result);
-            if (result['canceled']=== false) {
+            if (result['canceled'] === false) {
                 self.open_file(result['filePaths']);
             }
         });
@@ -208,7 +208,7 @@ module.exports = {
                     defaultPath: '~/examples/' + settings.project_name + '.aqc',    // TODO >> previuos opened folder?? https://github.com/electron/electron/issues/1541
                     filters: [{ extensions: ['aqc'] }]
             }).then((results) => {
-                if (results['canceled']=== false) {
+                if (results['canceled'] === false) {
                     var file_path = results['filePath'];
                     lg.info('Saving project at: ' + file_path);
                     if (typeof(file_path) !== 'undefined') {
@@ -260,7 +260,7 @@ module.exports = {
         lg.info('-- EXPORT MOVES --');
         var project_name = data.get('project_name', loc.proj_settings);
         var moves_name = '';
-        if (project_name=== false) {
+        if (project_name === false) {
             moves_name = 'moves.csv';
         } else {
             moves_name = project_name + '_moves.csv';
@@ -270,7 +270,7 @@ module.exports = {
                 defaultPath: '~/' + moves_name,
                 filters: [{ extensions: ['csv'] }]
             }).then((results) => {
-                if (results['canceled']=== false) {
+                if (results['canceled'] === false) {
                     self.export_moves(results);
                 }
             }

@@ -25,7 +25,7 @@ module.exports = {
         lg.info('-- WATCHER ENABLED');
         lg.info('>> MARK: ' + mark);
         var bullet = '• '
-        if (typeof(mark) === 'undefined' || mark == 'saved' || mark=== false) {
+        if (typeof(mark) === 'undefined' || mark == 'saved' || mark === false) {
             bullet = '';
         }
         var project_name = data.get('project_name', loc.proj_settings);

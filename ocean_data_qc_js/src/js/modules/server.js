@@ -95,7 +95,7 @@ module.exports = {
             // if the default.json are differents versions, replace it
             var v_src = data.get('json_version', loc.shared_data_src);  // new version if the app is updated
             var v_appdata = data.get('json_version', loc.shared_data);
-            if (v_appdata=== false) {       // then: v < 1.3.0
+            if (v_appdata === false) {       // then: v < 1.3.0
                 self.overwrite_json_file(loc.shared_data_src, loc.shared_data).then((result) => {
                     resolve(true);
                 }).catch((msg) => {reject(msg)});
@@ -171,7 +171,7 @@ module.exports = {
             // if the default.json are differents versions, replace it
             var v_src = data.get('json_version', loc.default_settings);  // new version if the app is updated
             var v_appdata = data.get('json_version', loc.custom_settings);
-            if (v_src != v_appdata || v_appdata=== false) {  // if v_appdata = false, then: v < 1.3.0
+            if (v_src != v_appdata || v_appdata === false) {  // if v_appdata = false, then: v < 1.3.0
                 if (self.dom_ready) {
                     self.web_contents.send('show-custom-settings-replace', {'result': 'should_update' });
                 } else {
@@ -466,7 +466,7 @@ module.exports = {
             portscanner.checkPortStatus(self.bokeh_port, function(error, status) {
                 if (status == 'open') {
                     clearInterval(_checkBokehPort);
-                    if (ensure_one=== false) {
+                    if (ensure_one === false) {
                         ensure_one = true;
                         lg.info('-- BOKEH PORT OPEN, SENDING SIGNAL TO LOAD THE IFRAME');
 
