@@ -1,3 +1,5 @@
+/* TOOLTIP INFO */
+
 .tooltip-inner {
     background-color: #cce5ff !important;
     color: #004085 !important;
@@ -14,4 +16,24 @@
 }
 .tooltip.bs-tooltip-top .arrow:before {
     border-top-color: #cce5ff !important;
+}
+
+/* TOOLTIP ERROR */
+
+.tooltip-error .tooltip-inner {
+    background-color: #f8d7da !important;
+    color: #721c24 !important;
+    padding: 0.4rem 0.6rem !important;
+}
+.tooltip-error.bs-tooltip-right .arrow:before {
+    border-right-color: #f8d7da !important;
+}
+.tooltip-error.bs-tooltip-left .arrow:before {
+    border-left-color: #f8d7da !important;
+}
+.tooltip-error.bs-tooltip-bottom .arrow:before {
+    border-bottom-color: #f8d7da !important;
+}
+.tooltip-error.bs-tooltip-top .arrow:before {
+    border-top-color: #f8d7da !important;
 }

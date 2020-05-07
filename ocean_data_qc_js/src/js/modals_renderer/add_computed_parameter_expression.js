@@ -79,7 +79,7 @@ module.exports = {
                     if (dep != {} && dep != null) {
                         self.all_computed_params_list.find('option').each(function() {
                             if ($(this).val() in dep) {
-                                if (dep[$(this).val()]=== false) {
+                                if (dep[$(this).val()] === false) {
                                     if ($(this).hasClass('default_param')) {
                                         $(this).removeClass('default_param');
                                     }
@@ -97,6 +97,14 @@ module.exports = {
 
     events: function() {
         var self = this;
+
+        self.comp_param_name.tooltip({
+            title: 'Allowed characters: a-z, A-Z, _',
+            placement: 'bottom',
+            trigger: 'manual',
+            template: '<div class="tooltip tooltip-error" role="tooltip"><div class="arrow"></div><div class="tooltip-inner">Jamon</div></div>',
+        })
+
         self.current_column_params_list.dblclick(() => {
             var value = ' ' + self.current_column_params_list.find('option:selected').val() + ' ';
             var cur_pos = self.equation_text.prop("selectionStart");
@@ -144,7 +152,7 @@ module.exports = {
                 var proj_cps = data.get('computed_params', loc.proj_settings);
                 proj_cps.every(function (elem, index){
                     if ('param_name' in elem && elem['param_name'] == value) {
-                        if (elem['units']=== false) {
+                        if (elem['units'] === false) {
                             self.units.val('');
                         } else{
                             self.units.val(elem['units']);
@@ -180,7 +188,13 @@ module.exports = {
         $('#save_expr').click(() => {
             var self = this;
             var expr_name = self.comp_param_name.val();
-            if (self.validate_expr_name(expr_name)=== false) {
+            var res = self.validate_expr_name(expr_name);
+            if (res !== true) {
+                // TODO: this does not work for some reason
+                $('input[name="expr_name"]').css('border-color', '#721c24');
+                $('input[name="expr_name"]').css('box-shadow', '0 0 0 0.2rem #f8d7da');
+                self.comp_param_name.attr('data-original-title', res);
+                self.comp_param_name.tooltip('show');
                 return;
             }
 
@@ -331,7 +345,7 @@ module.exports = {
                 if (result != {} && result != null) {
                     self.all_computed_params_list.find('option').each(function() {
                         if ($(this).val() in result) {
-                            if (result[$(this).val()]=== false) {
+                            if (result[$(this).val()] === false) {
                                 if ($(this).hasClass('default_param')) {
                                     $(this).removeClass('default_param');
                                 }
@@ -359,6 +373,10 @@ module.exports = {
         });
 
         self.comp_param_name.on('keyup change', () => {
+            self.comp_param_name.tooltip('hide');
+            $('input[name="expr_name"]').css('border-color', '');  //'#80bdff');
+            $('input[name="expr_name"]').css('box-shadow', '');    // '0 0 0 0.2rem rgba(0, 123, 255, 0.25)');
+
             var new_value = self.comp_param_name.val();
             if (new_value == '') {
                 $('#save_expr').prop('disabled', true);
@@ -405,27 +423,24 @@ module.exports = {
 
     validate_expr_name: function(expr_name) {
         var self = this;
-        var pat = new RegExp('[0-9a-zA-Z_]+');
-        var res = pat.test(expr_name)
-        if (pat.test(expr_name)=== false) {
-            tools.showModal('ERROR', 'Write a valid expression name. ([a-zA-Z0-9_]+)');
-            return false;
+        var match = expr_name.match(/[0-9a-zA-Z_]+/);  // return a list of coincidences, null if there is no coincidence
+        if (match == null || match[0] != expr_name) {
+            return 'Write a valid expression name. ([a-zA-Z0-9_]+)';
         } else if (expr_name == 'AUX') {
-            tools.showModal('ERROR', 'AUX cannot be used as expression name');
-            return false;
+            return 'AUX cannot be used as expression name';
         } else if (expr_name.indexOf('_FLAG_') !== -1) {
-            tools.showModal('ERROR', 'The string _FLAG_ cannot be used in the expression name, it is reserved for flag columns');
-            return false;
+            return 'The string _FLAG_ cannot be used in the expression name, ' +
+                   'it is reserved for flag columns';
         } else if (self.current_columns.includes(expr_name)) {
-            tools.showModal('ERROR', 'A column name that already exists cannot be used in the expression name for a computed parameter');
-            return false;
+            return 'A column name that already exists cannot be used ' +
+                   'in the expression name for a computed parameter';
         }
         return true
     },
 
     compute_cp: function(self=false) {
         lg.info('-- COMPUTE CP');
-        if (self=== false) {
+        if (self === false) {
             var self = this;
         }
         var expr_name = self.comp_param_name.val();
@@ -457,7 +472,7 @@ module.exports = {
                 self.all_computed_params_list.val(expr_name);
                 self.all_computed_params_list.click();
             } else if (result != null) {
-                if ('msg' in result && 'success' in result && result['success']=== false) {
+                if ('msg' in result && 'success' in result && result['success'] === false) {
                     tools.showModal('ERROR', result.msg, 'Validation Error', false, result.error);
                 }
             }
