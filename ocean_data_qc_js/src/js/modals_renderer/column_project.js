@@ -116,7 +116,10 @@ module.exports = {
         var self = this;
         var data_type = self.pj_cols[col_name]['data_type'];
         if (data_type == 'empty') {
-            data_type = '<span style="color: red; font-weight: bold;">empty</span>';
+            data_type = $('<span>', {
+                style: 'color: red; font-weight: bold;',
+                text: 'empty'
+            });
         }
         return data_type;
     },
@@ -173,6 +176,9 @@ module.exports = {
                 text: 'None',
             }))
         }
+        if (self.pj_cols[col_name]['data_type'] == 'empty') {
+            sel_cur_prec.attr('disabled', true);
+        }
         return sel_cur_prec
     },
 
@@ -188,6 +194,10 @@ module.exports = {
             type: 'text',
             val: cur_unit
         });
+        var t = ['empty', 'string'];
+        if (t.includes(self.pj_cols[col_name]['data_type'])) {
+            txt_cur_unit.attr('disabled', true);
+        }
         return txt_cur_unit;
     },
 
@@ -202,15 +212,17 @@ module.exports = {
             whp_df_prec = self.cs_cols[col_name]['precision'];
         }
 
-        var set_bt_title = []
         var set_bt_disabled = true;
-        if (whp_df_prec !== false) {
-            set_bt_title.push('<b>Precision:</b> ' + whp_df_prec);
-            set_bt_disabled = false;
-        }
-        if (whp_df_unit !== false) {
-            set_bt_title.push('<b>Unit:</b> ' + whp_df_unit);
-            set_bt_disabled = false;
+        var set_bt_title = []
+        if (self.pj_cols[col_name]['data_type'] != 'empty') {
+            if (whp_df_prec !== false) {
+                set_bt_title.push('<b>Precision:</b> ' + whp_df_prec);
+                set_bt_disabled = false;
+            }
+            if (whp_df_unit !== false) {
+                set_bt_title.push('<b>Unit:</b> ' + whp_df_unit);
+                set_bt_disabled = false;
+            }
         }
         var set_bt_title_str = set_bt_title.join('<br />')
 
