@@ -86,7 +86,7 @@ class CruiseDataWHP(CruiseData):
         lg.info('-- LOAD FILE WHP >> FROM SCRATCH')
         self._set_cols_from_scratch()  # the dataframe has to be created
         self._validate_required_columns()
-        self._init_early_calculated_params()
+        self._init_basic_params()
         self._replace_nan_values()         # '-999' >> NaN
         self._convert_data_to_number()
         self._sanitize_flags()

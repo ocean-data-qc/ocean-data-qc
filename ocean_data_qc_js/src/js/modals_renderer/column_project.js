@@ -11,9 +11,9 @@ app_module_path.addPath(path.join(__dirname, '../modules'));
 app_module_path.addPath(path.join(__dirname, '../renderer_modules'));
 app_module_path.addPath(__dirname);
 
-require( 'datatables.net-bs4' )(window, $);
-require( 'datatables.net-colreorder-bs4' )(window, $);
-require( 'datatables.net-fixedheader-bs4' )(window, $);
+require('datatables.net-bs4')(window, $);
+require('datatables.net-colreorder-bs4')(window, $);
+require('datatables.net-fixedheader-bs4')(window, $);
 
 const loc = require('locations');
 const lg = require('logging');
@@ -54,17 +54,18 @@ module.exports = {
         for (var i = 1; i < cols.length; i++) {
             var col_name = cols[i];
             var name = self.get_col_name(col_name);
+            var data_type = self.get_data_type(col_name)
             var types = self.pj_cols[col_name]['types'].join(', ');  // TODO: translate to icons or extract just some of them?
-            var cb_export = self.get_cb_export(i, types);
+            var cb_export = self.get_cb_export(i, col_name);
             var sel_cur_prec = self.get_cur_prec(col_name);
             var txt_cur_unit = self.get_txt_cur_unit(col_name);
             var set_bt = self.get_set_bt(col_name, i);
 
             var tr = $('<tr>');
             tr.append(
-                $('<td>', {html: cb_export}),
+                $('<td>', {html: cb_export }),
                 name,
-                $('<td>', {text: self.pj_cols[cols[i]]['data_type'] }),
+                $('<td>', {html: data_type }),
                 $('<td>', {text: types }),
                 $('<td>', {html: sel_cur_prec }),
                 $('<td>', {html: txt_cur_unit }),
@@ -90,17 +91,18 @@ module.exports = {
         });
     },
 
-    get_col_name: function(name='') {
+    get_col_name: function(name=false) {
         var self = this;
         var name_row = $('<td>', {
             text: name
         });
-        if (name != self.pj_cols[name]['orig_name'] && typeof(self.pj_cols[name]['orig_name']) != 'undefined') {
+        var orig_name = self.pj_cols[name]['orig_name'];
+        if (name != orig_name && typeof(orig_name) !== 'undefined' && orig_name !== false) {
             name_row.append(
                 $('<i>', {
                     'class': 'fa fa-info-circle',
                     'style': 'cursor: pointer; color: #337ab5; margin-left: 8px; font-size: 0.8rem;',
-                    'title': '<b>Original name:</b><br />' + self.pj_cols[name]['orig_name'],
+                    'title': '<b>Original name:</b><br />' + orig_name,
                     'data-toggle': 'tooltip',
                     'data-placement': 'bottom',
                     'data-html': 'true',
@@ -110,12 +112,18 @@ module.exports = {
         return name_row;
     },
 
-    get_cb_export: function(row=false, types=false) {
+    get_data_type: function(col_name=false) {
         var self = this;
-        var checked = true;
-        if (types.includes('computed')) {
-            checked = false;
+        var data_type = self.pj_cols[col_name]['data_type'];
+        if (data_type == 'empty') {
+            data_type = '<span style="color: red; font-weight: bold;">empty</span>';
         }
+        return data_type;
+    },
+
+    get_cb_export: function(row=false, col_name=false) {
+        var self = this;
+        var export_col = self.pj_cols[col_name]['export'];
         var cb_export = $('<div>', {
             class: 'form-check abc-checkbox abc-checkbox-primary'
         }).append(
@@ -124,7 +132,7 @@ module.exports = {
                 class: 'form-check-input',
                 name: 'cb_export',
                 type: 'checkbox',
-                checked: checked
+                checked: export_col
             })
         ).append(
             $('<label>', {

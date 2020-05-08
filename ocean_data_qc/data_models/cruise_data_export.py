@@ -122,7 +122,7 @@ class CruiseDataExport(Environment):
 
     def save_col_attribs(self):
         """ The columns and their attributes are saved """
-        lg.warning('-- SAVE COLUMNS AND ATTRIBUTES TO SETTINGS.JSON FILE')
+        lg.info('-- SAVE COLUMNS AND ATTRIBUTES TO SETTINGS.JSON FILE')
         self.env.f_handler.set('columns', self.cols, path.join(TMP,'settings.json'))
 
     def save_metadata(self):

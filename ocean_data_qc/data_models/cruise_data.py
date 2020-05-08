@@ -50,10 +50,11 @@ class CruiseData(CruiseDataExport):
         cols_to_rmv = []
         flags_to_rmv = []
         for col in self.df:
-            if self.df[col].str.contains(NA_REGEX).all():
-                cols_to_rmv.append(col)
-                if f'{col}_FLAG_W' in self.df:
-                    flags_to_rmv.append(f'{col}_FLAG_W')
+            if col not in BASIC_PARAMS:  # empty basic param columns are needed for some calculated params
+                if self.df[col].str.contains(NA_REGEX).all():
+                    cols_to_rmv.append(col)
+                    if f'{col}_FLAG_W' in self.df:
+                        flags_to_rmv.append(f'{col}_FLAG_W')
         if len(cols_to_rmv) > 0:
             lg.warning(f'>> THE FOLLOWING COLUMNS WERE REMOVED DUE TO -999: {",".join(cols_to_rmv)}')
             self.add_moves_element(
@@ -75,14 +76,19 @@ class CruiseData(CruiseDataExport):
                 "cols": {
                     "ALKALI": {
                         "orig_name": "alkali",
-                        "types": ["param"],
-                        "required": False,
+                        "types": ["param", "required", ],
+                        "data_type": "float",
                         "unit": "UMOL/KG",
+                        "precision": 3,
+                        "export": True
                     },
                     "ALKALI_FLAG_W": {
+                        "orig_name": False,
                         "types": ["param_flag", "qc_param_flag"],
-                        "required": False,
-                        "unit": NaN,  # >> False
+                        "data_type": "integer"
+                        "unit": False,  # >> False
+                        "precision": 0,
+                        "export": True
                     }
                 }
 
@@ -171,7 +177,7 @@ class CruiseData(CruiseDataExport):
                         rollback=self.rollback
                     )
 
-    def _add_column(self, column='', units=False):
+    def _add_column(self, column='', units=False, export=True):
         ''' Adds a column to the self.cols dictionary
             This dictionary is useful to select some columns by type
                 * required      - required columns
@@ -180,6 +186,9 @@ class CruiseData(CruiseDataExport):
                 * qc_param_flag - flag columns created by this app
                 * non_qc_param  - parameters without flag columns associated
                 * computed      - computed parameters
+
+            TODO: add all arguments or add a param as a dictionary with all the attributes
+                  this method also should work if something should be modified or removed?
         '''
         if column not in self.get_cols_by_type('all'):
             self.cols[column] = {
@@ -187,6 +196,7 @@ class CruiseData(CruiseDataExport):
                 'types': [],
                 'unit': units,
                 'precision': False,
+                'export': export
             }
             if column.endswith(FLAG_END):
                 self.cols[column]['types'] += ['param_flag']
@@ -194,6 +204,8 @@ class CruiseData(CruiseDataExport):
                 if column not in flags_not_to_qc:
                     self.cols[column]['types'] += ['qc_param_flag']
             else:
+                if column in BASIC_PARAMS:
+                    self.cols[column]['types'] += ['basic_param']
                 if column in REQUIRED_COLUMNS:
                     self.cols[column]['types'] += ['required']
                 elif column in NON_QC_PARAMS:
@@ -212,11 +224,15 @@ class CruiseData(CruiseDataExport):
                 values = ['2'] * len(self.df.index)
                 self.df[flag] = values
 
-                # TODO: 9 if there the param value is NaN
+                empty_rows = {}
+                empty_rows[flag] = 9
+                self.df[self.df[param].isnull()] = self.df[self.df[param].isnull()].assign(**empty_rows)
 
-                self.cols[flag] = {  # TODO: create this with _add_column method
+                self.cols[flag] = {
+                    'orig_name': False,
                     'types': ['param_flag', 'qc_param_flag'],
                     'unit': False,
+                    'export': True
                 }
                 self.add_moves_element(
                     'flag_column_added',
@@ -224,9 +240,13 @@ class CruiseData(CruiseDataExport):
                     'with default value "2" in all the rows: {}'.format(flag)
                 )
 
-    def _init_early_calculated_params(self):
+    def _init_basic_params(self):
         ''' Initializates the dataframe with the basic params that all csv files should have.
-            If some of them do not exist in the dataframe yet, they are created with the default values
+            If some of them do not exist in the dataframe yet, they are created with these values
+              * 9 for flags
+              * NaN for columns
+
+            This basic parameters are needed in order to run come calculated parameters
         '''
         for pname in BASIC_PARAMS:
             if pname not in self.get_cols_by_type('all'):
@@ -244,7 +264,7 @@ class CruiseData(CruiseDataExport):
                         'Basic column added to the project'
                         ' with default value "NaN" in all the rows: {}'.format(pname)
                     )
-                self._add_column(column=pname, units=False)
+                self._add_column(column=pname, units=False, export=False)
 
     def get_cols_from_settings_file(self):
         """ The columns are set directly from the settings.json file """
@@ -549,8 +569,7 @@ class CruiseData(CruiseDataExport):
                 * get the columns with int values   > precision = 0
                 * get the columns with str values   > precision = False
         '''
-        lg.info('-- SET COL PRECISIONS')
-
+        lg.warning('-- SET COL PRECISIONS')
         pd_precision = 0
         float_prec_dict = {}
         for c in self.df.select_dtypes(include=['float64']):
@@ -571,20 +590,25 @@ class CruiseData(CruiseDataExport):
                 self.cols[c]['data_type'] = 'float'
             else:  # empty column
                 self.cols[c]['precision'] = False
+                self.cols[c]['data_type'] = 'empty'
 
         for c in self.df.select_dtypes(include=['int8', 'int16', 'int32', 'int64']):
             self.cols[c]['precision'] = 0
-            self.cols[c]['data_type'] = 'integer'
+            if c == 'NITRIT_FLAG_W':
+                lg.warning(f'DF["NITRIT_FLAG_W"]: {self.df["NITRIT_FLAG_W"]}')
+            if self.df[self.df[c] == 9][c].index.size == self.df.index.size:
+                self.cols[c]['data_type'] = 'empty'
+                self.cols[c]['export'] = False
+            else:
+                self.cols[c]['data_type'] = 'integer'
 
         for c in self.df.select_dtypes(include=['object']):  # or exclude=['int8', 'int16', 'int32', 'int64', 'float64']
+            lg.warning(f'>> OBJECT COL: {c}')
             self.cols[c]['precision'] = False
             self.cols[c]['data_type'] = 'string'
 
         if pd_precision > 15:
             pd_precision = 15
-
-        lg.info(f'>> GLOBAL PRECISION: {pd_precision}')
-
         pd.set_option('precision', pd_precision)
         return float_prec_dict
 

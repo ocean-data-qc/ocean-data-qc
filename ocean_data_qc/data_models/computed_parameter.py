@@ -90,6 +90,7 @@ class ComputedParameter(Environment):
                         'types': ['computed'],
                         'unit': cp.get('units', False),
                         'precision': prec,
+                        'export': False
                     }
                     if prevent_save is False:
                         self.cruise_data.save_col_attribs()
