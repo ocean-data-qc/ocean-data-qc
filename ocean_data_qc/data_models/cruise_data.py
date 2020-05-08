@@ -148,16 +148,24 @@ class CruiseData(CruiseDataExport):
         else:
             return []
 
-    def _sanitize_flags(self):
-        lg.info('-- SANITIZING FLAGS --')
-        column_list = self.df.columns.tolist()
-        for column in column_list:
-            flag = column + FLAG_END
-            if flag in column_list:
-                try:
-                    self.df[flag][pd.isnull(self.df[column])] = 9
-                except:
-                    lg.warning('Unable to sanitize flag %s for column %s', flag, column)
+    def _validate_flag_values(self):
+        ''' Assign 9 to the rows where the param has an NaN
+            Also checks if there is any NaN or incorrect value in the flag columns
+        '''
+        lg.info('-- VALIDATE FLAG VALUES')
+        for param in self.df:
+            flag = param + FLAG_END
+            if flag in self.df:
+                upds = self.df[self.df[param].isnull() & (self.df[flag] != 9)].index.tolist()
+                if len(upds) > 0:
+                    empty_rows = {}
+                    empty_rows[flag] = 9
+                    self.df[self.df[param].isnull() & (self.df[flag] != 9)] = self.df[self.df[param].isnull() & (self.df[flag] != 9)].assign(**empty_rows)
+                    self.add_moves_element(
+                        'flag_column_updated',
+                        f'The flag column {flag} had some NaN values in the related parameter column. '
+                        f'It was set to the empty default value 9 in {len(upds)} rows.'
+                    )
 
                 # NOTE: if the flag value is NaN or is not between [0-9] > throw error or reset to 9?
                 if self.df[flag].isnull().any():
@@ -168,11 +176,11 @@ class CruiseData(CruiseDataExport):
                         ),
                         rollback=self.rollback
                     )
-                if self.df[(self.df[flag] > 9.0) | (self.df[flag] < 0)].index.any():
+                if self.df[(self.df[flag] > 9) | (self.df[flag] < 0)].index.any():
                     raise ValidationError(
                         'The flag column {} must have values between 0-9 in the row '
                         '(row position taking into account just the data cells): {}'.format(
-                            flag, str(self.df[(self.df[flag] > 9.0) | (self.df[flag] < 0)].index.tolist())[1:-1]
+                            flag, str(self.df[(self.df[flag] > 9) | (self.df[flag] < 0)].index.tolist())[1:-1]
                         ),
                         rollback=self.rollback
                     )
@@ -186,6 +194,7 @@ class CruiseData(CruiseDataExport):
                 * qc_param_flag - flag columns created by this app
                 * non_qc_param  - parameters without flag columns associated
                 * computed      - computed parameters
+                * created       - if the column was created by the app
 
             TODO: add all arguments or add a param as a dictionary with all the attributes
                   this method also should work if something should be modified or removed?
@@ -218,19 +227,13 @@ class CruiseData(CruiseDataExport):
         ''' Make sure there is a flag column for each param parameter '''
         if param is not None and isinstance(param, str) and not param.endswith(FLAG_END):
             flag = param + FLAG_END
-            cols = self.df.columns.tolist()
-            if flag not in cols and param not in NON_QC_PARAMS:
-                lg.info('>> CREATING FLAG: {}'.format(flag))
+            if flag not in self.df and param not in NON_QC_PARAMS:
+                lg.warning('>> CREATING FLAG: {}'.format(flag))
                 values = ['2'] * len(self.df.index)
                 self.df[flag] = values
-
-                empty_rows = {}
-                empty_rows[flag] = 9
-                self.df[self.df[param].isnull()] = self.df[self.df[param].isnull()].assign(**empty_rows)
-
                 self.cols[flag] = {
                     'orig_name': False,
-                    'types': ['param_flag', 'qc_param_flag'],
+                    'types': ['param_flag', 'qc_param_flag', 'created'],
                     'unit': False,
                     'export': True
                 }
@@ -241,30 +244,27 @@ class CruiseData(CruiseDataExport):
                 )
 
     def _init_basic_params(self):
-        ''' Initializates the dataframe with the basic params that all csv files should have.
-            If some of them do not exist in the dataframe yet, they are created with these values
-              * 9 for flags
-              * NaN for columns
-
-            This basic parameters are needed in order to run come calculated parameters
+        ''' Initializates the dataframe with the basic params that all csv files should have
+            to compute some calculated parameters. If some of them do not exist in the dataframe yet,
+            they are created with NaN values.
         '''
-        for pname in BASIC_PARAMS:
-            if pname not in self.get_cols_by_type('all'):
-                if pname.endswith(FLAG_END):
-                    self.df[pname] = np.array(['9'] * self.df.index.size)
-                    self.add_moves_element(
-                        'flag_column_added',
-                        'Basic flag column added to the project '
-                        ' with default value "9" in all the rows: {}'.format(pname)
-                    )
-                else:
-                    self.df[pname] = np.array([np.nan] * self.df.index.size)
-                    self.add_moves_element(
-                        'column_added',
-                        'Basic column added to the project'
-                        ' with default value "NaN" in all the rows: {}'.format(pname)
-                    )
-                self._add_column(column=pname, units=False, export=False)
+        for c in BASIC_PARAMS:
+            all_cols = self.get_cols_by_type('all')
+            if c not in all_cols:
+                self.df[c] = np.array([np.nan] * self.df.index.size)
+                self.add_moves_element(
+                    'column_added',
+                    'Basic column added to the project'
+                    ' with default value "NaN" in all the rows: {}'.format(c)
+                )
+                # NOTE: I don't call to _add_column because I don't want to create the flag column
+                self.cols[c] = {
+                    'orig_name': False,
+                    'types': ['param', 'basic_param', 'created', ],
+                    'unit': False,
+                    'precision': False,
+                    'export': False
+                }
 
     def get_cols_from_settings_file(self):
         """ The columns are set directly from the settings.json file """

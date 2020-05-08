@@ -89,7 +89,7 @@ class CruiseDataWHP(CruiseData):
         self._init_basic_params()
         self._replace_nan_values()         # '-999' >> NaN
         self._convert_data_to_number()
-        self._sanitize_flags()
+        self._validate_flag_values()
         self._set_hash_ids()
         self._set_cps()
         if not self.cd_aux:
