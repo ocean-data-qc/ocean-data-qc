@@ -21,7 +21,7 @@ const lg = require('logging');
 const data = require('data');
 const tools = require('tools');
 const server_renderer = require('server_renderer');
-const col_settings = require('col_settings');
+const column_project = require('column_project');
 
 
 module.exports = {
@@ -186,7 +186,7 @@ module.exports = {
             self.create_qc_tab_tables(qc_plot_tabs_final);
             self.load_buttons();
             self.load_accept_and_plot_button(); // different implementation in the bokeh modal form
-            self.load_col_settings_button();
+            self.load_column_project_button();
 
             $('#discard_plotting, .close').on('click', function() {  // on unload
                 if (fs.existsSync(loc.proj_files)) {
@@ -330,9 +330,9 @@ module.exports = {
         });
     },
 
-    load_col_settings_button() {
-        $('.col_settings').on('click', function() {
-            col_settings.load();
+    load_column_project_button() {
+        $('.column_project').on('click', function() {
+            column_project.load();
         });
     },
 
