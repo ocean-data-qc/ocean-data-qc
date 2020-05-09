@@ -16,6 +16,7 @@ const is_dev = require('electron-is-dev');
 
 const {dialog} = require('electron');
 const {app} = require('electron');
+const {shell} = require('electron');
 
 const loc = require('locations');
 const lg = require('logging');
@@ -601,4 +602,16 @@ module.exports = {
             // TODO: Show the main loader here
         }
     },
+
+    set_link_opener: function() {
+        var self = this;
+        var handleRedirect = (e, url) => {
+            if(url != self.web_contents.getURL()) {
+                e.preventDefault()
+                shell.openExternal(url)
+            }
+        }
+        self.web_contents.on('will-navigate', handleRedirect)
+        self.web_contents.on('new-window', handleRedirect)
+    }
 }

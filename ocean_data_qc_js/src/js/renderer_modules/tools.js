@@ -405,13 +405,15 @@ module.exports = {
     },
 
     load_popover: function() {
+        var timer;
         $('.pop').popover({
-            trigger: 'click',
+            trigger: 'manual',
             html: true,
             animation: true,
             // offset: 200
         })
         .on('mouseleave', function () {
+            clearTimeout(timer);
             var _this = this;
             setTimeout(function () {
                 if (!$('.popover:hover').length) {
@@ -419,12 +421,21 @@ module.exports = {
                 }
             }, 300);
         })
-        // .on('mouseenter', function () {
-        //     var _this = this;
-        //     $(this).popover('show');
-        //     $('.popover').on('mouseleave', function () {
-        //         $(_this).popover('hide');
-        //     });
-        // })
+        .on('mouseenter', function () {
+            var _this = this;
+            timer = setTimeout(function () {
+                $(_this).popover('show');
+                $('.popover').on('mouseleave', function () {
+                    $(_this).popover('hide');
+                });
+            }, 1500);
+        })
+        .on('click', function () {
+            var _this = this;
+            $(this).popover('show');
+            $('.popover').on('mouseleave', function () {
+                $(_this).popover('hide');
+            });
+        })
     }
 }
