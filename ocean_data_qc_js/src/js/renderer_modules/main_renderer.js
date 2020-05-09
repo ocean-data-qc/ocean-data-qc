@@ -12,7 +12,6 @@ app_module_path.addPath(path.join(__dirname, '../modals_renderer'));
 app_module_path.addPath(__dirname);
 
 const { ipcRenderer } = require('electron');
-const shell = require('electron').shell;
 const portscanner = require('portscanner')
 const rmdir = require('rimraf');
 const fs = require('fs');
@@ -46,6 +45,14 @@ load_images();
 check_port();    // TODO: move function into tools module
 check_previous_session();
 
+$('.possible_formats').attr({
+    'data-toggle': 'popover',
+    'data-placement': 'right',
+    'data-html': true,
+    'data-content': $('#possible_formats').html()
+});
+tools.load_popover();
+
 $(document).ready(function() {
     // NOTE: Doing this we avoid to send the form with a submit button
     //       This avoid the screen flickering, making a more credible desktop application
@@ -62,10 +69,7 @@ if (is_dev) {
     $('#update_state').text('Running on development').addClass('update_error');
 }
 
-$('.open-in-browser').click((event) => {
-    event.preventDefault();
-    shell.openExternal(event.target.href);
-});
+
 
 // -------------------- RECEIVING MESSAGES FROM THE BOKEH IFRAME ------------------ //
 
@@ -154,14 +158,6 @@ $('#set_octave_path_manually').click(function() {
 $('#open_file').on('click', function (){
     ipcRenderer.send('open-dialog');
 })
-
-$('.possible_formats').on('click', function() {
-    if ($('#possible_formats').css('display') == 'none') {
-        $('#possible_formats').slideDown();
-    } else {
-        $('#possible_formats').slideUp();
-    }
-});
 
 $('#modify_default_settings').on('click', function() {
     require('set_project_settings_default').init();

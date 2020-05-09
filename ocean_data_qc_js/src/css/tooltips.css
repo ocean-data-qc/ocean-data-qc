@@ -37,3 +37,23 @@
 .tooltip-error.bs-tooltip-top .arrow:before {
     border-top-color: #f8d7da !important;
 }
+
+/* POPOVERS */
+
+.popover {
+    background-color: #cce5ff !important;
+    max-width: 500px !important;
+    border-color: rgb(0, 64, 133, 0.9) !important;
+
+    /* TODO: if the popover is to the left or top I don't this is going to work well */
+    box-shadow: 2px 2px 4px grey;
+}
+.popover .popover-body {
+    color: #004085 !important;
+}
+.bs-popover-right > .arrow::before, .bs-popover-auto[x-placement^="right"] > .arrow::before {
+    border-right-color: rgba(0, 64, 133, 0.7) !important;
+}
+.bs-popover-right > .arrow::after, .bs-popover-auto[x-placement^="right"] > .arrow::after {
+    border-right-color: #cce5ff !important;
+}

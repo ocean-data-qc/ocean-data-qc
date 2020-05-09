@@ -23,6 +23,7 @@ const {app} = require('electron');
 const {BrowserWindow} = require('electron');
 const {ipcMain} = require('electron');
 const {dialog} = require('electron');
+const {shell} = require('electron');
 
 const data = require('data');
 const tools = require('tools');
@@ -107,6 +108,15 @@ app.on('ready', function() {
                     updater.listeners();
                     updater.check_for_updates();
                 }
+
+                var handleRedirect = (e, url) => {
+                    if(url != server.web_contents.getURL()) {
+                        e.preventDefault()
+                        shell.openExternal(url)
+                    }
+                }
+                server.web_contents.on('will-navigate', handleRedirect)
+                server.web_contents.on('new-window', handleRedirect)
 
                 server.web_contents.send('show-custom-settings-replace');
             }).catch((msg) => {

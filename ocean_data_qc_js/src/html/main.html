@@ -103,19 +103,23 @@
           <div class="card">
             <div class="card-header card-title text-white">Start <div class="fa fa-home float-right"></div></div>
             <div class="card-body">
-              <p><a id="open_file" href="#">Open file...    </a><i class="fa fa-question-circle possible_formats" style="cursor: pointer;"></i></p>
               <p>
-                <div id="possible_formats" class="alert alert-primary" role="alert" style="display: none;">
-                You can open files with some of the following formats:
-                    <ul style="margin-bottom: 0;">
-                        <li>CSV files with <strong><a class="open-in-browser" href="https://exchange-format.readthedocs.io/en/latest/bottle.html">WHP format</a></strong>. This file format include metadata in the header, units and some keywords to identify the format.</li>
-                        <li>Plain CSV files. Just columns and rows.</li>
-                        <li>AQC files. This application can save the project in this format. The file includes the CSV file data and some metadata.</li>
-                    </ul>
+                <a id="open_file" href="#">Open file...    </a>
+                <i class="fa fa-question-circle possible_formats pop" style="cursor: pointer;"></i>
+
+                <!-- popover content -->
+                <div id="possible_formats" role="alert" style="display: none;">
+                  You can open files with some of the following formats:
+                  <ul style="margin-bottom: 0;">
+                      <li>CSV files with <b>WHP format</b>. This file format include metadata in the header, units and some keywords to identify the format. Click <a href="https://exchange-format.readthedocs.io/en/latest/bottle.html"><b>here</b></a> for more information.</li>
+                      <li>Plain <b>CSV</b> files. Just columns and rows. Unit row can alsobe included.</li>
+                      <li><b>XLSX and ODS</b> files. First sheet with the data, the second with the metadata. Always with maximum precision</li>
+                      <li><b>AQC</b> files. This application can save the project in this format. The file includes the CSV file data and some metadata.</li>
+                  </ul>
                 </div>
               </p>
 
-              <p><strong><a class="open-in-browser" href="https://github.com/ocean-data-qc/ocean-data-qc">GitHub Repository</a></strong></p>
+              <p><strong><a target="_blank" href="https://github.com/ocean-data-qc/ocean-data-qc">GitHub Repository</a></strong></p>
               <p hidden><strong><a href="#" id="enable_dev_mode">Enable developer mode</a></strong></p>
               <p>
                 <span id="json_template_state" class="json_template_orange"><strong>Checking templates versions...</strong></span>
