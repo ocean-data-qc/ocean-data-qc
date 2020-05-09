@@ -406,24 +406,25 @@ module.exports = {
 
     load_popover: function() {
         $('.pop').popover({
-            trigger: 'manual',
+            trigger: 'click',
             html: true,
             animation: true,
             // offset: 200
         })
-        .on('mouseenter', function () {
-            var _this = this;
-            $(this).popover('show');
-            $('.popover').on('mouseleave', function () {
-                $(_this).popover('hide');
-            });
-        }).on('mouseleave', function () {
+        .on('mouseleave', function () {
             var _this = this;
             setTimeout(function () {
                 if (!$('.popover:hover').length) {
                     $(_this).popover('hide');
                 }
             }, 300);
-        });
+        })
+        // .on('mouseenter', function () {
+        //     var _this = this;
+        //     $(this).popover('show');
+        //     $('.popover').on('mouseleave', function () {
+        //         $(_this).popover('hide');
+        //     });
+        // })
     }
 }
