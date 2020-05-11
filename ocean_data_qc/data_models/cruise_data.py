@@ -222,6 +222,8 @@ class CruiseData(CruiseDataExport):
                 else:
                     self.cols[column]['types'] += ['param']
                 self.create_missing_flag_col(column)
+        else:
+            lg.warning('>> THE COLUMN ALREADY EXISTS AND IT CANNOT BE CREATED AGAIN')
 
     def create_missing_flag_col(self, param=None):
         ''' Make sure there is a flag column for each param parameter '''
