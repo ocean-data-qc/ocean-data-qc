@@ -28,7 +28,7 @@ module.exports = {
     init: function(){
         var self = this;
         ipcRenderer.on('tab-project', (event, args) => {
-            lg.warn('-- TAB PROJECT');
+            lg.info('-- TAB PROJECT');
             if ('open_app' in args && args['open_app'] === true) {
                 self.tab_project_in_app();
             } else {
@@ -117,7 +117,6 @@ module.exports = {
                 if (err) {
                     tools.showModal('ERROR', 'Some error writing metadata worksheet to a text file');
                 } else {
-                    lg.warn('>> DONE');
                     self.create_moves_csv();
                 }
             });
@@ -225,7 +224,6 @@ module.exports = {
         });
 
         $('.add_new_tab').on('click', function() {
-            lg.warn('>> ADD NEW TAB BT')
             var new_fieldset = $('fieldset').first().clone();
             $('#qc_tabs_container').append(new_fieldset);
             new_fieldset.slideDown();
@@ -237,7 +235,6 @@ module.exports = {
             })
             self.file_columns.forEach(function(column) {
                 if (self.cps_columns.includes(column)) {
-                    lg.warn('>> ADDING COMPUTED CLASS')
                     new_fieldset.find('.qc_tabs_table_row select').append($('<option>', {
                         value: column,
                         text : column,
@@ -439,7 +436,7 @@ module.exports = {
     },
 
     tab_project_in_app: function() {
-        lg.warn('-- TAB PROJECT IN APP')
+        lg.info('-- TAB PROJECT IN APP')
         var self = this;
         var url = path.join(loc.modals, 'tab_project.html');
         tools.load_modal(url, () => {
@@ -450,7 +447,7 @@ module.exports = {
                 'method': 'get_cruise_data_columns'
             }
             tools.call_promise(params).then((cols_dict) => {
-                lg.warn('>> COLUMNS: ' + JSON.stringify(cols_dict, null, 4));
+                // lg.warn('>> COLUMNS: ' + JSON.stringify(cols_dict, null, 4));
                 self.file_columns = cols_dict['cols'];
                 self.cps_columns = cols_dict['cps'];
                 self.params = cols_dict['params'];
@@ -473,7 +470,6 @@ module.exports = {
                 self.load_column_project_button();
 
                 $('.accept_and_plot').on('click', function() {
-                    lg.warn('>> ACCEPT AND PLOT');
                     // validations
                     if($('#project_name').val() == '') {
                         tools.show_modal({
@@ -503,7 +499,7 @@ module.exports = {
                             first = false;
                         } else {
                             var tab = $(this).find('select[name=tab_title]').val();
-                            lg.info('>> CURRENT TAB: ' + tab);
+                            // lg.info('>> CURRENT TAB: ' + tab);
                             qc_plot_tabs[tab] = []
                             var first_row = true;
                             $(this).find('.qc_tabs_table_row').each(function() {
@@ -527,7 +523,7 @@ module.exports = {
                         }
                     });
                     data.set({'qc_plot_tabs': qc_plot_tabs }, loc.proj_settings);
-                    lg.info('>> PROJECT SETTINGS: ' + JSON.stringify(loc.proj_settings, null, 4));
+                    // lg.info('>> PROJECT SETTINGS: ' + JSON.stringify(loc.proj_settings, null, 4));
                     $('#dummy_close').click();
                     server_renderer.reload_bokeh();
                 });
