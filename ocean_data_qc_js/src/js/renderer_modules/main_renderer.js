@@ -27,7 +27,7 @@ const server_renderer = require('server_renderer');
 const bokeh_export = require('bokeh_export');
 
 
-require('set_project_settings_user').init();
+require('tab_project').init();
 
 // ---------------------------- INITIAL FUNCTIONS ----------------------------- //
 

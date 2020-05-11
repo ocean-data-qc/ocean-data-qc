@@ -136,17 +136,17 @@ module.exports = {
             }
             self.web_contents.send('go-to-bokeh');
         } else if (mime_type == 'text/csv') {  // how to check if it is a CSV file??
-            self.web_contents.send('project-settings-user', {
+            self.web_contents.send('tab-project', {
                 'file_path': file_path,
                 'file_type': 'csv'
             });
         } else if (mime_type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-            self.web_contents.send('project-settings-user', {
+            self.web_contents.send('tab-project', {
                 'file_path': file_path,
                 'file_type': 'xlsx'
             });
         } else if (mime_type == 'application/vnd.oasis.opendocument.spreadsheet') {
-            self.web_contents.send('project-settings-user', {
+            self.web_contents.send('tab-project', {
                 'file_path': file_path,
                 'file_type': 'ods'
             });

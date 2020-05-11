@@ -1,8 +1,8 @@
 
-<button id="modal_trigger_set_project_settings" type="button" class="btn btn-info btn-lg"
-        data-toggle="modal" data-target="#set_project_settings" style="display: none;">Open Modal</button>
+<button id="modal_trigger_tab_project" type="button" class="btn btn-info btn-lg"
+        data-toggle="modal" data-target="#tab_project" style="display: none;">Open Modal</button>
 
-<div id="set_project_settings" data-backdrop="static" data-keyboard="false" class="modal fade modal-form" tabindex="-1">
+<div id="tab_project" data-backdrop="static" data-keyboard="false" class="modal fade modal-form" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -10,7 +10,7 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
-                <form id="set_project_settings_form" class="form-horizontal">
+                <form id="tab_project_form" class="form-horizontal">
                     <div class="form-group">
                         <div class="col-xs-12">
                             <div class="row">
@@ -80,8 +80,8 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="column_project btn btn-primary" >Columns</button>
                 <button type="button" class="add_new_tab btn btn-primary">Add new Tab</button>
+                <button type="button" class="column_project btn btn-primary" >Columns</button>
                 <button type="button" class="accept_and_plot btn btn-primary" >Accept and Plot</button>
                 <button id="dummy_close" type="button" class="btn btn-primary" style="display: none;" data-dismiss="modal">Dummy Close</button>
                 <button id="discard_plotting" type="button" class="btn btn-light" data-dismiss="modal">Discard</button>

@@ -27,18 +27,22 @@ const column_project = require('column_project');
 module.exports = {
     init: function(){
         var self = this;
-        ipcRenderer.on('project-settings-user', (event, args) => {
-            lg.info('-- SET PROJECT SETTINGS USER');
-            var url = path.join(loc.modals, 'set_project_settings_user.html');
-            tools.load_modal(url, function() {
-                self.file_path = args.file_path;
-                self.file_type = args.file_type;
-                $('#project_name').val(path.basename(
-                    self.file_path,
-                    path.extname(self.file_path)
-                ));
-                self.init_files();
-            });
+        ipcRenderer.on('tab-project', (event, args) => {
+            lg.warn('-- TAB PROJECT');
+            if ('open_app' in args && args['open_app'] === true) {
+                self.tab_project_in_app();
+            } else {
+                var url = path.join(loc.modals, 'tab_project.html');
+                tools.load_modal(url, function() {
+                    self.file_path = args.file_path;
+                    self.file_type = args.file_type;
+                    $('#project_name').val(path.basename(
+                        self.file_path,
+                        path.extname(self.file_path)
+                    ));
+                    self.init_files();
+                });
+            }
         });
     },
 
@@ -48,8 +52,7 @@ module.exports = {
         // TMP FOLDER
         fs.mkdir(loc.proj_files, function(err) {
             if (err) {
-                if (err.code == 'EEXIST') cb(null);     // ignore the error if the folder already exists
-                else {
+                if (err.code != 'EEXIST') {     // ignore the error if the folder already exists
                     tools.showModal('ERROR', 'Something went wrong creating the temp folder');
                 }
             } else {  // successfully created folder
@@ -205,12 +208,14 @@ module.exports = {
             });
 
             tools.show_default_cursor();
-            $('#modal_trigger_set_project_settings').click();
+            $('#modal_trigger_tab_project').click();
         });
     },
 
     load_buttons: function() {
         var self = this;
+
+        // TODO: Move this to a popover, which is more natural and common
         $('.performance_help').on('click', function() {
             if ($('#performance_help').css('display') == 'none') {
                 $('#performance_help').slideDown();
@@ -220,8 +225,9 @@ module.exports = {
         });
 
         $('.add_new_tab').on('click', function() {
-            var new_fieldset = $('fieldset:first').clone();
-            $('fieldset:last').after(new_fieldset);
+            lg.warn('>> ADD NEW TAB BT')
+            var new_fieldset = $('fieldset').first().clone();
+            $('#qc_tabs_container').append(new_fieldset);
             new_fieldset.slideDown();
             self.params.forEach(function(column) {
                 new_fieldset.find('select[name=tab_title]').append($('<option>', {
@@ -432,10 +438,102 @@ module.exports = {
         return new_row;
     },
 
-    update_column_params: function(file_columns, cps_columns, params) {
+    tab_project_in_app: function() {
+        lg.warn('-- TAB PROJECT IN APP')
         var self = this;
-        self.file_columns = file_columns;
-        self.cps_columns = cps_columns;
-        self.params = params;
+        var url = path.join(loc.modals, 'tab_project.html');
+        tools.load_modal(url, () => {
+            $('#project_name').val(data.get('project_name', loc.proj_settings));
+
+            var params = {
+                'object': 'cruise.data.handler',
+                'method': 'get_cruise_data_columns'
+            }
+            tools.call_promise(params).then((cols_dict) => {
+                lg.warn('>> COLUMNS: ' + JSON.stringify(cols_dict, null, 4));
+                self.file_columns = cols_dict['cols'];
+                self.cps_columns = cols_dict['cps'];
+                self.params = cols_dict['params'];
+                var qc_plot_tabs = data.get('qc_plot_tabs', loc.proj_settings);
+                var qc_plot_tabs_final = {};
+                Object.keys(qc_plot_tabs).forEach(function(tab) {
+                    qc_plot_tabs[tab].forEach(function (graph) {
+                        if (self.file_columns.includes(graph.x) && self.file_columns.includes(graph.y)) {
+                            if (tab in qc_plot_tabs_final) {
+                                qc_plot_tabs_final[tab].push(graph);
+                            } else {
+                                qc_plot_tabs_final[tab] = [graph];
+                            }
+                        }
+                    });
+                });
+
+                self.create_qc_tab_tables(qc_plot_tabs_final);
+                self.load_buttons();
+                self.load_column_project_button();
+
+                $('.accept_and_plot').on('click', function() {
+                    lg.warn('>> ACCEPT AND PLOT');
+                    // validations
+                    if($('#project_name').val() == '') {
+                        tools.show_modal({
+                            'msg_type': 'html',
+                            'type': 'VALIDATION ERROR',
+                            'msg': '<p>The project name field must be filled.</p> <p>It is a required field.</p>',
+                        });
+                        return;
+                    }
+                    if ($('#qc_tabs_table-0').length == 0) {
+                        tools.show_modal({
+                            'type': 'VALIDATION ERROR',
+                            'msg': 'At least there should be one tab with plots filled.'
+                        });
+                        return;
+                    }
+
+                    // TODO: check also at least 1 element inside the tab
+
+                    data.set({'project_name': $('#project_name').val(),}, loc.proj_settings);
+                    data.set({'project_state': 'modified',}, loc.shared_data);
+
+                    var first = true;
+                    var qc_plot_tabs = {}
+                    $('fieldset').each(function() {
+                        if (first == true) {
+                            first = false;
+                        } else {
+                            var tab = $(this).find('select[name=tab_title]').val();
+                            lg.info('>> CURRENT TAB: ' + tab);
+                            qc_plot_tabs[tab] = []
+                            var first_row = true;
+                            $(this).find('.qc_tabs_table_row').each(function() {
+                                // lg.info('>> CURRENT ROW (TITLE): ' + $(this).find('input[name=title]').val());
+                                if (first_row == true) {
+                                    first_row = false;
+                                } else {
+                                    var title = $(this).find('input[name=title]').val();
+                                    var x_axis = $(this).find('select[name=x_axis]').val();
+                                    var y_axis = $(this).find('select[name=y_axis]').val();
+                                    if (title == '') {
+                                        title = x_axis + ' vs ' + y_axis;
+                                    }
+                                    qc_plot_tabs[tab].push({
+                                        'title': title,
+                                        'x': x_axis,
+                                        'y': y_axis
+                                    });
+                                }
+                            })
+                        }
+                    });
+                    data.set({'qc_plot_tabs': qc_plot_tabs }, loc.proj_settings);
+                    lg.info('>> PROJECT SETTINGS: ' + JSON.stringify(loc.proj_settings, null, 4));
+                    $('#dummy_close').click();
+                    server_renderer.reload_bokeh();
+                });
+
+                $('#modal_trigger_tab_project').click();
+            });
+        });
     }
 }

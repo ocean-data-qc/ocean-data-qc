@@ -125,7 +125,7 @@ module.exports = {
             label: 'View',
             submenu: [
                 { label: 'Action History', accelerator: 'CmdOrCtrl+A', click: () => { self.web_contents.send('close-embed-forms'); self.web_contents.send('show-moves'); } },
-                { label: 'Edit Plot Layout', accelerator: 'CmdOrCtrl+L', click: () => { self.web_contents.send('close-embed-forms'); self.web_contents.send('project-settings-bokeh'); } }
+                { label: 'Project Settings', accelerator: 'CmdOrCtrl+L', click: () => { self.web_contents.send('close-embed-forms'); self.web_contents.send('tab-project', {'open_app': true}); } }
             ]
         }
 
