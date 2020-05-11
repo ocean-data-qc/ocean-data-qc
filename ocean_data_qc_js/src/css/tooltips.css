@@ -43,9 +43,9 @@
 .popover {
     background-color: #cce5ff !important;
     max-width: 500px !important;
-    border-color: rgb(0, 64, 133, 0.9) !important;
+    border-color: rgb(0, 64, 133, 0.7) !important;
 
-    /* TODO: if the popover is to the left or top I don't this is going to work well */
+    /* TODO: if the popover is to the left or top I don't this is going to work well because of the arrow */
     box-shadow: 2px 2px 4px grey;
 }
 .popover .popover-body {

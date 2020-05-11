@@ -23,10 +23,11 @@
                         </div>
                         <div id="qc_tabs_container" class="col-xs-12">
                             <div class="row">
-                                <label class="control-label" style="text-align: left">Plots layout: <i class="fa fa-question-circle performance_help" style="cursor: pointer;"></i></label>
+                                <label class="control-label" style="text-align: left">Plots layout: <i class="fa fa-question-circle performance_help pop" style="cursor: pointer;"></i></label>
                             </div>
 
-                            <div id="performance_help" class="alert alert-primary" role="alert" style="display: none;">
+                            <!-- popover content -->
+                            <div id="performance_help" style="display: none;">
                                 You may find some performance losses if (with at least 3000 samples):
                                     <ul style="margin-bottom: 0;">
                                         <li>You share many columns (in the same axis) in several plots (>5)</li>

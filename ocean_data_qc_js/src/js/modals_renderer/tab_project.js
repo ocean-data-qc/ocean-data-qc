@@ -189,6 +189,7 @@ module.exports = {
             self.load_buttons();
             self.load_accept_and_plot_button(); // different implementation in the bokeh modal form
             self.load_column_project_button();
+            self.load_help_popover();
 
             $('#discard_plotting, .close').on('click', function() {  // on unload
                 if (fs.existsSync(loc.proj_files)) {
@@ -213,16 +214,6 @@ module.exports = {
 
     load_buttons: function() {
         var self = this;
-
-        // TODO: Move this to a popover, which is more natural and common
-        $('.performance_help').on('click', function() {
-            if ($('#performance_help').css('display') == 'none') {
-                $('#performance_help').slideDown();
-            } else {
-                $('#performance_help').slideUp();
-            }
-        });
-
         $('.add_new_tab').on('click', function() {
             var new_fieldset = $('fieldset').first().clone();
             $('#qc_tabs_container').append(new_fieldset);
@@ -435,6 +426,16 @@ module.exports = {
         return new_row;
     },
 
+    load_help_popover: function() {
+        $('.performance_help').attr({
+            'data-toggle': 'popover',
+            'data-placement': 'right',
+            'data-html': true,
+            'data-content': $('#performance_help').html()
+        });
+        tools.load_popover();
+    },
+
     tab_project_in_app: function() {
         lg.info('-- TAB PROJECT IN APP')
         var self = this;
@@ -468,6 +469,7 @@ module.exports = {
                 self.create_qc_tab_tables(qc_plot_tabs_final);
                 self.load_buttons();
                 self.load_column_project_button();
+                self.load_help_popover();
 
                 $('.accept_and_plot').on('click', function() {
                     // validations
