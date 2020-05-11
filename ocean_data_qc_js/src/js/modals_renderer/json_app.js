@@ -18,19 +18,18 @@ const loc = require('locations');
 const lg = require('logging');
 const data = require('data');
 const tools = require('tools');
-const server_renderer = require('server_renderer');
 
 module.exports = {
     init: function(){
         self = this;
-        ipcRenderer.on('set-project-settings-json', (event, arg) => {
-            var url = path.join(loc.modals, 'set_project_settings_json.html');
+        ipcRenderer.on('json-app', (event, arg) => {
+            var url = path.join(loc.modals, 'json_app.html');
             tools.load_modal(url, () => {
-                codemirror.load('project_settings');
-                var json_content = data.load(loc.proj_settings);
+                codemirror.load('txt_json_app');
+                var json_content = data.load(loc.custom_settings);
                 codemirror.setValue(JSON.stringify(json_content, null, 4));
-                
-                $('#accept_reload_project_settings').on('click', function() {
+
+                $('#json_app_save').on('click', function() {
                     var settings_str = codemirror.getValue();
                     try {
                         JSON.parse(settings_str);
@@ -41,13 +40,11 @@ module.exports = {
                         });
                         return;
                     }
-                    codemirror.writeValue(loc.proj_settings);
-
-                    server_renderer.reload_bokeh();
+                    codemirror.writeValue(loc.custom_settings);
                 });
 
-                $('#modal_trigger_set_project_settings').click();
+                $('#modal_trigger_json_app').click();
             });
         });
     },
-}        
+}

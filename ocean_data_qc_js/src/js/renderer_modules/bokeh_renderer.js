@@ -29,7 +29,8 @@ const action_history = require('action_history');
 
 const update_from_external_file = require('update_from_external_file');
 require('update_values_by_station');
-require('set_project_settings_json').init();
+require('json_project').init();
+require('json_app').init();
 require('set_project_settings_bokeh').init();
 require('add_computed_parameter').init();
 require('show_data').init();

@@ -1,8 +1,8 @@
 
-<button id="modal_trigger_set_project_settings" type="button" class="btn btn-info btn-lg"
-        data-toggle="modal" data-target="#set_project_settings" style="display: none;">Open Modal</button>
+<button id="modal_trigger_json_project" type="button" class="btn btn-info btn-lg"
+        data-toggle="modal" data-target="#json_project" style="display: none;">Open Modal</button>
 
-<div id="set_project_settings" data-backdrop="static" data-keyboard="false" class="modal fade modal-form" role="dialog" tabindex="-1">
+<div id="json_project" data-backdrop="static" data-keyboard="false" class="modal fade modal-form" role="dialog" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <!-- Modal content-->
         <div class="modal-content">
@@ -12,17 +12,18 @@
             </div>
 
             <div class="modal-body">
-                <form id="set_project_settings" class="form-horizontal">
+                <form id="json_project" class="form-horizontal">
                     <div class="form-group">
+                        <div class="alert alert-warning" role="alert"><b>Warning!</b> Any change in this document could lead to an error and the current project could not be loaded anymore</div>
                         <label class="control-label col-12" for="new_port" style="text-align: left">The plots are built with this data:</label>
                         <div class="col-12" style="padding-left: 0px;">
-                            <textarea id="project_settings" rows="300" cols="100" class="col-12" ></textarea>
+                            <textarea id="txt_json_project" rows="300" cols="100" class="col-12" ></textarea>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button id="accept_reload_project_settings" type="button" class="btn btn-primary" data-dismiss="modal">Accept and Reload</button>
+                <button id="accept_reload" type="button" class="btn btn-primary" data-dismiss="modal">Accept and Reload</button>
                 <button type="button" class="btn btn-light" data-dismiss="modal">Discard</button>
             </div>
         </div>

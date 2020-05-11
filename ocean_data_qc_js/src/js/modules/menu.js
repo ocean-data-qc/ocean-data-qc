@@ -168,7 +168,8 @@ module.exports = {
         self.bokeh_dev_menu = {
             label: 'Development',
             submenu: [
-                { label: 'Project Settings (JSON)', accelerator: 'CmdOrCtrl+Shift+P', click: () => { self.web_contents.send('close-embed-forms'); self.web_contents.send('set-project-settings-json'); } },
+                { label: 'Project Settings (JSON)', accelerator: 'CmdOrCtrl+Shift+P', click: () => { self.web_contents.send('close-embed-forms'); self.web_contents.send('json-project'); } },
+                { label: 'App Settings (JSON)', accelerator: 'CmdOrCtrl+Shift+J', click: () => { self.web_contents.send('close-embed-forms'); self.web_contents.send('json-app'); } },
                 // { label: 'Logger [TO-DO]', accelerator: 'CmdOrCtrl+L', click: () => { alert('Not implemented yet');} },
                 { label: 'Reload Server', accelerator: 'CmdOrCtrl+R', click: () => { self.web_contents.send('close-embed-forms'); self.menu_actions.server.relaunch_bokeh(); } },
                 {
