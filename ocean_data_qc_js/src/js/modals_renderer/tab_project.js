@@ -23,6 +23,8 @@ const tools = require('tools');
 const server_renderer = require('server_renderer');
 const column_project = require('column_project');
 
+// TODO: reuse the methods of tab_app that do not change at all
+
 
 module.exports = {
     init: function(){
@@ -404,7 +406,7 @@ module.exports = {
 
     get_new_row: function(graph=null) {
         var self = this;
-        var new_row = $('#qc_tabs_table .qc_tabs_table_row:first').clone();
+        var new_row = $('#qc_tabs_table .qc_tabs_table_row').first().clone();
         self.file_columns.forEach(function (column) {
             var option_attrs = {
                 value: column,

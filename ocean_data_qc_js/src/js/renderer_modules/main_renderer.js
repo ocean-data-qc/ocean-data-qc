@@ -25,9 +25,10 @@ const data_renderer = require('data_renderer');
 const tools = require('tools');
 const server_renderer = require('server_renderer');
 const bokeh_export = require('bokeh_export');
-
+const tab_app = require('tab_app');
 
 require('tab_project').init();
+require('tab_app').init();
 
 // ---------------------------- INITIAL FUNCTIONS ----------------------------- //
 
@@ -159,8 +160,8 @@ $('#open_file').on('click', function (){
     ipcRenderer.send('open-dialog');
 })
 
-$('#modify_default_settings').on('click', function() {
-    require('set_project_settings_default').init();
+$('#modify_app_settings').on('click', function() {
+    tab_app.init_form()
 });
 
 function showPortValidationError(msg) {
@@ -305,11 +306,12 @@ function load_images() {
         if (err) {
             lg.error('ERROR LOADING ICON.PNG: ' + err)
         } else {
-            $('.jumbotron').prepend($('<img>', {
+            $('.app_logo').prepend($('<img>', {
                 src: 'data:image/png;base64,' + data,
-                id: 'ctd_img'
+                id: 'ctd_img',
+                style: 'display: none;',
             }));
-            $('.jumbotron>img').fadeIn(1000)
+            $('.app_logo>img').fadeIn(1000)
         }
     });
 

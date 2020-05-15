@@ -1,0 +1,84 @@
+
+<button id="modal_trigger_tab_app" type="button" class="btn btn-info btn-lg"
+data-toggle="modal" data-target="#tab_app" style="display: none;">Open Modal</button>
+
+<div id="tab_app" data-backdrop="static" data-keyboard="false" class="modal fade modal-form" tabindex="-1">
+<div class="modal-dialog modal-lg">
+<div class="modal-content">
+    <div class="modal-header">
+        <h6 class="modal-title">App Settings</h6>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+    </div>
+    <div class="modal-body">
+        <form id="tab_app_form" class="form-horizontal">
+            <div class="form-group">
+                <div id="qc_tabs_container" class="col-xs-12">
+                    <div class="row">
+                        <label class="control-label" style="text-align: left">Plots layout: <i class="fa fa-question-circle performance_help pop" style="cursor: pointer;"></i></label>
+                    </div>
+
+                    <!-- popover content -->
+                    <div id="performance_help" style="display: none;">
+                        You may find some performance losses if (with at least 3000 samples):
+                            <ul style="margin-bottom: 0;">
+                                <li>You share many columns (in the same axis) in several plots (>5)</li>
+                                <li>You show more than 10 plots. Profiles will take longer to be drawn as well</li>
+                            </ul>
+                    </div>
+
+                    <!-- table to clone -->
+                    <fieldset id="qc_tabs_table" style="display: none;">
+                        <div class="row">
+                            <label class="control-label col-sm-2" for="tab_title">Tab title:</label>
+                            <select class="form-control form-control-sm" name="tab_title" ></select>
+                            <button type="button" class="delete_tab form-control form-control-sm btn btn-danger col-sm-2 float-right">Delete this tab</button>
+                        </div>
+                        <div class="row">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Graph Title</th>
+                                        <th class="col-xs-4">x</th>
+                                        <th class="col-xs-4">y</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- row to clone -->
+                                    <tr class="qc_tabs_table_row" style="display: none;">
+                                        <td>
+                                            <input class="form-control form-control-sm" name="title" placeholder="Title" />
+                                        </td>
+                                        <td>
+                                            <select class="form-control form-control-sm" name="x_axis"></select>
+                                        </td>
+                                        <td>
+                                            <select class="form-control form-control-sm" name="y_axis" ></select>
+                                        </td>
+                                        <td>
+                                            <button class="delete_graph btn btn-danger fa fa-trash" type="button" ></button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4"><a class="add_new_plot" href="#">Add new plot to the tab</a></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </fieldset>
+                </div>
+
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="add_new_tab btn btn-primary">Add new Tab</button>
+        <button type="button" class="column_project btn btn-primary" >Columns</button>
+        <button type="button" class="save_settings btn btn-primary" >Save</button>
+        <button id="dummy_close" type="button" class="btn btn-primary" style="display: none;" data-dismiss="modal">Dummy Close</button>
+        <button id="discard_plotting" type="button" class="btn btn-light" data-dismiss="modal">Discard</button>
+    </div>
+</div>
+
+</div>
+</div>

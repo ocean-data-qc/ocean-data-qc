@@ -125,7 +125,8 @@ module.exports = {
             label: 'View',
             submenu: [
                 { label: 'Action History', accelerator: 'CmdOrCtrl+A', click: () => { self.web_contents.send('close-embed-forms'); self.web_contents.send('show-moves'); } },
-                { label: 'Project Settings', accelerator: 'CmdOrCtrl+L', click: () => { self.web_contents.send('close-embed-forms'); self.web_contents.send('tab-project', {'open_app': true}); } }
+                { label: 'Project Settings', accelerator: 'CmdOrCtrl+P+S', click: () => { self.web_contents.send('close-embed-forms'); self.web_contents.send('tab-project', {'open_app': true}); } },
+                { label: 'App Settings', accelerator: 'CmdOrCtrl+A+S', click: () => { self.web_contents.send('close-embed-forms'); self.web_contents.send('tab-app'); } }
             ]
         }
 
