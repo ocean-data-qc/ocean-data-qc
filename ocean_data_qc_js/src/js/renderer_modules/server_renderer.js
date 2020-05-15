@@ -34,6 +34,7 @@ module.exports = {
     go_to_bokeh: function() {
         lg.info('-- GO TO BOKEH');
         var self = this;
+        $('body').css('overflow-y', 'hidden');  // to prevent two scrolls on the right
         tools.show_loader();
         var _checkBokehSate = setInterval(function() {
             lg.info('>> CHECK BOKEH STATE');
@@ -68,6 +69,7 @@ module.exports = {
     go_to_welcome: function() {
         // the loader is not needed here, very fast transition
         $('#bokeh_iframe').fadeOut('slow', function(){
+            $('body').css('overflow-y', 'auto')
             $('.welcome_container').fadeIn('slow');
         });
     },
@@ -400,30 +402,14 @@ module.exports = {
                 results = results.replace(/'/g,'"');
                 results = results.replace('\r','');
                 results = JSON.parse(results);  // try catch ??
+                // lg.warn('>> RESULTS: ' + JSON.stringify(results, null, 4));
                 $.each(results, function(key, value) {
-                    if (key == 'electron_css_path') {
+                    if (key == 'electron_css_path') {  // TODO: How to run this before the window is shown?
                         $.each(results[key], function(file_name, hash) {
                             var css = $("link[href$='" + file_name + "']");
                             css.attr('href', css.attr('href') + '?v=' + hash);
                         });
                         $('.welcome_container').fadeIn(500);
-                    } else if (key == 'bokeh_css_path' || key == 'bokeh_js_path') {
-                        // NOTE: I need to wait for bokeh here in order to assign the hashes to the css files
-                        var _check_bokeh_loaded = setInterval(function() {
-                            if ($('body').data('bokeh_state') == 'ready') {
-                                clearInterval(_check_bokeh_loaded);
-                                $.each(results[key], function(file_name, hash) {
-                                    if (key == 'bokeh_css_path') {
-                                        // operator $= : https://www.w3schools.com/jquery/sel_attribute_end_value.asp
-                                        var css = $("#bokeh_iframe").contents().find("link[href$='" + file_name + "']");
-                                        css.attr('href', css.attr('href') + '?v=' + hash);
-                                    } else if (key == 'bokeh_js_path') {
-                                        var js = $("#bokeh_iframe").contents().find("script[src$='" + file_name + "']");
-                                        js.attr('src', js.attr('src') + '?v=' + hash);
-                                    }
-                                });
-                            }
-                        }, 100);
                     }
                 });
             }

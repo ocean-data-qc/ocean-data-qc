@@ -110,8 +110,8 @@ class OctaveEquations(Environment):
             try:
                 oct2py_lib = importlib.import_module('oct2py')
                 self.oc = oct2py_lib.octave
-                self.oc.addpath(os.path.join(OCEAN_DATA_QC, 'octave'))
-                self.oc.addpath(os.path.join(OCEAN_DATA_QC, 'octave', 'CANYON-B'))
+                self.oc.addpath(os.path.join(OCEAN_DATA_QC_PY, 'octave'))
+                self.oc.addpath(os.path.join(OCEAN_DATA_QC_PY, 'octave', 'CANYON-B'))
                 return {'octave_path': self.oct_exe_path }
             except Exception as e:
                 lg.error('>> oct2py LIBRARY COULD NOT BE IMPORTED, OCTAVE PATH WAS NOT SET CORRECTLY')

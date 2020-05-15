@@ -106,13 +106,15 @@ CIRCLE_COLORS = {
 
 OCEAN_DATA_QC = path.realpath(
     path.dirname(
-        path.abspath(__file__)
+        path.dirname(path.abspath(__file__))
     ),
 )
 
+OCEAN_DATA_QC_PY = path.join(OCEAN_DATA_QC, 'ocean_data_qc')
+
 # TODO: this will only work with asar = false,
 #       so checksums can be made all the process in js
-OCEAN_DATA_QC_JS = path.join(OCEAN_DATA_QC, '..', 'ocean_data_qc_js')
+OCEAN_DATA_QC_JS = path.join(OCEAN_DATA_QC, 'ocean_data_qc_js')
 
 APPDATA = getenv('APPDATA')
 if not APPDATA:
@@ -123,11 +125,12 @@ if not APPDATA:
     else:
         APPDATA = OCEAN_DATA_QC
 
+BOKEH_TEMPLATE = path.join(OCEAN_DATA_QC_PY, 'templates', 'index.html')
 FILES = path.join(APPDATA, 'ocean-data-qc', 'files')
 TMP = path.join(APPDATA, 'ocean-data-qc', 'files', 'tmp')
 UPD = path.join(APPDATA, 'ocean-data-qc', 'files', 'tmp', 'update')
 EXPORT = path.join(APPDATA, 'ocean-data-qc', 'files', 'tmp', 'export')
-IMG = path.join(OCEAN_DATA_QC, 'static', 'img')
+IMG = path.join(OCEAN_DATA_QC_PY, 'static', 'img')
 
 PROJ_SETTINGS = path.join(TMP, 'settings.json')
 CUSTOM_SETTINGS = path.join(FILES, 'custom_settings.json')

@@ -29,13 +29,13 @@
     <!-- EXTERNAL LIBRARIES -->
     <link rel="stylesheet" href="../js/external_resources/jquery-ui.min.css">
     <link rel="stylesheet" href="../../node_modules/bootstrap/dist/css/bootstrap.css">
-    <link rel="stylesheet" href="../../node_modules\datatables.net-bs4\css\dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="../../node_modules/datatables.net-bs4/css/dataTables.bootstrap4.min.css">
 
     <link rel="stylesheet" href="../../node_modules/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="../../node_modules/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css">
 
   </head>
-  <body >
+  <body>
     <div class="loader_container" style="display: none;">
       <div id="loader" class="loader" ></div>
     </div>
@@ -52,10 +52,14 @@
 
     <div class="welcome_container container theme-showcase" style="display: none;">
       <div id="page">
-        <div class="jumbotron col-xs-12">
-          <div id="atlantos_img">
-            <div></div>
-            <p>Tool for 1st Quality Control on Hydrographic Cruise Data</p>
+        <div id="panels" class="row col-xs-12 card-deck">
+          <div class="card">
+            <div class="card-body app_logo">
+              <div id="atlantos_img">
+                <div></div>
+                <p>Tool for 1st Quality Control on Hydrographic Cruise Data</p>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -132,7 +136,7 @@
                 <span id="json_template_upload_custom" class="json_template_blue"><a href="#"><strong>Upload a custom settings file</strong></a></span>
               </p>
 
-              <!-- <p><a id="modify_default_settings" href="#"><strong>Modify default project settings</strong></a></p> -->
+              <p><a id="modify_app_settings" href="#"><strong>Modify app settings</strong></a></p>
             </div>
           </div>
 

@@ -15,6 +15,8 @@ from os import path
 import os
 import json
 import shutil
+from hashlib import md5
+from jinja2 import Template
 
 
 class Graph():
@@ -217,3 +219,18 @@ class FilesHandler(Environment):
                 json.dump(json_content, fp, indent=4, sort_keys=True)
         else:
             lg.warning(f'>> The attribute {attr} is not in the JSON file: {f_path}')
+
+
+class BokehTemplate(Template):
+    def render(self, *args, **kwargs):
+        ''' Adds a hash to the end of the url resources if `with_hash`
+            function is used in the template
+        '''
+        def with_hash(rel_path):
+            f_path = path.join(OCEAN_DATA_QC, rel_path)
+            with open(f_path, 'rb') as f:
+                return f'{rel_path}?v={md5(f.read()).hexdigest()}'
+
+        if 'with_hash' not in kwargs:
+            kwargs['with_hash'] = with_hash
+        return super().render(*args, **kwargs)

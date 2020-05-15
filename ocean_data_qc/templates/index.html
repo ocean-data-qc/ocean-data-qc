@@ -2,20 +2,16 @@
 
 {% block preamble %}
 
-    <!-- TODO: try to use only one static folder for common resources at least -->
-    <!-- <link href="/ocean_data_qc_js/node_modules/bootstrap/dist/css/bootstrap.css" rel="stylesheet"> -->
+    <link href="{{ with_hash('ocean_data_qc/static/css/bootstrap.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ with_hash('ocean_data_qc/static/css/font_awesome_v5.3.1.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ with_hash('ocean_data_qc/static/css/font_awesome_v4.7.0.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ with_hash('ocean_data_qc/static/css/awesome_bootstrap_checkbox.css') }}" rel="stylesheet" type="text/css" />
 
-    <script src="/ocean_data_qc/static/js/jquery-v3.3.1.js"></script>
+    <link href="{{ with_hash('ocean_data_qc/static/css/bokeh_custom.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ with_hash('ocean_data_qc/static/css/flags_control.css') }}" rel="stylesheet" type="text/css" />
 
-    <link href="/ocean_data_qc/static/css/bootstrap.css" rel="stylesheet" type="text/css" />
-    <link href="/ocean_data_qc/static/css/font_awesome_v5.3.1.css" rel="stylesheet" type="text/css" />
-    <link href="/ocean_data_qc/static/css/font_awesome_v4.7.0.css" rel="stylesheet" type="text/css" />
-    <link href="/ocean_data_qc/static/css/awesome_bootstrap_checkbox.css" rel="stylesheet" type="text/css" />
-
-    <link href="/ocean_data_qc/static/css/bokeh_custom.css" rel="stylesheet" type="text/css" />
-    <link href="/ocean_data_qc/static/css/flags_control.css" rel="stylesheet" type="text/css" />
-
-    <script type="text/javascript" src="/ocean_data_qc/static/js/custom.js"></script>
+    <script src="{{ with_hash('ocean_data_qc/static/js/jquery-v3.3.1.js') }}"></script>
+    <script type="text/javascript" src="{{ with_hash('ocean_data_qc/static/js/custom.js') }}"></script>
 
 {% endblock %}
 
@@ -37,7 +33,6 @@
             </div>
         </div>
     </div>
-
 
     {% endblock %}
     {{ plot_script | indent(8) }}

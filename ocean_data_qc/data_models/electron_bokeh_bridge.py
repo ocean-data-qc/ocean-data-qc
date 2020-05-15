@@ -16,7 +16,11 @@ from ocean_data_qc.env import Environment
 from ocean_data_qc.constants import *
 import json
 import os
+from os import path
 import traceback
+import hashlib
+
+from ocean_data_qc.data_models.files_handler import BokehTemplate
 
 
 class ElectronBokehBridge(Environment):
@@ -30,7 +34,7 @@ class ElectronBokehBridge(Environment):
     bridge_plot_callback = None
 
     def __init__(self):
-        lg.info('-- MESSAGES BRIDGE')
+        lg.warning('-- MESSAGES BRIDGE')
         self.env.bk_bridge = self
 
         self._init_bridge_plot()
@@ -92,6 +96,7 @@ class ElectronBokehBridge(Environment):
         self.env.bridge_row.css_classes = ['bridge_row']
 
         self.env.doc = curdoc()
+        self.env.doc.template = BokehTemplate(open(BOKEH_TEMPLATE).read())
         self.env.doc.add_root(self.env.bridge_row)
 
     def send_python_response(self):

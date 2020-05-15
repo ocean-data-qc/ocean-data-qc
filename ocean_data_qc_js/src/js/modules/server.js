@@ -434,7 +434,7 @@ module.exports = {
                     }
                     if (typeof(results) !== 'undefined') {  // actually nothing is returned
                         if (results != null) {
-                            lg.info('>> OCEAN_DATA_QC RETURNS: ' + results[0]);
+                            lg.info('>> OCEAN_DATA_QC_PY RETURNS: ' + results[0]);
                         } else {
                             lg.error('>> PYTHON SHELL COMMAND RETURNED NULL')
                         }
