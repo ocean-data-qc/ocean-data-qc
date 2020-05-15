@@ -1,4 +1,6 @@
 
+/* MAIN FORM */
+
 body, body label, body input,
 body select, body button {
     font: caption; /* system font */
@@ -32,35 +34,11 @@ h5 {
     border-color: #337ab5 !important;
 }
 
-/* LOGOS */
-
-#atlantos_img div img {
-    height: 164px;
-}
-
-#atlantos_img div {
-    height: 164px;
-}
-
-#atlantos_img {
-    display: none;  /* to make work the fade in animation */
-    float: right;
-    margin-right: 70px;
-}
-
-#ctd_img {
-    height: 192px;
-}
-
-/* MAIN FORM */
-
-#panels {
-    min-height: 270px;
-    height: 285px;
-}
+/* PANELS AND CARDS */
 
 .card {
     border: 0px !important;
+    margin-top: 30px !important;
 }
 
 .card .card-title {
@@ -138,6 +116,22 @@ h5 {
 
 .json_template_orange, .json_template_orange>a {
     color: #e07714;
+}
+
+/* LOGOS */
+
+#ctd_logo {
+    width: 16%;
+}
+
+#atlantos_logo {
+    width: 60%;
+}
+
+#logos_div img {
+    float: left;
+    margin: 20px 5% 20px 5%;
+
 }
 
 /* MODAL WINDOW */

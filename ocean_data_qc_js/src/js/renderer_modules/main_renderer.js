@@ -306,12 +306,12 @@ function load_images() {
         if (err) {
             lg.error('ERROR LOADING ICON.PNG: ' + err)
         } else {
-            $('.app_logo').prepend($('<img>', {
+            $('#logos_div').append($('<img>', {
+                id: 'ctd_logo',
                 src: 'data:image/png;base64,' + data,
-                id: 'ctd_img',
                 style: 'display: none;',
             }));
-            $('.app_logo>img').fadeIn(1000)
+            $('#logos_div>img').fadeIn(1000)
         }
     });
 
@@ -319,11 +319,11 @@ function load_images() {
         if (err) {
             lg.error('ERROR LOADING ATLANTOS_LOGO.SVG: ' + err)
         } else {
-            $('#atlantos_img div').prepend($('<img>', {
+            $('#logos_div').append($('<img>', {
+                id: 'atlantos_logo',
                 src: 'data:image/svg+xml;base64,' + data,
-                id: 'ctd_img'
             }));
-            $('#atlantos_img').fadeIn(1000);
+            $('#logos_div').fadeIn(1000);
         }
     });
 
