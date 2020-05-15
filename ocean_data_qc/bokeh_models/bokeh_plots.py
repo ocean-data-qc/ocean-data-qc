@@ -34,8 +34,6 @@ class BokehPlots(Environment):
     env = Environment
 
     def __init__(self, **kwargs):
-        self.env.doc = curdoc()     # TODO: replace bk with env
-
         if 'x' in kwargs:
             self.x = kwargs['x']
         if 'y' in kwargs:
