@@ -60,6 +60,18 @@ h5 {
     border: 2px solid  #337ab7;
 }
 
+#panels .card-body {
+    border-radius: 0 0 4px 4px !important;
+}
+
+#panels .card-header:first-child {
+    border-radius: 4px 4px 0 0 !important;
+}
+
+.card-logos {
+    border-radius: 4px !important;
+}
+
 .card .card-body p {
     margin-bottom: 0.3rem;
 }
@@ -120,18 +132,18 @@ h5 {
 
 /* LOGOS */
 
-#ctd_logo {
+img#ctd_logo {
+    margin: 1rem 5% 1rem 5%;
     width: 16%;
 }
 
-#atlantos_logo {
+img#atlantos_logo {
+    margin: 0.7rem 5% 0.7rem 5%;
     width: 60%;
 }
 
 #logos_div img {
     float: left;
-    margin: 20px 5% 20px 5%;
-
 }
 
 /* MODAL WINDOW */
