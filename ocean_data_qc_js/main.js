@@ -57,6 +57,13 @@ var main_window = null;      // global reference of the window object
 // SO solution: https://stackoverflow.com/a/57288472/4891717
 app.commandLine.appendSwitch('disable-site-isolation-trials');
 
+if (is_dev) {
+    // NOTE: I need to use the hashes to the url files for the final app
+    //       because if an update is made it should use cache and reload
+    //       the modified files
+    app.commandLine.appendSwitch('disable-http-cache');
+}
+
 app.on('ready', function() {
     main_window = new BrowserWindow({
         webPreferences: { nodeIntegration: true, }, // https://stackoverflow.com/a/55908510/4891717
