@@ -306,26 +306,29 @@ function load_images() {
         if (err) {
             lg.error('ERROR LOADING ICON.PNG: ' + err)
         } else {
-            $('#logos_div').append($('<img>', {
+            var img = $('<img>', {
                 id: 'ctd_logo',
                 src: 'data:image/png;base64,' + data,
                 style: 'display: none;',
-            }));
-            $('#logos_div>img').fadeIn(1000)
+            });
+            $('#logos_div').append(img);
+
+            fs.readFile(path.join(loc.img, 'atlantos_logo.svg'), {encoding: 'base64'}, function(err, data) {
+                if (err) {
+                    lg.error('ERROR LOADING ATLANTOS_LOGO.SVG: ' + err)
+                } else {
+                    var img = $('<img>', {
+                        id: 'atlantos_logo',
+                        src: 'data:image/svg+xml;base64,' + data,
+                        style: 'display: none;',
+                    });
+                    $('#logos_div').append(img);
+                    $('#logos_div img').fadeIn(1000);
+                }
+            });
         }
     });
 
-    fs.readFile(path.join(loc.img, 'atlantos_logo.svg'), {encoding: 'base64'}, function(err, data) {
-        if (err) {
-            lg.error('ERROR LOADING ATLANTOS_LOGO.SVG: ' + err)
-        } else {
-            $('#logos_div').append($('<img>', {
-                id: 'atlantos_logo',
-                src: 'data:image/svg+xml;base64,' + data,
-            }));
-            $('#logos_div').fadeIn(1000);
-        }
-    });
 
     // NOTE: alternative: https://stackoverflow.com/questions/18264346/how-to-load-an-image-from-url-into-buffer-in-nodejs
     // var request = require('request').defaults({ encoding: null });   // maybe encoding: base64 is enough
