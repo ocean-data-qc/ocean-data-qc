@@ -136,10 +136,8 @@ class CruiseData(CruiseDataExport):
         no_unit_row = False
         for u in units:  # the loop continues only if it is a string and not number
             if not isinstance(u, str) and np.isnan(u):
-                lg.warning('>> NAN IN UNITS ROW')
                 break
             if is_number(u):
-                lg.warning('>> NUMBER IN UNITS ROW')
                 no_unit_row = True
                 break
         if no_unit_row is False:
@@ -230,7 +228,7 @@ class CruiseData(CruiseDataExport):
         if param is not None and isinstance(param, str) and not param.endswith(FLAG_END):
             flag = param + FLAG_END
             if flag not in self.df and param not in NON_QC_PARAMS:
-                lg.warning('>> CREATING FLAG: {}'.format(flag))
+                lg.info('>> CREATING FLAG COLUMN: {}'.format(flag))
                 values = ['2'] * len(self.df.index)
                 self.df[flag] = values
                 self.cols[flag] = {
@@ -270,9 +268,7 @@ class CruiseData(CruiseDataExport):
 
     def get_cols_from_settings_file(self):
         """ The columns are set directly from the settings.json file """
-        lg.warning('-- SET COLS FROM SETTINGS FILE --')
         self.cols = self.env.f_handler.get('columns', path.join(TMP, 'settings.json'))
-        lg.warning(f'>> COLS: {self.cols}')
 
     def get_col_type(self, column=''):
         ''' Return a list of column types associated to the column argument '''
@@ -571,7 +567,7 @@ class CruiseData(CruiseDataExport):
                 * get the columns with int values   > precision = 0
                 * get the columns with str values   > precision = False
         '''
-        lg.warning('-- SET COL PRECISIONS')
+        lg.info('-- SET COL PRECISIONS')
         pd_precision = 0
         float_prec_dict = {}
         for c in self.df.select_dtypes(include=['float64']):
@@ -605,7 +601,6 @@ class CruiseData(CruiseDataExport):
                 self.cols[c]['data_type'] = 'integer'
 
         for c in self.df.select_dtypes(include=['object']):  # or exclude=['int8', 'int16', 'int32', 'int64', 'float64']
-            lg.warning(f'>> OBJECT COL: {c}')
             self.cols[c]['precision'] = False
             self.cols[c]['data_type'] = 'string'
 

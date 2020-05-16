@@ -21,7 +21,7 @@ try:
 except Exception:
     try:
         from winmagic import magic  # TODO: is this working on linux/osx?
-                                #       because I would need only one import
+                                    #       because I would need only one import
     except:
         import mimetypes
 

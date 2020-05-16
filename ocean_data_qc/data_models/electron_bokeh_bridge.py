@@ -34,7 +34,6 @@ class ElectronBokehBridge(Environment):
     bridge_plot_callback = None
 
     def __init__(self):
-        lg.warning('-- MESSAGES BRIDGE')
         self.env.bk_bridge = self
 
         self._init_bridge_plot()
