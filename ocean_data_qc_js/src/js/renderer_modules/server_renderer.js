@@ -37,12 +37,11 @@ module.exports = {
         $('body').css('overflow-y', 'hidden');  // to prevent two scrolls on the right
         tools.show_loader();
         var _checkBokehSate = setInterval(function() {
-            lg.info('>> CHECK BOKEH STATE');
-            // NOTE: check if bokeh loading, the tile server and the octave detection are already done
-            if ($('#octave_version').text() != 'Checking...') {
-                lg.warn('>> OCTAVE DETECTION IS NOT FINISHED YET')
-            }
-            if ($('body').data('bokeh_state') == 'ready' && $('body').data('ts_state') != 'checking' && $('#octave_version').text() != 'Checking...') {
+            lg.info('>> BOKEH STATE: ' + $('body').data('bokeh_state')
+                    + ' | OCTAVE STATE: ' + $('body').data('oct_state'));
+            if ($('body').data('bokeh_state') == 'ready' && $('body').data('ts_state') != 'checking'
+               && $('body').data('oct_state') == 'checked') {
+
                 clearInterval(_checkBokehSate);
                 if ($('body').data('ts_state') == 'offline') {
                     ipcRenderer.send('run-tile-server');
@@ -193,7 +192,7 @@ module.exports = {
         }
     },
 
-    set_octave_version() {
+    set_octave_version: function() {
         lg.info('-- SET OCTAVE VERSION')
         var self = this;
         self.octave_version = false;
@@ -202,6 +201,7 @@ module.exports = {
             self.set_octave_info('Undetected');
             data.set({'octave_version': false}, loc.shared_data);
             data.set({'octave_path': false}, loc.shared_data);
+            $('body').data('oct_state', 'checked');
             return;
         }
 
@@ -219,13 +219,15 @@ module.exports = {
                 //       Expected answer: "ans = 4.1.4"
                 self.octave_version = full_str_version.split('=')[1].trim();
                 data.set({'octave_version': self.octave_version}, loc.shared_data);
-                self.set_octave_info()
+                self.set_octave_info();
+                $('body').data('oct_state', 'checked');
             }
         });
         octave.stderr.on('data', (data) => {
             self.set_octave_info(`Error detecting Octave version: ${data}`);
             data.set({'octave_version': false}, loc.shared_data);
             data.set({'octave_path': false}, loc.shared_data);
+            $('body').data('oct_state', 'checked');
         });
     },
 
@@ -263,6 +265,7 @@ module.exports = {
                 lg.warn('>> Octave undetected in PATH');
                 data.set({'octave_path': false, 'octave_version': false, }, loc.shared_data);
                 self.set_octave_info('Undetected');
+                $('body').data('oct_state', 'checked');
             } else {
                 self.octave_path = results['octave_path'];
                 data.set({'octave_path': self.octave_path }, loc.shared_data);
@@ -284,13 +287,18 @@ module.exports = {
                 lg.warn('>>Error detecting Octave executable');
                 data.set({'octave_path': false, 'octave_version': false, }, loc.shared_data);
                 self.set_octave_info('Undetected in PATH');
+                $('body').data('oct_state', 'checked');
             } else {
                 if (results['octave_path'] === false) {
-                    tools.showModal(
-                        'ERROR',
-                        'Octave was not found in the selected folder with the names: octave-cli.exe or octave-cli. ' +
-                        'Therefore, the library "oct2py" could not be imported. Please, select the correct folder.'
-                    );
+                    tools.show_modal({
+                        'type': 'ERROR',
+                        'msg_type': 'html',
+                        'msg': 'Octave was not found in the selected folder with the names:' +
+                               ' <span class="code_msg">octave-cli.exe</span> or <span class="code_msg">octave-cli</span>. ' +
+                               'Therefore, the library <span class="code_msg">oct2py</span> could not be imported. ' +
+                               'Please, select the correct folder.'
+                    });
+                    return;
                 }
                 self.octave_path = results['octave_path'];
                 data.set({'octave_path': self.octave_path }, loc.shared_data);

@@ -154,7 +154,7 @@ module.exports = {
         var cs_p = cs_rs.pipe(cs_ws);
         cs_p.on('close', function(){
             var _checkBokehSate = setInterval(function() {
-                if ($('body').data('bokeh_state') == 'ready') {  // checks if bokeh is already loaded
+                if ($('body').data('bokeh_state') == 'ready' && $('body').data('oct_state') == 'checked') {
                     clearInterval(_checkBokehSate);
                     self.init_form();
                 }

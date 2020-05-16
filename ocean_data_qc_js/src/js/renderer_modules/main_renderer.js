@@ -39,8 +39,10 @@ server_renderer.init();
 server_renderer.set_python_path();
 data_renderer.ipc_renderer = ipcRenderer;
 
-$('body').data('bokeh_state', 'not-ready');
-$('body').data('ts_state', 'checking');
+$('body').data('bokeh_state', 'not-ready');  // bokeh server state: 'ready', 'not-ready'
+$('body').data('ts_state', 'checking');      // tile server state: 'checking', 'offline', 'online'
+$('body').data('oct_state', 'checking');     // octave state: 'checking', 'checked'
+
 tools.multi_modal_fix();
 load_images();
 check_port();    // TODO: move function into tools module
@@ -300,8 +302,6 @@ function show_reopen_session_modal(arg) {
  *  they are not read well
  */
 function load_images() {
-    // TODO: the window should be shown when all the images are completely loaded.
-    //       or save some space to avoid the strange change of size behaviour
     fs.readFile(path.join(loc.img, 'icon.png'), {encoding: 'base64'}, function(err, data) {
         if (err) {
             lg.error('ERROR LOADING ICON.PNG: ' + err)
@@ -328,18 +328,6 @@ function load_images() {
             });
         }
     });
-
-
-    // NOTE: alternative: https://stackoverflow.com/questions/18264346/how-to-load-an-image-from-url-into-buffer-in-nodejs
-    // var request = require('request').defaults({ encoding: null });   // maybe encoding: base64 is enough
-    // request.get(s3Url, function (err, response, body) {
-    //       //process exif here
-    // });
-
-    // NOTE 2: $.get did not work for local files: https://electronjs.org/docs/tutorial/application-packaging#web-api
-    // $.get('file:///path/to/example.asar/file.txt', (data) => {
-    //   console.log(data)
-    // })
 }
 
 // ---------------------------------  LISTENERS ---------------------------------------------- //
@@ -380,6 +368,7 @@ ipcRenderer.on('relaunch-bokeh', (event, arg) => {
 });
 
 ipcRenderer.on('set-octave-path', (event, arg) => {
+    $('body').data('oct_state', 'checking');
     server_renderer.set_octave_path(arg.manual_octave_folder_path);
 });
 
