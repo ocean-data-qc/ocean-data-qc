@@ -4,6 +4,7 @@
     background-color: #cce5ff !important;
     color: #004085 !important;
     padding: 0.4rem 0.6rem !important;
+    font-size: 0.8rem;
 }
 .tooltip.bs-tooltip-right .arrow:before {
     border-right-color: #cce5ff !important;
@@ -24,6 +25,7 @@
     background-color: #f8d7da !important;
     color: #721c24 !important;
     padding: 0.4rem 0.6rem !important;
+    font-size: 0.8rem;
 }
 .tooltip-error.bs-tooltip-right .arrow:before {
     border-right-color: #f8d7da !important;
@@ -43,16 +45,15 @@
 .popover {
     background-color: #cce5ff !important;
     max-width: 500px !important;
-    border-color: rgb(0, 64, 133, 0.7) !important;
-
-    /* TODO: if the popover is to the left or top I don't this is going to work well because of the arrow */
-    box-shadow: 2px 2px 4px grey;
+    border-color: rgb(0, 64, 133, 0.5) !important;
+    box-shadow: 0px 0px 10px -2px grey;
 }
 .popover .popover-body {
     color: #004085 !important;
+    font-size: 0.8rem;
 }
 .bs-popover-right > .arrow::before, .bs-popover-auto[x-placement^="right"] > .arrow::before {
-    border-right-color: rgba(0, 64, 133, 0.7) !important;
+    border-right-color: rgba(0, 64, 133, 0.5) !important;
 }
 .bs-popover-right > .arrow::after, .bs-popover-auto[x-placement^="right"] > .arrow::after {
     border-right-color: #cce5ff !important;

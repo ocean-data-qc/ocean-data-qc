@@ -39,6 +39,7 @@ h5 {
 .card {
     border: 0px !important;
     margin-top: 30px !important;
+    box-shadow: 0px 0px 10px -2px grey;
 }
 
 .card .card-title {
@@ -203,6 +204,12 @@ img#atlantos_logo {
 
 .modal-lg {
     max-width: 60% !important;
+}
+
+.code_msg {
+    font: 0.7rem Consolas,Monaco,Courier New,Courier,monospace;
+    white-space: nowrap;
+    background-color: #cce5ff;
 }
 
 /* TITLE */
