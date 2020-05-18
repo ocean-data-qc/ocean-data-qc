@@ -17,79 +17,65 @@ const loc = require('locations');
 const lg = require('logging');
 const data = require('data');
 const tools = require('tools');
-const column_project = require('column_project');
+const column_app = require('column_app');
 
 
 module.exports = {
     init: function(){
-        lg.warn('-- TAB APP');
+        lg.info('-- TAB APP');
         var self = this;
         ipcRenderer.on('tab-app', (event, args) => {
-            var url = path.join(loc.modals, 'tab_app.html');
-            tools.load_modal(url, function() {
-                self.init_form();
-            });
+            self.init_form();
         });
     },
 
     init_form: function() {
+        lg.info('-- INIT FORM (TAB_APP)');
         var self = this;
-        var _checkBokehSate = setInterval(function() {
-            if ($('body').data('bokeh_state') == 'ready') {  // checks if bokeh is already loaded
-                clearInterval(_checkBokehSate);
-                self.load_columns();
-                self.load_tabs();
-                self.load_buttons();
-                self.load_save_button(); // different implementation in the bokeh modal form
-                self.load_column_project_button();
-                self.load_help_popover();
+        tools.show_wait_cursor();
+        var url = path.join(loc.modals, 'tab_app.html');
+        tools.load_modal(url, function() {
+            self.load_columns();
+            self.load_tabs();
+            self.load_buttons();
+            self.load_save_button();  // different implementation in the bokeh modal form
+            self.load_column_app_button();
+            self.load_help_popover();
 
-                tools.show_default_cursor();
-                $('#modal_trigger_tab_app').click();
-            }
-        }, 100);
-
+            $('#modal_trigger_tab_app').click();
+            tools.show_default_cursor();
+        });
     },
 
     load_columns: function() {
         var self = this;
         var columns = data.get('columns', loc.custom_settings);
-        self.file_columns = Object.keys(columns)
+        self.app_columns = Object.keys(columns)
+        // lg.warn('>> COLUMNS: ' + JSON.stringify(self.app_columns, null, 4));
+
+        // app_columns = params + flags
+        self.params = [];
+        self.app_columns.forEach(c => {  // ES6
+            var f = c.substr(c.length - 7);
+            if (f !== '_FLAG_W') {
+                self.params.push(c);
+            }
+        });
 
         var computed_params = data.get('computed_params', loc.custom_settings);
         self.cps_columns = [];
         computed_params.forEach(function(cp) {
             self.cps_columns.push(cp['param_name']);
+            self.app_columns.push(cp['param_name']);
         });
-
-        // file_columns = params + flags
-        self.params = [];
-        self.file_columns.forEach(c => {  // ES6
-            var f = c.substr(c.length - 7);
-            if (f != '_FLAG_W') {
-                self.params.push(c);
-            }
-        });
+        self.app_columns.sort();
+        // lg.warn('>> COMPUTED PARAM: ' + JSON.stringify(self.cps_columns, null, 4));
     },
 
     load_tabs: function(cols_dict=false) {
         var self = this;
         var qc_plot_tabs = data.get('qc_plot_tabs', loc.custom_settings);
-        var qc_plot_tabs_final = {};
-        Object.keys(qc_plot_tabs).forEach(function(tab) {
-            qc_plot_tabs[tab].forEach(function (graph) {
-                if (self.file_columns.includes(tab)) {
-                    if (self.file_columns.includes(graph.x) && self.file_columns.includes(graph.y)) {
-                        if (tab in qc_plot_tabs_final) {
-                            qc_plot_tabs_final[tab].push(graph);
-                        } else {
-                            qc_plot_tabs_final[tab] = [graph];
-                        }
-                    }
-                }
-            });
-        });
-        self.create_qc_tab_tables(qc_plot_tabs_final);
+        self.create_qc_tab_tables(qc_plot_tabs);
     },
 
     load_buttons: function() {
@@ -104,7 +90,7 @@ module.exports = {
                     text: column,
                 }));
             })
-            self.file_columns.forEach(function(column) {
+            self.app_columns.forEach(function(column) {
                 if (self.cps_columns.includes(column)) {
                     new_fieldset.find('.qc_tabs_table_row select').append($('<option>', {
                         value: column,
@@ -174,9 +160,6 @@ module.exports = {
                             var title = $(this).find('input[name=title]').val();
                             var x_axis = $(this).find('select[name=x_axis]').val();
                             var y_axis = $(this).find('select[name=y_axis]').val();
-                            if (title == '') {
-                                title = x_axis + ' vs ' + y_axis;
-                            }
                             qc_plot_tabs[tab].push({
                                 'title': title,
                                 'x': x_axis,
@@ -187,24 +170,29 @@ module.exports = {
                 }
             });
             data.set({'qc_plot_tabs': qc_plot_tabs }, loc.custom_settings);
-            lg.info('>> CUSTOM SETTINGS: ' + JSON.stringify(loc.custom_settings, null, 4));
+            // lg.info('>> CUSTOM SETTINGS: ' + JSON.stringify(loc.custom_settings, null, 4));
             $('#dummy_close').click();
         });
     },
 
-    load_column_project_button() {
-        $('.column_project').on('click', function() {
-            column_project.load();
+    load_column_app_button() {  // TODO: migrate to tab_app
+        $('.column_app').on('click', function() {
+            column_app.load();
         });
     },
 
     create_qc_tab_tables: function(qc_plot_tabs={}) {
-        lg.info('-- CREATE QC TAB TABLES');
+        lg.info('-- CREATE QC TAB TABLES (TAB_APP)');
         var self = this;
         // lg.info('>> TABS: ' + JSON.stringify(qc_plot_tabs, null, 4));
 
-        if (qc_plot_tabs == {} || self.file_columns == []) {
-            lg.error('>> QC PLOT TABS EMPTY or THE FILE DOES NOT HAVE ANY COLUMNS');
+        if (qc_plot_tabs == {} || self.app_columns == []) {
+            // TODO: anyway, add columns from scratch should be allowed
+            tools.show_modal({
+                'msg_type': 'text',
+                'type': 'ERROR',
+                'msg': 'There are no columns in the settings form.',
+            });
             return;
         }
 
@@ -273,7 +261,7 @@ module.exports = {
     get_new_row: function(graph=null) {
         var self = this;
         var new_row = $('#qc_tabs_table .qc_tabs_table_row').first().clone();
-        self.file_columns.forEach(function (column) {
+        self.app_columns.forEach(function (column) {
             var option_attrs = {
                 value: column,
                 text : column,

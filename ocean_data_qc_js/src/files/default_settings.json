@@ -39,10 +39,10 @@
         },
         "STNNBR": {
             "orig_name": false,
-            "data_type": "integer",
+            "data_type": "",
             "types": [],
             "unit": false,
-            "precision": 0
+            "precision": false
         },
         "CASTNO": {
             "orig_name": false,

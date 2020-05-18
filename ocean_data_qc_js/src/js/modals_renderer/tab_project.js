@@ -262,7 +262,6 @@ module.exports = {
             });
             self.load_row_buttons(new_fieldset);
         });
-
     },
 
     load_accept_and_plot_button() {

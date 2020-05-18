@@ -77,9 +77,7 @@ module.exports = {
         //      * msg: message to show in the modal form
         //      * [title]: customized title
         //      * [callback]: callback function to run after the dialog is closed
-
         var self = this;
-        lg.info('-- NEW SHOW MODAL >> PARAMS: ' + JSON.stringify(params, null, 4));
 
         var type = '';
         if ('type' in params) {
