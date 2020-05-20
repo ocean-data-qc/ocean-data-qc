@@ -572,3 +572,13 @@ body, .form-control-sm, .btn {
 .modal-title>fa, .modal-title-text {
     font-size: 0.9rem !important
 }
+
+/* JQUERY DATA TABLE */
+
+table.dataTable thead th[class^="sorting"]:before {
+    right: 1.5em !important;
+}
+
+table.dataTable thead th[class^="sorting"]:after {
+    right: 1em !important;
+}

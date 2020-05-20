@@ -192,7 +192,7 @@ module.exports = {
             name: 'txt_cur_unit',
             class: 'form-control form-control-sm',
             type: 'text',
-            val: cur_unit
+            value: cur_unit
         });
         var t = ['empty', 'string'];
         if (t.includes(self.pj_cols[col_name]['data_type'])) {

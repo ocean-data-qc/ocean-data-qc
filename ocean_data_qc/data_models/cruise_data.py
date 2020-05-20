@@ -514,9 +514,9 @@ class CruiseData(CruiseDataExport):
 
     def _replace_if_not_exists(self, columns, orig_name, replace_with):
         if not orig_name in columns:
-            columns = [re.sub(r'\b'+replace_with+r'\b', orig_name, c) for c in columns]
+            columns = [re.sub(r'\b' + replace_with + r'\b', orig_name, c) for c in columns]
             if replace_with + 'F' in columns:
-                columns = [re.sub(r'\b'+replace_with + 'F'+r'\b', orig_name + FLAG_END, c) for c in columns]
+                columns = [re.sub(r'\b' + replace_with + 'F' + r'\b', orig_name + FLAG_END, c) for c in columns]
         return columns
 
     def _map_col_names(self, names):
@@ -526,7 +526,7 @@ class CruiseData(CruiseDataExport):
             result = self._replace_if_not_exists(result, m[0], m[1])
         for name in result:
             if name + 'F' in result:
-                result = [re.sub(r'\b'+name + 'F'+r'\b', name + FLAG_END, r) for r in result]
+                result = [re.sub(r'\b' + name + 'F' + r'\b', name + FLAG_END, r) for r in result]
         return result
 
     def _replace_nan_values(self):
