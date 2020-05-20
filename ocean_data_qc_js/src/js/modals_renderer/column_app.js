@@ -130,8 +130,9 @@ module.exports = {
             value: col_name
         });
         input.on('change', function() {
+            $(this).attr('value', $(this).val());  // I had to do this to make it work
             var td = $(this).parent('td');
-            $('#table_column_app').DataTable().cell(td).data($(this).val()).draw();
+            $('#table_column_app').DataTable().cell(td).data(td.html()).draw();
         });
         return input;
     },
