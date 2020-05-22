@@ -252,7 +252,7 @@ module.exports = {
         });
     },
 
-    question: function(args) {
+    modal_question: function(args) {
         // Show a modal form with a question (Thge possible answer is "Yes" or "No")
         // args = {
         //     'msg': 'modal message',

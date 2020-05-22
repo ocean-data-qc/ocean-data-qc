@@ -447,7 +447,7 @@ module.exports = {
 
     json_template_restore_to_default: function() {
         var self = this;
-        tools.question({
+        tools.modal_question({
             'title': 'Overwrite Settings?',
             'msg': 'Are you sure that you want to overwrite the Settings File with the default values?' +
                     ' The changes that you may have done will be lost.',

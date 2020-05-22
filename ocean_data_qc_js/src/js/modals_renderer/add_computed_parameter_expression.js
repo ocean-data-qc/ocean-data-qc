@@ -201,7 +201,7 @@ module.exports = {
                 return $(this).val();
             }).get();
             if (cps.includes(expr_name)) {
-                var args = {
+                tools.modal_question({
                     'title': 'Overwrite this parameter?',
                     'msg': 'A computer parameter already exists with that name. Would you like to overwrite it?' +
                            ' If it is a default computed parameter, it will be ovewritten as well.',
@@ -209,8 +209,7 @@ module.exports = {
                     'self': self,        // callback argument >> TODO: try to do this better,
                                          // this is the cleanest way I found so far
                     'calback_no': false,
-                };
-                tools.question(args);
+                });
                 return;
             }
             self.compute_cp(self);

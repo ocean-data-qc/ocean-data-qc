@@ -127,10 +127,13 @@ module.exports = {
             name: 'txt_col_name',
             class: 'form-control form-control-sm',
             type: 'text',
-            value: col_name
+            value: col_name === false ? '' : col_name
         });
         input.on('change', function() {
-            $(this).attr('value', $(this).val());  // I had to do this to make it work
+            // Update the current value of the field and reload the table "data"
+            // to make work the search again
+
+            $(this).attr('value', $(this).val());
             var td = $(this).parent('td');
             $('#table_column_app').DataTable().cell(td).data(td.html()).draw();
         });
@@ -138,19 +141,27 @@ module.exports = {
     },
 
     get_txt_orig_name: function(col_name=false) {
+        lg.warn('-- GET TXT ORIG NAME');
+        lg.warn('>> COL NAME: ' + col_name);
         var self = this;
-        var orig_name = self.cs_cols[col_name]['orig_name'];
+        var orig_name = '';
+        if (col_name !== false) {
+            orig_name = self.cs_cols[col_name]['orig_name'];
+        }
         return $('<input>', {
             name: 'txt_orig_name',
             class: 'form-control form-control-sm',
             type: 'text',
-            value: orig_name
+            value: orig_name === false ? '' : orig_name
         });
     },
 
     get_data_type: function(col_name=false) {
         var self = this;
-        var tmp_data_type = self.cs_cols[col_name]['data_type'];
+        var tmp_data_type = '';
+        if (col_name !== false) {
+            var tmp_data_type = self.cs_cols[col_name]['data_type'];
+        }
         // lg.warn('>> TMP DATA TYPE: ' + tmp_data_type);
 
         var sel_cur_data_type = $('<select>', {
@@ -207,7 +218,10 @@ module.exports = {
 
     get_cur_prec: function(col_name=false, sel_cur_data_type=false) {
         var self = this;
-        var tmp_prec = self.cs_cols[col_name]['precision'];
+        var tmp_prec = 'none';
+        if (col_name !== false) {
+            tmp_prec = self.cs_cols[col_name]['precision'];
+        }
         var sel_cur_prec = $('<select>', {
             class: 'form-control form-control-sm',
             name: 'sel_cur_prec',
@@ -229,9 +243,12 @@ module.exports = {
             }
             sel_cur_prec.append(opt);
         }
-        if (tmp_prec === false) {
-            var data_types = ['integer', 'string', 'none'];
-            if (data_types.includes(sel_cur_data_type.val())) {
+        if ((tmp_prec === false || tmp_prec == 0) && sel_cur_data_type !== false) {
+            if (sel_cur_data_type.val() == 'integer') {
+                sel_cur_prec.attr('disabled', true);
+                sel_cur_prec.val('0');
+            }
+            if (['string', 'none'].includes(sel_cur_data_type.val())) {
                 sel_cur_prec.attr('disabled', true);
                 sel_cur_prec.val('none');
             }
@@ -242,8 +259,10 @@ module.exports = {
     get_txt_cur_unit: function(col_name=false) {
         var self = this;
         var cur_unit = '';
-        if (self.cs_cols[col_name]['unit'] !== false) {
-            cur_unit = self.cs_cols[col_name]['unit'];
+        if (col_name !== false) {
+            if (self.cs_cols[col_name]['unit'] !== false) {
+                cur_unit = self.cs_cols[col_name]['unit'];
+            }
         }
         var txt_cur_unit = $('<input>', {
             name: 'txt_cur_unit',
@@ -251,9 +270,10 @@ module.exports = {
             type: 'text',
             value: cur_unit
         });
-        if (self.cs_cols[col_name]['data_type'] === 'string') {
-            txt_cur_unit.attr('disabled', true);
-        }
+        // TODO: ask if string fields can have units
+        // if (self.cs_cols[col_name]['data_type'] === 'string') {
+        //     txt_cur_unit.attr('disabled', true);
+        // }
         return txt_cur_unit;
     },
 
@@ -263,18 +283,40 @@ module.exports = {
             type: 'button'
         });
         bt.on('click', function() {
-            lg.warn('>> BT CLICK');
-            var data_table = $('#table_column_app').DataTable();  // get the obj reference if it is already crated
+            lg.warn('>> REMOVE ROW');
             var tr = $(this).parents('tr');
-            var row = data_table.row(tr);
 
-            lg.warn('>> DATA TABLE: ' + JSON.stringify(data_table, null, 4));
-            lg.warn('>> TR: ' + JSON.stringify(tr, null, 4));
-            lg.warn('>> ROW: ' + JSON.stringify(row, null, 4));
+            // CHECK IF THE PARAM IS BEING USED IN the calculated equations
+            var col = tr.find('input[name="txt_col_name"]').val();
+            lg.warn('>> COL: ' + col);
+            var cps = data.get('computed_params', loc.default_settings);
+            var col_in_cps = [];
+            cps.forEach(function(elem) {
+                if (elem.equation.includes(col)) {
+                    col_in_cps.push(elem.param_name);
+                }
+            });
+            lg.warn('>> CP WITH THE REMOVED COLUMN: ' + col_in_cps);
+            if (col_in_cps.length == 0) {
+                tools.modal_question({
+                    'title': 'Remove row?',
+                    'msg': 'Are you sure you want to remove this row?',
+                    'callback_yes': function() {
+                        var data_table = $('#table_column_app').DataTable();  // get the obj reference if it is already crated
+                        data_table.row(tr).remove().draw();
 
-            if (row.child.isShown()) {
-                row.child.remove();
-                tr.removeClass('shown');
+                        // TODO: remove the associated column as well (flag or viceversa)
+
+                        tools.show_snackbar('Column ' + col + ' removed');
+                    },
+                })
+            } else {
+                tools.show_modal({
+                    msg_type: 'text',
+                    type: 'ERROR',
+                    msg: 'The column ' + col + ' is used in the following calculared parameters and cannot be removed or edited:',
+                    code: col_in_cps.join('\n')
+                });
             }
         });
         return bt;
@@ -283,8 +325,88 @@ module.exports = {
     load_add_column_button: function() {
         lg.warn('-- LOAD ADD COLUMN BUTTON')
         var self = this;
+        $('#add_column').on('click', function() {
+            var txt_col_name = self.get_txt_col_name();
+            var txt_orig_name = self.get_txt_orig_name();
+            var data_type = self.get_data_type()
+            var sel_cur_prec = self.get_cur_prec();
+            var txt_cur_unit = self.get_txt_cur_unit();
+            var bt_val = self.get_validate_bt();
 
+            var tr = $('<tr>', {
+                class: 'new_col'
+            });
+            tr.append(
+                $('<td>', {html: txt_col_name }),
+                $('<td>', {html: txt_orig_name }),
+                $('<td>', {html: data_type }),
+                $('<td>', {html: sel_cur_prec }),
+                $('<td>', {html: txt_cur_unit }),
+                $('<td>', {html: bt_val }),
+            );
 
+            var data_table = $('#table_column_app').DataTable();
+            data_table.row.add(tr).draw();
+
+            var index = 0, //0 sets the index as the first row
+            rowCount = data_table.data().length-1,
+            insertedRow = data_table.row(rowCount).data(),
+            tempRow;
+
+            for (var i=rowCount;i>index;i--) {
+                tempRow = data_table.row(i-1).data();
+                data_table.row(i).data(tempRow);
+                data_table.row(i-1).data(insertedRow);
+            }
+            //refresh the page
+            data_table.draw(false);
+        });
     },
 
+    get_validate_bt: function() {
+        lg.warn('-- GET VALIDATE BUTTON');
+        var self = this;
+        var bt = $('<button>', {
+            'class': 'validate_col btn btn-success fa fa-check',
+            'type': 'button',
+            'title': 'Validate column field',
+            'data-toggle': 'tooltip',
+            'data-placement': 'bottom',
+        });
+        bt.tooltip();
+
+        bt.on('click', function() {
+            lg.warn('>> VALIDATE ROW');
+            var tr = $(this).parents('tr');
+
+            var cps = data.get('computed_params', loc.custom_settings);
+            var cps_list = []
+            cps.forEach(function(elem) {
+                cps_list.push(elem.param_name);
+            });
+
+            var col = tr.find('input[name="txt_col_name"]').val();
+            var cs_cols = Object.keys(self.cs_cols);
+
+            if (cs_cols.includes(col)) {
+                tools.show_modal( {
+                    msg_type: 'text',
+                    type: 'VALIDATION ERROR',
+                    msg: 'The column ' + col + ' already exists.',
+                })
+            } else if (cps_list.includes(col)) {
+                tools.show_modal({
+                    msg_type: 'text',
+                    type: 'VALIDATION ERROR',
+                    msg: 'The column ' + col + ' is a calculated parameter name.' +
+                         ' You need to use a different one',
+                })
+            } else {
+                tr.removeClass('new_col');
+
+                // replace button
+            }
+        });
+        return bt
+    }
 }

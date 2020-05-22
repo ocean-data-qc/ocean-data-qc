@@ -582,3 +582,11 @@ table.dataTable thead th[class^="sorting"]:before {
 table.dataTable thead th[class^="sorting"]:after {
     right: 1em !important;
 }
+
+.delete_col, .validate_col {
+    width: 2.5rem;
+}
+
+.new_col {
+    background-color: #d4edda;
+}
