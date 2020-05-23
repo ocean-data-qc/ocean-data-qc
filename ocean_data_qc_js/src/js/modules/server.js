@@ -613,5 +613,25 @@ module.exports = {
         }
         self.web_contents.on('will-navigate', handleRedirect)
         self.web_contents.on('new-window', handleRedirect)
+    },
+
+    load_bokeh: function() {
+        var self = this;
+        var bokeh_port = data.get('bokeh_port', loc.shared_data);
+        port_scanner.checkPortStatus(bokeh_port, function(error, status) {
+            lg.warn('>> STATUS: ' + status)
+            if (status == 'open') {
+                if (self.dom_ready) {
+                    self.web_contents.send('bokeh-error-loading');
+                } else {
+                    self.web_contents.on('dom-ready', () => {
+                        self.web_contents.send('bokeh-error-loading');
+                    });
+                }
+            } else {
+                self.launch_bokeh();  // bokeh initialization on the background
+                self.load_bokeh_on_iframe();
+            }
+        });
     }
 }
