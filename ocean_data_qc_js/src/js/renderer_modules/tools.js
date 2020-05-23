@@ -9,6 +9,7 @@ const path = require('path');
 const app_module_path = require('app-module-path');
 
 const bokeh_calls = require('./bokeh_calls');
+const popper = require('popper.js');
 
 const lg = require('logging');
 const loc = require('locations');
@@ -259,6 +260,7 @@ module.exports = {
         //     'title': 'modal title',
         //     'calback_yes': callback_yes,
         //     'calback_no': callback_no,
+        //     'calback_close': callback_close,
         //     'self': self,                    // this should be used only if the callback function need it to work
         // }
 
@@ -278,11 +280,6 @@ module.exports = {
                 args['callback_no'] = false;
             }
 
-            // ICON
-            $('#modal_question .modal-title').css('color', '#f0ad4e');
-            $('#modal_question .modal-title-icon').removeClass().addClass('fa fa-question-circle');
-
-            // INFO
             $('#modal_question_content').html(args.msg);
             $('#modal_question .modal-title-text').text(args.title);
 
@@ -301,6 +298,13 @@ module.exports = {
                     args.callback_no();
                 }
             });
+
+            if (args.callback_close !== false && typeof(args.callback_close) === 'function') {
+                $('#modal_question .close').on('click', function() {
+                    args.callback_close();
+                });
+            }
+
             $('#modal_trigger_modal_question_form').click();
         });
     },
@@ -435,5 +439,10 @@ module.exports = {
                 $(_this).popover('hide');
             });
         })
+    },
+
+    popover_fix: function() {
+        // To prevent blurred text in tooltips: https://github.com/twbs/bootstrap/issues/22610
+        popper.Defaults.modifiers.computeStyle.gpuAcceleration = !(window.devicePixelRatio < 1.5 && /Win/.test(navigator.platform));
     }
 }

@@ -60,44 +60,6 @@
           </div>
         </div>
 
-        <!-- PORT MANAGING >> Load this to the modal form -->
-        <!-- TODO: remove this because if the port is busy it means that the python process should be killed -->
-
-        <div id="busy_port" style="display: none;" >
-          <h2>Port managing</h2>
-          <div id="busy_port_alert" class="alert alert-danger" role="alert">
-            <strong>ERROR, BUSY PORT!</strong> Bokeh uses the port 5006 to run, but it is busy by some other task. The Bokeh Server cannot be launched. If you want to change the port permanently do it directly on the settings JSON file.
-          </div>
-
-          <!-- <form id="portForm" class="form-horizontal">
-            <div class="form-group">
-              <label class="control-label col-sm-2" for="new_port">Assign this new port:</label>
-              <div class="col-sm-10">
-                <input id="new_port" class="form-control" type="text" placeholder="Enter port" style="max-width: 200px;">
-                <small id="new_port_validate_msg" style="display: none; color: red;">The username is required</small>
-              </div>
-            </div>
-            <div class="form-group">
-              <div class="col-sm-offset-2 col-sm-10">
-                <button id="assignPort" type="button" class="btn btn-primary">Assign new port</button>
-                or <button type="button" class="btn btn-danger">Terminate task by force [TO-DO]</button>
-              </div>
-            </div>
-          </form> -->
-        </div>
-
-        <!-- <div id="free_port" style="display: none;" >
-          <h2 class="mb-2">Port managing</h2>
-          <div id="free_port_alert" class="alert alert-success">
-            Bokeh serve will be listening to the port:
-          </div>
-          <div class="form-group">
-            <div>
-              <button id="goHome" type="button" class="btn btn-primary">Go to welcome page</button>
-            </div>
-          </div>
-        </div> -->
-
         <!-- WELCOME MENU PANELS -->
 
         <div id="panels" class="row col-xs-12 card-deck">

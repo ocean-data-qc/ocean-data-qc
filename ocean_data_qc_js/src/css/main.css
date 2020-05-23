@@ -20,6 +20,10 @@ h2 {
     margin-bottom: 40px;
 }
 
+h4 {
+    padding: 20px 0 15px 0;
+}
+
 h5 {
     font-weight: bold;
     color: #337ab7;
@@ -571,6 +575,10 @@ body, .form-control-sm, .btn {
 
 .modal-title>fa, .modal-title-text {
     font-size: 0.9rem !important
+}
+
+#modal_question .modal-title {
+    color: #e07714;
 }
 
 /* JQUERY DATA TABLE */

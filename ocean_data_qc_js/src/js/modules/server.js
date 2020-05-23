@@ -8,7 +8,7 @@
 const path = require('path');
 const fs = require('fs');
 const python_shell = require('python-shell');
-const portscanner = require('portscanner');
+const port_scanner = require('portscanner');
 const rmdir = require('rimraf');
 const url = require('url');
 const command_exists_sync = require('command-exists').sync;
@@ -430,13 +430,13 @@ module.exports = {
             self.shell = python_shell.run(
                 '', self.python_options, (err, results) => {
                     if (err || typeof(results) == 'undefined') {
-                        lg.error(`>> ERROR RUNNING BOKEH: ${err}`);
-                    }
-                    if (typeof(results) !== 'undefined') {  // actually nothing is returned
-                        if (results != null) {
-                            lg.info('>> OCEAN_DATA_QC_PY RETURNS: ' + results[0]);
+                        lg.error(`>> BOKEH SERVER COULD NOT BE LAUNCHED: ${err}`);
+                        if (self.dom_ready) {
+                            self.web_contents.send('bokeh-error-loading');
                         } else {
-                            lg.error('>> PYTHON SHELL COMMAND RETURNED NULL')
+                            self.web_contents.on('dom-ready', () => {
+                                self.web_contents.send('bokeh-error-loading');
+                            });
                         }
                     }
                 }
@@ -464,7 +464,7 @@ module.exports = {
         var self = this;
         var ensure_one = false;
         var _checkBokehPort = setInterval(function() {
-            portscanner.checkPortStatus(self.bokeh_port, function(error, status) {
+            port_scanner.checkPortStatus(self.bokeh_port, function(error, status) {
                 if (status == 'open') {
                     clearInterval(_checkBokehPort);
                     if (ensure_one === false) {

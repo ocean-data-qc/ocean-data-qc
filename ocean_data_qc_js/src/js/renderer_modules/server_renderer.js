@@ -18,6 +18,7 @@ const urlExists = require('url-exists');
 const fs = require('fs');
 const { spawn } = require('child_process');
 const python_shell = require('python-shell');
+const port_scanner = require('portscanner');
 
 const lg = require('logging');
 const loc = require('locations');
@@ -29,6 +30,43 @@ module.exports = {
     init: function() {
         var self = this;
         self.ipc_renderer = ipcRenderer;
+
+        // NOTE: Bokeh server is still not launched here
+        //       if bokeh port is free, then the modal_question with app error at launching is not going
+        //       to appear even if we open the app twice
+
+        var bokeh_port = data.get('bokeh_port', loc.shared_data);
+        port_scanner.checkPortStatus(bokeh_port, function(error, status) {
+            if (status == 'open') {
+                self.bokeh_error_loading();
+            } else {
+                self.set_python_path();  // later, this method will launch bokeh server
+                self.check_previous_session();
+            }
+        });
+    },
+
+    bokeh_error_loading: function() {
+        var self = this;
+        tools.modal_question({
+            'title': 'Restart app?',
+            'msg': 'Bokeh Server could not be loaded. Other instance of the app may be open or not correctly closed. ' +
+                   'Close it correctly before opening another one. Do you want to restart this instance of the app ' +
+                   'to try it again? If you press "No" this instance will close',
+            'callback_yes': function() {
+                ipcRenderer.send('restart-app');
+            },
+            'callback_no': function() {
+                ipcRenderer.send('exit-app');   // close without throwing any event
+            },
+            'callback_close': function() {
+                ipcRenderer.send('exit-app');
+            }
+        })
+
+        $('#modal_question .close').on('click', function() {
+            no_callback();
+        });
     },
 
     go_to_bokeh: function() {
@@ -462,5 +500,109 @@ module.exports = {
             var self = this;
         }
         self.ipc_renderer.send('json-template-restore-to-default');
+    },
+
+    /* If the folder "files" exists then the application was closed by force
+        ask to the user if try to open the last file, or discard the open file
+    */
+    check_previous_session: function() {
+        var self = this;
+        var file_to_open = data.get('file_to_open', loc.shared_data);
+        lg.info('>> FILE TO OPEN: ' + file_to_open);
+        if (file_to_open != '--updated') {  // if the app is not being updated
+
+            // wait for app detection bokeh >> ready is the only way, but it will take time
+            // before bokeh is launched port detection should take place
+
+            if (fs.existsSync(loc.proj_files)) {
+                lg.info('-- PENDING PREVIOUS SESSION');
+                var proj_name = data.get('project_name', loc.proj_settings);
+                if (proj_name == 'default_settings') {  // if the user did not accept al plot the las time
+                                                        // and the app was interrupted
+                    self.rmv_proj_files();
+                } else {
+                    self.restore_session(file_to_open);
+                }
+            } else {
+                // check if there is file to open
+                if (file_to_open !== false) {
+                    data.set({'file_to_open': false}, loc.shared_data);
+                    self.ipc_renderer.send('open-file', [file_to_open]);
+                }
+            }
+        }
+    },
+
+    rmv_proj_files: function(file_to_open=false) {
+        var self = this;
+        data.set({'file_to_open': false}, loc.shared_data);
+        rmdir(loc.proj_files, function () {
+            // TODO: if an error occur, then the window is shown again, or an error appears
+            lg.info('Directory files removed');
+            if (file_to_open !== false) {
+                self.ipc_renderer.send('open-file', [file_to_open]);
+            }
+        });
+    },
+
+    restore_session: function(file_to_open=false) {
+        var self = this;
+        var msg = '<p>A previous session was not closed correctly. ' +
+                  'Would you like to reopen it? ' +
+                  'If you press "No", or you close this dialog the changes will be lost.</p>'
+
+        if (file_to_open !== false) {
+            msg += '<p>Also, the file you are actually opening is going to be processed instead: </p>' +
+                   '<pre>' + file_to_open + '</pre>';
+        }
+
+        var cb_no = function() {
+            var file_to_open = data.get('file_to_open', loc.shared_data);
+            self.rmv_proj_files(file_to_open);
+        }
+
+        tools.modal_question({
+            title: 'Restore previous open session?',
+            msg: msg,
+            callback_yes: function() {
+                data.set({'file_to_open': false}, loc.shared_data);
+                self.go_to_bokeh();
+            },
+            callback_no: cb_no,
+            callback_close: cb_no,
+            self: self
+        })
+    },
+
+    /** Loads images, I need to do this because when they are in the .asar file
+     *  they are not read well
+     */
+    load_images: function() {
+        fs.readFile(path.join(loc.img, 'icon.png'), {encoding: 'base64'}, function(err, data) {
+            if (err) {
+                lg.error('ERROR LOADING ICON.PNG: ' + err)
+            } else {
+                var img = $('<img>', {
+                    id: 'ctd_logo',
+                    src: 'data:image/png;base64,' + data,
+                    style: 'display: none;',
+                });
+                $('#logos_div').append(img);
+
+                fs.readFile(path.join(loc.img, 'atlantos_logo.svg'), {encoding: 'base64'}, function(err, data) {
+                    if (err) {
+                        lg.error('ERROR LOADING ATLANTOS_LOGO.SVG: ' + err)
+                    } else {
+                        var img = $('<img>', {
+                            id: 'atlantos_logo',
+                            src: 'data:image/svg+xml;base64,' + data,
+                            style: 'display: none;',
+                        });
+                        $('#logos_div').append(img);
+                        $('#logos_div img').fadeIn(1000);
+                    }
+                });
+            }
+        });
     }
 }

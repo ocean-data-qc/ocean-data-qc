@@ -64,76 +64,88 @@ if (is_dev) {
     app.commandLine.appendSwitch('disable-http-cache');
 }
 
-app.on('ready', function() {
-    main_window = new BrowserWindow({
-        webPreferences: { nodeIntegration: true, }, // https://stackoverflow.com/a/55908510/4891717
-        width: 1380,
-        height: 820,
-        icon: path.join(__dirname, 'src/img/icon.png'),
-        title: 'AtlantOS Ocean Data QC!'  // if not the title ocean_data_qc is shown for a moment
-        // backgroundColour: '#e8e8e7'              // TODO: try to give a desktop application color
-    })
-    //main_window.maximize();
-    var web_contents = main_window.webContents;          // TODO: avoid globals
-    // web_contents.openDevTools();     // TODO: "chromium DevTools" >> add this options to development menu (toggle)
-    server.web_contents = web_contents;
+const lock = app.requestSingleInstanceLock()
 
-    server.check_files_folder().then((result) => {
-        if (result == true) {
-            Promise.all([
-                server.check_log_folder(),
-                server.check_json_shared_data(),
-                server.check_json_old_default_settings(),
-                server.check_json_custom_settings()
-            ]).then((result) => {
-                lg.info('>> PROMISE ALL RESULT: ' + result);
-                server.set_file_to_open();
-
-                menu_actions.init(web_contents, server);
-                menu.init(web_contents, menu_actions, server);
-                menu.set_main_menu();
-
-                server.init(menu);
-                web_contents.on('dom-ready', () => {
-                    server.dom_ready = true;
-                });
-                server.go_to_welcome_window();
-                server.launch_bokeh();  // bokeh initialization on the background
-                server.load_bokeh_on_iframe();
-
-                app.showExitPrompt = true
-                main_window.on('close', (e) => {
-                    lg.info('-- ON CLOSE MAIN WINDOW');
-                    server.close_with_exit_prompt_dialog(e);
-                })
-
-                if (!is_dev) {
-                    // Autoupdater (running on production)
-                    web_contents.send('show-loader');  // TODO: is this OK here?
-                    updater.init(web_contents);
-                    updater.listeners();
-                    updater.check_for_updates();
-                }
-                server.set_link_opener();
-                server.web_contents.send('show-custom-settings-replace');
-            }).catch((msg) => {
-                lg.error('ERROR in the promise all: ' + msg);
-                // TODO: I need dom-ready event to run this
-                // or running it in the renderer side
-                // tools.showModal('ERROR', msg);
-            });
-        } else {
-            tools.show_modal({
-                'msg_type': 'text',
-                'type': 'ERROR',
-                'msg': 'The files folder in appdata could be checked or created.',
-            });
+if (!lock) {
+    app.quit()
+} else {
+    app.on('second-instance', (event, commandLine, workingDirectory) => {
+        // Someone tried to run a second instance, we should focus our window.
+        if (main_window) {
+            if (main_window.isMinimized()) main_window.restore()
+            main_window.focus()
         }
     })
 
+    app.on('ready', function() {
+        main_window = new BrowserWindow({
+            webPreferences: { nodeIntegration: true, }, // https://stackoverflow.com/a/55908510/4891717
+            width: 1380,
+            height: 820,
+            icon: path.join(__dirname, 'src/img/icon.png'),
+            title: 'AtlantOS Ocean Data QC!'  // if not the title ocean_data_qc is shown for a moment
+            // backgroundColour: '#e8e8e7'              // TODO: try to give a desktop application color
+        })
+        //main_window.maximize();
+        var web_contents = main_window.webContents;          // TODO: avoid globals
+        // web_contents.openDevTools();     // TODO: "chromium DevTools" >> add this options to development menu (toggle)
+        server.web_contents = web_contents;
 
+        server.check_files_folder().then((result) => {
+            if (result == true) {
+                Promise.all([
+                    server.check_log_folder(),
+                    server.check_json_shared_data(),
+                    server.check_json_old_default_settings(),
+                    server.check_json_custom_settings()
+                ]).then((result) => {
+                    lg.info('>> PROMISE ALL RESULT: ' + result);
+                    server.set_file_to_open();
 
-});
+                    menu_actions.init(web_contents, server);
+                    menu.init(web_contents, menu_actions, server);
+                    menu.set_main_menu();
+
+                    server.init(menu);
+                    web_contents.on('dom-ready', () => {
+                        server.dom_ready = true;
+                    });
+                    server.go_to_welcome_window();
+                    server.launch_bokeh();  // bokeh initialization on the background
+                    server.load_bokeh_on_iframe();
+
+                    app.showExitPrompt = true
+                    main_window.on('close', (e) => {
+                        lg.info('-- ON CLOSE MAIN WINDOW');
+                        server.close_with_exit_prompt_dialog(e);
+                    })
+
+                    if (!is_dev) {
+                        // Autoupdater (running on production)
+                        web_contents.send('show-loader');  // TODO: is this OK here?
+                        updater.init(web_contents);
+                        updater.listeners();
+                        updater.check_for_updates();
+                    }
+                    server.set_link_opener();
+                    server.web_contents.send('show-custom-settings-replace');
+                }).catch((msg) => {
+                    lg.error('ERROR in the promise all: ' + msg);
+                    // TODO: I need dom-ready event to run this
+                    // or running it in the renderer side
+                    // tools.showModal('ERROR', msg);
+                });
+            } else {
+                tools.show_modal({
+                    'msg_type': 'text',
+                    'type': 'ERROR',
+                    'msg': 'The files folder in appdata could be checked or created.',
+                });
+            }
+        })
+    });
+}
+
 
 app.on('window-all-closed', function (event) {
     // On OS X it is common for applications and their menu bar
@@ -156,6 +168,15 @@ app.on('activate', function () {
 })
 
 // ------------- RECEIVED SIGNALS FROM main_renderer.js ----------------- //
+
+ipcMain.on('exit-app', (event, arg) => {
+    app.exit(0)
+})
+
+ipcMain.on('restart-app', (event, arg) => {
+    app.relaunch();
+    app.exit(0);
+})
 
 ipcMain.on('save-file', (event, arg) => {
     menu_actions.save_file(arg).then((value) => {
