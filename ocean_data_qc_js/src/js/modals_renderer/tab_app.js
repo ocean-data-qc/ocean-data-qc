@@ -81,6 +81,8 @@ module.exports = {
     load_buttons: function() {
         var self = this;
         $('.add_new_tab').on('click', function() {
+            $(".modal-body").animate({ scrollTop: $('.modal-body').prop("scrollHeight")}, 500);
+
             var new_fieldset = $('fieldset').first().clone();
             $('#qc_tabs_container').append(new_fieldset);
             new_fieldset.slideDown();
