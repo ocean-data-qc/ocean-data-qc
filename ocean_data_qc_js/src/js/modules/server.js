@@ -619,7 +619,6 @@ module.exports = {
         var self = this;
         var bokeh_port = data.get('bokeh_port', loc.shared_data);
         port_scanner.checkPortStatus(bokeh_port, function(error, status) {
-            lg.warn('>> STATUS: ' + status)
             if (status == 'open') {
                 if (self.dom_ready) {
                     self.web_contents.send('bokeh-error-loading');

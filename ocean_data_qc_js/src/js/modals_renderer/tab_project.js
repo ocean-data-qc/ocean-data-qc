@@ -31,6 +31,7 @@ module.exports = {
         var self = this;
         ipcRenderer.on('tab-project', (event, args) => {
             lg.info('-- TAB PROJECT');
+            // lg.warn('>> ARGS: ' + JSON.stringify(args, null, 4));
             if ('open_app' in args && args['open_app'] === true) {
                 self.tab_project_in_app();
             } else {
