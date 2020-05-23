@@ -18,7 +18,6 @@ const urlExists = require('url-exists');
 const fs = require('fs');
 const { spawn } = require('child_process');
 const python_shell = require('python-shell');
-const port_scanner = require('portscanner');
 
 const lg = require('logging');
 const loc = require('locations');
@@ -30,36 +29,24 @@ module.exports = {
     init: function() {
         var self = this;
         self.ipc_renderer = ipcRenderer;
-
-        // NOTE: Bokeh server is still not launched here
-        //       if bokeh port is free, then the modal_question with app error at launching is not going
-        //       to appear even if we open the app twice
-
-        var bokeh_port = data.get('bokeh_port', loc.shared_data);
-        port_scanner.checkPortStatus(bokeh_port, function(error, status) {
-            if (status == 'open') {
-                self.bokeh_error_loading();
-            } else {
-                self.set_python_path();  // later, this method will launch bokeh server
-                self.check_previous_session();
-            }
-        });
+        self.set_python_path();
+        self.check_previous_session();
     },
 
     bokeh_error_loading: function() {
         var self = this;
         tools.modal_question({
-            'title': 'Restart app?',
-            'msg': 'Bokeh Server could not be loaded. Other instance of the app may be open or not correctly closed. ' +
+            title: 'Restart app?',
+            msg: 'Bokeh Server could not be loaded. Other instance of the app may be open or not correctly closed. ' +
                    'Close it correctly before opening another one. Do you want to restart this instance of the app ' +
                    'to try it again? If you press "No" this instance will close',
-            'callback_yes': function() {
+            callback_yes: function() {
                 ipcRenderer.send('restart-app');
             },
-            'callback_no': function() {
+            callback_no: function() {
                 ipcRenderer.send('exit-app');   // close without throwing any event
             },
-            'callback_close': function() {
+            callback_close: function() {
                 ipcRenderer.send('exit-app');
             }
         })

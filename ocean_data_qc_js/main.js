@@ -10,6 +10,7 @@ const app_module_path = require('app-module-path');
 app_module_path.addPath(path.join(__dirname, 'src/js/modules'));  // change folder name to "node_modules" to avoid this?
 app_module_path.addPath(path.join(__dirname, 'src/js/renderer_modules'));
 
+const port_scanner = require('portscanner');
 const lg = require('logging');
 const loc = require('locations');
 const is_dev = require('electron-is-dev');
@@ -86,10 +87,16 @@ if (!lock) {
             title: 'AtlantOS Ocean Data QC!'  // if not the title ocean_data_qc is shown for a moment
             // backgroundColour: '#e8e8e7'              // TODO: try to give a desktop application color
         })
-        //main_window.maximize();
+        app.showExitPrompt = true
+        main_window.on('close', (e) => {
+            lg.info('-- ON CLOSE MAIN WINDOW');
+            server.close_with_exit_prompt_dialog(e);
+        })
         var web_contents = main_window.webContents;          // TODO: avoid globals
-        // web_contents.openDevTools();     // TODO: "chromium DevTools" >> add this options to development menu (toggle)
         server.web_contents = web_contents;
+
+        // main_window.maximize();
+        // web_contents.openDevTools();     // TODO: "Chromium DevTools" >> add this options to development menu (toggle)
 
         server.check_files_folder().then((result) => {
             if (result == true) {
@@ -111,14 +118,6 @@ if (!lock) {
                         server.dom_ready = true;
                     });
                     server.go_to_welcome_window();
-                    server.launch_bokeh();  // bokeh initialization on the background
-                    server.load_bokeh_on_iframe();
-
-                    app.showExitPrompt = true
-                    main_window.on('close', (e) => {
-                        lg.info('-- ON CLOSE MAIN WINDOW');
-                        server.close_with_exit_prompt_dialog(e);
-                    })
 
                     if (!is_dev) {
                         // Autoupdater (running on production)
@@ -129,6 +128,16 @@ if (!lock) {
                     }
                     server.set_link_opener();
                     server.web_contents.send('show-custom-settings-replace');
+
+                    var bokeh_port = data.get('bokeh_port', loc.shared_data);
+                    port_scanner.checkPortStatus(bokeh_port, function(error, status) {
+                        if (status == 'open') {
+                            server.web_contents.send('bokeh-error-loading');
+                        } else {
+                            server.launch_bokeh();  // bokeh initialization on the background
+                            server.load_bokeh_on_iframe();
+                        }
+                    });
                 }).catch((msg) => {
                     lg.error('ERROR in the promise all: ' + msg);
                     // TODO: I need dom-ready event to run this
