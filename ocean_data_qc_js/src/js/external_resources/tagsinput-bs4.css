@@ -1,4 +1,7 @@
 /*
+ * This is an adaptation from the original css and js from here
+ * http://bootstrap-tagsinput.github.io/bootstrap-tagsinput/examples/
+ *
  * bootstrap-tagsinput v0.8.0
  *
  */
@@ -25,7 +28,7 @@
   margin: 0;
   width: auto;
   max-width: inherit;
-  min-height: 19px;
+  min-height: 21px;
 }
 .bootstrap-tagsinput.form-control input::-moz-placeholder {
   color: #777;

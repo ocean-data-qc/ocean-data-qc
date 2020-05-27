@@ -195,8 +195,12 @@ img#atlantos_logo {
     color: #111;
 }
 
-.modal-body { /* scrollable content */
-    max-height: calc(100vh - 210px);
+.modal-body.non-scrollable-content {
+    overflow-y: hidden;
+}
+
+.modal-body {
+    max-height: calc(100vh - 180px);
     overflow-y: auto;
     padding: 1rem 3rem 1rem 1rem !important;
     margin: 0rem 0rem 0rem 2rem !important;
@@ -224,6 +228,10 @@ img#atlantos_logo {
 
 .modal-body .table th {
     line-height: 0.4rem;
+}
+
+.dataTables_scrollBody {  /* to adapt the table to the modal body div size */
+    max-height: calc(100vh - 320px) !important;
 }
 
 /* TITLE */

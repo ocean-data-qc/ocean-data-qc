@@ -1,4 +1,7 @@
 /*
+ * This is an adaptation from the original css and js from here
+ * http://bootstrap-tagsinput.github.io/bootstrap-tagsinput/examples/
+ *
  * bootstrap-tagsinput v0.8.0
  *
  */
