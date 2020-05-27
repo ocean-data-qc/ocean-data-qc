@@ -91,7 +91,9 @@ module.exports = {
                     // Apply the search
                     lg.warn('-- INIT COMPLETE');
                     $('#div_column_app').animate({ opacity: 1, }, { duration: 100, });
-                }
+                    self.set_tags_input();
+
+                },
             });
 
             $('#table_column_app_filter input[type="search"]').off().on('keyup', function() {
@@ -144,15 +146,17 @@ module.exports = {
         lg.warn('-- GET TXT ORIG NAME');
         lg.warn('>> COL NAME: ' + col_name);
         var self = this;
-        var orig_name = '';
+        var orig_name = [];
         if (col_name !== false) {
             orig_name = self.cs_cols[col_name]['orig_name'];
         }
+        var tags_input = orig_name.join(',');
         return $('<input>', {
-            name: 'txt_orig_name',
-            class: 'form-control form-control-sm',
-            type: 'text',
-            value: orig_name === false ? '' : orig_name
+            'name': 'txt_orig_name',
+            'class': 'form-control form-control-sm',
+            'type': 'text',
+            'data-role': 'tagsinput',
+            'value': tags_input,
         });
     },
 
@@ -323,7 +327,6 @@ module.exports = {
     },
 
     load_add_column_button: function() {
-        lg.warn('-- LOAD ADD COLUMN BUTTON')
         var self = this;
         $('#add_column').on('click', function() {
             var txt_col_name = self.get_txt_col_name();
@@ -333,9 +336,7 @@ module.exports = {
             var txt_cur_unit = self.get_txt_cur_unit();
             var bt_val = self.get_validate_bt();
 
-            var tr = $('<tr>', {
-                class: 'new_col'
-            });
+            var tr = $('<tr>');
             tr.append(
                 $('<td>', {html: txt_col_name }),
                 $('<td>', {html: txt_orig_name }),
@@ -346,20 +347,29 @@ module.exports = {
             );
 
             var data_table = $('#table_column_app').DataTable();
-            data_table.row.add(tr).draw();
+            var row = $(data_table.row(0).node());
 
-            var index = 0, //0 sets the index as the first row
-            rowCount = data_table.data().length-1,
-            insertedRow = data_table.row(rowCount).data(),
-            tempRow;
+            // TODO: this animation is not working well sometime when many rows are created (reindex table?)
+            $('#div_column_app .dataTables_scrollBody').animate({ scrollTop: row.offset().top }, 2000, function() {
+                data_table.row.add(tr).draw();
+                var index = 0;      // 0 sets the index as the first row
+                var row_count = data_table.data().length-1;
+                var inserted_row = data_table.row(row_count).data();
 
-            for (var i=rowCount;i>index;i--) {
-                tempRow = data_table.row(i-1).data();
-                data_table.row(i).data(tempRow);
-                data_table.row(i-1).data(insertedRow);
-            }
-            //refresh the page
-            data_table.draw(false);
+                for (var i = row_count; i > index; i--) {
+                    var temp_row = data_table.row(i-1).data();
+                    data_table.row(i).data(temp_row);
+                    data_table.row(i-1).data(inserted_row);
+                }
+                //refresh the page
+                data_table.draw(false);
+
+                var row = data_table.row(0).node();
+                $(row).addClass('new_col');
+
+                self.set_tags_input();
+
+            });
         });
     },
 
@@ -408,5 +418,16 @@ module.exports = {
             }
         });
         return bt
+    },
+
+    set_tags_input: function() {
+        $("input[data-role=tagsinput], select[multiple][data-role=tagsinput]").tagsinput({
+            confirmKeys: [
+                13,     // carriage return (enter, but it does not work)
+                44,     // comma
+                32,     // space
+                59      // semicolon
+            ]
+        });
     }
 }
