@@ -84,8 +84,8 @@ class CruiseDataExport(Environment):
         aux_df = aux_df.filter(cols)
         orig_col_names = []
         for c in cols:
-            if 'orig_name' in self.cols[c]:
-                orig_col_names.append(self.cols[c]['orig_name'])  # computed do not have orig_name
+            if 'external_name' in self.cols[c]:
+                orig_col_names.append(self.cols[c]['external_name'])  # computed do not have external_name
             else:
                 orig_col_names.append(c)
         aux_df.to_csv(

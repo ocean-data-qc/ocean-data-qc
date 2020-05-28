@@ -75,7 +75,7 @@ class CruiseData(CruiseDataExport):
 
                 "cols": {
                     "ALKALI": {
-                        "orig_name": "alkali",
+                        "external_name": "alkali",
                         "types": ["param", "required", ],
                         "data_type": "float",
                         "unit": "UMOL/KG",
@@ -83,7 +83,7 @@ class CruiseData(CruiseDataExport):
                         "export": True
                     },
                     "ALKALI_FLAG_W": {
-                        "orig_name": False,
+                        "external_name": False,
                         "types": ["param_flag", "qc_param_flag"],
                         "data_type": "integer"
                         "unit": False,  # >> False
@@ -93,7 +93,7 @@ class CruiseData(CruiseDataExport):
                 }
 
             TODO: store less garbage in the JSON structure:
-                  unit and orig_name should not exist if they do not have any value
+                  unit and external_name should not exist if they do not have any value
         """
         lg.info('-- SET COLS ATTRIBUTES FROM SCRATCH')
         pos = 0
@@ -199,7 +199,7 @@ class CruiseData(CruiseDataExport):
         '''
         if column not in self.get_cols_by_type('all'):
             self.cols[column] = {
-                'orig_name': self.orig_cols.get(column, column),
+                'external_name': self.orig_cols.get(column, column),
                 'types': [],
                 'unit': units,
                 'precision': False,
@@ -232,7 +232,7 @@ class CruiseData(CruiseDataExport):
                 values = ['2'] * len(self.df.index)
                 self.df[flag] = values
                 self.cols[flag] = {
-                    'orig_name': False,
+                    'external_name': False,
                     'types': ['param_flag', 'qc_param_flag', 'created'],
                     'unit': False,
                     'export': True
@@ -259,7 +259,7 @@ class CruiseData(CruiseDataExport):
                 )
                 # NOTE: I don't call to _add_column because I don't want to create the flag column
                 self.cols[c] = {
-                    'orig_name': False,
+                    'external_name': False,
                     'types': ['param', 'basic_param', 'created', ],
                     'unit': False,
                     'precision': False,
@@ -512,11 +512,11 @@ class CruiseData(CruiseDataExport):
             result.append(name)
         return result
 
-    def _replace_if_not_exists(self, columns, orig_name, replace_with):
-        if not orig_name in columns:
-            columns = [re.sub(r'\b' + replace_with + r'\b', orig_name, c) for c in columns]
+    def _replace_if_not_exists(self, columns, external_name, replace_with):
+        if not external_name in columns:
+            columns = [re.sub(r'\b' + replace_with + r'\b', external_name, c) for c in columns]
             if replace_with + 'F' in columns:
-                columns = [re.sub(r'\b' + replace_with + 'F' + r'\b', orig_name + FLAG_END, c) for c in columns]
+                columns = [re.sub(r'\b' + replace_with + 'F' + r'\b', external_name + FLAG_END, c) for c in columns]
         return columns
 
     def _map_col_names(self, names):

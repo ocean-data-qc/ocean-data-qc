@@ -96,13 +96,13 @@ module.exports = {
         var name_row = $('<td>', {
             text: name
         });
-        var orig_name = self.pj_cols[name]['orig_name'];
-        if (name != orig_name && typeof(orig_name) !== 'undefined' && orig_name !== false) {
+        var external_name = self.pj_cols[name]['external_name'];
+        if (name != external_name && typeof(external_name) !== 'undefined' && external_name !== false) {
             name_row.append(
                 $('<i>', {
                     'class': 'fa fa-info-circle',
                     'style': 'cursor: pointer; color: #337ab5; margin-left: 8px; font-size: 0.8rem;',
-                    'title': '<b>Original name:</b><br />' + orig_name,
+                    'title': '<b>Original name:</b><br />' + external_name,
                     'data-toggle': 'tooltip',
                     'data-placement': 'bottom',
                     'data-html': 'true',

@@ -50,7 +50,7 @@ module.exports = {
         for (var i = 0; i < cols.length; i++) {
             var col_name = cols[i];
             var txt_col_name = self.get_txt_col_name(col_name);
-            var txt_orig_name = self.get_txt_orig_name(col_name);
+            var txt_external_name = self.get_txt_external_name(col_name);
             var data_type = self.get_data_type(col_name);
 
             var basic_field = self.get_cb_field(i, col_name, 'basic_param');
@@ -64,7 +64,7 @@ module.exports = {
             var tr = $('<tr>');
             tr.append(
                 $('<td>', {html: txt_col_name }),
-                $('<td>', {html: txt_orig_name }),
+                $('<td>', {html: txt_external_name }),
                 $('<td>', {html: data_type }),
 
                 $('<td>', {html: basic_field }),
@@ -152,15 +152,15 @@ module.exports = {
         return input;
     },
 
-    get_txt_orig_name: function(col_name=false) {
+    get_txt_external_name: function(col_name=false) {
         var self = this;
-        var orig_name = [];
+        var external_name = [];
         if (col_name !== false) {
-            orig_name = self.cs_cols[col_name]['orig_name'];
+            external_name = self.cs_cols[col_name]['external_name'];
         }
-        var tags_input = orig_name.join(',');
+        var tags_input = external_name.join(',');
         return $('<input>', {
-            'name': 'txt_orig_name',
+            'name': 'txt_external_name',
             'class': 'form-control form-control-sm',
             'type': 'text',
             'data-role': 'tagsinput',
@@ -376,7 +376,7 @@ module.exports = {
             var new_row_i = data_table.data().length + 1;
 
             var txt_col_name = self.get_txt_col_name();
-            var txt_orig_name = self.get_txt_orig_name();
+            var txt_external_name = self.get_txt_external_name();
             var data_type = self.get_data_type();
 
             var basic_field = self.get_cb_field(new_row_i, false, 'basic_param');
@@ -392,7 +392,7 @@ module.exports = {
             });
             tr.append(
                 $('<td>', {html: txt_col_name }),
-                $('<td>', {html: txt_orig_name }),
+                $('<td>', {html: txt_external_name }),
                 $('<td>', {html: data_type }),
 
                 $('<td>', {html: basic_field }),
