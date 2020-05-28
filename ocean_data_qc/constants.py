@@ -34,6 +34,8 @@ REQUIRED_COLUMNS = [
 NON_QC_PARAMS = [                                # discovered by usage
     'CTDPRS', 'DEPTH',
     'SECT', 'SECT_ID', 'TIME', 'PH_TMP',
+
+    # defined these as columns? data_type = 'date' or 'date_component' ?
     'DAY', 'MONTH', 'YEAR', 'HOUR', 'MINUTE', 'SECOND',
     'DATE_DD', 'DATE_MM', 'DATE_YY',
 ] + REQUIRED_COLUMNS                            # TODO: Sometimes there is a BTLNBR_FLAG_W ???

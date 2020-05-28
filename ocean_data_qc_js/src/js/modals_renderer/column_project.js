@@ -51,7 +51,7 @@ module.exports = {
         var self = this;
         var cols = Object.keys(self.pj_cols);  // are they sorted?
 
-        for (var i = 1; i < cols.length; i++) {
+        for (var i = 0; i < cols.length; i++) {
             var col_name = cols[i];
             var name = self.get_col_name(col_name);
             var data_type = self.get_data_type(col_name)

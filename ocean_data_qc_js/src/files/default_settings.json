@@ -21,7 +21,8 @@
             ],
             "data_type": "string",
             "types": [
-                "required"
+                "required",
+                "non_qc_param"
             ],
             "unit": false,
             "precision": false
@@ -29,35 +30,48 @@
         "SECT": {
             "orig_name": [],
             "data_type": "",
-            "types": [],
+            "types": [
+                "non_qc_param"
+            ],
             "unit": false,
             "precision": false
         },
         "SECT_ID": {
             "orig_name": [],
             "data_type": "",
-            "types": [],
+            "types": [
+                "non_qc_param"
+            ],
             "unit": false,
             "precision": false
         },
         "STNNBR": {
             "orig_name": ["STATION"],
             "data_type": "",
-            "types": [],
+            "types": [
+                "required",
+                "non_qc_param"
+            ],
             "unit": false,
             "precision": false
         },
         "CASTNO": {
             "orig_name": ["CAST"],
             "data_type": "integer",
-            "types": [],
+            "types": [
+                "required",
+                "non_qc_param"
+            ],
             "unit": false,
             "precision": 0
         },
         "BTLNBR": {
             "orig_name": ["BOTTLE"],
             "data_type": "integer",
-            "types": [],
+            "types": [
+                "required",
+                "non_qc_param"
+            ],
             "unit": false,
             "precision": 0
         },
@@ -71,7 +85,9 @@
         "SAMPNO": {
             "orig_name": [],
             "data_type": "integer",
-            "types": [],
+            "types": [
+                "basic_param"
+            ],
             "unit": false,
             "precision": 0
         },
@@ -85,56 +101,77 @@
         "DATE": {
             "orig_name": [],
             "data_type": "",
-            "types": [],
+            "types": [
+                "required",
+                "non_qc_param"
+            ],
             "unit": false,
             "precision": false
         },
         "TIME": {
             "orig_name": [],
             "data_type": "",
-            "types": [],
+            "types": [
+                "non_qc_param"
+            ],
             "unit": false,
             "precision": false
         },
         "LATITUDE": {
             "orig_name": [],
             "data_type": "float",
-            "types": [],
+            "types": [
+                "required",
+                "non_qc_param"
+            ],
             "unit": false,
             "precision": 4
         },
         "LONGITUDE": {
             "orig_name": [],
             "data_type": "float",
-            "types": [],
+            "types": [
+                "required",
+                "non_qc_param"
+            ],
             "unit": false,
             "precision": 4
         },
         "DEPTH": {
             "orig_name": [],
             "data_type": "",
-            "types": [],
+            "types": [
+                "non_qc_param",
+                "basic_param"
+            ],
             "unit": "METERS",
             "precision": false
         },
         "CTDPRS": {
             "orig_name": ["PRESSURE"],
             "data_type": "float",
-            "types": [],
+            "types": [
+                "non_qc_param",
+                "basic_param"
+            ],
             "unit": "DBAR",
             "precision": 4
         },
         "CTDTMP": {
             "orig_name": ["TEMPERATURE"],
             "data_type": "float",
-            "types": [],
+            "types": [
+                "basic_param"
+            ],
             "unit": "ITS-90",
             "precision": 4
         },
         "CTDSAL": {
             "orig_name": [],
             "data_type": "float",
-            "types": [],
+            "types": [
+                "basic_param"
+            ],
             "unit": "PSS-78",
             "precision": 4
         },
@@ -148,7 +185,9 @@
         "SALNTY": {
             "orig_name": ["SALINITY", "CTDSAL"],
             "data_type": "float",
-            "types": [],
+            "types": [
+                "basic_param"
+            ],
             "unit": "PSS-78",
             "precision": 4
         },
@@ -162,7 +201,9 @@
         "CTDOXY": {
             "orig_name": [],
             "data_type": "float",
-            "types": [],
+            "types": [
+                "basic_param"
+            ],
             "unit": "UMOL/KG",
             "precision": 2
         },
@@ -176,7 +217,9 @@
         "OXYGEN": {
             "orig_name": [],
             "data_type": "float",
-            "types": [],
+            "types": [
+                "basic_param"
+            ],
             "unit": "UMOL/KG",
             "precision": 2
         },
@@ -204,7 +247,9 @@
         "NITRAT": {
             "orig_name": ["NITRATE"],
             "data_type": "float",
-            "types": [],
+            "types": [
+                "basic_param"
+            ],
             "unit": "UMOL/KG",
             "precision": 2
         },
@@ -218,7 +263,9 @@
         "NITRIT": {
             "orig_name": ["NITRATE"],
             "data_type": "float",
-            "types": [],
+            "types": [
+                "basic_param"
+            ],
             "unit": false,
             "precision": 2
         },
@@ -232,7 +279,9 @@
         "NO2_NO3": {
             "orig_name": ["NO2NO3"],
             "data_type": "",
-            "types": [],
+            "types": [
+                "basic_param"
+            ],
             "unit": false,
             "precision": false
         },
@@ -246,7 +295,9 @@
         "PHSPHT": {
             "orig_name": ["PHOSPHATE"],
             "data_type": "float",
-            "types": [],
+            "types": [
+                "basic_param"
+            ],
             "unit": "UMOL/KG",
             "precision": 2
         },
@@ -330,7 +381,9 @@
         "PH_TMP": {
             "orig_name": [],
             "data_type": "",
-            "types": [],
+            "types": [
+                "non_qc_param"
+            ],
             "unit": "DEGC",
             "precision": false
         },

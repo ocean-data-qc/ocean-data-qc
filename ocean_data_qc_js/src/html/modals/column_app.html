@@ -16,25 +16,32 @@
                 <table id="table_column_app" class="table table-striped dataTable no-footer" style="width:100%">
                     <thead>
                         <tr>
-                            <th style="width: 25%;">
+                            <th style="min-width: 8rem;">
                                 <span data-toggle="tooltip" data-placement="bottom"
-                                      title="This name is used within the application">Name</span>
+                                      title="This name is used within the application">Name in app</span>
                             </th>
-                            <th style="width: 25%;">
+                            <th style="min-width: 12rem;">
                                 <span data-toggle="tooltip" data-placement="bottom"
-                                      title="If set, the original name is used when the project is exported or imported. It should be the WHP Exchange standard name. If it is not set the name will coincide with it">WHP Name</span>
+                                      title="If set, the 'name in file' is used when the project is exported or imported from file. If it is not set, the 'name in app' will be the same. This is useful in order to group names for equations">Name in file</span>
                             </th>
-                            <th style="width: 15%;">Data type</th>
+                            <th style="min-width: 2rem;">Data type</th>
+
+                            <!-- Attributes -->
+                            <th style="min-width: 0.8rem;">Basic</th>
+                            <th style="min-width: 0.8rem;">Required</th>
+                            <th style="min-width: 0.8rem;">Non QC</th>
 
                             <!-- Precision -->
-                            <th style="width: 15%;">
+                            <th style="min-width: 2rem;">
                                 <span data-toggle="tooltip" data-placement="bottom"
                                       title="This is used when the project is exported in CSV and WHP exchange formats. Internally the app uses the maximum precision possible">Precision</span>
                             </th>
 
                             <!-- Units -->
-                            <th style="width: 15%;">Unit</th>
-                            <th style="width: 5%;"></th>
+                            <th style="min-width: 2rem;">Unit</th>
+
+                            <!-- Actions -->
+                            <th style="min-width: 1rem;"></th>
                         </tr>
                     </thead>
                     <tbody></tbody>

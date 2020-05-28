@@ -47,11 +47,16 @@ module.exports = {
         var self = this;
         var cols = Object.keys(self.cs_cols);  // are they sorted?
 
-        for (var i = 1; i < cols.length; i++) {
+        for (var i = 0; i < cols.length; i++) {
             var col_name = cols[i];
             var txt_col_name = self.get_txt_col_name(col_name);
             var txt_orig_name = self.get_txt_orig_name(col_name);
             var data_type = self.get_data_type(col_name)
+
+            var basic_field = self.get_basic_field(i, col_name)
+            var required_field = self.get_required_field(i, col_name)
+            var non_qc_field = self.get_non_qc_field(i, col_name)
+
             var sel_cur_prec = self.get_cur_prec(col_name, data_type);
             var txt_cur_unit = self.get_txt_cur_unit(col_name);
             var bt_rmv = self.get_rmv_bt();
@@ -61,6 +66,11 @@ module.exports = {
                 $('<td>', {html: txt_col_name }),
                 $('<td>', {html: txt_orig_name }),
                 $('<td>', {html: data_type }),
+
+                $('<td>', {html: basic_field }),
+                $('<td>', {html: required_field }),
+                $('<td>', {html: non_qc_field }),
+
                 $('<td>', {html: sel_cur_prec }),
                 $('<td>', {html: txt_cur_unit }),
                 $('<td>', {html: bt_rmv }),
@@ -194,6 +204,84 @@ module.exports = {
         });
         self.sel_data_type_change(sel_cur_data_type);
         return sel_cur_data_type;
+    },
+
+    get_basic_field: function(row=false, col_name=false) {
+        var self = this;
+        var types = self.cs_cols[col_name]['types'];
+        var checked = false;
+        if (types.length > 0 && types.includes('basic_param')) {
+            checked = true;
+        }
+        var cb_export = $('<div>', {
+            class: 'form-check abc-checkbox abc-checkbox-primary'
+        }).append(
+            $('<input>', {
+                id: 'cb_basic_row_' + row,
+                class: 'form-check-input',
+                name: 'cb_basic',
+                type: 'checkbox',
+                checked: checked
+            })
+        ).append(
+            $('<label>', {
+                for: 'cb_basic_row_' + row,
+                class: 'form-check-label'
+            })
+        );
+        return cb_export
+    },
+
+    get_required_field: function(row=false, col_name=false) {
+        var self = this;
+        var types = self.cs_cols[col_name]['types'];
+        var checked = false;
+        if (types.length > 0 && types.includes('required')) {
+            checked = true;
+        }
+        var cb_export = $('<div>', {
+            class: 'form-check abc-checkbox abc-checkbox-primary'
+        }).append(
+            $('<input>', {
+                id: 'cb_required_row_' + row,
+                class: 'form-check-input',
+                name: 'cb_required',
+                type: 'checkbox',
+                checked: checked
+            })
+        ).append(
+            $('<label>', {
+                for: 'cb_required_row_' + row,
+                class: 'form-check-label'
+            })
+        );
+        return cb_export
+    },
+
+    get_non_qc_field: function(row=false, col_name=false) {
+        var self = this;
+        var types = self.cs_cols[col_name]['types'];
+        var checked = false;
+        if (types.length > 0 && types.includes('non_qc_param')) {
+            checked = true;
+        }
+        var cb_export = $('<div>', {
+            class: 'form-check abc-checkbox abc-checkbox-primary'
+        }).append(
+            $('<input>', {
+                id: 'cb_non_qc_row_' + row,
+                class: 'form-check-input',
+                name: 'cb_non_qc',
+                type: 'checkbox',
+                checked: checked
+            })
+        ).append(
+            $('<label>', {
+                for: 'cb_non_qc_row_' + row,
+                class: 'form-check-label'
+            })
+        );
+        return cb_export
     },
 
     sel_data_type_change: function(sel_cur_data_type) {
@@ -341,6 +429,11 @@ module.exports = {
                 $('<td>', {html: txt_col_name }),
                 $('<td>', {html: txt_orig_name }),
                 $('<td>', {html: data_type }),
+
+                $('<td>', {html: basic_field }),
+                $('<td>', {html: required_field }),
+                $('<td>', {html: non_qc_field }),
+
                 $('<td>', {html: sel_cur_prec }),
                 $('<td>', {html: txt_cur_unit }),
                 $('<td>', {html: bt_val }),
