@@ -373,7 +373,7 @@ module.exports = {
             var scroll_body = $(data_table.table().node()).parent();
             scroll_body.animate({ scrollTop: scroll_body.get(0).scrollHeight }, 500);
 
-            var new_row_i = data_table.data().length + 1;
+            var new_row_i = data_table.data().length;
 
             var txt_col_name = self.get_txt_col_name();
             var txt_external_name = self.get_txt_external_name();
