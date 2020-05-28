@@ -51,11 +51,11 @@ module.exports = {
             var col_name = cols[i];
             var txt_col_name = self.get_txt_col_name(col_name);
             var txt_orig_name = self.get_txt_orig_name(col_name);
-            var data_type = self.get_data_type(col_name)
+            var data_type = self.get_data_type(col_name);
 
-            var basic_field = self.get_basic_field(i, col_name)
-            var required_field = self.get_required_field(i, col_name)
-            var non_qc_field = self.get_non_qc_field(i, col_name)
+            var basic_field = self.get_cb_field(i, col_name, 'basic_param');
+            var required_field = self.get_cb_field(i, col_name, 'required');
+            var non_qc_field = self.get_cb_field(i, col_name, 'non_qc_param');
 
             var sel_cur_prec = self.get_cur_prec(col_name, data_type);
             var txt_cur_unit = self.get_txt_cur_unit(col_name);
@@ -206,82 +206,35 @@ module.exports = {
         return sel_cur_data_type;
     },
 
-    get_basic_field: function(row=false, col_name=false) {
+    get_cb_field: function(row=false, col_name=false, type=false) {  // if col_name = fals >> new row
         var self = this;
-        var types = self.cs_cols[col_name]['types'];
-        var checked = false;
-        if (types.length > 0 && types.includes('basic_param')) {
-            checked = true;
+        if (type !== false) {
+            var types = [];
+            if (col_name !== false) {
+                var types = self.cs_cols[col_name]['types'];
+            }
+            var checked = false;
+            if (types.length > 0 && types.includes(type)) {
+                checked = true;
+            }
+            var cb_export = $('<div>', {
+                class: 'form-check abc-checkbox abc-checkbox-primary'
+            }).append(
+                $('<input>', {
+                    id: 'cb_' + type + '_row_' + row,
+                    class: 'form-check-input',
+                    name: 'cb_' + type,
+                    type: 'checkbox',
+                    checked: checked
+                })
+            ).append(
+                $('<label>', {
+                    for: 'cb_' + type + '_row_' + row,
+                    class: 'form-check-label'
+                })
+            );
+            return cb_export
         }
-        var cb_export = $('<div>', {
-            class: 'form-check abc-checkbox abc-checkbox-primary'
-        }).append(
-            $('<input>', {
-                id: 'cb_basic_row_' + row,
-                class: 'form-check-input',
-                name: 'cb_basic',
-                type: 'checkbox',
-                checked: checked
-            })
-        ).append(
-            $('<label>', {
-                for: 'cb_basic_row_' + row,
-                class: 'form-check-label'
-            })
-        );
-        return cb_export
-    },
-
-    get_required_field: function(row=false, col_name=false) {
-        var self = this;
-        var types = self.cs_cols[col_name]['types'];
-        var checked = false;
-        if (types.length > 0 && types.includes('required')) {
-            checked = true;
-        }
-        var cb_export = $('<div>', {
-            class: 'form-check abc-checkbox abc-checkbox-primary'
-        }).append(
-            $('<input>', {
-                id: 'cb_required_row_' + row,
-                class: 'form-check-input',
-                name: 'cb_required',
-                type: 'checkbox',
-                checked: checked
-            })
-        ).append(
-            $('<label>', {
-                for: 'cb_required_row_' + row,
-                class: 'form-check-label'
-            })
-        );
-        return cb_export
-    },
-
-    get_non_qc_field: function(row=false, col_name=false) {
-        var self = this;
-        var types = self.cs_cols[col_name]['types'];
-        var checked = false;
-        if (types.length > 0 && types.includes('non_qc_param')) {
-            checked = true;
-        }
-        var cb_export = $('<div>', {
-            class: 'form-check abc-checkbox abc-checkbox-primary'
-        }).append(
-            $('<input>', {
-                id: 'cb_non_qc_row_' + row,
-                class: 'form-check-input',
-                name: 'cb_non_qc',
-                type: 'checkbox',
-                checked: checked
-            })
-        ).append(
-            $('<label>', {
-                for: 'cb_non_qc_row_' + row,
-                class: 'form-check-label'
-            })
-        );
-        return cb_export
     },
 
     sel_data_type_change: function(sel_cur_data_type) {
@@ -417,14 +370,33 @@ module.exports = {
     load_add_column_button: function() {
         var self = this;
         $('#add_column').on('click', function() {
+            var data_table = $('#table_column_app').DataTable();
+
+            var scroll_body = $(data_table.table().node()).parent();
+
+            scroll_body.animate({ scrollTop: scroll_body.get(0).scrollHeight }, 500, function() {
+                lg.warn('SCROLLING');
+
+                // add column and scroll again after drawing
+            });
+
+            var new_row_i = data_table.data().length + 1;
+
             var txt_col_name = self.get_txt_col_name();
             var txt_orig_name = self.get_txt_orig_name();
-            var data_type = self.get_data_type()
+            var data_type = self.get_data_type();
+
+            var basic_field = self.get_cb_field(new_row_i, false, 'basic_param');
+            var required_field = self.get_cb_field(new_row_i, false, 'required');
+            var non_qc_field = self.get_cb_field(new_row_i, false, 'non_qc_param');
+
             var sel_cur_prec = self.get_cur_prec();
             var txt_cur_unit = self.get_txt_cur_unit();
             var bt_val = self.get_validate_bt();
 
-            var tr = $('<tr>');
+            var tr = $('<tr>', {
+                class: 'new_col'
+            });
             tr.append(
                 $('<td>', {html: txt_col_name }),
                 $('<td>', {html: txt_orig_name }),
@@ -439,30 +411,10 @@ module.exports = {
                 $('<td>', {html: bt_val }),
             );
 
-            var data_table = $('#table_column_app').DataTable();
-            var row = $(data_table.row(0).node());
+            var new_row = data_table.row.add(tr).draw().node();
+            self.set_tags_input();
 
-            // TODO: this animation is not working well sometime when many rows are created (reindex table?)
-            $('#div_column_app .dataTables_scrollBody').animate({ scrollTop: row.offset().top }, 2000, function() {
-                data_table.row.add(tr).draw();
-                var index = 0;      // 0 sets the index as the first row
-                var row_count = data_table.data().length-1;
-                var inserted_row = data_table.row(row_count).data();
-
-                for (var i = row_count; i > index; i--) {
-                    var temp_row = data_table.row(i-1).data();
-                    data_table.row(i).data(temp_row);
-                    data_table.row(i-1).data(inserted_row);
-                }
-                //refresh the page
-                data_table.draw(false);
-
-                var row = data_table.row(0).node();
-                $(row).addClass('new_col');
-
-                self.set_tags_input();
-
-            });
+            $(new_row).find('input[name="txt_col_name"]').focus();
         });
     },
 
