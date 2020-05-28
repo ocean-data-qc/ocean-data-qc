@@ -26,60 +26,6 @@ FLAG_END = '_FLAG_W'        # Flag distinctive
 NA_REGEX_LIST = [r'^-999[9]?[\.0]*?$']
 NA_REGEX = '^-999[9]?[\.0]*?$'
 
-REQUIRED_COLUMNS = [
-    'EXPOCODE', 'STNNBR', 'CASTNO', 'DATE',
-    'LATITUDE', 'LONGITUDE', 'BTLNBR'
-]
-
-NON_QC_PARAMS = [                                # discovered by usage
-    'CTDPRS', 'DEPTH',
-    'SECT', 'SECT_ID', 'TIME', 'PH_TMP',
-
-    # defined these as columns? data_type = 'date' or 'date_component' ?
-    'DAY', 'MONTH', 'YEAR', 'HOUR', 'MINUTE', 'SECOND',
-    'DATE_DD', 'DATE_MM', 'DATE_YY',
-] + REQUIRED_COLUMNS                            # TODO: Sometimes there is a BTLNBR_FLAG_W ???
-
-BASIC_PARAMS = [                                # they are created if they do not exist yet
-    'CTDSAL', 'SALNTY', 'CTDOXY', 'OXYGEN',
-    'NITRAT', 'PHSPHT', 'NITRIT', 'NO2_NO3',
-    'CTDPRS', 'DEPTH', 'CTDTMP', 'SAMPNO'
-]
-
-COL_NAMES_MAPPING = [
-    ('EXPOCODE', 'CRUISE'),
-    ('EXPOCODE', 'CRUISENO'),
-    ('STNNBR', 'STATION'),
-    ('CASTNO', 'CAST'),
-    ('BTLNBR', 'BOTTLE'),
-    ('CTDPRS', 'PRESSURE'),
-    ('CTDTMP', 'TEMPERATURE'),
-    ('SALNTY', 'SALINITY'),
-    ('SALNTY', 'CTDSAL'),
-    ('NITRAT', 'NITRATE'),
-    ('NITRIT', 'NITRITE'),
-    ('PHSPHT', 'PHOSPHATE'),
-    ('SILCAT', 'SILICATE'),
-    ('TCARBN', 'TCO2'),
-    ('TCARBN', 'DIC'),
-    ('TCARBN', 'CT'),
-    ('ALKALI', 'TALK'),
-    ('ALKALI', 'ALK'),
-    ('PH_TOT', 'PH_T'),
-    ('PH_TOT', 'PH_TS'),
-    ('PH_TOT', 'PHTS'),
-    ('PH_TOT', 'PHTS25'),
-    ('PH_TOT', 'PHTS25P0'),
-    ('PH_TOT', 'PH_TOT25P0'),
-    ('PH_SWS', 'PHSWS'),
-    ('PH_SWS', 'PHSWS25'),
-    ('PH_SWS', 'PHSWS25P0'),
-    ('PH_SWS', 'PH_SWS25P0'),
-    ('NO2_NO3', 'NO2NO3'),
-    ('CFC_11', 'CFC11'),
-    ('CFC_12', 'CFC12'),
-]
-
 # ---------------------- URLS ----------------------------- #
 
 ARGIS_TS = "https://server.arcgisonline.com/ArcGIS/rest/services/Ocean_Basemap/MapServer/tile/{Z}/{Y}/{X}/"

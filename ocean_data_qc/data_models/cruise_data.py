@@ -36,7 +36,7 @@ class CruiseData(CruiseDataExport):
         self.df_str = None                        # string DataFrame
         self.moves = None
         self.cols = {}
-        self.orig_cols = {}
+        self.col_mappings = {}                   # to set in external_name
 
         self._validate_original_data()
         self._set_moves()                         # TODO: this is not needed for cd_update
@@ -49,8 +49,9 @@ class CruiseData(CruiseDataExport):
         lg.info('-- REMOVE EMPTY COLUMNS (all values with -999)')
         cols_to_rmv = []
         flags_to_rmv = []
+        basic_params = self.env.f_handler.get_custom_cols_by_attr('basic_param')
         for col in self.df:
-            if col not in BASIC_PARAMS:  # empty basic param columns are needed for some calculated params
+            if col not in basic_params:  # empty basic param columns are needed for some calculated params
                 if self.df[col].str.contains(NA_REGEX).all():
                     cols_to_rmv.append(col)
                     if f'{col}_FLAG_W' in self.df:
@@ -75,7 +76,7 @@ class CruiseData(CruiseDataExport):
 
                 "cols": {
                     "ALKALI": {
-                        "external_name": "alkali",
+                        "external_name": "alkali",          # in custom_settings is a list
                         "types": ["param", "required", ],
                         "data_type": "float",
                         "unit": "UMOL/KG",
@@ -91,14 +92,10 @@ class CruiseData(CruiseDataExport):
                         "export": True
                     }
                 }
-
-            TODO: store less garbage in the JSON structure:
-                  unit and external_name should not exist if they do not have any value
         """
         lg.info('-- SET COLS ATTRIBUTES FROM SCRATCH')
         pos = 0
         column_list = self.df.columns.tolist()
-        lg.info('>> SELF ORIG COLS: {}'.format(self.orig_cols))
         units_list = self._check_unit_row()
 
         if len(units_list) > 0:
@@ -112,6 +109,12 @@ class CruiseData(CruiseDataExport):
         else:
             for column in column_list:
                 self._add_column(column=column)
+
+        for key, value in self.col_mappings.items():
+            # self.col_mappings = {
+            #     'external_value': new_value,  >> the new_value is the used inside the app
+            # }
+            self.cols[value]['external_name'] = key
 
         # lg.info(json.dumps(self.cols, sort_keys=True, indent=4))
 
@@ -199,23 +202,26 @@ class CruiseData(CruiseDataExport):
         '''
         if column not in self.get_cols_by_type('all'):
             self.cols[column] = {
-                'external_name': self.orig_cols.get(column, column),
+                'external_name': False,
                 'types': [],
                 'unit': units,
                 'precision': False,
                 'export': export
             }
+            non_qc_params = self.env.f_handler.get_custom_cols_by_attr('non_qc_param')
             if column.endswith(FLAG_END):
                 self.cols[column]['types'] += ['param_flag']
-                flags_not_to_qc = [x + FLAG_END for x in NON_QC_PARAMS]
+                flags_not_to_qc = [x + FLAG_END for x in non_qc_params]
                 if column not in flags_not_to_qc:
                     self.cols[column]['types'] += ['qc_param_flag']
             else:
-                if column in BASIC_PARAMS:
+                basic_params = self.env.f_handler.get_custom_cols_by_attr('basic_param')
+                if column in basic_params:
                     self.cols[column]['types'] += ['basic_param']
-                if column in REQUIRED_COLUMNS:
+                required_cols = self.env.f_handler.get_custom_cols_by_attr('required')
+                if column in required_cols:
                     self.cols[column]['types'] += ['required']
-                elif column in NON_QC_PARAMS:
+                elif column in non_qc_params:
                     self.cols[column]['types'] += ['non_qc_param']
                 else:
                     self.cols[column]['types'] += ['param']
@@ -227,7 +233,8 @@ class CruiseData(CruiseDataExport):
         ''' Make sure there is a flag column for each param parameter '''
         if param is not None and isinstance(param, str) and not param.endswith(FLAG_END):
             flag = param + FLAG_END
-            if flag not in self.df and param not in NON_QC_PARAMS:
+            non_qc_params = self.env.f_handler.get_custom_cols_by_attr('non_qc_param')
+            if flag not in self.df and param not in non_qc_params:
                 lg.info('>> CREATING FLAG COLUMN: {}'.format(flag))
                 values = ['2'] * len(self.df.index)
                 self.df[flag] = values
@@ -248,7 +255,8 @@ class CruiseData(CruiseDataExport):
             to compute some calculated parameters. If some of them do not exist in the dataframe yet,
             they are created with NaN values.
         '''
-        for c in BASIC_PARAMS:
+        basic_list = self.env.f_handler.get_custom_cols_by_attr('basic_param')
+        for c in basic_list:
             all_cols = self.get_cols_by_type('all')
             if c not in all_cols:
                 self.df[c] = np.array([np.nan] * self.df.index.size)
@@ -289,13 +297,16 @@ class CruiseData(CruiseDataExport):
             @discard_nan - discards columns with all the values = NaN
 
             NOTE: a flag param could have the types 'param_flag' and 'qc_param_flag' at the same time
+
+            TODO: use self.cols for this instance, and get custom_cols if needed (basic_params) ??
         '''
         if isinstance(column_types, str):
             column_types = [column_types]
         if len(column_types) == 1 and 'all' in column_types:
             column_types = [
                 'computed', 'param', 'non_qc_param',
-                'param_flag', 'qc_param_flag', 'required'
+                'param_flag', 'qc_param_flag', 'required',
+                'created'
             ]
         res = []
         for t in column_types:
@@ -381,15 +392,10 @@ class CruiseData(CruiseDataExport):
 
     def _prep_df_columns(self):
         self.df.replace(r'\s', '', regex=True, inplace=True)  # cleans spaces: \r and \n are managed by read_csv
-        aux_cols = self.df.columns.tolist()
-        self.df.columns = self._sanitize_cols(self.df.columns)  # remove spaces from columns
-        self.df.columns = self._map_col_names(self.df.columns)
-
-        cur_cols = self.df.columns.tolist()
-        for i in range(len(cur_cols)):
-            self.orig_cols[cur_cols[i]] = aux_cols[i]
-
-        self._create_btlnbr_or_sampno_column()
+        non_sanitized = self.df.columns.tolist()
+        self.df.columns = self._sanitize_cols(self.df.columns.tolist())  # remove spaces from columns
+        self.df.columns = self._map_col_names(self.df.columns.tolist(), non_sanitized)
+        self._create_btlnbr_or_sampno_column()  # >> basic params?
         self._create_date_column()
 
     def _create_btlnbr_or_sampno_column(self):
@@ -496,8 +502,9 @@ class CruiseData(CruiseDataExport):
 
     def _validate_required_columns(self):
         lg.info('-- VALIDATE REQUIRED COLUMNS')
-        if (not set(self.get_cols_by_type('all')).issuperset(REQUIRED_COLUMNS)):
-            missing_columns = ', '.join(list(set(REQUIRED_COLUMNS) - set(self.get_cols_by_type('all'))))
+        required_columns = self.env.f_handler.get_custom_cols_by_attr('required')
+        if (not set(self.get_cols_by_type('all')).issuperset(required_columns)):
+            missing_columns = ', '.join(list(set(required_columns) - set(self.get_cols_by_type('all'))))
             raise ValidationError(
                 'Missing required columns in the file: [{}]'.format(missing_columns),
                 rollback=self.rollback
@@ -506,28 +513,34 @@ class CruiseData(CruiseDataExport):
     def _sanitize_cols(self, names):
         result = []
         for name in names:
-            name = name.replace('-', '_')
-            name = name.replace('+', '_')
-            name = name.replace(' ', '')
-            result.append(name)
+            n = name.replace('-', '_')
+            n = n.replace('+', '_')
+            n = n.replace(' ', '')  # TODO: any space, not only space >> trim?
+            n = re.sub(r'\s', '', n)
+            n = n.upper()
+            result.append(n)
+            if name != n:
+                self.col_mappings[name] = n
         return result
 
-    def _replace_if_not_exists(self, columns, external_name, replace_with):
-        if not external_name in columns:
-            columns = [re.sub(r'\b' + replace_with + r'\b', external_name, c) for c in columns]
-            if replace_with + 'F' in columns:
-                columns = [re.sub(r'\b' + replace_with + 'F' + r'\b', external_name + FLAG_END, c) for c in columns]
-        return columns
-
-    def _map_col_names(self, names):
+    def _map_col_names(self, sanitized, non_sanitized):
         lg.info('-- MAP COL NAMES')
-        result = [n.upper() for n in names]
-        for m in COL_NAMES_MAPPING:
-            result = self._replace_if_not_exists(result, m[0], m[1])
-        for name in result:
-            if name + 'F' in result:
-                result = [re.sub(r'\b' + name + 'F' + r'\b', name + FLAG_END, r) for r in result]
-        return result
+        # map column names from custom settings
+        custom_cols = self.env.f_handler.get('columns', CUSTOM_SETTINGS)
+        for c in custom_cols.keys():
+            if len(custom_cols[c]['external_name']) > 0:
+                for n in custom_cols[c]['external_name']:
+                    if n in sanitized and c not in sanitized:
+                        sanitized[sanitized.index(n)] = c
+                        self.col_mappings[sanitized.index(n)] = c
+
+        # sometimes flags end with F instead of _FLAG_W
+        for n in sanitized:
+            if n + 'F' in sanitized and n + FLAG_END not in sanitized:
+                key = non_sanitized[sanitized.index(f'{n}F')]
+                sanitized[sanitized.index(f'{n}F')] = n + FLAG_END
+                self.col_mappings[f'{key}'] = n + FLAG_END
+        return sanitized
 
     def _replace_nan_values(self):
         ''' Replaces the -990.0, -999.00, etc values to NaN.

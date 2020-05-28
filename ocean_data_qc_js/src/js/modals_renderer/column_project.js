@@ -102,7 +102,7 @@ module.exports = {
                 $('<i>', {
                     'class': 'fa fa-info-circle',
                     'style': 'cursor: pointer; color: #337ab5; margin-left: 8px; font-size: 0.8rem;',
-                    'title': '<b>Original name:</b><br />' + external_name,
+                    'title': '<b>External name:</b><br />' + external_name,
                     'data-toggle': 'tooltip',
                     'data-placement': 'bottom',
                     'data-html': 'true',

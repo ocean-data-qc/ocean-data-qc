@@ -197,7 +197,7 @@ class FilesHandler(Environment):
 
             NOTE: This method should be avoided because access to hard disk is very costly
         """
-        lg.info('-- GET ATTR: {} | FROM FILE: {}'.format(attr, f_path))
+        # lg.info('-- GET ATTR: {} | FROM FILE: {}'.format(attr, f_path))
         with open(f_path, 'r') as f:
             json_content = json.load(f)
         if attr in json_content:
@@ -220,6 +220,22 @@ class FilesHandler(Environment):
         else:
             lg.warning(f'>> The attribute {attr} is not in the JSON file: {f_path}')
 
+    def get_custom_cols_by_attr(self, attr):
+        ''' return a list of fields selected by attr from the custom_settings.json:
+              * basic_params
+              * required_columns
+              * non_qc_param
+
+              TODO: this is called many times, try to access to disk less by storing the
+                    content of columns somewhere (it just has to be updated when the user modify it)
+        '''
+        cols = self.get('columns', CUSTOM_SETTINGS)
+        l = []
+        for c in cols:
+            if attr in cols[c]['types']:
+                l.append(c)
+        l = sorted(l)
+        return l
 
 class BokehTemplate(Template):
     def render(self, *args, **kwargs):
