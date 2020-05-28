@@ -610,6 +610,87 @@
             "types": [],
             "unit": false,
             "precision": 4
+        },
+        "DAY": {
+            "external_name": [],
+            "data_type": "date_component",
+            "types": [
+                "non_qc_param"
+            ],
+            "unit": false,
+            "precision": false
+        },
+        "MONTH": {
+            "external_name": [],
+            "data_type": "date_component",
+            "types": [
+                "non_qc_param"
+            ],
+            "unit": false,
+            "precision": false
+        },
+        "YEAR": {
+            "external_name": [],
+            "data_type": "date_component",
+            "types": [
+                "non_qc_param"
+            ],
+            "unit": false,
+            "precision": false
+        },
+        "HOUR": {
+            "external_name": [],
+            "data_type": "date_component",
+            "types": [
+                "non_qc_param"
+            ],
+            "unit": false,
+            "precision": false
+        },
+        "MINUTE": {
+            "external_name": [],
+            "data_type": "date_component",
+            "types": [
+                "non_qc_param"
+            ],
+            "unit": false,
+            "precision": false
+        },
+        "SECOND": {
+            "external_name": [],
+            "data_type": "date_component",
+            "types": [
+                "non_qc_param"
+            ],
+            "unit": false,
+            "precision": false
+        },
+        "DATE_DD": {
+            "external_name": [],
+            "data_type": "date_component",
+            "types": [
+                "non_qc_param"
+            ],
+            "unit": false,
+            "precision": false
+        },
+        "DATE_MM": {
+            "external_name": [],
+            "data_type": "date_component",
+            "types": [
+                "non_qc_param"
+            ],
+            "unit": false,
+            "precision": false
+        },
+        "DATE_YY": {
+            "external_name": [],
+            "data_type": "date_component",
+            "types": [
+                "non_qc_param"
+            ],
+            "unit": false,
+            "precision": false
         }
     },
     "computed_params": [
