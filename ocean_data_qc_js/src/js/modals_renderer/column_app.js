@@ -153,8 +153,6 @@ module.exports = {
     },
 
     get_txt_orig_name: function(col_name=false) {
-        lg.warn('-- GET TXT ORIG NAME');
-        lg.warn('>> COL NAME: ' + col_name);
         var self = this;
         var orig_name = [];
         if (col_name !== false) {
@@ -373,12 +371,7 @@ module.exports = {
             var data_table = $('#table_column_app').DataTable();
 
             var scroll_body = $(data_table.table().node()).parent();
-
-            scroll_body.animate({ scrollTop: scroll_body.get(0).scrollHeight }, 500, function() {
-                lg.warn('SCROLLING');
-
-                // add column and scroll again after drawing
-            });
+            scroll_body.animate({ scrollTop: scroll_body.get(0).scrollHeight }, 500);
 
             var new_row_i = data_table.data().length + 1;
 
@@ -413,7 +406,6 @@ module.exports = {
 
             var new_row = data_table.row.add(tr).draw().node();
             self.set_tags_input();
-
             $(new_row).find('input[name="txt_col_name"]').focus();
         });
     },
