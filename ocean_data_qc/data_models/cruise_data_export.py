@@ -50,7 +50,7 @@ class CruiseDataExport(Environment):
                     f_out.write('# {}'.format(line))
 
             # TODO: check if this exports the correct column order? which is the correct order?
-            columns = self.get_cols_by_type(
+            columns = self.get_cols_by_attrs(
                 ['required', 'param', 'non_qc_param', 'qc_param_flag', 'param_flag']
             )
             columns_row = ','.join(columns)
@@ -80,7 +80,7 @@ class CruiseDataExport(Environment):
             os.remove(path.join(TMP, 'export_data.csv'))
         aux_df = self.df.copy()
         aux_df = aux_df.replace(np.nan, -999.0)  # float64 fields value will be -999.0
-        cols = self.get_cols_by_type(['required', 'param', 'non_qc_param','qc_param_flag', 'param_flag'])
+        cols = self.get_cols_by_attrs(['required', 'param', 'non_qc_param','qc_param_flag', 'param_flag'])
         aux_df = aux_df.filter(cols)
         orig_col_names = []
         for c in cols:

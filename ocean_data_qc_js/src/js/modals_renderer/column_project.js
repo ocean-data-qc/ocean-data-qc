@@ -55,7 +55,7 @@ module.exports = {
             var col_name = cols[i];
             var name = self.get_col_name(col_name);
             var data_type = self.get_data_type(col_name)
-            var types = self.pj_cols[col_name]['types'].join(', ');  // TODO: translate to icons or extract just some of them?
+            var attrs = self.pj_cols[col_name]['attrs'].join(', ');  // TODO: translate to icons or extract just some of them?
             var cb_export = self.get_cb_export(i, col_name);
             var sel_cur_prec = self.get_cur_prec(col_name);
             var txt_cur_unit = self.get_txt_cur_unit(col_name);
@@ -66,7 +66,7 @@ module.exports = {
                 $('<td>', {html: cb_export }),
                 name,
                 $('<td>', {html: data_type }),
-                $('<td>', {text: types }),
+                $('<td>', {text: attrs }),
                 $('<td>', {html: sel_cur_prec }),
                 $('<td>', {html: txt_cur_unit }),
                 $('<td>', {html: set_bt })

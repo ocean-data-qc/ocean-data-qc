@@ -20,7 +20,7 @@
                 "CRUISENO"
             ],
             "data_type": "string",
-            "types": [
+            "attrs": [
                 "required",
                 "non_qc_param"
             ],
@@ -30,7 +30,7 @@
         "SECT": {
             "external_name": [],
             "data_type": "",
-            "types": [
+            "attrs": [
                 "non_qc_param"
             ],
             "unit": false,
@@ -39,16 +39,18 @@
         "SECT_ID": {
             "external_name": [],
             "data_type": "",
-            "types": [
+            "attrs": [
                 "non_qc_param"
             ],
             "unit": false,
             "precision": false
         },
         "STNNBR": {
-            "external_name": ["STATION"],
+            "external_name": [
+                "STATION"
+            ],
             "data_type": "",
-            "types": [
+            "attrs": [
                 "required",
                 "non_qc_param"
             ],
@@ -56,9 +58,11 @@
             "precision": false
         },
         "CASTNO": {
-            "external_name": ["CAST"],
+            "external_name": [
+                "CAST"
+            ],
             "data_type": "integer",
-            "types": [
+            "attrs": [
                 "required",
                 "non_qc_param"
             ],
@@ -66,9 +70,11 @@
             "precision": 0
         },
         "BTLNBR": {
-            "external_name": ["BOTTLE"],
+            "external_name": [
+                "BOTTLE"
+            ],
             "data_type": "integer",
-            "types": [
+            "attrs": [
                 "required",
                 "non_qc_param"
             ],
@@ -78,14 +84,14 @@
         "BTLNBR_FLAG_W": {
             "external_name": [],
             "data_type": "integer",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 0
         },
         "SAMPNO": {
             "external_name": [],
             "data_type": "integer",
-            "types": [
+            "attrs": [
                 "basic_param"
             ],
             "unit": false,
@@ -94,14 +100,14 @@
         "SAMPNO_FLAG_W": {
             "external_name": [],
             "data_type": "integer",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 0
         },
         "DATE": {
             "external_name": [],
             "data_type": "",
-            "types": [
+            "attrs": [
                 "required",
                 "non_qc_param"
             ],
@@ -111,7 +117,7 @@
         "TIME": {
             "external_name": [],
             "data_type": "",
-            "types": [
+            "attrs": [
                 "non_qc_param"
             ],
             "unit": false,
@@ -120,7 +126,7 @@
         "LATITUDE": {
             "external_name": [],
             "data_type": "float",
-            "types": [
+            "attrs": [
                 "required",
                 "non_qc_param"
             ],
@@ -130,7 +136,7 @@
         "LONGITUDE": {
             "external_name": [],
             "data_type": "float",
-            "types": [
+            "attrs": [
                 "required",
                 "non_qc_param"
             ],
@@ -140,7 +146,7 @@
         "DEPTH": {
             "external_name": [],
             "data_type": "",
-            "types": [
+            "attrs": [
                 "non_qc_param",
                 "basic_param"
             ],
@@ -148,9 +154,11 @@
             "precision": false
         },
         "CTDPRS": {
-            "external_name": ["PRESSURE"],
+            "external_name": [
+                "PRESSURE"
+            ],
             "data_type": "float",
-            "types": [
+            "attrs": [
                 "non_qc_param",
                 "basic_param"
             ],
@@ -158,9 +166,11 @@
             "precision": 4
         },
         "CTDTMP": {
-            "external_name": ["TEMPERATURE"],
+            "external_name": [
+                "TEMPERATURE"
+            ],
             "data_type": "float",
-            "types": [
+            "attrs": [
                 "basic_param"
             ],
             "unit": "ITS-90",
@@ -169,7 +179,7 @@
         "CTDSAL": {
             "external_name": [],
             "data_type": "float",
-            "types": [
+            "attrs": [
                 "basic_param"
             ],
             "unit": "PSS-78",
@@ -178,14 +188,17 @@
         "CTDSAL_FLAG_W": {
             "external_name": [],
             "data_type": "integer",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 0
         },
         "SALNTY": {
-            "external_name": ["SALINITY", "CTDSAL"],
+            "external_name": [
+                "SALINITY",
+                "CTDSAL"
+            ],
             "data_type": "float",
-            "types": [
+            "attrs": [
                 "basic_param"
             ],
             "unit": "PSS-78",
@@ -194,14 +207,14 @@
         "SALNTY_FLAG_W": {
             "external_name": [],
             "data_type": "integer",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 0
         },
         "CTDOXY": {
             "external_name": [],
             "data_type": "float",
-            "types": [
+            "attrs": [
                 "basic_param"
             ],
             "unit": "UMOL/KG",
@@ -210,14 +223,14 @@
         "CTDOXY_FLAG_W": {
             "external_name": [],
             "data_type": "integer",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 0
         },
         "OXYGEN": {
             "external_name": [],
             "data_type": "float",
-            "types": [
+            "attrs": [
                 "basic_param"
             ],
             "unit": "UMOL/KG",
@@ -226,28 +239,32 @@
         "OXYGEN_FLAG_W": {
             "external_name": [],
             "data_type": "integer",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 0
         },
         "SILCAT": {
-            "external_name": ["SILICATE"],
+            "external_name": [
+                "SILICATE"
+            ],
             "data_type": "float",
-            "types": [],
+            "attrs": [],
             "unit": "UMOL/KG",
             "precision": 2
         },
         "SILCAT_FLAG_W": {
             "external_name": [],
             "data_type": "integer",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 0
         },
         "NITRAT": {
-            "external_name": ["NITRATE"],
+            "external_name": [
+                "NITRATE"
+            ],
             "data_type": "float",
-            "types": [
+            "attrs": [
                 "basic_param"
             ],
             "unit": "UMOL/KG",
@@ -256,14 +273,16 @@
         "NITRAT_FLAG_W": {
             "external_name": [],
             "data_type": "integer",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 0
         },
         "NITRIT": {
-            "external_name": ["NITRATE"],
+            "external_name": [
+                "NITRITE"
+            ],
             "data_type": "float",
-            "types": [
+            "attrs": [
                 "basic_param"
             ],
             "unit": false,
@@ -272,14 +291,16 @@
         "NITRIT_FLAG_W": {
             "external_name": [],
             "data_type": "integer",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 0
         },
         "NO2_NO3": {
-            "external_name": ["NO2NO3"],
+            "external_name": [
+                "NO2NO3"
+            ],
             "data_type": "",
-            "types": [
+            "attrs": [
                 "basic_param"
             ],
             "unit": false,
@@ -288,14 +309,16 @@
         "NO2_NO3_FLAG_W": {
             "external_name": [],
             "data_type": "integer",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 0
         },
         "PHSPHT": {
-            "external_name": ["PHOSPHATE"],
+            "external_name": [
+                "PHOSPHATE"
+            ],
             "data_type": "float",
-            "types": [
+            "attrs": [
                 "basic_param"
             ],
             "unit": "UMOL/KG",
@@ -304,84 +327,102 @@
         "PHSPHT_FLAG_W": {
             "external_name": [],
             "data_type": "integer",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 0
         },
         "ALKALI": {
-            "external_name": ["TALK", "ALK"],
+            "external_name": [
+                "TALK",
+                "ALK"
+            ],
             "data_type": "float",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 2
         },
         "ALKALI_FLAG_W": {
             "external_name": [],
             "data_type": "integer",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 0
         },
         "TCARBN": {
-            "external_name": ["TCO2", "DIC", "CT"],
+            "external_name": [
+                "TCO2",
+                "DIC",
+                "CT"
+            ],
             "data_type": "float",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 2
         },
         "TCARBN_FLAG_W": {
             "external_name": [],
             "data_type": "integer",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 0
         },
         "PH": {
             "external_name": [],
             "data_type": "",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": false
         },
         "PH_FLAG_W": {
             "external_name": [],
             "data_type": "integer",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 0
         },
         "PH_TOT": {
-            "external_name": ["PH_T", "PH_TS", "PHTS", "PHTS25", "PHTS25P0"],
+            "external_name": [
+                "PH_T",
+                "PH_TS",
+                "PHTS",
+                "PHTS25",
+                "PHTS25P0"
+            ],
             "data_type": "",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": false
         },
         "PH_TOT_FLAG_W": {
             "external_name": [],
             "data_type": "integer",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 0
         },
         "PH_SWS": {
-            "external_name": ["PHSWS", "PHSWS25", "PHSWS25P0", "PH_SWS25P0"],
+            "external_name": [
+                "PHSWS",
+                "PHSWS25",
+                "PHSWS25P0",
+                "PH_SWS25P0"
+            ],
             "data_type": "",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": false
         },
         "PH_SWS_FLAG_W": {
             "external_name": [],
             "data_type": "integer",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 0
         },
         "PH_TMP": {
             "external_name": [],
             "data_type": "",
-            "types": [
+            "attrs": [
                 "non_qc_param"
             ],
             "unit": "DEGC",
@@ -390,231 +431,235 @@
         "PCO2": {
             "external_name": [],
             "data_type": "",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": false
         },
         "PCO2_FLAG_W": {
             "external_name": [],
             "data_type": "integer",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 0
         },
         "CFC_11": {
-            "external_name": ["CFC11"],
+            "external_name": [
+                "CFC11"
+            ],
             "data_type": "float",
-            "types": [],
+            "attrs": [],
             "unit": "PMOL/KG",
             "precision": 3
         },
         "CFC_11_FLAG_W": {
             "external_name": [],
             "data_type": "integer",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 0
         },
         "CFC_12": {
-            "external_name": ["CFC12"],
+            "external_name": [
+                "CFC12"
+            ],
             "data_type": "float",
-            "types": [],
+            "attrs": [],
             "unit": "PMOL/KG",
             "precision": 3
         },
         "CFC_12_FLAG_W": {
             "external_name": [],
             "data_type": "integer",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 0
         },
         "CFC113": {
             "external_name": [],
             "data_type": "float",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 2
         },
         "CFC113_FLAG_W": {
             "external_name": [],
             "data_type": "integer",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 0
         },
         "CCL4": {
             "external_name": [],
             "data_type": "float",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 2
         },
         "CCL4_FLAG_W": {
             "external_name": [],
             "data_type": "integer",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 0
         },
         "TRITIUM": {
             "external_name": [],
             "data_type": "float",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 3
         },
         "TRITIUM_FLAG_W": {
             "external_name": [],
             "data_type": "integer",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 0
         },
         "TRITIUM_ERR": {
             "external_name": [],
             "data_type": "float",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 3
         },
         "HELIUM": {
             "external_name": [],
             "data_type": "float",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 2
         },
         "HELIUM_FLAG_W": {
             "external_name": [],
             "data_type": "integer",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 0
         },
         "HELIUM_ERR": {
             "external_name": [],
             "data_type": "float",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 2
         },
         "DELHE3": {
             "external_name": [],
             "data_type": "float",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 2
         },
         "DELHE3_FLAG_W": {
             "external_name": [],
             "data_type": "integer",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 0
         },
         "DELHE3_ERR": {
             "external_name": [],
             "data_type": "float",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 2
         },
         "DELC14": {
             "external_name": [],
             "data_type": "",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": false
         },
         "DELC14_FLAG_W": {
             "external_name": [],
             "data_type": "integer",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 0
         },
         "DELC13": {
             "external_name": [],
             "data_type": "",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": false
         },
         "DELC13_FLAG_W": {
             "external_name": [],
             "data_type": "integer",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 0
         },
         "O18O16": {
             "external_name": [],
             "data_type": "",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": false
         },
         "O18O16_FLAG_W": {
             "external_name": [],
             "data_type": "integer",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 0
         },
         "PHTS25P0": {
             "external_name": [],
             "data_type": "float",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 4
         },
         "SF6": {
             "external_name": [],
             "data_type": "float",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 2
         },
         "SF6_FLAG_W": {
             "external_name": [],
             "data_type": "integer",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 0
         },
         "THETA": {
             "external_name": [],
             "data_type": "",
-            "types": [],
+            "attrs": [],
             "unit": "DEGC",
             "precision": false
         },
         "N2O": {
             "external_name": [],
             "data_type": "",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": false
         },
         "NEON": {
             "external_name": [],
             "data_type": "float",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 4
         },
         "NEON_ERR": {
             "external_name": [],
             "data_type": "float",
-            "types": [],
+            "attrs": [],
             "unit": false,
             "precision": 4
         },
         "DAY": {
             "external_name": [],
             "data_type": "date_component",
-            "types": [
+            "attrs": [
                 "non_qc_param"
             ],
             "unit": false,
@@ -623,7 +668,7 @@
         "MONTH": {
             "external_name": [],
             "data_type": "date_component",
-            "types": [
+            "attrs": [
                 "non_qc_param"
             ],
             "unit": false,
@@ -632,7 +677,7 @@
         "YEAR": {
             "external_name": [],
             "data_type": "date_component",
-            "types": [
+            "attrs": [
                 "non_qc_param"
             ],
             "unit": false,
@@ -641,7 +686,7 @@
         "HOUR": {
             "external_name": [],
             "data_type": "date_component",
-            "types": [
+            "attrs": [
                 "non_qc_param"
             ],
             "unit": false,
@@ -650,7 +695,7 @@
         "MINUTE": {
             "external_name": [],
             "data_type": "date_component",
-            "types": [
+            "attrs": [
                 "non_qc_param"
             ],
             "unit": false,
@@ -659,7 +704,7 @@
         "SECOND": {
             "external_name": [],
             "data_type": "date_component",
-            "types": [
+            "attrs": [
                 "non_qc_param"
             ],
             "unit": false,
@@ -668,7 +713,7 @@
         "DATE_DD": {
             "external_name": [],
             "data_type": "date_component",
-            "types": [
+            "attrs": [
                 "non_qc_param"
             ],
             "unit": false,
@@ -677,7 +722,7 @@
         "DATE_MM": {
             "external_name": [],
             "data_type": "date_component",
-            "types": [
+            "attrs": [
                 "non_qc_param"
             ],
             "unit": false,
@@ -686,7 +731,7 @@
         "DATE_YY": {
             "external_name": [],
             "data_type": "date_component",
-            "types": [
+            "attrs": [
                 "non_qc_param"
             ],
             "unit": false,

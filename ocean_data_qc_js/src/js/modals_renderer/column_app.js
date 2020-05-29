@@ -207,12 +207,12 @@ module.exports = {
     get_cb_field: function(row=false, col_name=false, type=false) {  // if col_name = fals >> new row
         var self = this;
         if (type !== false) {
-            var types = [];
+            var attrs = [];
             if (col_name !== false) {
-                var types = self.cs_cols[col_name]['types'];
+                var attrs = self.cs_cols[col_name]['attrs'];
             }
             var checked = false;
-            if (types.length > 0 && types.includes(type)) {
+            if (attrs.length > 0 && attrs.includes(type)) {
                 checked = true;
             }
             var cb_export = $('<div>', {

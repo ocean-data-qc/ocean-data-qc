@@ -232,7 +232,7 @@ class FilesHandler(Environment):
         cols = self.get('columns', CUSTOM_SETTINGS)
         l = []
         for c in cols:
-            if attr in cols[c]['types']:
+            if attr in cols[c]['attrs']:
                 l.append(c)
         l = sorted(l)
         return l

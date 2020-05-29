@@ -77,7 +77,7 @@ class CruiseData(CruiseDataExport):
                 "cols": {
                     "ALKALI": {
                         "external_name": "alkali",          # in custom_settings is a list
-                        "types": ["param", "required", ],
+                        "attrs": ["param", "required", ],
                         "data_type": "float",
                         "unit": "UMOL/KG",
                         "precision": 3,
@@ -85,7 +85,7 @@ class CruiseData(CruiseDataExport):
                     },
                     "ALKALI_FLAG_W": {
                         "external_name": False,
-                        "types": ["param_flag", "qc_param_flag"],
+                        "attrs": ["param_flag", "qc_param_flag"],
                         "data_type": "integer"
                         "unit": False,  # >> False
                         "precision": 0,
@@ -200,31 +200,31 @@ class CruiseData(CruiseDataExport):
             TODO: add all arguments or add a param as a dictionary with all the attributes
                   this method also should work if something should be modified or removed?
         '''
-        if column not in self.get_cols_by_type('all'):
+        if column not in self.get_cols_by_attrs('all'):
             self.cols[column] = {
                 'external_name': False,
-                'types': [],
+                'attrs': [],
                 'unit': units,
                 'precision': False,
                 'export': export
             }
             non_qc_params = self.env.f_handler.get_custom_cols_by_attr('non_qc_param')
             if column.endswith(FLAG_END):
-                self.cols[column]['types'] += ['param_flag']
+                self.cols[column]['attrs'] += ['param_flag']
                 flags_not_to_qc = [x + FLAG_END for x in non_qc_params]
                 if column not in flags_not_to_qc:
-                    self.cols[column]['types'] += ['qc_param_flag']
+                    self.cols[column]['attrs'] += ['qc_param_flag']
             else:
                 basic_params = self.env.f_handler.get_custom_cols_by_attr('basic_param')
                 if column in basic_params:
-                    self.cols[column]['types'] += ['basic_param']
+                    self.cols[column]['attrs'] += ['basic_param']
                 required_cols = self.env.f_handler.get_custom_cols_by_attr('required')
                 if column in required_cols:
-                    self.cols[column]['types'] += ['required']
+                    self.cols[column]['attrs'] += ['required']
                 elif column in non_qc_params:
-                    self.cols[column]['types'] += ['non_qc_param']
+                    self.cols[column]['attrs'] += ['non_qc_param']
                 else:
-                    self.cols[column]['types'] += ['param']
+                    self.cols[column]['attrs'] += ['param']
                 self.create_missing_flag_col(column)
         else:
             lg.warning('>> THE COLUMN ALREADY EXISTS AND IT CANNOT BE CREATED AGAIN')
@@ -240,7 +240,7 @@ class CruiseData(CruiseDataExport):
                 self.df[flag] = values
                 self.cols[flag] = {
                     'external_name': False,
-                    'types': ['param_flag', 'qc_param_flag', 'created'],
+                    'attrs': ['param_flag', 'qc_param_flag', 'created'],
                     'unit': False,
                     'export': True
                 }
@@ -257,7 +257,7 @@ class CruiseData(CruiseDataExport):
         '''
         basic_list = self.env.f_handler.get_custom_cols_by_attr('basic_param')
         for c in basic_list:
-            all_cols = self.get_cols_by_type('all')
+            all_cols = self.get_cols_by_attrs('all')
             if c not in all_cols:
                 self.df[c] = np.array([np.nan] * self.df.index.size)
                 self.add_moves_element(
@@ -268,7 +268,7 @@ class CruiseData(CruiseDataExport):
                 # NOTE: I don't call to _add_column because I don't want to create the flag column
                 self.cols[c] = {
                     'external_name': False,
-                    'types': ['param', 'basic_param', 'created', ],
+                    'attrs': ['param', 'basic_param', 'created', ],
                     'unit': False,
                     'precision': False,
                     'export': False
@@ -278,15 +278,8 @@ class CruiseData(CruiseDataExport):
         """ The columns are set directly from the settings.json file """
         self.cols = self.env.f_handler.get('columns', path.join(TMP, 'settings.json'))
 
-    def get_col_type(self, column=''):
-        ''' Return a list of column types associated to the column argument '''
-        if column in self.cols:
-            return self.cols[column]['types']
-        else:
-            return False
-
-    def get_cols_by_type(self, column_types=[], discard_nan=False):
-        ''' Possible types:
+    def get_cols_by_attrs(self, column_attrs=[], discard_nan=False):
+        ''' Possible attrs:
                 * computed      - calculated parameters
                 * param         - parameters
                 * non_qc_param  - params without qc column
@@ -296,25 +289,25 @@ class CruiseData(CruiseDataExport):
 
             @discard_nan - discards columns with all the values = NaN
 
-            NOTE: a flag param could have the types 'param_flag' and 'qc_param_flag' at the same time
+            NOTE: a flag param could have the attrs 'param_flag' and 'qc_param_flag' at the same time
 
             TODO: use self.cols for this instance, and get custom_cols if needed (basic_params) ??
         '''
-        if isinstance(column_types, str):
-            column_types = [column_types]
-        if len(column_types) == 1 and 'all' in column_types:
-            column_types = [
+        if isinstance(column_attrs, str):
+            column_attrs = [column_attrs]
+        if len(column_attrs) == 1 and 'all' in column_attrs:
+            column_attrs = [
                 'computed', 'param', 'non_qc_param',
                 'param_flag', 'qc_param_flag', 'required',
                 'created'
             ]
         res = []
-        for t in column_types:
+        for t in column_attrs:
             for c in self.cols:
-                if t in self.cols[c]['types']:
+                if t in self.cols[c]['attrs']:
                     if c not in res:
                         res.append(c)
-        res = list(set(res))  # one column may have multiple types
+        res = list(set(res))  # one column may have multiple attrs
         df_cols = list(self.df.columns)
         col_positions = dict(
             [(df_cols[df_cols.index(x)], df_cols.index(x)) for x in df_cols]  # {'COL1': 0, 'COL2': 1, ...}
@@ -348,7 +341,7 @@ class CruiseData(CruiseDataExport):
         return [self.cols[x]['unit'] for x in cols]
 
     def is_flag(self, flag):
-        if flag[-7:] == FLAG_END and flag in self.get_cols_by_type(['param_flag', 'qc_param_flag']):
+        if flag[-7:] == FLAG_END and flag in self.get_cols_by_attrs(['param_flag', 'qc_param_flag']):
             return True
         else:
             return False
@@ -503,8 +496,8 @@ class CruiseData(CruiseDataExport):
     def _validate_required_columns(self):
         lg.info('-- VALIDATE REQUIRED COLUMNS')
         required_columns = self.env.f_handler.get_custom_cols_by_attr('required')
-        if (not set(self.get_cols_by_type('all')).issuperset(required_columns)):
-            missing_columns = ', '.join(list(set(required_columns) - set(self.get_cols_by_type('all'))))
+        if (not set(self.get_cols_by_attrs('all')).issuperset(required_columns)):
+            missing_columns = ', '.join(list(set(required_columns) - set(self.get_cols_by_attrs('all'))))
             raise ValidationError(
                 'Missing required columns in the file: [{}]'.format(missing_columns),
                 rollback=self.rollback
@@ -678,7 +671,7 @@ class CruiseData(CruiseDataExport):
                   - Show a error message (now only a warning appears)
         '''
         lg.info('-- RECOMPUTE CP PARAMETERS')
-        cp_params = self.env.cruise_data.get_cols_by_type('computed')
+        cp_params = self.env.cruise_data.get_cols_by_attrs('computed')
         for c in cp_params:
             del self.cols[c]
         cps_to_rmv = []

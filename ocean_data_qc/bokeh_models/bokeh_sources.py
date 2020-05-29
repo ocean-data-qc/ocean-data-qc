@@ -184,7 +184,7 @@ class BokehSources(Environment):
                 ...
             }
         '''
-        cols = self.env.cruise_data.get_cols_by_type(['param_flag', 'qc_param_flag'])
+        cols = self.env.cruise_data.get_cols_by_attrs(['param_flag', 'qc_param_flag'])
         flag_vals = self.env.cds_df[cols].values.ravel('K')  # ravel('K') to flatten the multidimensional array
         flag_vals = flag_vals[~np.isnan(flag_vals)]          # remove nan
         flag_vals = np.unique(flag_vals)                     # select the unique values

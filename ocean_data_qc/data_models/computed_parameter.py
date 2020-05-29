@@ -86,7 +86,7 @@ class ComputedParameter(Environment):
                     self.cruise_data.cols[val] = {
                         'external_name': cp['param_name'],
                         'data_type': 'integer' if prec == 0 else 'float',
-                        'types': ['computed'],
+                        'attrs': ['computed'],
                         'unit': cp.get('units', False),
                         'precision': prec,
                         'export': False
@@ -283,11 +283,11 @@ class ComputedParameter(Environment):
 
     def get_all_parameters(self):
         lg.info('-- GET ALL PARAMETERS')
-        cols = self.cruise_data.get_cols_by_type(
+        cols = self.cruise_data.get_cols_by_attrs(
             ['param', 'param_flag', 'qc_param_flag', 'non_qc_param', 'required']
         )
         deps = self.check_dependencies()
-        cp_cols = self.cruise_data.get_cols_by_type('computed')
+        cp_cols = self.cruise_data.get_cols_by_attrs('computed')
         return dict(
             columns=cols,
             dependencies=deps,
@@ -302,7 +302,7 @@ class ComputedParameter(Environment):
         '''
         lg.info('-- DELETE COMPUTED PARAMETER')
         value = args.get('value', False)
-        current_columns = self.cruise_data.get_cols_by_type(['all'])
+        current_columns = self.cruise_data.get_cols_by_attrs(['all'])
         if value in current_columns:
             try:
                 if value in self.cruise_data.df.columns:
