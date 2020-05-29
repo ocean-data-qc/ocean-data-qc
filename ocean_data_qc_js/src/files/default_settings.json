@@ -92,7 +92,7 @@
             "external_name": [],
             "data_type": "integer",
             "attrs": [
-                "basic_param"
+                "basic"
             ],
             "unit": false,
             "precision": 0
@@ -148,7 +148,7 @@
             "data_type": "",
             "attrs": [
                 "non_qc_param",
-                "basic_param"
+                "basic"
             ],
             "unit": "METERS",
             "precision": false
@@ -160,7 +160,7 @@
             "data_type": "float",
             "attrs": [
                 "non_qc_param",
-                "basic_param"
+                "basic"
             ],
             "unit": "DBAR",
             "precision": 4
@@ -171,7 +171,7 @@
             ],
             "data_type": "float",
             "attrs": [
-                "basic_param"
+                "basic"
             ],
             "unit": "ITS-90",
             "precision": 4
@@ -180,7 +180,7 @@
             "external_name": [],
             "data_type": "float",
             "attrs": [
-                "basic_param"
+                "basic"
             ],
             "unit": "PSS-78",
             "precision": 4
@@ -199,7 +199,7 @@
             ],
             "data_type": "float",
             "attrs": [
-                "basic_param"
+                "basic"
             ],
             "unit": "PSS-78",
             "precision": 4
@@ -215,7 +215,7 @@
             "external_name": [],
             "data_type": "float",
             "attrs": [
-                "basic_param"
+                "basic"
             ],
             "unit": "UMOL/KG",
             "precision": 2
@@ -231,7 +231,7 @@
             "external_name": [],
             "data_type": "float",
             "attrs": [
-                "basic_param"
+                "basic"
             ],
             "unit": "UMOL/KG",
             "precision": 2
@@ -265,7 +265,7 @@
             ],
             "data_type": "float",
             "attrs": [
-                "basic_param"
+                "basic"
             ],
             "unit": "UMOL/KG",
             "precision": 2
@@ -283,7 +283,7 @@
             ],
             "data_type": "float",
             "attrs": [
-                "basic_param"
+                "basic"
             ],
             "unit": false,
             "precision": 2
@@ -301,7 +301,7 @@
             ],
             "data_type": "",
             "attrs": [
-                "basic_param"
+                "basic"
             ],
             "unit": false,
             "precision": false
@@ -319,7 +319,7 @@
             ],
             "data_type": "float",
             "attrs": [
-                "basic_param"
+                "basic"
             ],
             "unit": "UMOL/KG",
             "precision": 2

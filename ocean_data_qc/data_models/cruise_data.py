@@ -49,7 +49,7 @@ class CruiseData(CruiseDataExport):
         lg.info('-- REMOVE EMPTY COLUMNS (all values with -999)')
         cols_to_rmv = []
         flags_to_rmv = []
-        basic_params = self.env.f_handler.get_custom_cols_by_attr('basic_param')
+        basic_params = self.env.f_handler.get_custom_cols_by_attr('basic')
         for col in self.df:
             if col not in basic_params:  # empty basic param columns are needed for some calculated params
                 if self.df[col].str.contains(NA_REGEX).all():
@@ -215,9 +215,9 @@ class CruiseData(CruiseDataExport):
                 if column not in flags_not_to_qc:
                     self.cols[column]['attrs'] += ['qc_param_flag']
             else:
-                basic_params = self.env.f_handler.get_custom_cols_by_attr('basic_param')
+                basic_params = self.env.f_handler.get_custom_cols_by_attr('basic')
                 if column in basic_params:
-                    self.cols[column]['attrs'] += ['basic_param']
+                    self.cols[column]['attrs'] += ['basic']
                 required_cols = self.env.f_handler.get_custom_cols_by_attr('required')
                 if column in required_cols:
                     self.cols[column]['attrs'] += ['required']
@@ -255,7 +255,7 @@ class CruiseData(CruiseDataExport):
             to compute some calculated parameters. If some of them do not exist in the dataframe yet,
             they are created with NaN values.
         '''
-        basic_list = self.env.f_handler.get_custom_cols_by_attr('basic_param')
+        basic_list = self.env.f_handler.get_custom_cols_by_attr('basic')
         for c in basic_list:
             all_cols = self.get_cols_by_attrs('all')
             if c not in all_cols:
@@ -268,7 +268,7 @@ class CruiseData(CruiseDataExport):
                 # NOTE: I don't call to _add_column because I don't want to create the flag column
                 self.cols[c] = {
                     'external_name': False,
-                    'attrs': ['param', 'basic_param', 'created', ],
+                    'attrs': ['param', 'basic', 'created', ],
                     'unit': False,
                     'precision': False,
                     'export': False
@@ -291,7 +291,7 @@ class CruiseData(CruiseDataExport):
 
             NOTE: a flag param could have the attrs 'param_flag' and 'qc_param_flag' at the same time
 
-            TODO: use self.cols for this instance, and get custom_cols if needed (basic_params) ??
+            TODO: use self.cols for this instance, and get custom_cols if needed (basic params) ??
         '''
         if isinstance(column_attrs, str):
             column_attrs = [column_attrs]

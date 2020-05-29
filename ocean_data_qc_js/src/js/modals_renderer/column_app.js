@@ -53,7 +53,7 @@ module.exports = {
             var txt_external_name = self.get_txt_external_name(col_name);
             var data_type = self.get_data_type(col_name);
 
-            var basic_field = self.get_cb_field(i, col_name, 'basic_param');
+            var basic_field = self.get_cb_field(i, col_name, 'basic');
             var required_field = self.get_cb_field(i, col_name, 'required');
             var non_qc_field = self.get_cb_field(i, col_name, 'non_qc_param');
 
@@ -379,7 +379,7 @@ module.exports = {
             var txt_external_name = self.get_txt_external_name();
             var data_type = self.get_data_type();
 
-            var basic_field = self.get_cb_field(new_row_i, false, 'basic_param');
+            var basic_field = self.get_cb_field(new_row_i, false, 'basic');
             var required_field = self.get_cb_field(new_row_i, false, 'required');
             var non_qc_field = self.get_cb_field(new_row_i, false, 'non_qc_param');
 

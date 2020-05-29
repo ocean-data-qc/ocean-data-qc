@@ -222,8 +222,8 @@ class FilesHandler(Environment):
 
     def get_custom_cols_by_attr(self, attr):
         ''' return a list of fields selected by attr from the custom_settings.json:
-              * basic_params
-              * required_columns
+              * basic
+              * required
               * non_qc_param
 
               TODO: this is called many times, try to access to disk less by storing the
