@@ -167,7 +167,7 @@ class BokehDataTable(Environment):
         lg.info('-- UPDATE DATATABLE SOURCE')
         self.update_params()
         df = self.env.cds_df.iloc[self.env.selection]
-        df_filter = self.env.cruise_data.get_cols_by_attrs(['param', 'param_flag'])
+        df_filter = self.env.cruise_data.get_cols_by_attrs(['param', 'flag'])
         df_filter.insert(0, STNNBR)
         df = df.filter(df_filter)
         self.table_df = df                          # TODO: check if it has the same order as the selection)

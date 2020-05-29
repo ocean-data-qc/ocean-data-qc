@@ -34,7 +34,7 @@ class CruiseDataUpdate(Environment):
         lg.info('-- CRUISE DATA UPDATE INIT')
         self.env.cd_update = self
         self.cols_to_compare = [
-            'param', 'param_flag', 'non_qc', 'required'
+            'param', 'flag', 'non_qc', 'required'
         ]
         self.modified = False
 
@@ -178,9 +178,9 @@ class CruiseDataUpdate(Environment):
                         # unless the whole flag column was added or the flag cell was modified
                         if column in self.env.cruise_data.get_cols_by_attrs(['param']):
                             flag_column = column + FLAG_END
-                            if flag_column in self.env.cruise_data.get_cols_by_attrs(['param_flag']):
+                            if flag_column in self.env.cruise_data.get_cols_by_attrs(['flag']):
                                 if (hash_id, flag_column) not in self.diff_val_pairs:
-                                    if flag_column in self.env.cd_aux.get_cols_by_attrs('param_flag'):
+                                    if flag_column in self.env.cd_aux.get_cols_by_attrs('flag'):
                                         if flag_column not in self.add_cols:
                                             if self.env.cd_aux.df.loc[hash_id, flag_column] != RESET_FLAG_VALUE:
                                                 self.diff_val_qty += 1
@@ -357,8 +357,8 @@ class CruiseDataUpdate(Environment):
                 self.env.cruise_data.df.loc[hash_id, columns] = self.env.cd_aux.df.loc[hash_id, columns].tolist()
 
                 # NOTE: when there is a new row but we do not have value in the flag column: NaN >> 9
-                cd_aux_flag_columns = self.env.cd_aux.get_cols_by_attrs(['param_flag'])
-                cd_flag_columns = self.env.cruise_data.get_cols_by_attrs(['param_flag'])
+                cd_aux_flag_columns = self.env.cd_aux.get_cols_by_attrs(['flag'])
+                cd_flag_columns = self.env.cruise_data.get_cols_by_attrs(['flag'])
                 flag_cols = [col for col in cd_flag_columns if col not in cd_aux_flag_columns]
                 self.env.cruise_data.df.loc[hash_id, flag_cols] = 9
 
@@ -403,7 +403,7 @@ class CruiseDataUpdate(Environment):
                         # column_flag = column + FLAG_END
                         # if column_flag not in self.rmv_cols:
                         #     col_flag_rmv.append.append(column_flag)  # TODO: this should be added in the method compare_columns to show it to the user
-                        #     if column_flag in self.env.cruise_data.get_cols_by_attrs(['param_flag']):
+                        #     if column_flag in self.env.cruise_data.get_cols_by_attrs(['flag']):
                         #         lg.warning('>> REMOVING ALSO THE ASSOCIATED FLAG: {}'.format(column_flag))
                         #         del self.env.cruise_data.cols[column_flag]  # if the param column is deleted, then the flag is also deleted
                         #         del self.env.cruise_data.df[column_flag]    # if they are not in the removed columns
@@ -413,7 +413,7 @@ class CruiseDataUpdate(Environment):
                         del self.env.cruise_data.df[column]
 
                     # TODO: RESET FLAG TO DEFAULT VALUES INSTEAD OF REMOVING THEM
-                    if column in self.env.cruise_data.get_cols_by_attrs(['param_flag']):
+                    if column in self.env.cruise_data.get_cols_by_attrs(['flag']):
                         # lg.warning('>> REMOVING FLAG: {}'.format(column))
                         del self.env.cruise_data.cols[column]
                         del self.env.cruise_data.df[column]
@@ -484,7 +484,7 @@ class CruiseDataUpdate(Environment):
 
     def _reset_update_env(self):
         lg.info('-- RESET FILES >> store old original csv and remove update folder')
-        # TODO: Reset cruise_data columns in order to make sure that the pairs (param, param_flag) are right
+        # TODO: Reset cruise_data columns in order to make sure that the pairs (param, flag) are right
         for c in self.env.cruise_data.get_cols_by_attrs('param'):
             self.env.cruise_data.create_missing_flag_col(c)
         self.env.cruise_data.cp_param = ComputedParameter()

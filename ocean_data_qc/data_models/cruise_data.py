@@ -85,7 +85,7 @@ class CruiseData(CruiseDataExport):
                     },
                     "ALKALI_FLAG_W": {
                         "external_name": False,
-                        "attrs": ["param_flag", ],
+                        "attrs": ["flag", ],
                         "data_type": "integer"
                         "unit": False,  # >> False
                         "precision": 0,
@@ -191,7 +191,7 @@ class CruiseData(CruiseDataExport):
             This dictionary is useful to select some columns by type
                 * required      - required columns
                 * param         - parameter columns
-                * param_flag    - flag columns
+                * flag          - flag columns
                 * non_qc        - parameters without flag columns associated
                 * computed      - computed parameters
                 * created       - if the column was created by the app
@@ -209,7 +209,7 @@ class CruiseData(CruiseDataExport):
             }
             non_qc_params = self.env.f_handler.get_custom_cols_by_attr('non_qc')
             if column.endswith(FLAG_END):
-                self.cols[column]['attrs'] += ['param_flag']
+                self.cols[column]['attrs'] += ['flag']
             else:
                 basic_params = self.env.f_handler.get_custom_cols_by_attr('basic')
                 if column in basic_params:
@@ -236,7 +236,7 @@ class CruiseData(CruiseDataExport):
                 self.df[flag] = values
                 self.cols[flag] = {
                     'external_name': False,
-                    'attrs': ['param_flag', 'created'],
+                    'attrs': ['flag', 'created'],
                     'unit': False,
                     'export': True
                 }
@@ -279,18 +279,23 @@ class CruiseData(CruiseDataExport):
                 * computed      - calculated parameters
                 * param         - parameters
                 * non_qc        - params without qc column
-                * param_flag    - existing flags for the params that were loaded from the beginning
+                * flag          - existing flags for the params that were loaded from the beginning
                 * required      - required columns
                 * created       - columns created by the app
 
             @discard_nan - discards columns with all the values = NaN
+
+            NOTE: the result is an union of sets. For instance, if you need to get
+                  the created flag columns you shoud make the difference between the
+                  'flag' columns minus the 'created' columns. I could add another argument
+                  to select the operation
         '''
         if isinstance(column_attrs, str):
             column_attrs = [column_attrs]
         if len(column_attrs) == 1 and 'all' in column_attrs:
             column_attrs = [
                 'computed', 'param', 'non_qc',
-                'param_flag', 'required', 'created'
+                'flag', 'required', 'created'
             ]
         res = []
         for t in column_attrs:
@@ -332,7 +337,7 @@ class CruiseData(CruiseDataExport):
         return [self.cols[x]['unit'] for x in cols]
 
     def is_flag(self, flag):
-        if flag[-7:] == FLAG_END and flag in self.get_cols_by_attrs(['param_flag']):
+        if flag[-7:] == FLAG_END and flag in self.get_cols_by_attrs(['flag']):
             return True
         else:
             return False

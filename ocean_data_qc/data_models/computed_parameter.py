@@ -284,7 +284,7 @@ class ComputedParameter(Environment):
     def get_all_parameters(self):
         lg.info('-- GET ALL PARAMETERS')
         cols = self.cruise_data.get_cols_by_attrs(
-            ['param', 'param_flag', 'non_qc', 'required']
+            ['param', 'flag', 'non_qc', 'required']
         )
         deps = self.check_dependencies()
         cp_cols = self.cruise_data.get_cols_by_attrs('computed')
