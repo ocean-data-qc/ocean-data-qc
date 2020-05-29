@@ -22,7 +22,7 @@
             "data_type": "string",
             "attrs": [
                 "required",
-                "non_qc_param"
+                "non_qc"
             ],
             "unit": false,
             "precision": false
@@ -31,7 +31,7 @@
             "external_name": [],
             "data_type": "",
             "attrs": [
-                "non_qc_param"
+                "non_qc"
             ],
             "unit": false,
             "precision": false
@@ -40,7 +40,7 @@
             "external_name": [],
             "data_type": "",
             "attrs": [
-                "non_qc_param"
+                "non_qc"
             ],
             "unit": false,
             "precision": false
@@ -52,7 +52,7 @@
             "data_type": "",
             "attrs": [
                 "required",
-                "non_qc_param"
+                "non_qc"
             ],
             "unit": false,
             "precision": false
@@ -64,7 +64,7 @@
             "data_type": "integer",
             "attrs": [
                 "required",
-                "non_qc_param"
+                "non_qc"
             ],
             "unit": false,
             "precision": 0
@@ -76,7 +76,7 @@
             "data_type": "integer",
             "attrs": [
                 "required",
-                "non_qc_param"
+                "non_qc"
             ],
             "unit": false,
             "precision": 0
@@ -109,7 +109,7 @@
             "data_type": "",
             "attrs": [
                 "required",
-                "non_qc_param"
+                "non_qc"
             ],
             "unit": false,
             "precision": false
@@ -118,7 +118,7 @@
             "external_name": [],
             "data_type": "",
             "attrs": [
-                "non_qc_param"
+                "non_qc"
             ],
             "unit": false,
             "precision": false
@@ -128,7 +128,7 @@
             "data_type": "float",
             "attrs": [
                 "required",
-                "non_qc_param"
+                "non_qc"
             ],
             "unit": false,
             "precision": 4
@@ -138,7 +138,7 @@
             "data_type": "float",
             "attrs": [
                 "required",
-                "non_qc_param"
+                "non_qc"
             ],
             "unit": false,
             "precision": 4
@@ -147,7 +147,7 @@
             "external_name": [],
             "data_type": "",
             "attrs": [
-                "non_qc_param",
+                "non_qc",
                 "basic"
             ],
             "unit": "METERS",
@@ -159,7 +159,7 @@
             ],
             "data_type": "float",
             "attrs": [
-                "non_qc_param",
+                "non_qc",
                 "basic"
             ],
             "unit": "DBAR",
@@ -423,7 +423,7 @@
             "external_name": [],
             "data_type": "",
             "attrs": [
-                "non_qc_param"
+                "non_qc"
             ],
             "unit": "DEGC",
             "precision": false
@@ -660,7 +660,7 @@
             "external_name": [],
             "data_type": "date_component",
             "attrs": [
-                "non_qc_param"
+                "non_qc"
             ],
             "unit": false,
             "precision": false
@@ -669,7 +669,7 @@
             "external_name": [],
             "data_type": "date_component",
             "attrs": [
-                "non_qc_param"
+                "non_qc"
             ],
             "unit": false,
             "precision": false
@@ -678,7 +678,7 @@
             "external_name": [],
             "data_type": "date_component",
             "attrs": [
-                "non_qc_param"
+                "non_qc"
             ],
             "unit": false,
             "precision": false
@@ -687,7 +687,7 @@
             "external_name": [],
             "data_type": "date_component",
             "attrs": [
-                "non_qc_param"
+                "non_qc"
             ],
             "unit": false,
             "precision": false
@@ -696,7 +696,7 @@
             "external_name": [],
             "data_type": "date_component",
             "attrs": [
-                "non_qc_param"
+                "non_qc"
             ],
             "unit": false,
             "precision": false
@@ -705,7 +705,7 @@
             "external_name": [],
             "data_type": "date_component",
             "attrs": [
-                "non_qc_param"
+                "non_qc"
             ],
             "unit": false,
             "precision": false
@@ -714,7 +714,7 @@
             "external_name": [],
             "data_type": "date_component",
             "attrs": [
-                "non_qc_param"
+                "non_qc"
             ],
             "unit": false,
             "precision": false
@@ -723,7 +723,7 @@
             "external_name": [],
             "data_type": "date_component",
             "attrs": [
-                "non_qc_param"
+                "non_qc"
             ],
             "unit": false,
             "precision": false
@@ -732,7 +732,7 @@
             "external_name": [],
             "data_type": "date_component",
             "attrs": [
-                "non_qc_param"
+                "non_qc"
             ],
             "unit": false,
             "precision": false

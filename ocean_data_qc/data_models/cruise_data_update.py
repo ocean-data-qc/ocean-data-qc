@@ -34,7 +34,7 @@ class CruiseDataUpdate(Environment):
         lg.info('-- CRUISE DATA UPDATE INIT')
         self.env.cd_update = self
         self.cols_to_compare = [
-            'param', 'param_flag', 'qc_param_flag', 'non_qc_param', 'required'
+            'param', 'param_flag', 'qc_param_flag', 'non_qc', 'required'
         ]
         self.modified = False
 

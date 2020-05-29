@@ -55,7 +55,7 @@ module.exports = {
 
             var basic_field = self.get_cb_field(i, col_name, 'basic');
             var required_field = self.get_cb_field(i, col_name, 'required');
-            var non_qc_field = self.get_cb_field(i, col_name, 'non_qc_param');
+            var non_qc_field = self.get_cb_field(i, col_name, 'non_qc');
 
             var sel_cur_prec = self.get_cur_prec(col_name, data_type);
             var txt_cur_unit = self.get_txt_cur_unit(col_name);
@@ -381,7 +381,7 @@ module.exports = {
 
             var basic_field = self.get_cb_field(new_row_i, false, 'basic');
             var required_field = self.get_cb_field(new_row_i, false, 'required');
-            var non_qc_field = self.get_cb_field(new_row_i, false, 'non_qc_param');
+            var non_qc_field = self.get_cb_field(new_row_i, false, 'non_qc');
 
             var sel_cur_prec = self.get_cur_prec();
             var txt_cur_unit = self.get_txt_cur_unit();

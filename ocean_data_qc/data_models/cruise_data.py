@@ -193,7 +193,7 @@ class CruiseData(CruiseDataExport):
                 * param         - parameter columns
                 * param_flag    - flag columns
                 * qc_param_flag - flag columns created by this app
-                * non_qc_param  - parameters without flag columns associated
+                * non_qc  - parameters without flag columns associated
                 * computed      - computed parameters
                 * created       - if the column was created by the app
 
@@ -208,7 +208,7 @@ class CruiseData(CruiseDataExport):
                 'precision': False,
                 'export': export
             }
-            non_qc_params = self.env.f_handler.get_custom_cols_by_attr('non_qc_param')
+            non_qc_params = self.env.f_handler.get_custom_cols_by_attr('non_qc')
             if column.endswith(FLAG_END):
                 self.cols[column]['attrs'] += ['param_flag']
                 flags_not_to_qc = [x + FLAG_END for x in non_qc_params]
@@ -222,7 +222,7 @@ class CruiseData(CruiseDataExport):
                 if column in required_cols:
                     self.cols[column]['attrs'] += ['required']
                 elif column in non_qc_params:
-                    self.cols[column]['attrs'] += ['non_qc_param']
+                    self.cols[column]['attrs'] += ['non_qc']
                 else:
                     self.cols[column]['attrs'] += ['param']
                 self.create_missing_flag_col(column)
@@ -233,7 +233,7 @@ class CruiseData(CruiseDataExport):
         ''' Make sure there is a flag column for each param parameter '''
         if param is not None and isinstance(param, str) and not param.endswith(FLAG_END):
             flag = param + FLAG_END
-            non_qc_params = self.env.f_handler.get_custom_cols_by_attr('non_qc_param')
+            non_qc_params = self.env.f_handler.get_custom_cols_by_attr('non_qc')
             if flag not in self.df and param not in non_qc_params:
                 lg.info('>> CREATING FLAG COLUMN: {}'.format(flag))
                 values = ['2'] * len(self.df.index)
@@ -282,10 +282,11 @@ class CruiseData(CruiseDataExport):
         ''' Possible attrs:
                 * computed      - calculated parameters
                 * param         - parameters
-                * non_qc_param  - params without qc column
+                * non_qc        - params without qc column
                 * param_flag    - existing flags for the params that were loaded from the beginning
                 * qc_param_flag - flags that were created by the application with value 2
                 * required      - required columns
+                * created       - columns created by the app
 
             @discard_nan - discards columns with all the values = NaN
 
@@ -297,7 +298,7 @@ class CruiseData(CruiseDataExport):
             column_attrs = [column_attrs]
         if len(column_attrs) == 1 and 'all' in column_attrs:
             column_attrs = [
-                'computed', 'param', 'non_qc_param',
+                'computed', 'param', 'non_qc',
                 'param_flag', 'qc_param_flag', 'required',
                 'created'
             ]
