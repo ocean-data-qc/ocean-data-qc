@@ -42,7 +42,7 @@ class BokehFlags(Environment):
 
     def _init_flagger_select(self):
         lg.info('-- INIT FLAGGER SELECT')
-        options = self.env.cruise_data.get_cols_by_attrs(['param_flag', 'qc_param_flag'])
+        options = self.env.cruise_data.get_cols_by_attrs(['param_flag'])
         options = sorted(options)
         self.env.flagger_select = Select(
             value=self.env.cur_flag,

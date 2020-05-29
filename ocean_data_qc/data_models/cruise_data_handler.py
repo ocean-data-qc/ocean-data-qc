@@ -47,7 +47,7 @@ class CruiseDataHandler(Environment):
         d = {
             'cps': self.env.cruise_data.get_cols_by_attrs('computed'),
             'cols': self.env.cruise_data.get_cols_by_attrs(
-                ['param', 'param_flag', 'qc_param_flag', 'computed'],
+                ['param', 'param_flag', 'computed'],
                 discard_nan=True
             ),
             'params': params

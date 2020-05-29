@@ -34,7 +34,7 @@ class CruiseDataUpdate(Environment):
         lg.info('-- CRUISE DATA UPDATE INIT')
         self.env.cd_update = self
         self.cols_to_compare = [
-            'param', 'param_flag', 'qc_param_flag', 'non_qc', 'required'
+            'param', 'param_flag', 'non_qc', 'required'
         ]
         self.modified = False
 
@@ -357,8 +357,8 @@ class CruiseDataUpdate(Environment):
                 self.env.cruise_data.df.loc[hash_id, columns] = self.env.cd_aux.df.loc[hash_id, columns].tolist()
 
                 # NOTE: when there is a new row but we do not have value in the flag column: NaN >> 9
-                cd_aux_flag_columns = self.env.cd_aux.get_cols_by_attrs(['param_flag', 'qc_param_flag'])
-                cd_flag_columns = self.env.cruise_data.get_cols_by_attrs(['param_flag', 'qc_param_flag'])
+                cd_aux_flag_columns = self.env.cd_aux.get_cols_by_attrs(['param_flag'])
+                cd_flag_columns = self.env.cruise_data.get_cols_by_attrs(['param_flag'])
                 flag_cols = [col for col in cd_flag_columns if col not in cd_aux_flag_columns]
                 self.env.cruise_data.df.loc[hash_id, flag_cols] = 9
 
