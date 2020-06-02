@@ -391,10 +391,10 @@
                 "PHTS25",
                 "PHTS25P0"
             ],
-            "data_type": "",
+            "data_type": "float",
             "attrs": [],
             "unit": false,
-            "precision": false
+            "precision": 4
         },
         "PH_TOT_FLAG_W": {
             "external_name": [],
@@ -609,13 +609,6 @@
             "attrs": [],
             "unit": false,
             "precision": 0
-        },
-        "PHTS25P0": {
-            "external_name": [],
-            "data_type": "float",
-            "attrs": [],
-            "unit": false,
-            "precision": 4
         },
         "SF6": {
             "external_name": [],
