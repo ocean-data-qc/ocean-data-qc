@@ -520,16 +520,17 @@ class CruiseData(CruiseDataExport):
             if len(custom_cols[c]['external_name']) > 0:
                 for n in custom_cols[c]['external_name']:
                     if n in sanitized and c not in sanitized:
-                        sanitized[sanitized.index(n)] = c
-                        self.col_mappings[sanitized.index(n)] = c
+                        pos = sanitized.index(n)
+                        sanitized[pos] = c
+                        self.col_mappings[non_sanitized[pos]] = c
 
         # sometimes flags end with F instead of _FLAG_W
         for n in sanitized:
             if n + 'F' in sanitized and n + FLAG_END not in sanitized:
-                key = non_sanitized[sanitized.index(f'{n}F')]
-                sanitized[sanitized.index(f'{n}F')] = n + FLAG_END
-                self.col_mappings[f'{key}'] = n + FLAG_END
-        return sanitized
+                pos = sanitized.index(f'{n}F')
+                sanitized[pos] = n + FLAG_END
+                self.col_mappings[non_sanitized[pos]] = n + FLAG_END
+        return sanitized  # actuallly sanitized and mapped
 
     def _replace_nan_values(self):
         ''' Replaces the -990.0, -999.00, etc values to NaN.
