@@ -188,14 +188,15 @@
         "CTDSAL_FLAG_W": {
             "external_name": [],
             "data_type": "integer",
-            "attrs": [],
+            "attrs": [
+                "basic"
+            ],
             "unit": false,
             "precision": 0
         },
         "SALNTY": {
             "external_name": [
-                "SALINITY",
-                "CTDSAL"
+                "SALINITY"
             ],
             "data_type": "float",
             "attrs": [
@@ -207,7 +208,9 @@
         "SALNTY_FLAG_W": {
             "external_name": [],
             "data_type": "integer",
-            "attrs": [],
+            "attrs": [
+                "basic"
+            ],
             "unit": false,
             "precision": 0
         },
