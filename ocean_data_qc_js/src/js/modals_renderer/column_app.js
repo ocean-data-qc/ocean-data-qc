@@ -98,11 +98,8 @@ module.exports = {
                     { targets: [5], orderable: false, searchable: false, },
                 ],
                 initComplete: function () {
-                    // Apply the search
-                    lg.warn('-- INIT COMPLETE');
                     $('#div_column_app').animate({ opacity: 1, }, { duration: 100, });
                     self.set_tags_input();
-
                 },
             });
 

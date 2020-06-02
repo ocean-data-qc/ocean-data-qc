@@ -86,7 +86,15 @@ module.exports = {
                 paging: false,
                 searching: true,
                 ordering: true,
+                order: [[ 1, 'asc' ]],  // this is the value by default
                 info: false,
+                columnDefs: [
+                    { targets: '_all', visible: true, },
+                    { targets: [6], orderable: false, searchable: false, },
+                ],
+                initComplete: function () {
+                    $('#div_column_project').animate({ opacity: 1, }, { duration: 100, });
+                },
             });
         });
     },
