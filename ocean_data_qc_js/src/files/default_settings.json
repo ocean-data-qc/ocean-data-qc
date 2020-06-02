@@ -911,37 +911,37 @@
         },
         {
             "param_name": "PH_TOT_DIFF",
-            "equation": "PH_TOT - PHTS25P0_CALCULATED",
+            "equation": "PH_TOT - PHTS25P0_FROM_ALKALI_TCARBN",
             "units": false,
             "precision": "5"
         },
         {
             "param_name": "ALK_DIFF",
-            "equation": " ALK_NNGV2_BRO19 - ALKALI ",
+            "equation": "ALK_NNGV2_BRO19 - ALKALI ",
             "units": false,
             "precision": "5"
         },
         {
             "param_name": "TCARBN_DIFF",
-            "equation": " TCARBN_NNGV2LDEO_BRO20 - TCARBN ",
+            "equation": "TCARBN_NNGV2LDEO_BRO20 - TCARBN ",
             "units": false,
             "precision": "5"
         },
         {
             "param_name": "OXY_DIFF",
-            "equation": " CTDOXY - OXYGEN ",
+            "equation": "CTDOXY - OXYGEN ",
             "units": false,
             "precision": "5"
         },
         {
             "param_name": "SAL_DIFF",
-            "equation": " CTDSAL - SALNTY ",
+            "equation": "CTDSAL - SALNTY ",
             "units": false,
             "precision": "5"
         },
         {
             "param_name": "N_STAR",
-            "equation": " _NITRATE - 16 * PHSPHT + 2",
+            "equation": "_NITRATE - 16 * PHSPHT + 2",
             "units": false,
             "precision": "5"
         }
@@ -955,7 +955,7 @@
             },
             {
                 "title": "Salinity profiles",
-                "x": "SALNTY",
+                "x": "_SALINITY",
                 "y": "_PRESSURE"
             },
             {
@@ -965,12 +965,12 @@
             },
             {
                 "title": "T/S",
-                "x": "SALNTY",
+                "x": "_SALINITY",
                 "y": "CTDTMP"
             },
             {
                 "title": "CTD vs Salinity",
-                "x": "SALNTY",
+                "x": "_SALINITY",
                 "y": "CTDSAL"
             },
             {
