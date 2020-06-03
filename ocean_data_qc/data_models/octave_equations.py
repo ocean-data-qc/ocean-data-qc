@@ -134,108 +134,69 @@ class OctaveEquations(Environment):
         return self.oc.nitrate_combined(np.transpose(np.vstack((NITRAT, NITRIT, NO2_NO3))))
 
     def salinity_combined(self):
-        msg = 'Salinity combined in the column _SALINITY.'
-        df = self.env.cruise_data.df
-        CTDSAL = True
-        if 'CTDSAL' not in df or ('CTDSAL' in df and df['CTDSAL'].isnull().all()):
-            CTDSAL = False
-
-        SALNTY = True
-        if 'SALNTY' not in df or ('SALNTY' in df and df['SALNTY'].isnull().all()):
-            SALNTY = False
-
-        if CTDSAL and not SALNTY:
-            ret = df.CTDSAL.to_numpy()
-            ret[(df[f'CTDSAL{FLAG_END}'] > 2) & (df[f'CTDSAL{FLAG_END}'] != 6)] = np.nan
-            msg += ' CTDSAL was taken because SALNTY is empty or does not exist'
-        elif SALNTY and not CTDSAL:
-            ret = df.SALNTY.to_numpy()
-            ret[(df[f'SALNTY{FLAG_END}'] > 2) & (df[f'SALNTY{FLAG_END}'] != 6)] = np.nan
-            msg += ' SALNTY was taken because CTDSAL is empty or does not exist'
-        elif not SALNTY and not CTDSAL:
-            ret = pd.Series([np.nan] * len(df.index))
-            msg += ' CTDSAL and SALNTY do not exist'
-        else:
-            ctdsal = df.CTDSAL.to_numpy()
-            ctdsal[(df[f'CTDSAL{FLAG_END}'] > 2) & (df[f'CTDSAL{FLAG_END}'] != 6)] = np.nan
-            salnty = df.SALNTY.to_numpy()
-            salnty[(df[f'SALNTY{FLAG_END}'] > 2) & (df[f'SALNTY{FLAG_END}'] != 6)] = np.nan
-
-            dev = np.nanmean(np.abs(ctdsal - salnty))
-            ctdsal_nonnans = np.sum(~np.isnan(ctdsal)) / np.size(ctdsal)
-            salnty_nonnans = np.sum(~np.isnan(salnty)) / np.size(salnty)
-
-            if salnty_nonnans > 0.8:
-                msg += f'Use SALNTY as more {salnty_nonnans * 100}% of data has it.'
-                ret = salnty
-            if dev < 0.003:
-                msg += f' Gaps filled with CTDSAL as mean deviation is {dev:.4f}'
-                ret = np.where(~np.isnan(salnty), salnty, ctdsal)
-            else:
-                mask = ~np.isnan(salnty) & ~np.isnan(ctdsal)
-                slope, intercept, r_value, p_value, std_err = stats.linregress(ctdsal[mask], salnty[mask])
-                rsq = r_value * r_value
-                if rsq > 0.99:
-                    msg = msg + f' Calibrating CTDSAL (R^2={rsq:.3f}) to filll gaps as mean deviation is {dev:.4f}'
-                    calibrated_ctd = slope * ctdsal + intercept
-                    ret = np.where(~np.isnan(salnty), salnty, calibrated_ctd)
-                else:
-                    msg += f' Not filling gaps with CTDSAL as mean deviation is {dev:.4f} and trying to calibrate gots a R^2={rsq:.3f}'
-                    ret = salnty
-
-        self.env.cruise_data.add_moves_element('column_combined', msg)
-        lg.warning(f'>> {msg}')
-        return ret
+        return self.column_combined(
+            msg='Salinity combined in the column _SALINITY.',
+            col1='CTDSAL', col2='SALNTY'
+        )
 
     def oxygen_combined(self):
-        msg = 'OXYGEN combined in the column _OXYGEN.'
+        return self.column_combined(
+            msg='Oxygen combined in the column _OXYGEN.',
+            col1='CTDOXY', col2='OXYGEN'
+        )
+
+    def column_combined(self, msg, col1, col2):
+        ''' @msg - the beginning of the message that is shown in the actions history
+            @col1 - the first column name to combine, more precise than the second
+            @col1 - the second column name to combine
+        '''
+        msg = msg
         df = self.env.cruise_data.df
-        CTDOXY = True
-        if 'CTDOXY' not in df or ('CTDOXY' in df and df['CTDOXY'].isnull().all()):
-            CTDOXY = False
+        COL1 = True
+        if col1 not in df or (col1 in df and df[col1].isnull().all()):
+            COL1 = False
 
-        OXYGEN = True
-        if 'OXYGEN' not in df or ('OXYGEN' in df and df['OXYGEN'].isnull().all()):
-            OXYGEN = False
+        COL2 = True
+        if col2 not in df or (col2 in df and df[col2].isnull().all()):
+            COL2 = False
 
-        if CTDOXY and not OXYGEN:
-            ret = df.CTDOXY.to_numpy()
-            ret[(df[f'CTDOXY{FLAG_END}'] > 2) & (df[f'CTDOXY{FLAG_END}'] != 6)] = np.nan
-            msg += ' CTDOXY was taken because OXYGEN is empty or does not exist'
-        elif OXYGEN and not CTDOXY:
-            ret = df.OXYGEN.to_numpy()
-            ret[(df[f'OXYGEN{FLAG_END}'] > 2) & (df[f'OXYGEN{FLAG_END}'] != 6)] = np.nan
-            msg += ' OXYGEN was taken because CTDOXY is empty or does not exist'
-        elif not OXYGEN and not CTDOXY:
+        if COL1 and not COL2:
+            ret = df[col1].to_numpy()
+            ret[(df[f'{col1}{FLAG_END}'] > 2) & (df[f'{col2}{FLAG_END}'] != 6)] = np.nan
+            msg += f' {col1} was taken because {col2} is empty or does not exist'
+        elif COL2 and not COL1:
+            ret = df[col2].to_numpy()
+            ret[(df[f'{col2}{FLAG_END}'] > 2) & (df[f'{col2}{FLAG_END}'] != 6)] = np.nan
+            msg += f' {col2} was taken because {col1} is empty or does not exist'
+        elif not COL2 and not COL1:
             ret = pd.Series([np.nan] * len(df.index))
-            msg += ' CTDOXY and OXYGEN do not exist'
+            msg += f' {col1} and {col2} do not exist'
         else:
-            ctdoxy = df.CTDOXY.to_numpy()
-            ctdoxy[(df[f'CTDOXY{FLAG_END}'] > 2) & (df[f'CTDOXY{FLAG_END}'] != 6)] = np.nan
-            oxygen = df.OXYGEN.to_numpy()
-            oxygen[(df[f'OXYGEN{FLAG_END}'] > 2) & (df[f'OXYGEN{FLAG_END}'] != 6)] = np.nan
+            col1_arr = df[col1].to_numpy()
+            col1_arr[(df[f'{col1}{FLAG_END}'] > 2) & (df[f'{col1}{FLAG_END}'] != 6)] = np.nan
+            col2_arr = df[col2].to_numpy()
+            col2_arr[(df[f'{col2}{FLAG_END}'] > 2) & (df[f'{col2}{FLAG_END}'] != 6)] = np.nan
 
-            dev = np.nanmean(np.abs(ctdoxy - oxygen))
-            ctdoxy_nonnans = np.sum(~np.isnan(ctdoxy)) / np.size(ctdoxy)
-            oxygen_nonnans = np.sum(~np.isnan(oxygen)) / np.size(oxygen)
+            dev = np.nanmean(np.abs(col1_arr - col2_arr))
+            col2_nonnans = np.sum(~np.isnan(col2_arr)) / np.size(col2_arr)
 
-            if oxygen_nonnans > 0.8:
-                msg += f'Use OXYGEN as more {oxygen_nonnans * 100}% of data has it.'
-                ret = oxygen
+            if col2_nonnans > 0.8:
+                msg += f'Use SALNTY as more {col2_nonnans * 100}% of data has it.'
+                ret = col2_arr
             if dev < 0.003:
-                msg += f' Gaps filled with CTDOXY as mean deviation is {dev:.4f}'
-                ret = np.where(~np.isnan(oxygen), oxygen, ctdoxy)
+                msg += f' Gaps filled with {col1} as mean deviation is {dev:.4f}'
+                ret = np.where(~np.isnan(col2_arr), col2_arr, col1_arr)
             else:
-                mask = ~np.isnan(oxygen) & ~np.isnan(ctdoxy)
-                slope, intercept, r_value, p_value, std_err = stats.linregress(ctdoxy[mask], oxygen[mask])
+                mask = ~np.isnan(col2_arr) & ~np.isnan(col1_arr)
+                slope, intercept, r_value, p_value, std_err = stats.linregress(col1_arr[mask], col2_arr[mask])
                 rsq = r_value * r_value
                 if rsq > 0.99:
-                    msg = msg + f' Calibrating CTDOXY (R^2={rsq:.3f}) to filll gaps as mean deviation is {dev:.4f}'
-                    calibrated_ctd = slope * ctdoxy + intercept
-                    ret = np.where(~np.isnan(oxygen), oxygen, calibrated_ctd)
+                    msg = msg + f' Calibrating {col1} (R^2={rsq:.3f}) to filll gaps as mean deviation is {dev:.4f}'
+                    calibrated_ctd = slope * col1_arr + intercept
+                    ret = np.where(~np.isnan(col2_arr), col2_arr, calibrated_ctd)
                 else:
-                    msg += f' Not filling gaps with CTDOXY as mean deviation is {dev:.4f} and trying to calibrate gots a R^2={rsq:.3f}'
-                    ret = oxygen
+                    msg += f' Not filling gaps with {col1} as mean deviation is {dev:.4f} and trying to calibrate gots a R^2={rsq:.3f}'
+                    ret = col2_arr
 
         self.env.cruise_data.add_moves_element('column_combined', msg)
         lg.warning(f'>> {msg}')
