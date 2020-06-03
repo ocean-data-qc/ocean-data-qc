@@ -108,33 +108,18 @@ module.exports = {
         var url = path.join(loc.modals, 'modal_message.html');
         self.load_modal(url, function() {
             var modal = $('#modal_message');
-            switch (type.toUpperCase()) {
-                case 'ERROR':
-                    modal.find('.modal-title').css('color', '#a94442');   // TODO: assign a class and set the color in the class
-                    modal.find('.modal-title-icon').removeClass().addClass('fa fa-exclamation-triangle');
-                    break;
-                case 'UNCAUGHT EXCEPTION':
-                    modal.find('.modal-title').css('color', '#a94442');   // TODO: assign a class and set the color in the class
-                    modal.find('.modal-title-icon').removeClass().addClass('fa fa-exclamation-triangle');
-                    break;
-                case 'VALIDATION ERROR':
-                    modal.find('.modal-title').css('color', '#a94442');   // TODO: assign a class and set the color in the class
-                    modal.find('.modal-title-icon').removeClass().addClass('fa fa-exclamation-triangle');
-                    break;
-                case 'USER ERROR':
-                    modal.find('.modal-title').css('color', '#a94442');   // TODO: assign a class and set the color in the class
-                    modal.find('.modal-title-icon').removeClass().addClass('fa fa-exclamation-triangle');
-                    break;
-                case 'INFO':
-                    modal.find('.modal-title').css('color', '#5FBA7D');
-                    modal.find('.modal-title-icon').removeClass().addClass('fa fa-info-circle');
-                    break;
-                case 'WARNING':
-                    modal.find('.modal-title').css('color', '#fd7e14');
-                    modal.find('.modal-title-icon').removeClass().addClass('fa fa-exclamation-triangle');
-                    break;
-                }
-
+            var t = type.toUpperCase();
+            var errors = ['ERROR', 'UNCAUGHT EXCEPTION', 'VALIDATION ERROR', 'USER ERROR'];
+            if (errors.includes(t)) {
+                modal.find('.modal-title').css('color', '#a94442');   // TODO: assign a class and set the color in the class
+                modal.find('.modal-title-icon').removeClass().addClass('fa fa-exclamation-triangle');
+            } else if (t == 'INFO') {
+                modal.find('.modal-title').css('color', '#5FBA7D');
+                modal.find('.modal-title-icon').removeClass().addClass('fa fa-info-circle');
+            } else if (t == 'WARNING') {
+                modal.find('.modal-title').css('color', '#fd7e14');
+                modal.find('.modal-title-icon').removeClass().addClass('fa fa-exclamation-triangle');
+            }
 
             if (title != '') {
                 modal.find('.modal-title-text').text(title);
