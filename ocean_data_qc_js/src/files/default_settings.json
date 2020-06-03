@@ -179,18 +179,14 @@
         "CTDSAL": {
             "external_name": [],
             "data_type": "float",
-            "attrs": [
-                "basic"
-            ],
+            "attrs": [],
             "unit": "PSS-78",
             "precision": 4
         },
         "CTDSAL_FLAG_W": {
             "external_name": [],
             "data_type": "integer",
-            "attrs": [
-                "basic"
-            ],
+            "attrs": [],
             "unit": false,
             "precision": 0
         },
@@ -199,27 +195,21 @@
                 "SALINITY"
             ],
             "data_type": "float",
-            "attrs": [
-                "basic"
-            ],
+            "attrs": [],
             "unit": "PSS-78",
             "precision": 4
         },
         "SALNTY_FLAG_W": {
             "external_name": [],
             "data_type": "integer",
-            "attrs": [
-                "basic"
-            ],
+            "attrs": [],
             "unit": false,
             "precision": 0
         },
         "CTDOXY": {
             "external_name": [],
             "data_type": "float",
-            "attrs": [
-                "basic"
-            ],
+            "attrs": [],
             "unit": "UMOL/KG",
             "precision": 2
         },
@@ -233,9 +223,7 @@
         "OXYGEN": {
             "external_name": [],
             "data_type": "float",
-            "attrs": [
-                "basic"
-            ],
+            "attrs": [],
             "unit": "UMOL/KG",
             "precision": 2
         },
@@ -755,13 +743,13 @@
         },
         {
             "param_name": "_SALINITY",
-            "equation": "@salinity_combined(CTDSAL, CTDSAL_FLAG_W, SALNTY, SALNTY_FLAG_W)",
+            "equation": "@salinity_combined()",
             "units": false,
             "precision": "5"
         },
         {
             "param_name": "_OXYGEN",
-            "equation": "@oxygen_combined(CTDOXY, CTDOXY_FLAG_W, OXYGEN, OXYGEN_FLAG_W)",
+            "equation": "@oxygen_combined()",
             "units": false,
             "precision": "3"
         },
@@ -959,9 +947,19 @@
                 "y": "_PRESSURE"
             },
             {
+                "title": "Salinity profiles",
+                "x": "SALNTY",
+                "y": "_PRESSURE"
+            },
+            {
                 "title": "CTDSAL profiles",
                 "x": "CTDSAL",
                 "y": "_PRESSURE"
+            },
+            {
+                "title": "T/S",
+                "x": "SALNTY",
+                "y": "CTDTMP"
             },
             {
                 "title": "T/S",
@@ -970,7 +968,7 @@
             },
             {
                 "title": "CTD vs Salinity",
-                "x": "_SALINITY",
+                "x": "SALNTY",
                 "y": "CTDSAL"
             },
             {
@@ -996,8 +994,8 @@
                 "y": "SAMPNO"
             },
             {
-                "title": "OXYGEN vs _NITRATE",
-                "x": "OXYGEN",
+                "title": "_OXYGEN vs _NITRATE",
+                "x": "_OXYGEN",
                 "y": "_NITRATE"
             },
             {

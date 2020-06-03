@@ -73,32 +73,28 @@ class CruiseDataHandler(Environment):
 
         if path.isfile(original_path):
             if self._is_plain_text(original_path):
-                cd = None
                 is_whp_format = self._is_whp_format(original_path)
                 if path.isfile(path.join(working_dir, 'data.csv')):   # aqc or pending session
                     original_type = 'whp' if is_whp_format else 'csv'
-                    cd = CruiseDataAQC(
+                    CruiseDataAQC(
                         original_type=original_type,
                         working_dir=working_dir,
-                        cd_aux=cd_aux
+                        cd_aux=cd_aux,
+                        cd_update=update
                     )
                 else:
                     if is_whp_format:
                         # generates data.csv from original.csv
-                        cd = CruiseDataWHP(working_dir=working_dir, cd_aux=cd_aux)
+                        CruiseDataWHP(working_dir=working_dir, cd_aux=cd_aux, cd_update=update)
                     else:
                         # the data.csv should be a copy of original.csv, at the beggining at least
-                        cd = CruiseDataCSV(working_dir=working_dir, cd_aux=cd_aux)
+                        CruiseDataCSV(working_dir=working_dir, cd_aux=cd_aux, cd_update=update)
             else:
                 raise ValidationError(
                     'The file to open should be a CSV file.'
                     ' That is a plain text file with comma separate values.',
                     rollback=rollback
                 )
-            if not update:
-                self.env.cruise_data = cd
-            else:
-                self.env.cd_aux = cd
         else:
             raise ValidationError(
                 'The file could not be open',
