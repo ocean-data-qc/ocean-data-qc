@@ -25,6 +25,8 @@ module.exports = {
     load: function() {
         lg.info('-- LOAD DATA COL SETTINGS')
         var self = this;
+
+        self.tmp_record = {}
         self.cs_cols = data.get('columns', loc.custom_settings);
         // lg.warn('>> CUSTOM SETTINGS COLS: ' + JSON.stringify(self.cs_cols, null, 4));
         if (Object.keys(self.cs_cols).length > 1 && Object.keys(self.cs_cols).length > 1 ) {
@@ -59,7 +61,10 @@ module.exports = {
 
             var sel_cur_prec = self.get_cur_prec(col_name, data_type);
             var txt_cur_unit = self.get_txt_cur_unit(col_name);
+            var bt_edit = self.get_edit_bt();
             var bt_rmv = self.get_rmv_bt();
+            var bt_valid = self.get_valid_bt();
+            var bt_discard = self.get_discard_bt();
 
             var tr = $('<tr>');
             tr.append(
@@ -73,7 +78,7 @@ module.exports = {
 
                 $('<td>', {html: sel_cur_prec }),
                 $('<td>', {html: txt_cur_unit }),
-                $('<td>', {html: bt_rmv }),
+                $('<td>', {html: [bt_edit, bt_rmv, bt_valid, bt_discard] }),
             );
 
             $('#table_column_app tbody').append(tr);
@@ -136,7 +141,8 @@ module.exports = {
             name: 'txt_col_name',
             class: 'form-control form-control-sm',
             type: 'text',
-            value: col_name === false ? '' : col_name
+            value: col_name === false ? '' : col_name,
+            disabled: true
         });
         input.on('change', function() {
             // Update the current value of the field and reload the table "data"
@@ -162,6 +168,7 @@ module.exports = {
             'type': 'text',
             'data-role': 'tagsinput',
             'value': tags_input,
+            'disabled': true
         });
     },
 
@@ -176,6 +183,7 @@ module.exports = {
         var sel_cur_data_type = $('<select>', {
             class: 'form-control form-control-sm',
             name: 'sel_cur_data_type',
+            disabled: true
         })
         var opts = [
             'none',  // in case the user does not know the data type of the column or it can be more than one
@@ -220,7 +228,8 @@ module.exports = {
                     class: 'form-check-input',
                     name: 'cb_' + type,
                     type: 'checkbox',
-                    checked: checked
+                    checked: checked,
+                    disabled: true,
                 })
             ).append(
                 $('<label>', {
@@ -308,7 +317,8 @@ module.exports = {
             name: 'txt_cur_unit',
             class: 'form-control form-control-sm',
             type: 'text',
-            value: cur_unit
+            value: cur_unit,
+            disabled: true,
         });
         // TODO: ask if string fields can have units
         // if (self.cs_cols[col_name]['data_type'] === 'string') {
@@ -317,9 +327,38 @@ module.exports = {
         return txt_cur_unit;
     },
 
-    get_rmv_bt: function() {
+    get_edit_bt: function() {
+        var self = this;
         var bt = $('<button>', {
-            class: 'delete_col btn btn-danger fa fa-trash',
+            class: 'edit_col btn btn-warning fa fa-pencil',
+            type: 'button'
+        });
+        bt.on('click', function() {
+            lg.warn('>> EDIT ROW');
+            var tr = $(this).parents('tr');
+
+            // TODO: store record before editing it
+            self.tmp_record = {
+                prev_bgcolor: tr.css('background-color'),
+                name: tr.find('input[name="txt_col_name"]').val(),
+            }
+
+            tr.find('.discard_col, .valid_col').css('display', 'inline-block');
+            tr.find('.rmv_col, .edit_col').css('display', 'none');
+            tr.find('input, select').removeAttr('disabled');
+            tr.css('background-color', 'rgba(255, 193, 7, 0.3)');
+
+            // TODO: enable precision only if data type = float
+
+            self.enable_tags_input(tr);
+        });
+        return bt;
+    },
+
+    get_rmv_bt: function() {
+        var self = this;
+        var bt = $('<button>', {
+            class: 'rmv_col btn btn-danger fa fa-trash',
             type: 'button'
         });
         bt.on('click', function() {
@@ -362,6 +401,27 @@ module.exports = {
         return bt;
     },
 
+    get_discard_bt: function() {
+        var self = this;
+        var bt = $('<button>', {
+            class: 'discard_col btn btn-danger fa fa-times',
+            type: 'button',
+            style: 'display: none;'
+        });
+        bt.on('click', function() {
+            var tr = $(this).parents('tr');
+            lg.warn('>> DISCARD RECORD CHANGES');
+
+            tr.find('.discard_col, .valid_col').css('display', 'none');
+            tr.find('.rmv_col, .edit_col').css('display', 'inline-block');
+            tr.find('input, select').attr('disabled', true);
+            tr.css('background-color', self.tmp_record['prev_bgcolor']);
+
+            self.disable_tags_input();
+        });
+        return bt;
+    },
+
     load_add_column_button: function() {
         var self = this;
         $('#add_column').on('click', function() {
@@ -382,7 +442,8 @@ module.exports = {
 
             var sel_cur_prec = self.get_cur_prec();
             var txt_cur_unit = self.get_txt_cur_unit();
-            var bt_val = self.get_validate_bt();
+            var bt_valid = self.get_valid_bt();
+            var bt_discard = self.get_discard_bt();
 
             var tr = $('<tr>', {
                 class: 'new_col'
@@ -398,7 +459,7 @@ module.exports = {
 
                 $('<td>', {html: sel_cur_prec }),
                 $('<td>', {html: txt_cur_unit }),
-                $('<td>', {html: bt_val }),
+                $('<td>', {html: [bt_valid, bt_discard] }),
             );
 
             var new_row = data_table.row.add(tr).draw().node();
@@ -407,21 +468,25 @@ module.exports = {
         });
     },
 
-    get_validate_bt: function() {
+    get_valid_bt: function() {
         lg.warn('-- GET VALIDATE BUTTON');
         var self = this;
+
         var bt = $('<button>', {
-            'class': 'validate_col btn btn-success fa fa-check',
+            'class': 'valid_col btn btn-success fa fa-check',
             'type': 'button',
             'title': 'Validate column field',
             'data-toggle': 'tooltip',
             'data-placement': 'bottom',
+            'style': 'display: none;',
         });
         bt.tooltip();
 
         bt.on('click', function() {
             lg.warn('>> VALIDATE ROW');
             var tr = $(this).parents('tr');
+
+            // TODO: diferentiate from new row or editing row
 
             var cps = data.get('computed_params', loc.custom_settings);
             var cps_list = []
@@ -455,6 +520,7 @@ module.exports = {
     },
 
     set_tags_input: function() {
+        var self = this;
         $("input[data-role=tagsinput], select[multiple][data-role=tagsinput]").tagsinput({
             confirmKeys: [
                 13,     // carriage return (enter, but it does not work)
@@ -463,5 +529,29 @@ module.exports = {
                 59      // semicolon
             ]
         });
+        self.disable_tags_input();
+    },
+
+    disable_tags_input: function() {
+        var self = this;
+
+        $('.bootstrap-tagsinput .badge [data-role="remove"]').css('cursor', 'default');
+        $('.bootstrap-tagsinput').css({
+            'cursor': 'default',
+            'background-color': '#e9ecef',
+            'color': '#9E9999'
+        })
+        $('.bootstrap-tagsinput input').attr('disabled', true);
+    },
+
+    enable_tags_input: function(tr=false) {
+        var self = this;
+        lg.warn('>> ENABLE TAGS INPUT')
+        tr.find('.bootstrap-tagsinput .badge [data-role="remove"]').css('cursor', 'pointer');
+        tr.find('.bootstrap-tagsinput').css({
+            'background-color': '',
+            'color': ''
+        })
+        tr.find('.bootstrap-tagsinput input').removeAttr('disabled');
     }
 }

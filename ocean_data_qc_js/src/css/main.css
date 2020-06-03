@@ -562,7 +562,7 @@ select[name='all_computed_param'] {
     top: 3px !important;
 }
 
-/* To select data in the Show data table form */
+/* To select data in the Show data table and error messages form */
 .user_select_all {
     user-select: all !important;
 }
@@ -609,8 +609,9 @@ table.dataTable thead th[class^="sorting"]:after {
     right: 1em !important;
 }
 
-.delete_col, .validate_col {
+.edit_col, .rmv_col, .valid_col, .discard_col  {
     width: 2.5rem;
+    margin-right: 0.4rem;
 }
 
 .new_col {
