@@ -943,11 +943,6 @@
             },
             {
                 "title": "Salinity profiles",
-                "x": "_SALINITY",
-                "y": "_PRESSURE"
-            },
-            {
-                "title": "Salinity profiles",
                 "x": "SALNTY",
                 "y": "_PRESSURE"
             },
@@ -959,11 +954,6 @@
             {
                 "title": "T/S",
                 "x": "SALNTY",
-                "y": "CTDTMP"
-            },
-            {
-                "title": "T/S",
-                "x": "_SALINITY",
                 "y": "CTDTMP"
             },
             {
