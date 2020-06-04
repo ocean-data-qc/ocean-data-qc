@@ -181,7 +181,7 @@ class OctaveEquations(Environment):
             col2_nonnans = np.sum(~np.isnan(col2_arr)) / np.size(col2_arr)
 
             if col2_nonnans > 0.8:
-                msg += f'Use SALNTY as more {col2_nonnans * 100}% of data has it.'
+                msg += f'Use {col2} as more {col2_nonnans * 100}% of data has it.'
                 ret = col2_arr
             if dev < 0.003:
                 msg += f' Gaps filled with {col1} as mean deviation is {dev:.4f}'
