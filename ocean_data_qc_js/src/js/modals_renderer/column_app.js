@@ -104,7 +104,7 @@ module.exports = {
                 ],
                 initComplete: function () {
                     $('#div_column_app').animate({ opacity: 1, }, { duration: 100, });
-                    self.set_tags_input();
+                    tools.set_tags_input();
                 },
             });
 
@@ -350,7 +350,7 @@ module.exports = {
 
             // TODO: enable precision only if data type = float
 
-            self.enable_tags_input(tr);
+            tools.enable_tags_input(tr);
         });
         return bt;
     },
@@ -417,7 +417,7 @@ module.exports = {
             tr.find('input, select').attr('disabled', true);
             tr.css('background-color', self.tmp_record['prev_bgcolor']);
 
-            self.disable_tags_input();
+            tools.disable_tags_input();
         });
         return bt;
     },
@@ -463,7 +463,7 @@ module.exports = {
             );
 
             var new_row = data_table.row.add(tr).draw().node();
-            self.set_tags_input();
+            tools.set_tags_input();
             $(new_row).find('input[name="txt_col_name"]').focus();
         });
     },
@@ -519,39 +519,4 @@ module.exports = {
         return bt
     },
 
-    set_tags_input: function() {
-        var self = this;
-        $("input[data-role=tagsinput], select[multiple][data-role=tagsinput]").tagsinput({
-            confirmKeys: [
-                13,     // carriage return (enter, but it does not work)
-                44,     // comma
-                32,     // space
-                59      // semicolon
-            ]
-        });
-        self.disable_tags_input();
-    },
-
-    disable_tags_input: function() {
-        var self = this;
-
-        $('.bootstrap-tagsinput .badge [data-role="remove"]').css('cursor', 'default');
-        $('.bootstrap-tagsinput').css({
-            'cursor': 'default',
-            'background-color': '#e9ecef',
-            'color': '#9E9999'
-        })
-        $('.bootstrap-tagsinput input').attr('disabled', true);
-    },
-
-    enable_tags_input: function(tr=false) {
-        var self = this;
-        lg.warn('>> ENABLE TAGS INPUT')
-        tr.find('.bootstrap-tagsinput .badge [data-role="remove"]').css('cursor', 'pointer');
-        tr.find('.bootstrap-tagsinput').css({
-            'background-color': '',
-            'color': ''
-        })
-        tr.find('.bootstrap-tagsinput input').removeAttr('disabled');
-    }
 }

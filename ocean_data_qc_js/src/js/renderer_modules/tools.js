@@ -429,5 +429,37 @@ module.exports = {
     popover_fix: function() {
         // To prevent blurred text in tooltips: https://github.com/twbs/bootstrap/issues/22610
         popper.Defaults.modifiers.computeStyle.gpuAcceleration = !(window.devicePixelRatio < 1.5 && /Win/.test(navigator.platform));
+    },
+
+    set_tags_input: function() {
+        var self = this;
+        $("input[data-role=tagsinput], select[multiple][data-role=tagsinput]").tagsinput({
+            confirmKeys: [
+                13,     // carriage return (enter, but it does not work)
+                44,     // comma
+                32,     // space
+                59      // semicolon
+            ]
+        });
+        self.disable_tags_input();
+    },
+
+    disable_tags_input: function() {
+        $('.bootstrap-tagsinput .badge [data-role="remove"]').css('cursor', 'default');
+        $('.bootstrap-tagsinput').css({
+            'cursor': 'default',
+            'background-color': '#e9ecef',
+            'color': '#9E9999'
+        })
+        $('.bootstrap-tagsinput input').attr('disabled', true);
+    },
+
+    enable_tags_input: function(tr=false) {
+        tr.find('.bootstrap-tagsinput .badge [data-role="remove"]').css('cursor', 'pointer');
+        tr.find('.bootstrap-tagsinput').css({
+            'background-color': '',
+            'color': ''
+        })
+        tr.find('.bootstrap-tagsinput input').removeAttr('disabled');
     }
 }
