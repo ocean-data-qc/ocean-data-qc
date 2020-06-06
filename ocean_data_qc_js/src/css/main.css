@@ -614,6 +614,10 @@ table.dataTable thead th[class^="sorting"]:after {
     margin-right: 0.4rem;
 }
 
-.new_col {
+.new_row {
     background-color: #d6e9c6 !important;
+}
+
+.edit_row {
+    background-color: rgba(255, 193, 7, 0.3) !important;
 }

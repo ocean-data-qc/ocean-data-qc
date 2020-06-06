@@ -439,7 +439,9 @@ module.exports = {
                 44,     // comma
                 32,     // space
                 59      // semicolon
-            ]
+            ],
+            validationPattern: new RegExp('^[a-zA-Z_]+$'),  // this should used sanitized characters
+            cancelConfirmKeysOnEmpty: false                 // is this working?
         });
         self.disable_tags_input();
     },

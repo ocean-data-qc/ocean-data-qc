@@ -28,6 +28,7 @@ module.exports = {
 
         self.tmp_record = {}
         self.cs_cols = data.get('columns', loc.custom_settings);
+        self.cps = data.get('computed_params', loc.custom_settings);
         // lg.warn('>> CUSTOM SETTINGS COLS: ' + JSON.stringify(self.cs_cols, null, 4));
         if (Object.keys(self.cs_cols).length > 1 && Object.keys(self.cs_cols).length > 1 ) {
             var url = path.join(loc.modals, 'column_app.html');
@@ -336,17 +337,26 @@ module.exports = {
         bt.on('click', function() {
             lg.warn('>> EDIT ROW');
             var tr = $(this).parents('tr');
+            // lg.warn('>> TAGS INPUT: ' + tr.find('input[name="txt_external_name"]').tagsinput('items'))
 
-            // TODO: store record before editing it
             self.tmp_record = {
-                prev_bgcolor: tr.css('background-color'),
-                name: tr.find('input[name="txt_col_name"]').val(),
+                bgcolor: tr.css('background-color'),  // move to some class
+                col_name: tr.find('input[name="txt_col_name"]').val(),
+                external_name: tr.find('input[name="txt_external_name"]').tagsinput('items').slice(),  // slice() to make a copy by value
+                data_type: tr.find('select[name="sel_cur_data_type"]').val(),
+                basic: tr.find('input[name="cb_basic"]').prop('checked'),
+                required: tr.find('input[name="cb_required"]').prop('checked'),
+                non_qc: tr.find('input[name="cb_non_qc"]').prop('checked'),
+                cur_prec: tr.find('select[name="sel_cur_prec"]').val(),
+                cur_unit: tr.find('input[name="txt_cur_unit"]').val(),
             }
+            lg.warn('>> TMP RECORD (edit): ' + JSON.stringify(self.tmp_record, null, 4));
 
             tr.find('.discard_col, .valid_col').css('display', 'inline-block');
             tr.find('.rmv_col, .edit_col').css('display', 'none');
             tr.find('input, select').removeAttr('disabled');
-            tr.css('background-color', 'rgba(255, 193, 7, 0.3)');
+
+            tr.addClass('edit_row');
 
             // TODO: enable precision only if data type = float
 
@@ -412,12 +422,33 @@ module.exports = {
             var tr = $(this).parents('tr');
             lg.warn('>> DISCARD RECORD CHANGES');
 
+
+            tr.find('input[name="txt_col_name"]').val(self.tmp_record.col_name);
+
+            var ti = tr.find('input[name="txt_external_name"]');
+            ti.tagsinput('removeAll');
+            // lg.warn('>> TMP RECORD (discard): ' + JSON.stringify(self.tmp_record, null, 4));
+            self.tmp_record.external_name.forEach(function(value) {
+                lg.warn('>> Adding value: ' + value)
+                ti.tagsinput('add', value);
+            })
+
+            tr.find('select[name="sel_cur_data_type"]').val(self.tmp_record.data_type);
+            tr.find('input[name="cb_basic"]').prop('checked', self.tmp_record.basic);
+            tr.find('input[name="cb_required"]').prop('checked', self.tmp_record.required);
+            tr.find('input[name="cb_non_qc"]').prop('checked', self.tmp_record.non_qc);
+            tr.find('select[name="sel_cur_prec"]').val(self.tmp_record.cur_prec);
+            tr.find('input[name="txt_cur_unit"]').val(self.tmp_record.cur_unit);
+
             tr.find('.discard_col, .valid_col').css('display', 'none');
             tr.find('.rmv_col, .edit_col').css('display', 'inline-block');
             tr.find('input, select').attr('disabled', true);
-            tr.css('background-color', self.tmp_record['prev_bgcolor']);
+
+            // tr.css('background-color', self.tmp_record.bgcolor);
+            tr.removeClass('edit_row');
 
             tools.disable_tags_input();
+            self.tmp_record = {};
         });
         return bt;
     },
@@ -446,7 +477,7 @@ module.exports = {
             var bt_discard = self.get_discard_bt();
 
             var tr = $('<tr>', {
-                class: 'new_col'
+                class: 'new_row'
             });
             tr.append(
                 $('<td>', {html: txt_col_name }),
@@ -469,7 +500,6 @@ module.exports = {
     },
 
     get_valid_bt: function() {
-        lg.warn('-- GET VALIDATE BUTTON');
         var self = this;
 
         var bt = $('<button>', {
@@ -485,38 +515,125 @@ module.exports = {
         bt.on('click', function() {
             lg.warn('>> VALIDATE ROW');
             var tr = $(this).parents('tr');
+            var table = $(this).parents('table');
 
-            // TODO: diferentiate from new row or editing row
-
-            var cps = data.get('computed_params', loc.custom_settings);
-            var cps_list = []
-            cps.forEach(function(elem) {
-                cps_list.push(elem.param_name);
-            });
-
-            var col = tr.find('input[name="txt_col_name"]').val();
-            var cs_cols = Object.keys(self.cs_cols);
-
-            if (cs_cols.includes(col)) {
-                tools.show_modal( {
-                    msg_type: 'text',
-                    type: 'VALIDATION ERROR',
-                    msg: 'The column ' + col + ' already exists.',
-                })
-            } else if (cps_list.includes(col)) {
-                tools.show_modal({
-                    msg_type: 'text',
-                    type: 'VALIDATION ERROR',
-                    msg: 'The column ' + col + ' is a calculated parameter name.' +
-                         ' You need to use a different one',
-                })
-            } else {
-                tr.removeClass('new_col');
-
-                // replace button
+            var checks = [];
+            if (self.check_valid_col_name(tr) === false) {
+                return;
             }
+            if (self.check_tagsinput(table) === false) {
+                return;
+            }
+            if (tr.hasClass('new_row')) {
+                self.create_row(tr);
+            } else {
+                self.update_row(tr);
+            }
+
+            // TODO: if a column is renamed, that value in the ecuations should be updated, or at least
+            //       the user should be informed
         });
         return bt
     },
 
+    check_valid_col_name: function(col_name=false) {
+        var self = this;
+        col_name = tr.find('input[name="txt_col_name"]').val()
+        if (col_name === false) {
+            return false;
+        }
+
+        // check if the name has changed
+        if (tr.hasClass('new_row') || (tr.hasClass('edit_row') && self.tmp_record.col_name != col_name)){
+            var cps_list = []
+            self.cps.forEach(function(elem) {
+                cps_list.push(elem.param_name);
+            });
+            var cs_cols = Object.keys(self.cs_cols);
+
+            if (cs_cols.includes(col_name)) {
+                tools.show_modal( {
+                    msg_type: 'text',
+                    type: 'VALIDATION ERROR',
+                    msg: 'The column ' + col_name + ' already exists.',
+                })
+                return false;
+            } else if (cps_list.includes(col_name)) {
+                tools.show_modal({
+                    msg_type: 'text',
+                    type: 'VALIDATION ERROR',
+                    msg: 'The column ' + col_name + ' is a calculated parameter name.' +
+                         ' You need to use a different one',
+                })
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return true; // edit_row and no changes
+        }
+    },
+
+    check_tagsinput: function(table=false) {
+        var self = this;
+        var cur_tags = table.find('tr.edit_row, tr.new_row').find('input[name="txt_external_name"]').tagsinput('items');
+
+        var rows = table.find('tr').not('.edit_row, .new_row');
+        var tags = rows.find('input[name="txt_external_name"]').tagsinput('items');
+        cur_tags.forEach(function(ct) {
+            tags.forEach(function(t) {
+                if (ct == t) {
+                    tools.show_modal({
+                        'msg_type': 'text',
+                        'type': 'VALIDATION ERROR',
+                        'msg': 'The external name ' + t + ' is already in other parameter.',
+                    });
+                    return false;
+                }
+            });
+        });
+        return true;
+    },
+
+    create_row: function(tr=false) {
+        var self = this;
+
+        self.cs_cols[tr.find('input[name="txt_col_name"]').val()] = {
+            external_name: tr.find('input[name="txt_external_name"]').tagsinput('items').slice(),
+            data_type: tr.find('select[name="sel_cur_data_type"]').val(),
+            basic: tr.find('input[name="cb_basic"]').prop('checked'),
+            required: tr.find('input[name="cb_required"]').prop('checked'),
+            non_qc: tr.find('input[name="cb_non_qc"]').prop('checked'),
+            cur_prec: tr.find('select[name="sel_cur_prec"]').val(),
+            cur_unit: tr.find('input[name="txt_cur_unit"]').val(),
+        }
+        data.set({'columns': self.cs_cols}, loc.custom_settings);
+    },
+
+    update_row: function(tr=false) {
+        var self = this;
+        var new_col_name = tr.find('input[name="txt_col_name"]').val();
+
+        // if the name is different remove the previous one form the cs_cols object
+        if (self.tmp_record.col_name != new_col_name) {
+            delete self.cs_cols[self.tmp_record.col_name];
+        }
+        self.cs_cols[new_col_name] = {
+            external_name: tr.find('input[name="txt_external_name"]').tagsinput('items').slice(),
+            data_type: tr.find('select[name="sel_cur_data_type"]').val(),
+            basic: tr.find('input[name="cb_basic"]').prop('checked'),
+            required: tr.find('input[name="cb_required"]').prop('checked'),
+            non_qc: tr.find('input[name="cb_non_qc"]').prop('checked'),
+            cur_prec: tr.find('select[name="sel_cur_prec"]').val(),
+            cur_unit: tr.find('input[name="txt_cur_unit"]').val(),
+        }
+
+        self.cps.forEach(function(elem) {
+            var re = new RegExp('\\b' + self.tmp_record.col_name + '\\b', 'g');
+            elem.equation = elem.equation.split(re).join(new_col_name);
+        });
+
+        data.set({'columns': self.cs_cols}, loc.custom_settings);
+        data.set({'computed_params': self.cps}, loc.custom_settings);
+    }
 }
