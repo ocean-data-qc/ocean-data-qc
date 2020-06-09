@@ -431,9 +431,8 @@ module.exports = {
         popper.Defaults.modifiers.computeStyle.gpuAcceleration = !(window.devicePixelRatio < 1.5 && /Win/.test(navigator.platform));
     },
 
-    set_tags_input: function() {
-        var self = this;
-        $("input[data-role=tagsinput], select[multiple][data-role=tagsinput]").tagsinput({
+    set_tags_input: function(tr=false) {
+        var options = {
             confirmKeys: [
                 13,     // carriage return (enter, but it does not work)
                 44,     // comma
@@ -442,8 +441,13 @@ module.exports = {
             ],
             validationPattern: new RegExp('^[a-zA-Z_]+$'),  // this should used sanitized characters
             cancelConfirmKeysOnEmpty: false                 // is this working?
-        });
-        self.disable_tags_input();
+        };
+        var filter = "input[data-role=tagsinput], select[multiple][data-role=tagsinput]";
+        if (tr === false) {
+            $(filter).tagsinput(options);
+        } else {
+            tr.find(filter).tagsinput(options);
+        }
     },
 
     disable_tags_input: function() {
@@ -453,7 +457,7 @@ module.exports = {
             'background-color': '#e9ecef',
             'color': '#9E9999'
         })
-        $('.bootstrap-tagsinput input').attr('disabled', true);
+        $('.bootstrap-tagsinput input, input[name="txt_external_name"]').attr('disabled', true);
     },
 
     enable_tags_input: function(tr=false) {
@@ -462,6 +466,7 @@ module.exports = {
             'background-color': '',
             'color': ''
         })
-        tr.find('.bootstrap-tagsinput input').removeAttr('disabled');
+
+        tr.find('.bootstrap-tagsinput input, input[name="txt_external_name"]').removeAttr('disabled');
     }
 }
