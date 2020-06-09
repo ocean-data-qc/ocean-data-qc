@@ -55,6 +55,7 @@ module.exports = {
             var col_name = cols[i];
             var name = self.get_col_name(col_name);
             var data_type = self.get_data_type(col_name)
+            lg.warn('>> ATTRS: ' + JSON.stringify(self.pj_cols[col_name]['attrs'], null, 4))
             var attrs = self.pj_cols[col_name]['attrs'].join(', ');  // TODO: translate to icons or extract just some of them?
             var cb_export = self.get_cb_export(i, col_name);
             var sel_cur_prec = self.get_cur_prec(col_name);
@@ -123,10 +124,10 @@ module.exports = {
     get_data_type: function(col_name=false) {
         var self = this;
         var data_type = self.pj_cols[col_name]['data_type'];
-        if (data_type == 'empty') {
+        if (data_type == 'none') {
             data_type = $('<span>', {
                 style: 'color: red; font-weight: bold;',
-                text: 'empty'
+                text: 'none'
             });
         }
         return data_type;
@@ -184,7 +185,7 @@ module.exports = {
                 text: 'None',
             }))
         }
-        if (self.pj_cols[col_name]['data_type'] == 'empty') {
+        if (self.pj_cols[col_name]['data_type'] == 'none') {
             sel_cur_prec.attr('disabled', true);
         }
         return sel_cur_prec
@@ -222,7 +223,7 @@ module.exports = {
 
         var set_bt_disabled = true;
         var set_bt_title = []
-        if (self.pj_cols[col_name]['data_type'] != 'empty') {
+        if (self.pj_cols[col_name]['data_type'] != 'none') {
             if (whp_df_prec !== false) {
                 set_bt_title.push('<b>Precision:</b> ' + whp_df_prec);
                 set_bt_disabled = false;

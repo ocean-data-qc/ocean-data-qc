@@ -29,7 +29,7 @@
         },
         "SECT": {
             "external_name": [],
-            "data_type": "",
+            "data_type": "none",
             "attrs": [
                 "non_qc"
             ],
@@ -38,7 +38,7 @@
         },
         "SECT_ID": {
             "external_name": [],
-            "data_type": "",
+            "data_type": "none",
             "attrs": [
                 "non_qc"
             ],
@@ -49,7 +49,7 @@
             "external_name": [
                 "STATION"
             ],
-            "data_type": "",
+            "data_type": "none",
             "attrs": [
                 "required",
                 "non_qc"
@@ -106,7 +106,7 @@
         },
         "DATE": {
             "external_name": [],
-            "data_type": "",
+            "data_type": "none",
             "attrs": [
                 "required",
                 "non_qc"
@@ -116,7 +116,7 @@
         },
         "TIME": {
             "external_name": [],
-            "data_type": "",
+            "data_type": "none",
             "attrs": [
                 "non_qc"
             ],
@@ -145,7 +145,7 @@
         },
         "DEPTH": {
             "external_name": [],
-            "data_type": "",
+            "data_type": "none",
             "attrs": [
                 "non_qc",
                 "basic"
@@ -290,7 +290,7 @@
             "external_name": [
                 "NO2NO3"
             ],
-            "data_type": "",
+            "data_type": "none",
             "attrs": [
                 "basic"
             ],
@@ -359,7 +359,7 @@
         },
         "PH": {
             "external_name": [],
-            "data_type": "",
+            "data_type": "none",
             "attrs": [],
             "unit": false,
             "precision": false
@@ -398,7 +398,7 @@
                 "PHSWS25P0",
                 "PH_SWS25P0"
             ],
-            "data_type": "",
+            "data_type": "none",
             "attrs": [],
             "unit": false,
             "precision": false
@@ -412,7 +412,7 @@
         },
         "PH_TMP": {
             "external_name": [],
-            "data_type": "",
+            "data_type": "none",
             "attrs": [
                 "non_qc"
             ],
@@ -421,7 +421,7 @@
         },
         "PCO2": {
             "external_name": [],
-            "data_type": "",
+            "data_type": "none",
             "attrs": [],
             "unit": false,
             "precision": false
@@ -558,7 +558,7 @@
         },
         "DELC14": {
             "external_name": [],
-            "data_type": "",
+            "data_type": "none",
             "attrs": [],
             "unit": false,
             "precision": false
@@ -572,7 +572,7 @@
         },
         "DELC13": {
             "external_name": [],
-            "data_type": "",
+            "data_type": "none",
             "attrs": [],
             "unit": false,
             "precision": false
@@ -586,7 +586,7 @@
         },
         "O18O16": {
             "external_name": [],
-            "data_type": "",
+            "data_type": "none",
             "attrs": [],
             "unit": false,
             "precision": false
@@ -614,14 +614,14 @@
         },
         "THETA": {
             "external_name": [],
-            "data_type": "",
+            "data_type": "none",
             "attrs": [],
             "unit": "DEGC",
             "precision": false
         },
         "N2O": {
             "external_name": [],
-            "data_type": "",
+            "data_type": "none",
             "attrs": [],
             "unit": false,
             "precision": false

@@ -282,6 +282,7 @@ class CruiseData(CruiseDataExport):
                 * flag          - existing flags for the params that were loaded from the beginning
                 * required      - required columns
                 * created       - columns created by the app
+                * empty         - empty columns
 
             @discard_nan - discards columns with all the values = NaN
 
@@ -591,15 +592,17 @@ class CruiseData(CruiseDataExport):
                 self.cols[c]['data_type'] = 'float'
             else:  # empty column
                 self.cols[c]['precision'] = False
-                self.cols[c]['data_type'] = 'empty'
+                self.cols[c]['data_type'] = 'none'
+                self.cols[c]['attrs'].append('empty')
 
         for c in self.df.select_dtypes(include=['int8', 'int16', 'int32', 'int64']):
             self.cols[c]['precision'] = 0
             if c == 'NITRIT_FLAG_W':
                 lg.warning(f'DF["NITRIT_FLAG_W"]: {self.df["NITRIT_FLAG_W"]}')
             if self.df[self.df[c] == 9][c].index.size == self.df.index.size:
-                self.cols[c]['data_type'] = 'empty'
+                self.cols[c]['data_type'] = 'none'
                 self.cols[c]['export'] = False
+                self.cols[c]['attrs'].append('empty')
             else:
                 self.cols[c]['data_type'] = 'integer'
 
