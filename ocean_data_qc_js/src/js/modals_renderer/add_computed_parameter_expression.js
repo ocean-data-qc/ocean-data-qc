@@ -76,7 +76,7 @@ module.exports = {
 
                 if (typeof(result['dependencies']) !== 'undefined') {
                     var dep = result['dependencies'];
-                    if (dep != {} && dep != null) {
+                    if (!$.isEmptyObject(dep) && dep != null) {
                         self.all_computed_params_list.find('option').each(function() {
                             if ($(this).val() in dep) {
                                 if (dep[$(this).val()] === false) {
@@ -340,7 +340,7 @@ module.exports = {
                 });
                 self.sort_select_list(self.available_computed_param);
 
-                if (result != {} && result != null) {
+                if (!$.isEmptyObject(result) && result != null) {
                     self.all_computed_params_list.find('option').each(function() {
                         if ($(this).val() in result) {
                             if (result[$(this).val()] === false) {

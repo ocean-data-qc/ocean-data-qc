@@ -339,7 +339,7 @@ module.exports = {
         var self = this;
         // lg.info('>> TABS: ' + JSON.stringify(qc_plot_tabs, null, 4));
 
-        if (qc_plot_tabs == {} || self.file_columns == []) {
+        if ($.isEmptyObject(qc_plot_tabs) || self.file_columns == []) {
             lg.error('>> QC PLOT TABS EMPTY or THE FILE DOES NOT HAVE ANY COLUMNS');
             return;
         }

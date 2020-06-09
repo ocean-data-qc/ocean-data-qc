@@ -188,7 +188,7 @@ module.exports = {
         var self = this;
         // lg.info('>> TABS: ' + JSON.stringify(qc_plot_tabs, null, 4));
 
-        if (qc_plot_tabs == {} || self.app_columns == []) {
+        if ($.isEmptyObject(qc_plot_tabs) || self.app_columns == []) {
             // TODO: anyway, add columns from scratch should be allowed
             tools.show_modal({
                 'msg_type': 'text',
