@@ -32,7 +32,6 @@ module.exports = {
         self.cps = data.get('computed_params', loc.custom_settings);
         self.update_col_lists();
 
-        // lg.warn('>> CUSTOM SETTINGS COLS: ' + JSON.stringify(self.cs_cols, null, 4));
         if (Object.keys(self.cs_cols).length > 1 && Object.keys(self.cs_cols).length > 1 ) {
             var url = path.join(loc.modals, 'column_app.html');
             tools.load_modal(url, function() {
@@ -58,7 +57,6 @@ module.exports = {
     },
 
     parse_data: function() {
-        lg.warn('-- PARSE DATA COL SETTINGS')
         var self = this;
         var cols = Object.keys(self.cs_cols);  // are they sorted?
 
@@ -101,8 +99,6 @@ module.exports = {
         $('#modal_column_app').click();
 
         $('#column_app_win').on('shown.bs.modal', function (e) {
-            lg.warn('-- MODAL LOADED');
-
             self.data_table = $('#table_column_app').DataTable({  // TODO: show only when rendered
                 scrollY: 400,
                 scrollCollapse: true,
@@ -193,13 +189,14 @@ module.exports = {
             value: col_name === false ? '' : col_name,
             disabled: true
         });
+
         input.on('change', function() {
             // Update the current value of the field and reload the table "data"
             // to make work the search again
-
+            $(this).val($(this).val().toUpperCase());  // does it work?
             $(this).attr('value', $(this).val());
             var td = $(this).parent('td');
-            $('#table_column_app').DataTable().cell(td).data(td.html()).draw();
+            $('#table_column_app').DataTable().cell(td).data(td.html());
         });
         return input;
     },
@@ -227,7 +224,6 @@ module.exports = {
         if (col_name !== false) {
             var tmp_data_type = self.cs_cols[col_name]['data_type'];
         }
-        // lg.warn('>> TMP DATA TYPE: ' + tmp_data_type);
 
         var sel_cur_data_type = $('<select>', {
             class: 'form-control form-control-sm',
@@ -297,8 +293,6 @@ module.exports = {
             // integer > precision 0 disabled
             // string > precision 'none' disabled
             // float > precision 1 enabled
-            lg.warn('>> SEL DATA TYPE CHANGE')
-
             var sel_val = $(this).val();
             var prec_obj = $(this).parent().parent().find('select[name="sel_cur_prec"]');
             if (sel_val === 'none' || sel_val === 'string') {
@@ -335,7 +329,6 @@ module.exports = {
                 text: j
             });
             if (tmp_prec === j) {
-                // lg.warn('>> SEL: ' + self.cs_cols[col_name]['precision'] + ' | ' + parseInt(j))
                 opt.attr("selected","selected");
                 sel_cur_prec.attr('disabled', false);
             }
@@ -383,10 +376,7 @@ module.exports = {
             type: 'button'
         });
         bt.on('click', function() {
-            lg.warn('>> EDIT ROW');
             var tr = $(this).parents('tr');
-            // lg.warn('>> TAGS INPUT: ' + tr.find('input[name="txt_external_name"]').tagsinput('items'))
-
             self.tmp_record = {
                 bgcolor: tr.css('background-color'),  // move to some class
                 col_name: tr.find('input[name="txt_col_name"]').val().toUpperCase(),
@@ -398,8 +388,6 @@ module.exports = {
                 cur_prec: tr.find('select[name="sel_cur_prec"]').val(),
                 cur_unit: tr.find('input[name="txt_cur_unit"]').val(),
             }
-            lg.warn('>> TMP RECORD (edit): ' + JSON.stringify(self.tmp_record, null, 4));
-
             tr.find('.discard_col, .valid_col').css('display', 'inline-block');
             tr.find('.rmv_col, .edit_col').css('display', 'none');
             tr.find('input, select').removeAttr('disabled');
@@ -409,6 +397,7 @@ module.exports = {
             // TODO: enable precision only if data type = float
 
             tools.enable_tags_input(tr);
+            $('#div_column_app tr').find('button.edit_col, button.rmv_col').attr('disabled', true);
         });
         return bt;
     },
@@ -420,12 +409,8 @@ module.exports = {
             type: 'button'
         });
         bt.on('click', function() {
-            lg.warn('>> REMOVE ROW');
             var tr = $(this).parents('tr');
-
-            // CHECK IF THE PARAM IS BEING USED IN the calculated equations
             var col = tr.find('input[name="txt_col_name"]').val();
-            lg.warn('>> COL: ' + col);
             var cps = data.get('computed_params', loc.default_settings);
             var col_in_cps = [];
             cps.forEach(function(elem) {
@@ -433,7 +418,6 @@ module.exports = {
                     col_in_cps.push(elem.param_name);
                 }
             });
-            lg.warn('>> CP WITH THE REMOVED COLUMN: ' + col_in_cps);
             if (col_in_cps.length == 0) {
                 tools.modal_question({
                     'title': 'Remove row?',
@@ -468,23 +452,16 @@ module.exports = {
         });
         bt.on('click', function() {
             var tr = $(this).parents('tr');
-            lg.warn('>> DISCARD RECORD CHANGES');
-            lg.warn('>> SELF TEMP RECORD: ' + JSON.stringify(self.tmp_record, null, 4));
             if ($.isEmptyObject(self.tmp_record)) {
                 // discard new_row
-                lg.warn('>> 00')
                 var data_table = $('#table_column_app').DataTable();
                 data_table.row(tr).remove().draw();
                 return;
             }
-
             tr.find('input[name="txt_col_name"]').val(self.tmp_record.col_name);
-
             var ti = tr.find('input[name="txt_external_name"]');
             ti.tagsinput('removeAll');
-            // lg.warn('>> TMP RECORD (discard): ' + JSON.stringify(self.tmp_record, null, 4));
             self.tmp_record.external_name.forEach(function(value) {
-                lg.warn('>> Adding value: ' + value)
                 ti.tagsinput('add', value);
             })
 
@@ -504,6 +481,7 @@ module.exports = {
 
             tools.disable_tags_input();
             self.tmp_record = {};
+            $('#div_column_app tr').find('button.edit_col, button.rmv_col').removeAttr('disabled');
         });
         return bt;
     },
@@ -549,12 +527,11 @@ module.exports = {
                 $('<td>', {html: txt_cur_unit }),
                 $('<td>', {html: [bt_edit, bt_rmv, bt_valid, bt_discard] }),
             );
-
             data_table.row.add(tr).draw();
-            // var new_row = data_table.row.add(tr).draw().node();
             tools.set_tags_input(tr);
             self.enable_row(tr)
             $(tr).find('input[name="txt_col_name"]').focus();
+            $('#div_column_app tr').find('button.edit_col, button.rmv_col').attr('disabled', true);
         });
     },
 
@@ -564,15 +541,11 @@ module.exports = {
         var bt = $('<button>', {
             'class': 'valid_col btn btn-success fa fa-check',
             'type': 'button',
-            'title': 'Validate column field',
-            'data-toggle': 'tooltip',
-            'data-placement': 'bottom',
             'style': 'display: none;',
         });
         bt.tooltip();
 
         bt.on('click', function() {
-            lg.warn('>> VALIDATE ROW');
             var tr = $(this).parents('tr');
             var table = $(this).parents('table');
             self.update_col_lists();
@@ -580,7 +553,8 @@ module.exports = {
             if (self.check_valid_col_name(tr) === false) {
                 return;
             }
-            if (self.check_tagsinput(table) === false) {
+
+            if (self.check_tagsinput(table, tr) === false) {
                 return;
             }
             if (tr.hasClass('new_row')) {
@@ -588,21 +562,34 @@ module.exports = {
             } else {
                 self.update_row(tr);
             }
+            self.disable_row(tr);  // back to the new normal >> everything disabled
 
-            // TODO: if a column is renamed, that value in the ecuations should be updated, or at least
-            //       the user should be informed
-
-            // back to the new normal >> everything disabled
-            self.disable_row(tr);
-
+            $('#table_column_app').DataTable().draw();
+            $('#div_column_app tr').find('button.edit_col, button.rmv_col').removeAttr('disabled');
         });
         return bt
     },
 
     check_valid_col_name: function(tr=false) {
         var self = this;
-        var col_name = tr.find('input[name="txt_col_name"]').val()
-        if (col_name === false) {
+        var col_name = tr.find('input[name="txt_col_name"]').val();
+        if (col_name === '') {
+            tools.show_modal( {
+                msg_type: 'text',
+                type: 'VALIDATION ERROR',
+                msg: 'The column name field is empty.',
+            })
+            return false;
+        }
+
+        var re = new RegExp('[^A-Z0-9_]+', 'g');
+        var l = col_name.split(re);
+        if (l.length > 1) {
+            tools.show_modal( {
+                msg_type: 'text',
+                type: 'VALIDATION ERROR',
+                msg: 'The column name has some invalid characters. You can use some of these ones: A-Z, 0-9, _',
+            })
             return false;
         }
 
@@ -637,24 +624,44 @@ module.exports = {
         }
     },
 
-    check_tagsinput: function(table=false) {
+    check_tagsinput: function(table=false, tr=false) {
         var self = this;
         var cur_tags = table.find('tr.edit_row, tr.new_row').find('input[name="txt_external_name"]').tagsinput('items');
+        cur_tags = cur_tags.map(function(x){ return x.toUpperCase() })
+        cur_tags.forEach(function(c) {
+            var re = new RegExp('[^A-Z0-9_]+', 'g');
+            var l = c.split(re);
+            if (l.length > 1) {
+                tools.show_modal( {
+                    msg_type: 'text',
+                    type: 'VALIDATION ERROR',
+                    msg: 'The name in file "' + c + '" has some invalid characters. You can use some of these ones: A-Z, 0-9, _',
+                })
+                return false;
+            }
+        });
 
         var rows = table.find('tr').not('.edit_row, .new_row');
         var other_tags = rows.find('input[name="txt_external_name"]').tagsinput('items');
-        var res = true;
 
+        if (cur_tags.includes(tr.find('input[name="txt_col_name"]').val())) {
+            tools.show_modal({
+                'msg_type': 'text',
+                'type': 'VALIDATION ERROR',
+                'msg': 'The current row column name cannot be in the external names as well.',
+            });
+            return false;
+        }
+
+        var res = true;
         cur_tags.forEach(function(ct) {
-            if (self.check_dup_col(ct.toUpperCase()) === false) {
-                lg.warn('>> RETURNING FALSEEEEEEE')
+            if (self.check_dup_col(ct) === false) {
                 res = false;
             }
             other_tags.forEach(function(tl) {
                 if (tl != []) {
                     tl.forEach(function(tg) {
-                        lg.warn('>> T: ' + tg);
-                        if (ct.toUpperCase() == tg.toUpperCase()) {
+                        if (ct == tg) {
                             tools.show_modal({
                                 'msg_type': 'text',
                                 'type': 'VALIDATION ERROR',
@@ -671,14 +678,14 @@ module.exports = {
     },
 
     create_row: function(tr=false) {
-        lg.warn('-- CREATE ROW');
+        lg.info('-- CREATE ROW');
         var self = this;
         self.upd_row_values(tr);
         data.set({'columns': self.cs_cols}, loc.custom_settings);
     },
 
     update_row: function(tr=false) {
-        lg.warn('-- UPDATE ROW');
+        lg.info('-- UPDATE ROW');
         var self = this;
         self.upd_row_values(tr);
 
