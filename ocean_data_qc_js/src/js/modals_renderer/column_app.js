@@ -588,7 +588,7 @@ module.exports = {
             tools.show_modal( {
                 msg_type: 'text',
                 type: 'VALIDATION ERROR',
-                msg: 'The column name has some invalid characters. You can use some of these ones: A-Z, 0-9, _',
+                msg: 'The column name has some invalid characters. You can use: A-Z, 0-9, _',
             })
             return false;
         }
@@ -635,7 +635,7 @@ module.exports = {
                 tools.show_modal( {
                     msg_type: 'text',
                     type: 'VALIDATION ERROR',
-                    msg: 'The name in file "' + c + '" has some invalid characters. You can use some of these ones: A-Z, 0-9, _',
+                    msg: 'The name in file "' + c + '" has some invalid characters. You can use: A-Z, 0-9, _',
                 })
                 return false;
             }

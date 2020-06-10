@@ -36,18 +36,19 @@ module.exports = {
             var url = path.join(loc.modals, 'column_project.html');
             tools.load_modal(url, function() {
                 self.parse_data();
+                self.set_save_bt();
             });
         } else {
             tools.show_modal({
-                'msg_type': 'text',
-                'type': 'ERROR',
-                'msg': 'There are not columns or settings files could not be read.',
+                msg_type: 'text',
+                type: 'ERROR',
+                msg: 'There are not columns or settings files could not be read.',
             });
         }
     },
 
     parse_data: function() {
-        lg.warn('-- PARSE DATA COL SETTINGS')
+        lg.info('-- PARSE DATA COL SETTINGS')
         var self = this;
         var cols = Object.keys(self.pj_cols);  // are they sorted?
 
@@ -55,7 +56,6 @@ module.exports = {
             var col_name = cols[i];
             var name = self.get_col_name(col_name);
             var data_type = self.get_data_type(col_name)
-            lg.warn('>> ATTRS: ' + JSON.stringify(self.pj_cols[col_name]['attrs'], null, 4))
             var attrs = self.pj_cols[col_name]['attrs'].join(', ');  // TODO: translate to icons or extract just some of them?
             var cb_export = self.get_cb_export(i, col_name);
             var sel_cur_prec = self.get_cur_prec(col_name);
@@ -100,13 +100,66 @@ module.exports = {
         });
     },
 
+    set_save_bt: function() {
+        var self = this;
+        // var data_table = $('#table_column_project').DataTable();
+
+        $('#save_settings').on('click', function() {
+            lg.warn('>> ROWS: ' + $('#div_column_project tr'))
+
+            var valid = true;
+            $.each($('#div_column_project tbody tr'), function(i, node) {
+                lg.warn('>> I: ' + i);
+                lg.warn('>> NODE: ' + node);
+                node = $(node);
+                var col_name = node.find('.td_col_name').text();
+                var cb_export = node.find('input[name="cb_export"]').prop('checked');
+
+                var sel_cur_prec = false;
+                if (node.find('select[name="sel_cur_prec"]').val() != 'none') {
+                    sel_cur_prec = parseInt(node.find('select[name="sel_cur_prec"]').val());
+                }
+
+                var txt_cur_unit = false
+                if (node.find('input[name="txt_cur_unit"]').val() != '') {
+                    txt_cur_unit = node.find('input[name="txt_cur_unit"]').val().toUpperCase();
+
+                    var re = new RegExp('[^A-Z0-9_/-]+', 'g');
+                    var l = txt_cur_unit.split(re);
+                    if (l.length > 1) {
+                        tools.show_modal( {
+                            msg_type: 'text',
+                            type: 'VALIDATION ERROR',
+                            msg: 'The unit field in the column ' + col_name + ' has some invalid characters. You can use: A-Z, 0-9, _, /, -',
+                        })
+                        valid = false;
+                    }
+                }
+                var d = {
+                    attrs: self.pj_cols[col_name].attrs.slice(),
+                    data_type: self.pj_cols[col_name].data_type,
+                    export: cb_export,
+                    external_name: self.pj_cols[col_name].external_name.slice(),
+                    precision: sel_cur_prec,
+                    unit: txt_cur_unit,
+                }
+                self.pj_cols[col_name] = d
+            })
+            if (valid) {
+                self.pj_cols = data.set({columns: self.pj_cols }, loc.proj_settings);
+                $("#column_project_win").modal("hide");
+            }
+        });
+    },
+
     get_col_name: function(name=false) {
         var self = this;
         var name_row = $('<td>', {
-            text: name
+            text: name,
+            class: 'td_col_name'
         });
         var external_name = self.pj_cols[name]['external_name'];
-        if (name != external_name && typeof(external_name) !== 'undefined' && external_name !== false) {
+        if (external_name.length > 0) {
             name_row.append(
                 $('<i>', {
                     'class': 'fa fa-info-circle',
