@@ -727,211 +727,211 @@
             "param_name": "_PRESSURE",
             "equation": "@pressure_combined(CTDPRS, DEPTH, LATITUDE)",
             "units": false,
-            "precision": "2"
+            "precision": 2
         },
         {
             "param_name": "_DEPTH",
             "equation": "@depth_combined(CTDPRS, DEPTH, LATITUDE)",
             "units": false,
-            "precision": "2"
+            "precision": 2
         },
         {
             "param_name": "_NITRATE",
             "equation": "@nitrate_combined(NITRAT, NITRIT, NO2_NO3)",
             "units": false,
-            "precision": "2"
+            "precision": 2
         },
         {
             "param_name": "_SALINITY",
             "equation": "@salinity_combined()",
             "units": false,
-            "precision": "5"
+            "precision": 5
         },
         {
             "param_name": "_OXYGEN",
             "equation": "@oxygen_combined()",
             "units": false,
-            "precision": "3"
+            "precision": 3
         },
         {
             "param_name": "_THETA",
             "equation": "@ptmp(_SALINITY, CTDTMP, _PRESSURE, 0)",
             "units": false,
-            "precision": "5"
+            "precision": 5
         },
         {
             "param_name": "SIGMA0",
             "equation": "@pden(_SALINITY, CTDTMP, _PRESSURE, 0) - 1000",
             "units": false,
-            "precision": "5"
+            "precision": 5
         },
         {
             "param_name": "SIGMA1",
             "equation": "@pden(_SALINITY, CTDTMP, _PRESSURE, 1000) - 1000",
             "units": false,
-            "precision": "5"
+            "precision": 5
         },
         {
             "param_name": "SIGMA2",
             "equation": "@pden(_SALINITY, CTDTMP, _PRESSURE, 2000) - 1000",
             "units": false,
-            "precision": "5"
+            "precision": 5
         },
         {
             "param_name": "SIGMA3",
             "equation": "@pden(_SALINITY, CTDTMP, _PRESSURE, 3000) - 1000",
             "units": false,
-            "precision": "5"
+            "precision": 5
         },
         {
             "param_name": "SIGMA4",
             "equation": "@pden(_SALINITY, CTDTMP, _PRESSURE, 4000) - 1000",
             "units": false,
-            "precision": "5"
+            "precision": 5
         },
         {
             "param_name": "AOU",
             "equation": "@satO2(_SALINITY, _THETA) / (22.414 * @dens(_SALINITY, _THETA, 0) * 1E-6) - _OXYGEN",
             "units": false,
-            "precision": "3"
+            "precision": 3
         },
         {
             "param_name": "AOU_GG92",
             "equation": "@aou_gg(_SALINITY, _THETA, _OXYGEN)",
             "units": false,
-            "precision": "3"
+            "precision": 3
         },
         {
             "param_name": "PO",
             "equation": "_OXYGEN + 135 * PHSPHT ",
             "units": false,
-            "precision": "3"
+            "precision": 3
         },
         {
             "param_name": "NO",
             "equation": "_OXYGEN + 9 * _NITRATE",
             "units": false,
-            "precision": "3"
+            "precision": 3
         },
         {
             "param_name": "NTA",
             "equation": "ALKALI * 35 / _SALINITY",
             "units": false,
-            "precision": "3"
+            "precision": 3
         },
         {
             "param_name": "ALKALI_TCARBN_1_RATIO",
             "equation": "ALKALI / TCARBN -1",
             "units": false,
-            "precision": "5"
+            "precision": 5
         },
         {
             "param_name": "ALKALI_NNG2_VEL13",
             "equation": "@alkali_nng2_vel13(LONGITUDE, LATITUDE, _DEPTH, _THETA, _SALINITY, _NITRATE, PHSPHT, SILCAT, _OXYGEN)",
             "units": false,
-            "precision": "3"
+            "precision": 3
         },
         {
             "param_name": "ALKALI_NNGV2_BRO19",
             "equation": "@alkali_nngv2_bro19(LONGITUDE, LATITUDE, _DEPTH, _THETA, _SALINITY, _NITRATE, PHSPHT, SILCAT, _OXYGEN)",
             "units": false,
-            "precision": "3"
+            "precision": 3
         },
         {
             "param_name": "ALKALI_NNCANYONB_BIT18",
             "equation": "@alkali_nncanyonb_bit18(DATE, LATITUDE, LONGITUDE, _PRESSURE, CTDTMP, _SALINITY, _OXYGEN)",
             "units": false,
-            "precision": "3"
+            "precision": 3
         },
         {
             "param_name": "TCARBN_NNCANYONB_BIT18",
             "equation": "@tcarbn_nncanyonb_bit18(DATE, LATITUDE, LONGITUDE, _PRESSURE, CTDTMP, _SALINITY, _OXYGEN)",
             "units": false,
-            "precision": "3"
+            "precision": 3
         },
         {
             "param_name": "TCARBN_NNGV2LDEO_BRO20",
             "equation": "@tcarbn_nngv2ldeo_bro20(LONGITUDE, LATITUDE, _DEPTH, _THETA, _SALINITY, _NITRATE, PHSPHT, SILCAT, _OXYGEN, YEAR)",
             "units": false,
-            "precision": "3"
+            "precision": 3
         },
         {
             "param_name": "PHTS25P0_NNCANYONB_BIT18",
             "equation": "@phts25p0_nncanyonb_bit18(DATE, LATITUDE, LONGITUDE, _PRESSURE, CTDTMP, _SALINITY, _OXYGEN)",
             "units": false,
-            "precision": "5"
+            "precision": 5
         },
         {
             "param_name": "NITRAT_NNCANYONB_BIT18",
             "equation": "@nitrat_nncanyonb_bit18(DATE, LATITUDE, LONGITUDE, _PRESSURE, CTDTMP, _SALINITY, _OXYGEN)",
             "units": false,
-            "precision": "5"
+            "precision": 5
         },
         {
             "param_name": "PHSPHT_NNCANYONB_BIT18",
             "equation": "@phspht_nncanyonb_bit18(DATE, LATITUDE, LONGITUDE, _PRESSURE, CTDTMP, _SALINITY, _OXYGEN)",
             "units": false,
-            "precision": "5"
+            "precision": 5
         },
         {
             "param_name": "SILCAT_NNCANYONB_BIT18",
             "equation": "@silcat_nncanyonb_bit18(DATE, LATITUDE, LONGITUDE, _PRESSURE, CTDTMP, _SALINITY, _OXYGEN)",
             "units": false,
-            "precision": "5"
+            "precision": 5
         },
         {
             "param_name": "TCARBN_FROM_ALKALI_PHSWS25P0",
             "equation": "@tcarbn_from_alkali_phsws25p0(ALKALI, PH_SWS, _SALINITY, SILCAT, PHSPHT)",
             "units": false,
-            "precision": "3"
+            "precision": 3
         },
         {
             "param_name": "TCARBN_FROM_ALKALI_PHTS25P0",
             "equation": "@tcarbn_from_alkali_phts25p0(ALKALI, PH_TOT, _SALINITY, SILCAT, PHSPHT)",
             "units": false,
-            "precision": "3"
+            "precision": 3
         },
         {
             "param_name": "PHTS25P0_FROM_ALKALI_TCARBN",
             "equation": "@phts25p0_from_alkali_tcarbn(ALKALI, TCARBN, _SALINITY, SILCAT, PHSPHT)",
             "units": false,
-            "precision": "5"
+            "precision": 5
         },
         {
             "param_name": "PH_TOT_DIFF",
             "equation": "PH_TOT - PHTS25P0_FROM_ALKALI_TCARBN",
             "units": false,
-            "precision": "5"
+            "precision": 5
         },
         {
             "param_name": "ALK_DIFF",
             "equation": "ALK_NNGV2_BRO19 - ALKALI ",
             "units": false,
-            "precision": "5"
+            "precision": 5
         },
         {
             "param_name": "TCARBN_DIFF",
             "equation": "TCARBN_NNGV2LDEO_BRO20 - TCARBN ",
             "units": false,
-            "precision": "5"
+            "precision": 5
         },
         {
             "param_name": "OXY_DIFF",
             "equation": "CTDOXY - OXYGEN ",
             "units": false,
-            "precision": "5"
+            "precision": 5
         },
         {
             "param_name": "SAL_DIFF",
             "equation": "CTDSAL - SALNTY ",
             "units": false,
-            "precision": "5"
+            "precision": 5
         },
         {
             "param_name": "N_STAR",
             "equation": "_NITRATE - 16 * PHSPHT + 2",
             "units": false,
-            "precision": "5"
+            "precision": 5
         }
     ],
     "qc_plot_tabs": {
