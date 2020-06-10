@@ -76,7 +76,7 @@ class CruiseData(CruiseDataExport):
 
                 "cols": {
                     "ALKALI": {
-                        "external_name": "alkali",          # in custom_settings is a list
+                        "external_name": ["alkali"],  # just one element in project settings
                         "attrs": ["param", "required", ],
                         "data_type": "float",
                         "unit": "UMOL/KG",
@@ -114,7 +114,7 @@ class CruiseData(CruiseDataExport):
             # self.col_mappings = {
             #     'external_value': new_value,  >> the new_value is the used inside the app
             # }
-            self.cols[value]['external_name'] = key
+            self.cols[value]['external_name'] = [key]
 
         # lg.info(json.dumps(self.cols, sort_keys=True, indent=4))
 
