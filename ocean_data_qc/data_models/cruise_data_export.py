@@ -50,21 +50,20 @@ class CruiseDataExport(Environment):
                     f_out.write('# {}'.format(line))
 
             # TODO: check if this exports the correct column order? which is the correct order?
-            columns = self.get_cols_by_attrs(
-                ['required', 'param', 'non_qc', 'flag']
-            )
-            columns_row = ','.join(columns)
+            cols = self.get_cols_to_export(whp=True)  # discard calculated cols even if they are selected to export?
+            columns_row = ','.join(cols)
             f_out.write(columns_row + '\n')
 
-            units = self.get_units(columns)
+            units = self.get_units(cols)
             units = [x if x is not False else '' for x in units]
             units_row = ','.join(units)
             f_out.write(units_row + '\n')
 
             aux_df = self.df.copy()
             aux_df = aux_df.replace(np.nan, -999.0)  # float64 fields value will be -999.0
+            aux_df = self.round_cols(aux_df)
 
-            for index, row in aux_df[columns].iterrows():
+            for index, row in aux_df[cols].iterrows():
                 str_row =  ','.join([str(x) for x in row])   # TODO: take values with commas into account
                 f_out.write(str_row + '\n')
 
@@ -80,20 +79,42 @@ class CruiseDataExport(Environment):
             os.remove(path.join(TMP, 'export_data.csv'))
         aux_df = self.df.copy()
         aux_df = aux_df.replace(np.nan, -999.0)  # float64 fields value will be -999.0
-        cols = self.get_cols_by_attrs(['required', 'param', 'non_qc', 'flag'])
+        cols = self.get_cols_to_export()
         aux_df = aux_df.filter(cols)
-        orig_col_names = []
+        aux_df = self.round_cols(aux_df)
+        external_names = []
         for c in cols:
-            if 'external_name' in self.cols[c]:
-                orig_col_names.append(self.cols[c]['external_name'])  # computed do not have external_name
+            if len(self.cols[c]['external_name']) > 0:
+                external_names.append(self.cols[c]['external_name'][0])  # computed do not have external_name
             else:
-                orig_col_names.append(c)
+                external_names.append(c)
         aux_df.to_csv(
             path_or_buf=os.path.join(TMP, 'export_data.csv'),
-            header=orig_col_names,
+            header=external_names,
             index=False,
         )
         return True
+
+    def get_cols_to_export(self, whp=False):
+        all_cols = self.env.f_handler.get('columns', PROJ_SETTINGS)
+        cols = []
+        if whp is False:
+            for c in all_cols.keys():
+                if all_cols[c]['export'] is True:
+                    cols.append(c)
+        else:
+            for c in all_cols.keys():
+                if all_cols[c]['export'] is True and 'computed' not in all_cols[c]['attrs']:
+                    cols.append(c)
+        return cols
+
+    def round_cols(self, df):
+        lg.warning('-- ROUND COLS')
+        all_cols = self.env.f_handler.get('columns', PROJ_SETTINGS)
+        for c in df.columns:
+            if all_cols[c]['precision'] is not False:
+                df[c] = df[c].round(all_cols[c]['precision'])
+        return df
 
     def save_csv_data(self):
         """ it saves the dataframe self.df to the data.csv file

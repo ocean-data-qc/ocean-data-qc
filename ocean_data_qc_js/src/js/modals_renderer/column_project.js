@@ -106,7 +106,9 @@ module.exports = {
 
         $('#save_settings').on('click', function() {
             lg.warn('>> ROWS: ' + $('#div_column_project tr'))
-
+            var dt = $('#table_column_project').DataTable();
+            dt.search('').draw();  // to show all the table in order to get the values
+                                   // the alternative would be to save all the events in the rows
             var valid = true;
             $.each($('#div_column_project tbody tr'), function(i, node) {
                 lg.warn('>> I: ' + i);
