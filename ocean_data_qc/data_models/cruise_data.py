@@ -84,7 +84,7 @@ class CruiseData(CruiseDataExport):
                         "export": True
                     },
                     "ALKALI_FLAG_W": {
-                        "external_name": False,
+                        "external_name": [],
                         "attrs": ["flag", ],
                         "data_type": "integer"
                         "unit": False,  # >> False
@@ -201,7 +201,7 @@ class CruiseData(CruiseDataExport):
         '''
         if column not in self.get_cols_by_attrs('all'):
             self.cols[column] = {
-                'external_name': False,
+                'external_name': [],
                 'attrs': [],
                 'unit': units,
                 'precision': False,
@@ -235,7 +235,7 @@ class CruiseData(CruiseDataExport):
                 values = ['2'] * len(self.df.index)
                 self.df[flag] = values
                 self.cols[flag] = {
-                    'external_name': False,
+                    'external_name': [],
                     'attrs': ['flag', 'created'],
                     'unit': False,
                     'export': True
@@ -263,7 +263,7 @@ class CruiseData(CruiseDataExport):
                 )
                 # NOTE: I don't call to _add_column because I don't want to create the flag column
                 self.cols[c] = {
-                    'external_name': False,
+                    'external_name': [],
                     'attrs': ['param', 'basic', 'created', ],
                     'unit': False,
                     'precision': False,

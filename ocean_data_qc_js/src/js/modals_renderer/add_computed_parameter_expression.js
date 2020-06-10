@@ -30,7 +30,15 @@ module.exports = {
             self.all_computed_params_list = $('select[name=all_computed_param]');
             self.equation_text = $('textarea[name=equation]');
             self.units = $('input[name=units]');
-            self.precision = $('input[name=precision]');
+            self.precision = $('select[name=precision]');
+
+            for (var i = 0; i < 16; i += 1) {
+                self.precision.append($('<option>', {
+                    value: i,
+                    text: i
+                }))
+            }
+
             self.precision.val(5);
             self.comp_param_name = $('input[name=expr_name]');
             self.current_columns = [];
@@ -490,19 +498,19 @@ module.exports = {
         if (units == '') units = false;
         if (new_cp) {
             comp_params.push({
-                'param_name': self.comp_param_name.val(),
-                'equation': self.equation_text.val(),
-                'units': units,
-                'precision': self.precision.val()
+                param_name: self.comp_param_name.val(),
+                equation: self.equation_text.val(),
+                units: units,
+                precision: parseInt(self.precision.val())
             })
         } else {
             comp_params = jQuery.map(comp_params, function(cp) {
                 if (typeof(cp.param_name) !== 'undefined' && cp.param_name == expr_name) {
                     return {
-                        'param_name': self.comp_param_name.val(),
-                        'equation': self.equation_text.val(),
-                        'units': units,
-                        'precision': self.precision.val()
+                        param_name: self.comp_param_name.val(),
+                        equation: self.equation_text.val(),
+                        units: units,
+                        precision: parseInt(self.precision.val())
                     }
                 } else {
                     return cp
@@ -514,7 +522,7 @@ module.exports = {
                 if ('param_name' in cp && cp['param_name'] == expr_name) {
                     cp['equation'] = self.equation_text.val();
                     cp['units'] = units;
-                    cp['precision'] = self.precision.val();
+                    cp['precision'] = parseInt(self.precision.val());
                 }
             });
             data.set({'computed_params': custom_cps }, loc.custom_settings);

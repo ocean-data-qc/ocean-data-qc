@@ -84,7 +84,7 @@ class ComputedParameter(Environment):
                 result = self.compute_equation(new_cp)
                 if result.get('success', False):
                     self.cruise_data.cols[val] = {
-                        'external_name': cp['param_name'],
+                        'external_name': [],
                         'data_type': 'integer' if prec == 0 else 'float',
                         'attrs': ['computed'],
                         'unit': cp.get('units', False),
