@@ -145,7 +145,7 @@ class BokehEvents(Environment):
             lg.info('-- NEXT PROFILE')
             if self.nearby_prof_cb:
                 s = self.nearby_prof_select.options
-                next_pos = s.index('{0:g}'.format(self.env.cur_nearby_prof)) + 1
+                next_pos = s.index(f'{self.env.cur_nearby_prof}') + 1
                 if next_pos < len(s):
                     self.nearby_prof_select.value = s[next_pos]
                     self.env.cur_nearby_prof = float(s[next_pos])
@@ -156,7 +156,7 @@ class BokehEvents(Environment):
             lg.info('-- PREVIOUS PROFILE')
             if self.nearby_prof_cb:
                 s = self.nearby_prof_select.options
-                previous_pos = s.index('{0:g}'.format(self.env.cur_nearby_prof)) - 1
+                previous_pos = s.index(f'{self.env.cur_nearby_prof}') - 1
                 if previous_pos >= 0:
                     self.nearby_prof_select.value = s[previous_pos]
                     self.env.cur_nearby_prof = float(s[previous_pos])
@@ -185,8 +185,10 @@ class BokehEvents(Environment):
         # TODO: dont trigger this the first time
         if isinstance(self.env.stt_to_select, int):  # str to number >> to make it work with '2.2' or '2'
             new_value = int(new)
-        else:
+        elif isinstance(self.env.stt_to_select, float):
             new_value = float(new)
+        else: # string
+            new_value = new
 
         s = self.env.stations
         new_pos = s.index(new_value)
@@ -235,10 +237,18 @@ class BokehEvents(Environment):
 
     def _update_nearby_prof_select_opts(self):
         lg.info(f'-- UPDATE NEARBY PROF SELECT OPTS | STT TO SELECT: {self.env.stt_to_select}')
-        options_sorted = sorted(self.env.stations)
+        to_sort = True
+        for e in self.env.stations:
+            if isinstance(e, str):
+                to_sort = False
+        if to_sort:  # sort only if all the values are integer or float
+            options_sorted = sorted(self.env.stations)
+        else:
+            options_sorted = self.env.stations
+
         if self.env.stt_to_select is not None:
             options_sorted.remove(self.env.stt_to_select)
-            self.nearby_prof_select.options = ['{0:g}'.format(s) for s in options_sorted]
+            self.nearby_prof_select.options = [f'{s}' for s in options_sorted]
             self.nearby_prof_select.on_change('value', self._on_change_nearby_prof_select)
             self.nearby_prof_select.disabled = False
             self._check_profile_limits()
@@ -282,12 +292,12 @@ class BokehEvents(Environment):
             nearby_pos = self.env.stations.index(self.env.stt_to_select)
             if nearby_pos < len(self.env.stations) - 1:
                 self.env.cur_nearby_prof = self.env.stations[nearby_pos + 1]
-                self.nearby_prof_select.value = '{0:g}'.format(self.env.cur_nearby_prof)
+                self.nearby_prof_select.value = f'{self.env.cur_nearby_prof}'
             else:
                 nearby_pos = nearby_pos - 1
                 if nearby_pos >= 0:
                     self.env.cur_nearby_prof = self.env.stations[nearby_pos]
-                    self.nearby_prof_select.value = '{0:g}'.format(self.env.cur_nearby_prof)
+                    self.nearby_prof_select.value = f'{self.env.cur_nearby_prof}'
             self._check_profile_limits()
 
     def _init_tabs(self):
