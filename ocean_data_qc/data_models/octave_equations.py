@@ -130,8 +130,44 @@ class OctaveEquations(Environment):
         #depth[np.isnan(depth)] = depth_from_pres[np.isnan(depth)]
         return depth_from_pres
 
-    def nitrate_combined(self, NITRAT, NITRIT, NO2_NO3):
-        return self.oc.nitrate_combined(np.transpose(np.vstack((NITRAT, NITRIT, NO2_NO3))))
+    def nitrate_combined(self):
+        ''' NO2_NO3 is the sum of NITRAT and NITRIT, sometimes both are reported separately.
+            Some other times we need to get the NITRATE from the difference NO2_NO3 - NITRIT.
+            NO2_NO3 exists because there are some devices that take the measures together.
+            The values of NITRIT are always tiny. If the column does not exist we can do NITRATE = NO2_NO3.
+        '''
+        msg = ''
+        ret = None
+        df = self.env.cruise_data.df
+        NITRAT = True
+        if 'NITRAT' not in df or ('NITRAT' in df and df['NITRAT'].isnull().all()):
+            NITRAT = False
+
+        NITRIT = True
+        if 'NITRIT' not in df or ('NITRIT' in df and df['NITRIT'].isnull().all()):
+            NITRIT = False
+
+        NO2_NO3 = True
+        if 'NO2_NO3' not in df or ('NO2_NO3' in df and df['NO2_NO3'].isnull().all()):
+            NO2_NO3 = False
+
+        if NO2_NO3 and not NITRAT:
+            if NITRIT:
+                ret = df['NO2_NO3'] - ~pd.isnull(df['NITRIT'])
+                msg = '_NITRATE created from the calculation NO2_NO3 - NITRIT'
+            else:
+                ret = df['NO2_NO3']
+                msg = '_NITRATE created from the NO2_NO3, NITRITE and NITRATE columns are missing'
+        elif NITRAT:
+            ret = df['NITRAT']
+            msg = '_NITRATE was copied from the NITRAT column'
+        else:  # not NITRAT and not NO2_NO3
+            ret = pd.Series([np.nan] * len(df.index))
+            msg = '_NITRATE is an empty column because NITRAT and NO2_NO3 columns do not exist or they are all NaN'
+
+        self.env.cruise_data.add_moves_element('column_combined', msg)
+        lg.warning(f'>> {msg}')
+        return ret
 
     def salinity_combined(self):
         return self.column_combined(
@@ -173,6 +209,7 @@ class OctaveEquations(Environment):
             msg += f' {col1} and {col2} do not exist'
         else:
             col1_arr = df[col1].to_numpy()
+            # TODO: inform if there is some change here to the user
             col1_arr[(df[f'{col1}{FLAG_END}'] > 2) & (df[f'{col1}{FLAG_END}'] != 6)] = np.nan
             col2_arr = df[col2].to_numpy()
             col2_arr[(df[f'{col2}{FLAG_END}'] > 2) & (df[f'{col2}{FLAG_END}'] != 6)] = np.nan

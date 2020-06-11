@@ -255,9 +255,7 @@
                 "NITRATE"
             ],
             "data_type": "float",
-            "attrs": [
-                "basic"
-            ],
+            "attrs": [],
             "unit": "UMOL/KG",
             "precision": 2
         },
@@ -273,9 +271,7 @@
                 "NITRITE"
             ],
             "data_type": "float",
-            "attrs": [
-                "basic"
-            ],
+            "attrs": [],
             "unit": false,
             "precision": 2
         },
@@ -291,9 +287,7 @@
                 "NO2NO3"
             ],
             "data_type": "none",
-            "attrs": [
-                "basic"
-            ],
+            "attrs": [],
             "unit": false,
             "precision": false
         },
@@ -737,7 +731,7 @@
         },
         {
             "param_name": "_NITRATE",
-            "equation": "@nitrate_combined(NITRAT, NITRIT, NO2_NO3)",
+            "equation": "@nitrate_combined()",
             "units": false,
             "precision": 2
         },
