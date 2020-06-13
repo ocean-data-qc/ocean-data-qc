@@ -14,7 +14,7 @@ app_module_path.addPath(__dirname);
 const { ipcRenderer } = require('electron');
 const command_exists_sync = require('command-exists').sync;
 const rmdir = require('rimraf');
-const urlExists = require('url-exists');
+const url_exist = require('url-exist');
 const fs = require('fs');
 const { spawn } = require('child_process');
 const python_shell = require('python-shell');
@@ -452,7 +452,7 @@ module.exports = {
     check_tile_server_state: function() {
         lg.info('-- CHECK TILE SERVER STATE')
         // check ArcGIS Tile Server State
-        urlExists('https://server.arcgisonline.com/arcgis/rest/services/Ocean/World_Ocean_Base/MapServer/tile/0/0/0', function(err, exists) {
+        url_exist('https://server.arcgisonline.com/arcgis/rest/services/Ocean/World_Ocean_Base/MapServer/tile/0/0/0').then((exists) => {
             if (exists) {
                 lg.info('Tile server online');
                 $('body').data('ts_state', 'online');
