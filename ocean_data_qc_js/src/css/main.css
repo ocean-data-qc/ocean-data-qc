@@ -621,3 +621,24 @@ table.dataTable thead th[class^="sorting"]:after {
 .edit_row {
     background-color: rgba(255, 193, 7, 0.3) !important;
 }
+
+/* ARROWS IN BOOTSTRAP BUTTONS - CALCULATED PARAMETER FORM */
+
+.bt_arrows_wrapper {
+    height: 300px;
+    padding: 137px 0px;
+    text-align: center;
+}
+
+.bt_arrows_center {
+    width: 40px;
+    margin: -35px auto;
+}
+
+.bt_arrows_center #move_left {
+    margin: 15px 0px 15px 0px;
+}
+
+.bt_arrows_center #move_right {
+    margin: 15px 0px 15px 0px;
+}
