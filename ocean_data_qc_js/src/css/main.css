@@ -296,7 +296,7 @@ html, body, .bokeh_iframe {
 .top_layer {
     /* to block any action in the whole document */
     cursor: wait;
-    z-index: 9999;
+    z-index: 1400; /* under the snackbar */
     height: 100vh;
     width: 100vw;
     position: fixed;
@@ -307,13 +307,14 @@ html, body, .bokeh_iframe {
 .float_button, .help_form_float_button {
     z-index: 10000;
     height: 100px;
-    width: 150px;
+    width: 300px;
     position: fixed;
     top: 0;
     left: 0;
 }
 
-.float_button #close_df_data, .help_form_float_button #close_help_form_bt {
+.float_button #close_df_data, .help_form_float_button #close_help_form_bt,
+.float_button #cp_to_clipboard_df_data {
     margin: 15px;
 }
 

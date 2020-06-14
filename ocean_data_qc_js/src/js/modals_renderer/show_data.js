@@ -12,6 +12,7 @@ app_module_path.addPath(path.join(__dirname, '../renderer_modules'));
 app_module_path.addPath(__dirname);
 
 const {ipcRenderer} = require('electron');
+const { clipboard } = require('electron')
 
 const loc = require('locations');
 const lg = require('logging');
@@ -44,14 +45,42 @@ module.exports = {
                     $('#loader_mask').before(
                         $('<div>', {
                             class: 'float_button', //  fa fa-arrow-left
-                            html: '<button id="close_df_data" type="button" class="btn btn-sm btn-primary">Close View</button>'
-                        })
+                        }).append($('<button>', {
+                            id: 'close_df_data',
+                            type: 'button',
+                            class: 'btn btn-sm btn-primary',
+                            text: 'Close View'
+                        })).append($('<button>', {
+                            id: 'cp_to_clipboard_df_data',
+                            type: 'button',
+                            class: 'btn btn-sm btn-primary',
+                            text: 'Copy to clipboard'
+                        }))
                     );
                     $('#close_df_data').click(function() {
                         // $('.df_data').fadeOut('slow');        // TODO: too heavy to make animation?
                         // $('.float_button').fadeOut('slow');
                         $('.df_data').remove();
                         $('.float_button').remove();
+                    });
+
+                    $('#cp_to_clipboard_df_data').click(function() {
+                        var df_data = $('.df_data table').clone();
+                        df_data.find('thead>tr>th').eq(0).remove();
+                        df_data.find('tbody tr>th').remove();
+                        df_data.find('table').removeAttr('class style');
+                        df_data.find('tr').removeAttr('class style');
+                        df_data.find('th').removeAttr('class style');
+                        df_data.find('th').each(function() { $(this).text($(this).text()); });
+
+                        // TODO: replace nan values?
+
+                        clipboard.writeHTML(df_data.html());
+
+                        tools.show_snackbar(  // this is not appearing because the other div has mor z-index?
+                            'Table content copied in the clipboard as HTML text. ' +
+                            'You can now paste it in a spreadsheet with Ctrl+V'
+                        );
                     });
 
                     // close guide if it is open
