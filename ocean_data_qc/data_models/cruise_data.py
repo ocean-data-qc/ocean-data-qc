@@ -386,7 +386,7 @@ class CruiseData(CruiseDataExport):
         self.df.columns = self._sanitize_cols(self.df.columns.tolist())  # remove spaces from columns
         self.df.columns = self._map_col_names(self.df.columns.tolist(), non_sanitized)
         self._create_btlnbr_or_sampno_column()  # >> basic params?
-        self._create_date_column()
+        self._manage_date_time()
 
     def _create_btlnbr_or_sampno_column(self):
         if 'BTLNBR' in self.df and not 'SAMPNO' in self.df:
@@ -409,13 +409,11 @@ class CruiseData(CruiseDataExport):
                 'BTLNBR, SAMPNO column was automatically generated from the column '
             )
 
-    def _create_date_column(self):
+    def _manage_date_time(self):
         # TODO: check what happens with this columns in the cd_update and self.env.cols
-
-        cols = self.df.columns.tolist()
-        if 'DATE' not in cols:
+        if 'DATE' not in self.df:
             lg.info('-- CREATE DATE COLUMN')
-            if 'YEAR' in cols and 'MONTH' in cols and 'DAY' in cols:
+            if 'YEAR' in self.df and 'MONTH' in self.df and 'DAY' in self.df:
                 try:
                     self.df = self.df.assign(
                         DATE=pd.to_datetime(self.df[['YEAR', 'MONTH', 'DAY']]).dt.strftime('%Y%m%d')
@@ -430,33 +428,15 @@ class CruiseData(CruiseDataExport):
                     'required_column_added',
                     'DATE column was automatically generated from the columns YEAR, MONTH and DAY'
                 )
-            elif 'DATE_YY' in cols and 'DATE_MM' in cols and 'DATE_DD' in cols:
-                mapper = dict(zip(
-                    ('DATE_YY', 'DATE_MM', 'DATE_DD'),
-                    ('YEAR', 'MONTH', 'DAY')
-                ))
-                try:
-                    self.df = self.df.assign(
-                        DATE=pd.to_datetime(
-                            self.df[['DATE_YY','DATE_MM','DATE_DD']].rename(columns=mapper)
-                        ).dt.strftime('%Y%m%d')
-                    )
-                except Exception as e:
-                    raise ValidationError(
-                        'DATE column, which is a required field, does not exist. Also, it could not be created'
-                        ' from DATE_YY, DATE_MM and DATE_DD columns possibly because some of the rows do not have any value.',
-                        rollback=self.rollback
-                    )
-                self.add_moves_element(
-                    'required_column_added',
-                    'DATE column was automatically generated from the columns DATE_YY, DATE_MM and DATE_DD'
-                )
             else:
                 raise ValidationError(
                     'DATE column, which is a required field, does not exist. Also, it could not be built'
                     ' with other columns (usually year, month and day).',
                     rollback=self.rollback
                 )
+
+        if 'TIME' in self.df:  # fill with zeros on the left: 132 >> 0132
+            self.df['TIME'] = self.df['TIME'].astype(float).apply(lambda x: f'{x:04.0f}')
 
     def _set_moves(self):
         """ create the self.moves dataframe object
@@ -613,6 +593,11 @@ class CruiseData(CruiseDataExport):
         for c in self.df.select_dtypes(include=['object']):  # or exclude=['int8', 'int16', 'int32', 'int64', 'float64']
             self.cols[c]['precision'] = False
             self.cols[c]['data_type'] = 'string'
+
+        if 'DATE' in self.cols.keys():
+            self.cols['DATE']['data_type'] = 'date'
+        if 'TIME' in self.cols.keys():
+            self.cols['TIME']['data_type'] = 'time'
 
         if pd_precision > 15:
             pd_precision = 15

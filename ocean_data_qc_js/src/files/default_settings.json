@@ -106,7 +106,7 @@
         },
         "DATE": {
             "external_name": [],
-            "data_type": "none",
+            "data_type": "date",
             "attrs": [
                 "required",
                 "non_qc"
@@ -116,7 +116,7 @@
         },
         "TIME": {
             "external_name": [],
-            "data_type": "none",
+            "data_type": "time",
             "attrs": [
                 "non_qc"
             ],
@@ -635,8 +635,10 @@
             "precision": 4
         },
         "DAY": {
-            "external_name": [],
-            "data_type": "date_component",
+            "external_name": [
+                "DATE_DD"
+            ],
+            "data_type": "integer",
             "attrs": [
                 "non_qc"
             ],
@@ -644,8 +646,10 @@
             "precision": false
         },
         "MONTH": {
-            "external_name": [],
-            "data_type": "date_component",
+            "external_name": [
+                "DATE_MM"
+            ],
+            "data_type": "integer",
             "attrs": [
                 "non_qc"
             ],
@@ -653,8 +657,10 @@
             "precision": false
         },
         "YEAR": {
-            "external_name": [],
-            "data_type": "date_component",
+            "external_name": [
+                "DATE_YY"
+            ],
+            "data_type": "integer",
             "attrs": [
                 "non_qc"
             ],
@@ -663,7 +669,7 @@
         },
         "HOUR": {
             "external_name": [],
-            "data_type": "date_component",
+            "data_type": "integer",
             "attrs": [
                 "non_qc"
             ],
@@ -672,7 +678,7 @@
         },
         "MINUTE": {
             "external_name": [],
-            "data_type": "date_component",
+            "data_type": "integer",
             "attrs": [
                 "non_qc"
             ],
@@ -681,7 +687,7 @@
         },
         "SECOND": {
             "external_name": [],
-            "data_type": "date_component",
+            "data_type": "integer",
             "attrs": [
                 "non_qc"
             ],
@@ -690,7 +696,7 @@
         },
         "DATE_DD": {
             "external_name": [],
-            "data_type": "date_component",
+            "data_type": "integer",
             "attrs": [
                 "non_qc"
             ],
@@ -699,7 +705,7 @@
         },
         "DATE_MM": {
             "external_name": [],
-            "data_type": "date_component",
+            "data_type": "integer",
             "attrs": [
                 "non_qc"
             ],
@@ -708,7 +714,7 @@
         },
         "DATE_YY": {
             "external_name": [],
-            "data_type": "date_component",
+            "data_type": "integer",
             "attrs": [
                 "non_qc"
             ],
