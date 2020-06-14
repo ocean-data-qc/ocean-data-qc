@@ -59,7 +59,7 @@ class CruiseDataExport(Environment):
             units_row = ','.join(units)
             f_out.write(units_row + '\n')
 
-            aux_df = self.df.copy()
+            aux_df = self.df.copy(deep=True)
             aux_df = aux_df.replace(np.nan, -999.0)  # float64 fields value will be -999.0
             aux_df = self.round_cols(aux_df)
 
@@ -77,7 +77,7 @@ class CruiseDataExport(Environment):
         lg.info('-- EXPORT CSV')
         if path.isfile(path.join(TMP, 'export_data.csv')):
             os.remove(path.join(TMP, 'export_data.csv'))
-        aux_df = self.df.copy()
+        aux_df = self.df.copy(deep=True)
         aux_df = aux_df.replace(np.nan, -999.0)  # float64 fields value will be -999.0
         cols = self.get_cols_to_export()
         aux_df = aux_df.filter(cols)

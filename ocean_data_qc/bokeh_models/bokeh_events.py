@@ -15,8 +15,6 @@ from bokeh.models.widgets.panels import Panel, Tabs
 from ocean_data_qc.env import Environment
 from ocean_data_qc.constants import *
 
-import numpy as np
-
 
 class BokehEvents(Environment):
     ''' Controls and events. The widgets and buttons are created here
@@ -185,15 +183,8 @@ class BokehEvents(Environment):
     def _on_change_nearby_prof_select(self, attr, old, new):
         lg.info('-- ON CHANGE NEARBY PROF SELECT')
         # TODO: dont trigger this the first time
-        if isinstance(self.env.stt_to_select, (np.int8, np.int16, np.int32, np.int64)):  # str to number >> to make it work with '2.2' or '2'
-            new_value = int(new)
-        elif isinstance(self.env.stt_to_select, np.float64):
-            new_value = float(new)
-        else: # string
-            new_value = new
-
         s = self.env.stations
-        new_pos = s.index(new_value)
+        new_pos = s.index(new)
         self.env.cur_nearby_prof = s[new_pos]
 
         # NOTE: trigger this just in case there is a manual change
@@ -239,18 +230,10 @@ class BokehEvents(Environment):
 
     def _update_nearby_prof_select_opts(self):
         lg.info(f'-- UPDATE NEARBY PROF SELECT OPTS | STT TO SELECT: {self.env.stt_to_select}')
-        to_sort = True
-        for e in self.env.stations:
-            if isinstance(e, str):
-                to_sort = False
-        if to_sort:  # sort only if all the values are integer or float
-            options_sorted = sorted(self.env.stations)
-        else:
-            options_sorted = self.env.stations
-
+        options = self.env.stations
         if self.env.stt_to_select is not None:
-            options_sorted.remove(self.env.stt_to_select)
-            self.nearby_prof_select.options = [f'{s}' for s in options_sorted]
+            options.remove(self.env.stt_to_select)
+            self.nearby_prof_select.options = [f'{s}' for s in options]
             self.nearby_prof_select.on_change('value', self._on_change_nearby_prof_select)
             self.nearby_prof_select.disabled = False
             self._check_profile_limits()

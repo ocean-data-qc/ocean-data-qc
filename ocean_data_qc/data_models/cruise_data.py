@@ -558,7 +558,11 @@ class CruiseData(CruiseDataExport):
             If a cell of a column with dtype=np.int8 is assigned to some int64 value, then the column
             is completely converted to int64
         '''
-        self.df = self.df.apply(lambda x: pd.to_numeric(x, errors='ignore', downcast='integer'))
+        # treat stations always as strings
+        df_aux = self.df.copy(deep=True)
+        df_aux = df_aux.drop(['STNNBR'], axis=1).apply(lambda x: pd.to_numeric(x, errors='ignore', downcast='integer'))
+        self.df[df_aux.columns] = df_aux
+
         float_prec_dict = self._set_col_precisions()
 
         # NOTE: Round each column by the original number of decimal places, if the value is shown somewhere
