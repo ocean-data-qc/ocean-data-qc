@@ -199,11 +199,13 @@ class OctaveEquations(Environment):
         if COL1 and not COL2:
             ret = df[col1].to_numpy()
             ret[(df[f'{col1}{FLAG_END}'] > 2) & (df[f'{col2}{FLAG_END}'] != 6)] = np.nan
-            msg += f' {col1} was taken because {col2} is empty or does not exist'
+            msg += f' {col1} was taken because {col2} is empty or does not exist.'
+            msg += ' Values with flags 3, 4 and 5 were set to NaN.'
         elif COL2 and not COL1:
             ret = df[col2].to_numpy()
             ret[(df[f'{col2}{FLAG_END}'] > 2) & (df[f'{col2}{FLAG_END}'] != 6)] = np.nan
-            msg += f' {col2} was taken because {col1} is empty or does not exist'
+            msg += f' {col2} was taken because {col1} is empty or does not exist.'
+            msg += ' Values with flags 3, 4 and 5 were set to NaN.'
         elif not COL2 and not COL1:
             ret = pd.Series([np.nan] * len(df.index))
             msg += f' {col1} and {col2} do not exist'
@@ -213,6 +215,7 @@ class OctaveEquations(Environment):
             col1_arr[(df[f'{col1}{FLAG_END}'] > 2) & (df[f'{col1}{FLAG_END}'] != 6)] = np.nan
             col2_arr = df[col2].to_numpy()
             col2_arr[(df[f'{col2}{FLAG_END}'] > 2) & (df[f'{col2}{FLAG_END}'] != 6)] = np.nan
+            msg += f' Values from {col1} and {col2} columns with flags 3, 4 and 5 were set to NaN.'
 
             dev = np.nanmean(np.abs(col1_arr - col2_arr))
             col2_nonnans = np.sum(~np.isnan(col2_arr)) / np.size(col2_arr)
