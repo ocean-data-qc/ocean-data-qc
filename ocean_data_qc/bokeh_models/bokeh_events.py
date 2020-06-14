@@ -15,6 +15,8 @@ from bokeh.models.widgets.panels import Panel, Tabs
 from ocean_data_qc.env import Environment
 from ocean_data_qc.constants import *
 
+import numpy as np
+
 
 class BokehEvents(Environment):
     ''' Controls and events. The widgets and buttons are created here
@@ -183,9 +185,9 @@ class BokehEvents(Environment):
     def _on_change_nearby_prof_select(self, attr, old, new):
         lg.info('-- ON CHANGE NEARBY PROF SELECT')
         # TODO: dont trigger this the first time
-        if isinstance(self.env.stt_to_select, int):  # str to number >> to make it work with '2.2' or '2'
+        if isinstance(self.env.stt_to_select, (np.int8, np.int16, np.int32, np.int64)):  # str to number >> to make it work with '2.2' or '2'
             new_value = int(new)
-        elif isinstance(self.env.stt_to_select, float):
+        elif isinstance(self.env.stt_to_select, np.float64):
             new_value = float(new)
         else: # string
             new_value = new
