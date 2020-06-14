@@ -463,11 +463,20 @@ class CruiseData(CruiseDataExport):
                 * LATITUDE   latitude
                 * LONGITUDE  longitude
         """
-        self.df['HASH_ID'] = self.df[[
-            'STNNBR', 'CASTNO', 'BTLNBR', 'LATITUDE', 'LONGITUDE'   # if BTLNBR is NaN the hash is made correctly as well
-        ]].astype(str).apply(                                       # astype is 4x slower than apply
-            lambda x: hashlib.sha256(str.encode(str(tuple(x)))).hexdigest(), axis=1
+        self.df['HASH_ID'] = pd.util.hash_pandas_object(  # faster, but it may create duplicates
+            self.df[['STNNBR', 'CASTNO', 'BTLNBR', 'LATITUDE', 'LONGITUDE']],
+            index=False
         )
+        if self.df['HASH_ID'].duplicated().any():
+            # TODO: if the second file (the file to update) uses this other method
+            #       to create the hashes there will many changes in the hashes.
+            #       I could control this with some flag (though it is unlikely to happen)
+            lg.warning('>> HASH ID is being created with hashlib sha256')
+            self.df['HASH_ID'] = self.df[[
+                'STNNBR', 'CASTNO', 'BTLNBR', 'LATITUDE', 'LONGITUDE'   # if BTLNBR is NaN the hash is made correctly as well
+            ]].astype(str).apply(                                       # astype is 4x slower than apply
+                lambda x: hashlib.sha256(str.encode(str(tuple(x)))).hexdigest(), axis=1
+            )
         self.df = self.df.set_index(['HASH_ID'])
 
     def _validate_required_columns(self):
