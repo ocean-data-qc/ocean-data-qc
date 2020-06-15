@@ -427,8 +427,17 @@ a#update_values_by_station {
     background: #337ab7 !important;
 }
 
-.no-padding-left {
-    padding-left: 0px !important;
+#accordion_stations .table th, #accordion_stations .table td {
+    line-height: 0.4rem !important;
+    padding: 0.5rem !important;
+}
+
+#accordion_stations .table {
+    font-size: 0.7rem !important;
+}
+
+#accordion_stations .table th .abc-checkbox label::after {
+    padding-top: 4px !important;
 }
 
 /* add_computed_parameter form */
