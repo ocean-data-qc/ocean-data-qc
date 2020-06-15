@@ -46,6 +46,7 @@ module.exports = {
                     skip_empty_lines: true,
                     delimiter: ','
                 };
+                // All the cells are exported as text
                 csv_parse(buffer, options, function(err, records){      // TODO: check if utf8?
                     if (err) {
                         tools.show_modal({
