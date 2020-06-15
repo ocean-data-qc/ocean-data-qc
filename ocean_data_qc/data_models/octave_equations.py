@@ -198,7 +198,7 @@ class OctaveEquations(Environment):
 
         if COL1 and not COL2:
             ret = df[col1].to_numpy()
-            ret[(df[f'{col1}{FLAG_END}'] > 2) & (df[f'{col2}{FLAG_END}'] != 6)] = np.nan
+            ret[(df[f'{col1}{FLAG_END}'] > 2) & (df[f'{col1}{FLAG_END}'] != 6)] = np.nan
             msg += f' {col1} was taken because {col2} is empty or does not exist.'
             msg += ' Values with flags 3, 4 and 5 were set to NaN.'
         elif COL2 and not COL1:
