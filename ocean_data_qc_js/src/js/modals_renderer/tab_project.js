@@ -186,10 +186,7 @@ module.exports = {
                     }
                 });
             });
-            lg.warn('>> TAB TITLES (before update): ' + JSON.stringify(qc_plot_tabs_final, null, 4));
             var qc_tabs = self.update_tab_titles(qc_plot_tabs_final);
-            lg.warn('>> TAB TITLES (after update): ' + JSON.stringify(qc_plot_tabs_final, null, 4));
-
             self.create_qc_tab_tables(qc_tabs);
             self.load_buttons();
             self.load_accept_and_plot_button(); // different implementation in the bokeh modal form
