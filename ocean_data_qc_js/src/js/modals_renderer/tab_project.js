@@ -168,7 +168,7 @@ module.exports = {
         var call_params = {
             'object': 'cruise.data.handler',
             'method': 'get_cruise_data_columns',
-        }
+        };
         tools.call_promise(call_params).then((cols_dict) => {
             self.file_columns = cols_dict['cols'];
             self.cps_columns = cols_dict['cps'];
@@ -177,18 +177,20 @@ module.exports = {
             var qc_plot_tabs_final = {};
             Object.keys(qc_plot_tabs).forEach(function(tab) {
                 qc_plot_tabs[tab].forEach(function (graph) {
-                    if (self.file_columns.includes(tab)) {
-                        if (self.file_columns.includes(graph.x) && self.file_columns.includes(graph.y)) {
-                            if (tab in qc_plot_tabs_final) {
-                                qc_plot_tabs_final[tab].push(graph);
-                            } else {
-                                qc_plot_tabs_final[tab] = [graph];
-                            }
+                    if (self.file_columns.includes(graph.x) && self.file_columns.includes(graph.y)) {
+                        if (tab in qc_plot_tabs_final) {
+                            qc_plot_tabs_final[tab].push(graph);
+                        } else {
+                            qc_plot_tabs_final[tab] = [graph];  // first time
                         }
                     }
                 });
             });
-            self.create_qc_tab_tables(qc_plot_tabs_final);
+            lg.warn('>> TAB TITLES (before update): ' + JSON.stringify(qc_plot_tabs_final, null, 4));
+            var qc_tabs = self.update_tab_titles(qc_plot_tabs_final);
+            lg.warn('>> TAB TITLES (after update): ' + JSON.stringify(qc_plot_tabs_final, null, 4));
+
+            self.create_qc_tab_tables(qc_tabs);
             self.load_buttons();
             self.load_accept_and_plot_button(); // different implementation in the bokeh modal form
             self.load_column_project_button();
@@ -215,10 +217,54 @@ module.exports = {
         });
     },
 
+    /** If the title does not exist in the dataframe
+     *  another title should be used. If there are duplicated titles
+     *  the content should be gather altogether
+     */
+    update_tab_titles: function(plots_and_tabs={}) {
+        var self = this;
+        var res_tabs = {};
+        var titles = Object.keys(plots_and_tabs);
+        titles.forEach(function(tab) {
+            if (!self.params.includes(tab)) {  // if not in current df get the alternative title
+                var alt_title = '';
+                plots_and_tabs[tab].forEach(function (graph) {  // get first column different from the main one
+                    if (alt_title == '') {
+                        if (self.params.includes(graph.x)) {
+                            alt_title = graph.x;
+                        }
+                        if (self.params.includes(graph.y)) {
+                            alt_title = graph.y;
+                        }
+                    }
+                });
+                if (alt_title == '') {
+                    alt_title = self.params[0];  // get the first param
+                }
+                if (Object.keys(res_tabs).includes(alt_title)) {  // mix tab contents, this should happen in just a very few cases
+                    Object.keys(plots_and_tabs[alt_title]).forEach(function(i) {
+                        res_tabs[tab].push(plots_and_tabs[alt_title][i]);
+                    });
+                } else {
+                    res_tabs[alt_title] = plots_and_tabs[tab];  // tabs should be unique, validate that in tab_app.js
+                }
+            } else {
+                if (Object.keys(res_tabs).includes(tab)) {
+                    Object.keys(plots_and_tabs[tab]).forEach(function(i) {
+                        res_tabs[tab].push(plots_and_tabs[tab][i]);
+                    });
+                } else {
+                    res_tabs[tab] = plots_and_tabs[tab];  // tabs should be unique, validate that in tab_app.js
+                }
+            }
+        });
+        return res_tabs;
+    },
+
     load_buttons: function() {
         var self = this;
         $('.add_new_tab').on('click', function() {
-            $(".modal-body").animate({ scrollTop: $('.modal-body').prop("scrollHeight")}, 500);
+            $('.modal-body').animate({ scrollTop: $('.modal-body').prop('scrollHeight')}, 500);
 
             var new_fieldset = $('fieldset').first().clone();
             $('#qc_tabs_container').append(new_fieldset);
@@ -285,8 +331,40 @@ module.exports = {
                 });
                 return;
             }
+            var tab_titles = [];
+            var dup_tab = []
+            var error = false;
+            $('#qc_tabs_container select[name=tab_title]').slice(1).each(function() {  // slice(1) to remove the first element
+                var val = $(this).val();
+                if (val == '') {
+                    error = true;
+                    tools.show_modal({
+                        msg_type: 'text',
+                        type: 'VALIDATION ERROR',
+                        msg: 'Tab titles cannot be empty',
+                    });
+                    return;
+                } else {
+                    if (tab_titles.includes(val)) {
+                        dup_tab.push(val);
+                    } else {
+                        tab_titles.push($(this).val());
+                    }
+                }
+            })
+            if (dup_tab.length != 0) {
+                tools.show_modal({
+                    msg_type: 'text',
+                    type: 'VALIDATION ERROR',
+                    msg: 'The following tab title/s is/are duplicated: ' + dup_tab,
+                });
+                return;
+            }
+            if (error) {
+                return;
+            }
 
-            // TODO: check also at least 1 element inside the tab
+            // TODO: check also at least 1 element inside the tab or just remove the empty tab
 
             data.set({'project_name': $('#project_name').val(),}, loc.proj_settings);
             data.set({'project_state': 'modified',}, loc.shared_data);
