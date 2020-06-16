@@ -55,8 +55,7 @@ requires = [
     # 'svglib >=0.9.2',
     'reportlab >=3.5.42',
     # 'selenium >=3.141.0',
-
-# TODO: when python setup.py develop >> jupyter lab should be installed as well to make tests
+]
 
 dependency_links = [
     'https://github.com/ocean-data-qc/tilecloud/tarball/master#egg=tilecloud'
