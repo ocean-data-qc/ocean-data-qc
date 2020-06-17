@@ -161,7 +161,7 @@ class CruiseDataHandler(Environment):
         df_aux.set_index(keys='NEW_INDEX', inplace=True)
 
         html = df_aux.to_html(
-            classes='table table-striped',
+            classes='table table-striped table-hover',
             # formatters={
             #     'EXPOCODE': lambda x: '<b>' + str(x) + '</b>'
             # },
