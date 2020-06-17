@@ -720,6 +720,20 @@
             ],
             "unit": false,
             "precision": false
+        },
+        "PH_NBS": {
+            "external_name": [],
+            "data_type": "none",
+            "attrs": [],
+            "unit": false,
+            "precision": false
+        },
+        "CH4": {
+            "external_name": [],
+            "data_type": "none",
+            "attrs": [],
+            "unit": false,
+            "precision": false
         }
     },
     "computed_params": [
@@ -1158,16 +1172,6 @@
             {
                 "title": "",
                 "x": "TCARBN",
-                "y": "TCARBN_CALCULATED_TS"
-            },
-            {
-                "title": "",
-                "x": "TCARBN",
-                "y": "TCARBN_CALCULATED_SWS"
-            },
-            {
-                "title": "",
-                "x": "TCARBN",
                 "y": "TCARBN_NNCANYONB_BIT18"
             },
             {
@@ -1191,11 +1195,6 @@
                 "title": "pH vs Nitrate",
                 "x": "PH_TOT",
                 "y": "_NITRATE"
-            },
-            {
-                "title": "",
-                "x": "PH_TOT",
-                "y": "PHTS25P0_CALCULATED"
             },
             {
                 "title": "PH_TOT vs ALKALI_TCARBN_1_RATIO",
@@ -1323,7 +1322,7 @@
                 "y": "_PRESSURE"
             }
         ],
-        "NO2": [
+        "N2O": [
             {
                 "title": "profiles",
                 "x": "N2O",
