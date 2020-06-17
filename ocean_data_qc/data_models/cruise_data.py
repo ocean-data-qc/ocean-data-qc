@@ -549,6 +549,8 @@ class CruiseData(CruiseDataExport):
         '''
         # treat stations always as strings
         df_aux = self.df.copy(deep=True)
+        if 'TIME' in df_aux:  # TIME should be string
+            df_aux = df_aux.drop(['TIME'], axis=1)
         df_aux = df_aux.drop(['STNNBR'], axis=1).apply(lambda x: pd.to_numeric(x, errors='ignore', downcast='integer'))
         self.df[df_aux.columns] = df_aux
 
