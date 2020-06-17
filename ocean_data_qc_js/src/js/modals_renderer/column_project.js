@@ -75,22 +75,24 @@ module.exports = {
         $('[data-toggle="tooltip"]').tooltip();
 
         $('#column_project_win').on('shown.bs.modal', function (e) {
-            $('#table_column_project').DataTable( {  // TODO: show only when rendered
-                scrollY: 400,
-                scrollCollapse: true,
-                paging: false,
-                searching: true,
-                ordering: true,
-                order: [[ 1, 'asc' ]],  // this is the value by default
-                info: false,
-                columnDefs: [
-                    { targets: '_all', visible: true, },
-                    { targets: [6], orderable: false, searchable: false, },
-                ],
-                initComplete: function () {
-                    $('#div_column_project').animate({ opacity: 1, }, { duration: 100, });
-                },
-            });
+            setTimeout(function() {
+                $('#table_column_project').DataTable( {  // TODO: show only when rendered
+                    scrollY: 400,
+                    scrollCollapse: true,
+                    paging: false,
+                    searching: true,
+                    ordering: true,
+                    order: [[ 1, 'asc' ]],  // this is the value by default
+                    info: false,
+                    columnDefs: [
+                        { targets: '_all', visible: true, },
+                        { targets: [6], orderable: false, searchable: false, },
+                    ],
+                    initComplete: function () {
+                        $('#div_column_project').animate({ opacity: 1, }, { duration: 100, });
+                    },
+                })
+            }, 500);
         });
         $('#modal_column_project').click();
     },

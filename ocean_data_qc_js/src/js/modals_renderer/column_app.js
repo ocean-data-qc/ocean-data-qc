@@ -98,58 +98,60 @@ module.exports = {
         $('[data-toggle="tooltip"]').tooltip();
 
         $('#column_app_win').on('shown.bs.modal', function (e) {
-            self.data_table = $('#table_column_app').DataTable({  // TODO: show only when rendered
-                scrollY: 400,
-                scrollCollapse: true,
-                paging: false,
-                searching: true,
-                ordering: true,
-                order: [[ 0, 'asc' ]],  // this is the value by default
-                info: false,
-                columnDefs: [
-                    { targets: '_all', visible: true, },
-                    { targets: [5], orderable: false, searchable: false, },
-                ],
-                initComplete: function () {
-                    $('#div_column_app').animate({ opacity: 1, }, { duration: 100, });
-                    tools.set_tags_input();
-                    tools.disable_tags_input();
-                },
+            setTimeout(function() {
+                self.data_table = $('#table_column_app').DataTable({  // TODO: show only when rendered
+                    scrollY: 400,
+                    scrollCollapse: true,
+                    paging: false,
+                    searching: true,
+                    ordering: true,
+                    order: [[ 0, 'asc' ]],  // this is the value by default
+                    info: false,
+                    columnDefs: [
+                        { targets: '_all', visible: true, },
+                        { targets: [5], orderable: false, searchable: false, },
+                    ],
+                    initComplete: function () {
+                        $('#div_column_app').animate({ opacity: 1, }, { duration: 100, });
+                        tools.set_tags_input();
+                        tools.disable_tags_input();
+                    },
 
-                // to keep the scroll position after draw() method
-                preDrawCallback: function (settings) {
-                    self.pageScrollPos = $('#div_column_app div.dataTables_scrollBody').scrollTop();
-                },
-                drawCallback: function (settings) {
-                    $('#div_column_app div.dataTables_scrollBody').scrollTop(self.pageScrollPos);
-                }
-            });
+                    // to keep the scroll position after draw() method
+                    preDrawCallback: function (settings) {
+                        self.pageScrollPos = $('#div_column_app div.dataTables_scrollBody').scrollTop();
+                    },
+                    drawCallback: function (settings) {
+                        $('#div_column_app div.dataTables_scrollBody').scrollTop(self.pageScrollPos);
+                    }
+                });
 
-            $('#table_column_app_filter input[type="search"]').off().on('keyup', function() {
-                // This disables the Datatables event handler for the default search input and creates its own below.
-                // It uses draw() to draw the table which will invoke the search plugins.
-                $('#table_column_app').DataTable().draw();
-            });
+                $('#table_column_app_filter input[type="search"]').off().on('keyup', function() {
+                    // This disables the Datatables event handler for the default search input and creates its own below.
+                    // It uses draw() to draw the table which will invoke the search plugins.
+                    $('#table_column_app').DataTable().draw();
+                });
 
-            $.fn.dataTable.ext.search.push(
-                function(settings, searchData, index, rowData, rowIndex ) {
-                    if ( settings.nTable.id === 'table_column_app' ) {
-                        // there has to be a better way to get the current search value
-                        var s = $('#table_column_app_filter input[type="search"]').val().toUpperCase();
+                $.fn.dataTable.ext.search.push(
+                    function(settings, searchData, index, rowData, rowIndex ) {
+                        if ( settings.nTable.id === 'table_column_app' ) {
+                            // there has to be a better way to get the current search value
+                            var s = $('#table_column_app_filter input[type="search"]').val().toUpperCase();
 
-                        // var res = self.search_in_tags(index, s);
+                            // var res = self.search_in_tags(index, s);
 
-                        // rowData is an array with the original cell contents as strings
-                        var col_name = $(rowData[0]).val();  // column 0
+                            // rowData is an array with the original cell contents as strings
+                            var col_name = $(rowData[0]).val();  // column 0
 
-                        if (col_name.includes(s)) {
-                            return true;
-                        } else {
-                            return false;
+                            if (col_name.includes(s)) {
+                                return true;
+                            } else {
+                                return false;
+                            }
                         }
                     }
-                }
-            );
+                );
+            }, 500);
         });
         $('#modal_column_app').click();
     },
