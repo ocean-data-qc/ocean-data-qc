@@ -214,9 +214,9 @@ module.exports = {
         });
     },
 
-    /** If the title does not exist in the dataframe
-     *  another title should be used. If there are duplicated titles
-     *  the content should be gather altogether
+    /** If the title does not exist in the dataframe another title should be used.
+     *  If there are duplicated titles the content should be gathered altogether in one tab.
+     *  If the tabs just have calculated parameters the first parameter in the list should be the selected one.
      */
     update_tab_titles: function(plots_and_tabs={}) {
         var self = this;
