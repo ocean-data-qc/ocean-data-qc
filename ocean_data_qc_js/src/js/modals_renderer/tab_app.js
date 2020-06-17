@@ -141,6 +141,25 @@ module.exports = {
                 });
                 return;
             }
+            var tab_titles = [];
+            var dup_tab = []
+            var error = false;
+            $('#qc_tabs_container select[name=tab_title]').slice(1).each(function() {  // slice(1) to remove the first element
+                var val = $(this).val();
+                if (tab_titles.includes(val)) {
+                    dup_tab.push(val);
+                } else {
+                    tab_titles.push($(this).val());
+                }
+            })
+            if (dup_tab.length != 0) {
+                tools.show_modal({
+                    msg_type: 'text',
+                    type: 'VALIDATION ERROR',
+                    msg: 'The following tab title/s is/are duplicated: ' + dup_tab,
+                });
+                return;
+            }
 
             // TODO: check also at least 1 element inside the tab
 
