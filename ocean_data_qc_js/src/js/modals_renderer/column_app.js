@@ -96,7 +96,6 @@ module.exports = {
 
         }
         $('[data-toggle="tooltip"]').tooltip();
-        $('#modal_column_app').click();
 
         $('#column_app_win').on('shown.bs.modal', function (e) {
             self.data_table = $('#table_column_app').DataTable({  // TODO: show only when rendered
@@ -151,8 +150,8 @@ module.exports = {
                     }
                 }
             );
-
         });
+        $('#modal_column_app').click();
     },
 
     search_in_tags: function(index, s) {
@@ -411,14 +410,8 @@ module.exports = {
         bt.on('click', function() {
             var tr = $(this).parents('tr');
             var col = tr.find('input[name="txt_col_name"]').val();
-            var cps = data.get('computed_params', loc.default_settings);
-            var col_in_cps = [];
-            cps.forEach(function(elem) {
-                if (elem.equation.includes(col)) {
-                    col_in_cps.push(elem.param_name);
-                }
-            });
-            if (col_in_cps.length == 0) {
+
+            if (self.check_col_in_cps(col) && self.check_col_in_tabs(col)) {
                 tools.modal_question({
                     'title': 'Remove row?',
                     'msg': 'Are you sure you want to remove this row?',
@@ -430,17 +423,59 @@ module.exports = {
                         tools.show_snackbar('Column ' + col + ' removed');
                     },
                     'self': self
-                })
-            } else {
-                tools.show_modal({
-                    msg_type: 'text',
-                    type: 'ERROR',
-                    msg: 'The column ' + col + ' is used in the following calculared parameters and cannot be removed or edited:',
-                    code: col_in_cps.join('\n')
                 });
             }
         });
         return bt;
+    },
+
+    check_col_in_cps: function(col=false) {
+        var self = this;
+        var cps = data.get('computed_params', loc.default_settings);
+        var col_in_cps = [];
+        cps.forEach(function(elem) {
+            if (elem.equation.includes(col)) {
+                col_in_cps.push(elem.param_name);
+            }
+        });
+        if (col_in_cps.length == 0) {
+            return true
+        } else {
+            tools.show_modal({
+                msg_type: 'text',
+                type: 'ERROR',
+                msg: 'The column ' + col + ' is used in the following calculared parameters and cannot be removed or edited:',
+                code: col_in_cps.join(', ')
+            });
+            return false;
+        }
+    },
+
+    check_col_in_tabs: function(col=false) {
+        var self = this;
+        var tabs = data.get('qc_plot_tabs', loc.default_settings);
+        var cols = []
+        Object.keys(tabs).forEach(function(tab) {
+            tabs[tab].forEach(function(g) {
+                if (!cols.includes(g.x)) {
+                    cols.push(g.x);
+                }
+                if (!cols.includes(g.y)) {
+                    cols.push(g.y);
+                }
+            });
+        });
+        if (cols.includes(col)) {
+            tools.show_modal({
+                msg_type: 'text',
+                type: 'ERROR',
+                msg: 'The column ' + col + ' is used in one of the tabs plotted by default and cannot be removed'
+            });
+            return false;
+        } else {
+            return true;
+        }
+
     },
 
     get_discard_bt: function() {

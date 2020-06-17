@@ -48,10 +48,8 @@ module.exports = {
     },
 
     parse_data: function() {
-        lg.info('-- PARSE DATA COL SETTINGS')
         var self = this;
         var cols = Object.keys(self.pj_cols);  // are they sorted?
-
         for (var i = 0; i < cols.length; i++) {
             var col_name = cols[i];
             var name = self.get_col_name(col_name);
@@ -72,15 +70,11 @@ module.exports = {
                 $('<td>', {html: txt_cur_unit }),
                 $('<td>', {html: set_bt })
             );
-
             $('#table_column_project tbody').append(tr);
-
         }
         $('[data-toggle="tooltip"]').tooltip();
-        $('#modal_column_project').click();
 
         $('#column_project_win').on('shown.bs.modal', function (e) {
-            lg.warn('-- MODAL LOADED');
             $('#table_column_project').DataTable( {  // TODO: show only when rendered
                 scrollY: 400,
                 scrollCollapse: true,
@@ -98,6 +92,7 @@ module.exports = {
                 },
             });
         });
+        $('#modal_column_project').click();
     },
 
     set_save_bt: function() {
