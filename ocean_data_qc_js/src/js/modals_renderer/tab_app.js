@@ -50,12 +50,10 @@ module.exports = {
     load_columns: function() {
         var self = this;
         var columns = data.get('columns', loc.custom_settings);
-        self.app_columns = Object.keys(columns)
-        // lg.warn('>> COLUMNS: ' + JSON.stringify(self.app_columns, null, 4));
-
-        // app_columns = params + flags
+        self.app_columns = Object.keys(columns);
+        self.app_columns.sort();
         self.params = [];
-        self.app_columns.forEach(c => {  // ES6
+        self.app_columns.forEach(c => {  // ES6  // app_columns = params + flags
             var f = c.substr(c.length - 7);
             if (f !== '_FLAG_W') {
                 self.params.push(c);
