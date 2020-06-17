@@ -69,3 +69,8 @@
     border-right: 1px solid #b1b4b8;
     border-bottom: 1px solid #b1b4b8 !important;
 }
+
+.df_data .table-hover tbody tr:hover {
+    color: white;
+    background-color: rgba(51, 122, 183, 1) !important;
+}
