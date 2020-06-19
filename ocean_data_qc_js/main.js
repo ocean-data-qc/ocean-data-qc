@@ -31,6 +31,11 @@ const menu = require('menu');
 const menu_actions = require('menu_actions');
 var updater = require('updater');
 
+// https://github.com/electron/electron/issues/2479#issuecomment-130307655
+process.on('uncaughtException', function (error) {
+    server.uncaught_exception_dialog(error.stack);
+});
+
 try {
     require('electron-debug')({showDevTools: false});
 } catch (ex) {

@@ -36,6 +36,17 @@ module.exports = {
         self.dom_ready = false;
     },
 
+    uncaught_exception_dialog: function(error) {
+        var self = this;
+        if (self.dom_ready) {
+            self.web_contents.send('uncaught-exception', {error: error });
+        } else {
+            self.web_contents.on('dom-ready', () => {
+                self.web_contents.send('uncaught-exception', {error: error });
+            });
+        }
+    },
+
     check_files_folder: function() {
         lg.info('-- CHECK FILES FOLDER')
         return new Promise((resolve, reject) => {

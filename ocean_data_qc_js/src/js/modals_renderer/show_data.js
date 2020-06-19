@@ -12,7 +12,7 @@ app_module_path.addPath(path.join(__dirname, '../renderer_modules'));
 app_module_path.addPath(__dirname);
 
 const {ipcRenderer} = require('electron');
-const { clipboard } = require('electron')
+const { clipboard } = require('electron');
 
 const loc = require('locations');
 const lg = require('logging');
@@ -77,7 +77,7 @@ module.exports = {
 
                         clipboard.writeHTML(df_data.html());
 
-                        tools.show_snackbar(  // this is not appearing because the other div has mor z-index?
+                        tools.show_snackbar(
                             'Table content copied in the clipboard as HTML text. ' +
                             'You can now paste it in a spreadsheet with Ctrl+V'
                         );

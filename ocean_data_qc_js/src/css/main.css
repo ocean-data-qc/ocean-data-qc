@@ -572,11 +572,6 @@ select[name='all_computed_param'] {
     top: 3px !important;
 }
 
-/* To select data in the Show data table and error messages form */
-.user_select_all {
-    user-select: all !important;
-}
-
 .set_octave_path_manually a {
     color: #337ab7 !important;
 }

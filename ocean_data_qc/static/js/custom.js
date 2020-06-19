@@ -1,4 +1,18 @@
 
+window.onunhandledrejection = function(event) {
+    window.top.postMessage({
+        signal: 'unhandled-exception',
+        message: 'Unhandled promise rejection:\n' + event.reason
+    }, '*');
+};
+
+window.onerror = function(message, source, lineNumber, colno, error) {
+    window.top.postMessage({
+        signal: 'unhandled-exception',
+        message: error.stack
+    }, '*');
+};
+
 function get_input_bridge_text() {
     var models = window.Bokeh.index[Object.keys(window.Bokeh.index)[0]].model.document._all_models;
     var model_id = null;
@@ -37,6 +51,9 @@ $(window).keydown(function(event){
 });
 
 window.onmessage = function(e){
+
+    var aaaa = bbbb;
+
     if (typeof(e.data.signal) != "undefined") {
         if (e.data.signal == 'call-python-promise' || e.data.signal == 'update-bridge-text-value') {
                 // this updates dummy text field value and triggers the click event of the bridge_button

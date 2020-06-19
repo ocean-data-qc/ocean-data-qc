@@ -25,12 +25,21 @@ const server_renderer = require('server_renderer');
 const bokeh_export = require('bokeh_export');
 const tab_app = require('tab_app');
 
+ipcRenderer.on('uncaught-exception', (event, args) => {
+    server_renderer.uncaught_exception_dialog(args.error);
+})
+
+process.on('uncaughtException', function (error) {
+    server_renderer.uncaught_exception_dialog(error.stack);
+});
+
 require('tab_project').init();
 require('tab_app').init();
 
 // ---------------------------- INITIAL FUNCTIONS ----------------------------- //
 
 server_renderer.init();
+// require('dsdfgsdfgsdfg');
 data_renderer.ipc_renderer = ipcRenderer;
 
 $('body').data('bokeh_state', 'not-ready');  // bokeh server state: 'not-ready', 'ready'
@@ -96,6 +105,11 @@ window.onmessage = function(e){
                 'method': 'deselect_tool',
             }
             tools.call_promise(call_params);
+        } else if (e.data.signal == 'unhandled-exception') {
+            tools.show_modal({
+                type: 'UNCAUGHT EXCEPTION',
+                code: e.data.message,
+            });
         }
     }
 

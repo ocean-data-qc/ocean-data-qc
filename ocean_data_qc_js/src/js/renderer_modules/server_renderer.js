@@ -33,6 +33,13 @@ module.exports = {
         self.check_previous_session();
     },
 
+    uncaught_exception_dialog: function(error) {
+        tools.show_modal({
+            type: 'UNCAUGHT EXCEPTION',
+            code: error
+        });
+    },
+
     bokeh_error_loading: function() {
         var self = this;
         tools.modal_question({

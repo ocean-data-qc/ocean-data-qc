@@ -10,6 +10,7 @@ const app_module_path = require('app-module-path');
 
 const bokeh_calls = require('./bokeh_calls');
 const popper = require('popper.js');
+const { clipboard } = require('electron')
 
 const lg = require('logging');
 const loc = require('locations');
@@ -148,6 +149,20 @@ module.exports = {
                 modal.find('.modal-body').append(
                     $('<pre>', { text : code })
                 );
+                modal.find('.modal-footer').prepend($('<button>', {
+                    id: 'cp_code_to_clipboard',
+                    type: 'button',
+                    class: 'btn btn-primary',
+                    text: 'Copy to clipboard'
+                }));
+                $('#cp_code_to_clipboard').on('click', function() {
+                    clipboard.writeText($('.modal-body pre').text());
+                    self.show_snackbar(
+                        'Error text copied in the clipboard. ' +
+                        'You can now paste it anywhere with Ctrl+V'
+                    );
+                });
+
             }
 
             if (callback !== false) {
