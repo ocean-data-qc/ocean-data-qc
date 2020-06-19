@@ -2,12 +2,15 @@
 function get_input_bridge_text() {
     var models = window.Bokeh.index[Object.keys(window.Bokeh.index)[0]].model.document._all_models;
     var model_id = null;
-    $.each(models, function (m_id) {
-        if (models[m_id].attributes.name == 'bridge_text_input') {
-            model_id = m_id;
+
+    // models is a Map object (different from an Object)
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map
+    models.forEach(function (m, key) {
+        if (m.name == 'bridge_text_input') {
+            model_id = key;
         }
     });
-    return models[model_id];
+    return models.get(model_id);
 }
 
 oldLog = console.log;
