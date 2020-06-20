@@ -51,9 +51,6 @@ $(window).keydown(function(event){
 });
 
 window.onmessage = function(e){
-
-    var aaaa = bbbb;
-
     if (typeof(e.data.signal) != "undefined") {
         if (e.data.signal == 'call-python-promise' || e.data.signal == 'update-bridge-text-value') {
                 // this updates dummy text field value and triggers the click event of the bridge_button
