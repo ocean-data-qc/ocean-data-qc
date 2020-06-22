@@ -108,7 +108,8 @@ module.exports = {
                     info: false,
                     columnDefs: [
                         { targets: '_all', visible: true, },
-                        { targets: [5], orderable: false, searchable: false, },
+                        { targets: [8], orderable: false, searchable: false, },
+                        { targets: [3, 4, 5], orderable: false, },
                     ],
                     initComplete: function () {
                         $('#div_column_app').animate({ opacity: 1, }, { duration: 100, });
@@ -224,7 +225,6 @@ module.exports = {
         if (col_name !== false) {
             var tmp_data_type = self.cs_cols[col_name]['data_type'];
         }
-
         var sel_cur_data_type = $('<select>', {
             class: 'form-control form-control-sm',
             name: 'sel_cur_data_type',
@@ -232,10 +232,8 @@ module.exports = {
         })
         var opts = [
             'none',  // in case the user does not know the data type of the column or it can be more than one
-            'integer',
-            'float',
-            'string',
-            // 'date'   // include this type, or treat them as strings?
+            'integer', 'float',
+            'string', 'date', 'time',
         ]
         opts.forEach(function(o) {
             var opt = $('<option>', {

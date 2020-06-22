@@ -16,31 +16,39 @@
                 <table id="table_column_app" class="table table-striped dataTable no-footer" style="width:100%">
                     <thead>
                         <tr>
-                            <th style="min-width: 8rem;" data-toggle="tooltip" data-placement="bottom"
+                            <th data-toggle="tooltip" data-placement="bottom"
                                 title="This name is used within the application">Name in app
                             </th>
-                            <th style="min-width: 10rem;" data-toggle="tooltip" data-placement="bottom"
+                            <th data-toggle="tooltip" data-placement="bottom"
                                 title="If set, the 'name in file' is used when the project is exported or imported from file. If it is not set, the 'name in app' will be the same. This is useful in order to group names for equations">
                                 Name in file
                             </th>
-                            <th style="min-width: 1.5rem;">Data type</th>
+                            <th>Data type</th>
 
                             <!-- Attributes -->
-                            <th style="min-width: 0.3rem;">Basic</th>
-                            <th style="min-width: 0.3rem;">Required</th>
-                            <th style="min-width: 0.3rem;">Non QC</th>
+                            <th data-toggle="tooltip" data-placement="bottom"
+                                title="Basic columns are created with NaN values even if they do not exit in the opened file">
+                                Basic</th>
+
+                            <th data-toggle="tooltip" data-placement="bottom"
+                                title="Any file should have this columns, they are used to create the indices internally">
+                                Required</th>
+
+                            <th data-toggle="tooltip" data-placement="bottom"
+                                title="A column is non-qc when there is no need to create flag column associated. Any param with this attribute unmarked should have a flag column associated, if not, the app will create an empty one">
+                                Non QC</th>
 
                             <!-- Precision -->
-                            <th style="min-width: 2rem;" data-toggle="tooltip" data-placement="bottom"
+                            <th data-toggle="tooltip" data-placement="bottom"
                                 title="This is used when the project is exported in CSV and WHP exchange formats. Internally the app uses the maximum precision possible">
                                 Precision
                             </th>
 
                             <!-- Units -->
-                            <th style="min-width: 1.5rem;">Unit</th>
+                            <th>Unit</th>
 
                             <!-- Actions -->
-                            <th style="min-width: 1.5rem;"></th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody></tbody>
