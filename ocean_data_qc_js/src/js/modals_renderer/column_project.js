@@ -56,30 +56,30 @@ module.exports = {
                 paging: false,
                 searching: true,
                 ordering: true,
-                order: [[ 1, 'asc' ]],  // this is the value by default
+                order: [[ 1, 'asc' ]],
                 info: false,
                 columnDefs: [
                     { targets: '_all', visible: true, },
                     {
                         targets: 0,
                         type: 'html-num',
-                        render: function (data, type, row, meta) {  // meta => col, row
+                        render: function (data, type, row, meta) {
                             if (type == 'display') {
                                 return self.get_cb_export(
-                                    meta.row,
+                                    meta.row,   // meta => col, row
                                     data
                                 );
                             } else {
                                 return data;
                             }
                         },
-                        width: '1.2rem',
+                        width: '0.6rem',
                         searchable: false
                     },
                     {
                         targets: 4,
                         type: 'html-num',
-                        render: function (data, type, row, meta) {  // meta => col, row
+                        render: function (data, type, row, meta) {
                             if (type == 'display') {
                                 return self.get_prec(
                                     $(row[1]).text(),
@@ -92,12 +92,28 @@ module.exports = {
                         width: '1.2rem',
                         searchable: false
                     },
+                    {
+                        targets: 5,
+                        type: 'html',
+                        render: function (data, type, row, meta) {
+                            if (type == 'display') {
+                                return self.get_unit(
+                                    $(row[1]).text(),
+                                    data
+                                );
+                            } else {
+                                return data;
+                            }
+                        },
+                        width: '6rem',
+                        searchable: false
+                    },
                     { targets: [6], orderable: false, searchable: false, },
                 ],
                 initComplete: function () {
                     const api = this.api()
                     self.populate_rows(api);
-                    self.change_events();
+                    self.set_events();
 
                     $('[data-toggle="tooltip"]').tooltip();
                     $('#div_column_project').animate({ opacity: 1, }, { duration: 100, });
@@ -124,7 +140,6 @@ module.exports = {
             var name = self.get_col_name(col_name);
             var data_type = self.get_data_type(col_name)
             var attrs = self.pj_cols[col_name]['attrs'].join(', ');  // TODO: translate to icons or extract just some of them?
-            var txt_cur_unit = self.get_unit(col_name);
             var set_bt = self.get_set_bt(col_name, i);
             api.row.add([
                 self.pj_cols[col_name]['export'],
@@ -132,14 +147,14 @@ module.exports = {
                 data_type,
                 attrs,
                 self.pj_cols[col_name]['precision'],
-                txt_cur_unit.prop('outerHTML'),
+                self.pj_cols[col_name]['unit'],
                 set_bt.prop('outerHTML')
             ])
         }
         api.draw();
     },
 
-    change_events: function() {
+    set_events: function() {
         var self = this;
         var tbody = $('#div_column_project tbody');
         tbody.on('change', 'select[name="sel_cur_prec"]', function() {
@@ -158,6 +173,27 @@ module.exports = {
             var cell = dt.cell($(this).parents('td'))
             cell.data(new_val).draw();
         });
+
+        tbody.on('change', 'input[name="txt_cur_unit"]', function() {
+            var dt = $('#table_column_project').DataTable();
+            var new_val = $(this).val();
+            var cell = dt.cell($(this).parents('td'))
+            cell.data(new_val).draw();
+        });
+
+        tbody.on('click', 'button.set_whp:not(:disabled)', function() {
+            var p = parseInt($(this).attr('precision'));
+            var u = $(this).attr('unit');
+            var dt = $('#table_column_project').DataTable();
+            if (u !== 'false') {
+                var cell = dt.cell($(this).parents('tr').find('td').eq(5))
+                cell.data(u).draw();
+            }
+            if (p !== 'false') {
+                var cell = dt.cell($(this).parents('tr').find('td').eq(4))
+                cell.data(p).draw();
+            }
+        })
     },
 
     set_save_bt: function() {
@@ -299,26 +335,26 @@ module.exports = {
         return sel_cur_prec.prop('outerHTML');
     },
 
-    get_unit: function(col_name=false) {
+    get_unit: function(col_name=false, unit=false) {
         var self = this;
-        var cur_unit = '';
-        if (self.pj_cols[col_name]['unit'] !== false) {
-            cur_unit = self.pj_cols[col_name]['unit'];
+        var u = unit;
+        if (unit === false) {
+            u = ''
         }
         var txt_cur_unit = $('<input>', {
             name: 'txt_cur_unit',
             class: 'form-control form-control-sm',
             type: 'text',
-            value: cur_unit
+            value: u
         });
         var t = ['empty', 'string'];
         if (t.includes(self.pj_cols[col_name]['data_type'])) {
             txt_cur_unit.attr('disabled', true);
         }
-        return txt_cur_unit;
+        return txt_cur_unit.prop('outerHTML');
     },
 
-    get_set_bt: function(col_name=false, row=false) {
+    get_set_bt: function(col_name=false) {
         var self = this;
         var whp_df_unit = false;
         if (col_name in self.cs_cols && self.cs_cols[col_name]['unit'] !== false) {
@@ -344,7 +380,6 @@ module.exports = {
         var set_bt_title_str = set_bt_title.join('<br />')
 
         var set_bt = $('<button>', {
-            'id': 'set_whp_row_' + row,
             'type': 'button',
             'class': 'btn btn-primary arrow set_whp',
             'text': 'Set',
@@ -357,19 +392,6 @@ module.exports = {
             'unit': whp_df_unit,
             'precision': whp_df_prec
         })
-
-        if (set_bt_disabled === false) {
-            set_bt.on('click', function() {
-                var p = parseInt($(this).attr('precision'));
-                var u = $(this).attr('unit');
-                if (u !== 'false') {
-                    $(this).parent().prev().find('input[name="txt_cur_unit"]').val(u);
-                }
-                if (p !== 'false') {
-                    $(this).parent().prev().prev().find('select[name="sel_cur_prec"]').val(p)
-                }
-            })
-        }
         return set_bt;
     }
 }
