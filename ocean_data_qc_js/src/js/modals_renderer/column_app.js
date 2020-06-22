@@ -27,7 +27,6 @@ module.exports = {
         var self = this;
 
         self.tmp_record = {}
-        self.pageScrollPos = null;
         self.cs_cols = data.get('columns', loc.custom_settings);
         self.cps = data.get('computed_params', loc.custom_settings);
         self.update_col_lists();
@@ -119,10 +118,10 @@ module.exports = {
 
                     // to keep the scroll position after draw() method
                     preDrawCallback: function (settings) {
-                        self.pageScrollPos = $('#div_column_app div.dataTables_scrollBody').scrollTop();
+                        self.scroll_pos = $('#div_column_app div.dataTables_scrollBody').scrollTop();
                     },
                     drawCallback: function (settings) {
-                        $('#div_column_app div.dataTables_scrollBody').scrollTop(self.pageScrollPos);
+                        $('#div_column_app div.dataTables_scrollBody').scrollTop(self.scroll_pos);
                     }
                 });
 
