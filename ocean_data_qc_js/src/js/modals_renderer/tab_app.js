@@ -52,11 +52,12 @@ module.exports = {
         var columns = data.get('columns', loc.custom_settings);
         self.app_columns = Object.keys(columns);
         self.app_columns.sort();
-        self.params = [];
+        self.non_qc_params = [];
         self.app_columns.forEach(c => {  // ES6  // app_columns = params + flags
+            var attrs = columns[c]['attrs'];
             var f = c.substr(c.length - 7);
-            if (f !== '_FLAG_W') {
-                self.params.push(c);
+            if (f !== '_FLAG_W' && !attrs.includes('non_qc')) {
+                self.non_qc_params.push(c);
             }
         });
 
@@ -84,7 +85,7 @@ module.exports = {
             var new_fieldset = $('fieldset').first().clone();
             $('#qc_tabs_container').append(new_fieldset);
             new_fieldset.slideDown();
-            self.params.forEach(function(column) {
+            self.non_qc_params.forEach(function(column) {
                 new_fieldset.find('select[name=tab_title]').append($('<option>', {
                     value: column,
                     text: column,
@@ -228,7 +229,7 @@ module.exports = {
                     $(this).parent().parent().remove();
                 });
             });
-            self.params.forEach(function (column) {
+            self.non_qc_params.forEach(function (column) {
                 new_qc_tab_div.find('select[name=tab_title]').append($('<option>', {
                     value: column,
                     text: column,
