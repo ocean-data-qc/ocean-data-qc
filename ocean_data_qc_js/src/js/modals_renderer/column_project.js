@@ -49,52 +49,93 @@ module.exports = {
 
     parse_data: function() {
         var self = this;
-        var cols = Object.keys(self.pj_cols);  // are they sorted?
+        $('#column_project_win').on('shown.bs.modal', function (e) {
+            $('#table_column_project').DataTable( {  // TODO: show only when rendered
+                scrollY: 400,
+                scrollCollapse: true,
+                paging: false,
+                searching: true,
+                ordering: true,
+                order: [[ 1, 'asc' ]],  // this is the value by default
+                info: false,
+                columnDefs: [
+                    { targets: '_all', visible: true, },
+                    { targets: [6], orderable: false, searchable: false, },
+                    {
+                        targets: 4,
+                        type: 'html-num',
+                        render: function (data, type, row, meta) {  // meta => col, row
+                            if (type == 'display') {
+                                return self.get_html_prec(
+                                    $(row[1]).text(),
+                                    data
+                                );
+                            } else {
+                                return data;
+                            }
+                        },
+                        width: '1.2rem'
+                    },
+                ],
+                initComplete: function () {
+                    const api = this.api()
+                    self.populate_rows(api);
+                    self.change_events();
+
+                    $('[data-toggle="tooltip"]').tooltip();
+                    $('#div_column_project').animate({ opacity: 1, }, { duration: 100, });
+                },
+
+                // to keep the scroll position after draw() method
+                preDrawCallback: function (settings) {
+                    self.scroll_pos = $('#div_column_project div.dataTables_scrollBody').scrollTop();
+                },
+                drawCallback: function (settings) {
+                    $('#div_column_project div.dataTables_scrollBody').scrollTop(self.scroll_pos);
+                }
+            })
+        });
+        $('#modal_column_project').click();
+    },
+
+    populate_rows(api) {
+        lg.warn('>> POPULATE ROWS');
+        var self = this;
+        var cols = Object.keys(self.pj_cols);
+        cols.sort();
         for (var i = 0; i < cols.length; i++) {
             var col_name = cols[i];
+            var cb_export = self.get_cb_export(i, col_name);
             var name = self.get_col_name(col_name);
             var data_type = self.get_data_type(col_name)
             var attrs = self.pj_cols[col_name]['attrs'].join(', ');  // TODO: translate to icons or extract just some of them?
-            var cb_export = self.get_cb_export(i, col_name);
-            var sel_cur_prec = self.get_cur_prec(col_name);
             var txt_cur_unit = self.get_txt_cur_unit(col_name);
             var set_bt = self.get_set_bt(col_name, i);
-
-            var tr = $('<tr>');
-            tr.append(
-                $('<td>', {html: cb_export }),
-                name,
-                $('<td>', {html: data_type }),
-                $('<td>', {text: attrs }),
-                $('<td>', {html: sel_cur_prec }),
-                $('<td>', {html: txt_cur_unit }),
-                $('<td>', {html: set_bt })
-            );
-            $('#table_column_project tbody').append(tr);
+            api.row.add([
+                cb_export.prop('outerHTML'),
+                name.prop('outerHTML'),
+                data_type,
+                attrs,
+                self.pj_cols[col_name]['precision'],
+                txt_cur_unit.prop('outerHTML'),
+                set_bt.prop('outerHTML')
+            ])
         }
-        $('[data-toggle="tooltip"]').tooltip();
+        api.draw();
+    },
 
-        $('#column_project_win').on('shown.bs.modal', function (e) {
-            setTimeout(function() {
-                $('#table_column_project').DataTable( {  // TODO: show only when rendered
-                    scrollY: 400,
-                    scrollCollapse: true,
-                    paging: false,
-                    searching: true,
-                    ordering: true,
-                    order: [[ 1, 'asc' ]],  // this is the value by default
-                    info: false,
-                    columnDefs: [
-                        { targets: '_all', visible: true, },
-                        { targets: [6], orderable: false, searchable: false, },
-                    ],
-                    initComplete: function () {
-                        $('#div_column_project').animate({ opacity: 1, }, { duration: 100, });
-                    },
-                })
-            }, 500);
+    change_events: function() {
+        var self = this;
+        $('#div_column_project tbody').on('change', 'select[name="sel_cur_prec"]', function() {
+            lg.warn('>> CHANGE SELECT')
+            var dt = $('#table_column_project').DataTable();
+            var new_val = $(this).val();
+            if (new_val != 'none') {
+                new_val = parseInt(new_val);
+            }
+            var cell = dt.cell($(this).parents('td'))
+            cell.data(new_val).draw();
         });
-        $('#modal_column_project').click();
     },
 
     set_save_bt: function() {
@@ -115,7 +156,7 @@ module.exports = {
                 var cb_export = node.find('input[name="cb_export"]').prop('checked');
 
                 var sel_cur_prec = false;
-                if (node.find('select[name="sel_cur_prec"]').val() != 'none') {
+                if (node.find('select[name="sel_cur_prec"]').val() != '-1') {
                     sel_cur_prec = parseInt(node.find('select[name="sel_cur_prec"]').val());
                 }
 
@@ -153,13 +194,15 @@ module.exports = {
 
     get_col_name: function(name=false) {
         var self = this;
-        var name_row = $('<td>', {
+        var name_span = $('<span>', {
             text: name,
             class: 'td_col_name'
         });
         var external_name = self.pj_cols[name]['external_name'];
+        var name_row = false;
         if (external_name.length > 0) {
-            name_row.append(
+            name_row = $('<div>').append(
+                name_span,
                 $('<i>', {
                     'class': 'fa fa-info-circle',
                     'style': 'cursor: pointer; color: #337ab5; margin-left: 8px; font-size: 0.8rem;',
@@ -169,6 +212,8 @@ module.exports = {
                     'data-html': 'true',
                 })
             );
+        } else {
+            name_row = name_span;
         }
         return name_row;
     },
@@ -181,8 +226,10 @@ module.exports = {
                 style: 'color: red; font-weight: bold;',
                 text: 'none'
             });
+            return data_type.prop('outerHTML');
+        } else {
+            return data_type;
         }
-        return data_type;
     },
 
     get_cb_export: function(row=false, col_name=false) {
@@ -207,40 +254,35 @@ module.exports = {
         return cb_export;
     },
 
-    get_cur_prec: function(col_name=false) {
+    get_html_prec: function(col_name=false, prec=false) {
         var self = this;
-        var tmp_prec = self.pj_cols[col_name]['precision'];
+        lg.warn('>> COL_NAME' + col_name)
+        lg.warn('>> PREC: ' + prec)
         var sel_cur_prec = $('<select>', {
             class: 'form-control form-control-sm',
             name: 'sel_cur_prec',
-            disabled: true
         })
-        if (tmp_prec !== false) {
+        if (prec !== false) {
             for (var j = 0; j < 16; j++) {
                 var opt = $('<option>', {
                     value: j,
                     text: j
                 });
-                if (tmp_prec === j) {
-                    // lg.warn('>> SEL: ' + self.pj_cols[col_name]['precision'] + ' | ' + parseInt(j))
-                    opt.attr("selected","selected");
-                    sel_cur_prec.attr('disabled', false);
+                if (prec === j) {
+                    opt.attr('selected','selected');
                 }
                 sel_cur_prec.append(opt);
             }
-            if (sel_cur_prec.find('option:selected').text() == 'None') {
-                sel_cur_prec.attr('disabled', true);
-            }
         } else {
-            sel_cur_prec.append($('<option>', {
-                value: 'none',
+            sel_cur_prec.append($('<option>', {  // just one option is enough
+                value: '-1',
                 text: 'None',
             }))
         }
-        if (self.pj_cols[col_name]['data_type'] == 'none') {
+        if (self.pj_cols[col_name]['data_type'] != 'float') {
             sel_cur_prec.attr('disabled', true);
         }
-        return sel_cur_prec
+        return sel_cur_prec.prop('outerHTML');
     },
 
     get_txt_cur_unit: function(col_name=false) {
