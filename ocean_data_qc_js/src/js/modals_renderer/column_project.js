@@ -60,13 +60,28 @@ module.exports = {
                 info: false,
                 columnDefs: [
                     { targets: '_all', visible: true, },
-                    { targets: [6], orderable: false, searchable: false, },
+                    {
+                        targets: 0,
+                        type: 'html-num',
+                        render: function (data, type, row, meta) {  // meta => col, row
+                            if (type == 'display') {
+                                return self.get_cb_export(
+                                    meta.row,
+                                    data
+                                );
+                            } else {
+                                return data;
+                            }
+                        },
+                        width: '1.2rem',
+                        searchable: false
+                    },
                     {
                         targets: 4,
                         type: 'html-num',
                         render: function (data, type, row, meta) {  // meta => col, row
                             if (type == 'display') {
-                                return self.get_html_prec(
+                                return self.get_prec(
                                     $(row[1]).text(),
                                     data
                                 );
@@ -74,8 +89,10 @@ module.exports = {
                                 return data;
                             }
                         },
-                        width: '1.2rem'
+                        width: '1.2rem',
+                        searchable: false
                     },
+                    { targets: [6], orderable: false, searchable: false, },
                 ],
                 initComplete: function () {
                     const api = this.api()
@@ -99,20 +116,18 @@ module.exports = {
     },
 
     populate_rows(api) {
-        lg.warn('>> POPULATE ROWS');
         var self = this;
         var cols = Object.keys(self.pj_cols);
         cols.sort();
         for (var i = 0; i < cols.length; i++) {
             var col_name = cols[i];
-            var cb_export = self.get_cb_export(i, col_name);
             var name = self.get_col_name(col_name);
             var data_type = self.get_data_type(col_name)
             var attrs = self.pj_cols[col_name]['attrs'].join(', ');  // TODO: translate to icons or extract just some of them?
-            var txt_cur_unit = self.get_txt_cur_unit(col_name);
+            var txt_cur_unit = self.get_unit(col_name);
             var set_bt = self.get_set_bt(col_name, i);
             api.row.add([
-                cb_export.prop('outerHTML'),
+                self.pj_cols[col_name]['export'],
                 name.prop('outerHTML'),
                 data_type,
                 attrs,
@@ -126,8 +141,8 @@ module.exports = {
 
     change_events: function() {
         var self = this;
-        $('#div_column_project tbody').on('change', 'select[name="sel_cur_prec"]', function() {
-            lg.warn('>> CHANGE SELECT')
+        var tbody = $('#div_column_project tbody');
+        tbody.on('change', 'select[name="sel_cur_prec"]', function() {
             var dt = $('#table_column_project').DataTable();
             var new_val = $(this).val();
             if (new_val != 'none') {
@@ -136,21 +151,23 @@ module.exports = {
             var cell = dt.cell($(this).parents('td'))
             cell.data(new_val).draw();
         });
+
+        tbody.on('change', 'input[name="cb_export"]', function() {
+            var dt = $('#table_column_project').DataTable();
+            var new_val = $(this).prop('checked');
+            var cell = dt.cell($(this).parents('td'))
+            cell.data(new_val).draw();
+        });
     },
 
     set_save_bt: function() {
         var self = this;
-        // var data_table = $('#table_column_project').DataTable();
-
         $('#save_settings').on('click', function() {
-            lg.warn('>> ROWS: ' + $('#div_column_project tr'))
             var dt = $('#table_column_project').DataTable();
             dt.search('').draw();  // to show all the table in order to get the values
                                    // the alternative would be to save all the events in the rows
             var valid = true;
             $.each($('#div_column_project tbody tr'), function(i, node) {
-                lg.warn('>> I: ' + i);
-                lg.warn('>> NODE: ' + node);
                 node = $(node);
                 var col_name = node.find('.td_col_name').text();
                 var cb_export = node.find('input[name="cb_export"]').prop('checked');
@@ -232,9 +249,8 @@ module.exports = {
         }
     },
 
-    get_cb_export: function(row=false, col_name=false) {
+    get_cb_export: function(row=false, exp_val=false) {
         var self = this;
-        var export_col = self.pj_cols[col_name]['export'];
         var cb_export = $('<div>', {
             class: 'form-check abc-checkbox abc-checkbox-primary'
         }).append(
@@ -243,7 +259,7 @@ module.exports = {
                 class: 'form-check-input',
                 name: 'cb_export',
                 type: 'checkbox',
-                checked: export_col
+                checked: exp_val
             })
         ).append(
             $('<label>', {
@@ -251,13 +267,11 @@ module.exports = {
                 class: 'form-check-label'
             })
         );
-        return cb_export;
+        return cb_export.prop('outerHTML');
     },
 
-    get_html_prec: function(col_name=false, prec=false) {
+    get_prec: function(col_name=false, prec=false) {
         var self = this;
-        lg.warn('>> COL_NAME' + col_name)
-        lg.warn('>> PREC: ' + prec)
         var sel_cur_prec = $('<select>', {
             class: 'form-control form-control-sm',
             name: 'sel_cur_prec',
@@ -285,7 +299,7 @@ module.exports = {
         return sel_cur_prec.prop('outerHTML');
     },
 
-    get_txt_cur_unit: function(col_name=false) {
+    get_unit: function(col_name=false) {
         var self = this;
         var cur_unit = '';
         if (self.pj_cols[col_name]['unit'] !== false) {
@@ -348,9 +362,6 @@ module.exports = {
             set_bt.on('click', function() {
                 var p = parseInt($(this).attr('precision'));
                 var u = $(this).attr('unit');
-                lg.warn('>> PRECS' + p);
-                lg.warn('>> UNITS' + u);
-
                 if (u !== 'false') {
                     $(this).parent().prev().find('input[name="txt_cur_unit"]').val(u);
                 }
