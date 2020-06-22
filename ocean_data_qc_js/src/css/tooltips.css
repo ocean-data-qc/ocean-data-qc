@@ -1,3 +1,20 @@
+
+.tooltip-inner {
+    max-width: 300px !important;
+    text-align: left !important;
+}
+
+.tooltip-inner ul {
+    text-align: left;
+    line-height: 0.5rem;
+    margin-top: 1rem !important;
+}
+
+.tooltip-inner pre {
+    /* if not the some words are cut by the line height */
+    overflow: visible !important;
+}
+
 /* TOOLTIP INFO */
 
 .tooltip-inner {

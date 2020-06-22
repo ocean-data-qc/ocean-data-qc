@@ -19,10 +19,40 @@
                             <th title="Exporting in WHP format will never include calculated parameters"
                                 data-toggle="tooltip"
                                 data-placement="bottom">Export</th>
+
                             <th data-toggle="tooltip" data-placement="bottom"
                                 title="If set, the external name is used when the project is exported">Sanitized Name</th>
-                            <th>Data type</th>
-                            <th>Column attributes</th>
+
+                            <th class="data_type_col">Data type
+                                <!-- tooltip content -->
+                                <div id="possible_data_types" style="display: none;">
+                                    These are the possible data types:
+                                    <ul style="margin-bottom: 0;">
+                                        <li><pre>string</pre></li>
+                                        <li><pre>integer</pre></li>
+                                        <li><pre>float</pre></li>
+                                        <li><pre>date</pre></li>
+                                        <li><pre>time</pre></li>
+                                        <li><pre>none</pre></li>
+                                    </ul>
+                                </div>
+                            </th>
+
+                            <th class="col_attrs_col">Column attributes
+                                <!-- tooltip content -->
+                                <div id="possible_col_attrs" style="display: none;">
+                                    These are the possible column attributes:
+                                    <ul style="margin-bottom: 0;">
+                                        <li><pre>computed - calculated parameters</pre></li>
+                                        <li><pre>param - parameters</pre></li>
+                                        <li><pre>non_qc - params without qc column</pre></li>
+                                        <li><pre>flag - flag columns</pre></li>
+                                        <li><pre>created - columns created by the app</pre></li>
+                                        <li><pre>required - required columns</pre></li>
+                                        <li><pre>empty - empty columns</pre></li>
+                                    </ul>
+                                </div>
+                            </th>
 
                             <!-- Precision -->
                             <th data-toggle="tooltip" data-placement="bottom"
@@ -31,7 +61,7 @@
                             <!-- Units -->
                             <th>Unit</th>
                             <th data-toggle="tooltip" data-placement="bottom"
-                                title="Set default WHP values to the row. Move the mouse over the butten to see the values">WHP values</span>
+                                title="Set default WHP values to the row. Move the mouse over the button to see the values">WHP values</span>
                             </th>
                         </tr>
                     </thead>

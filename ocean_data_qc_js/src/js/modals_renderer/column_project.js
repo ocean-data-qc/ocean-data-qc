@@ -37,6 +37,20 @@ module.exports = {
             tools.load_modal(url, function() {
                 self.parse_data();
                 self.set_save_bt();
+
+                $('.data_type_col').attr({
+                    'data-toggle': 'tooltip',
+                    'data-placement': 'bottom',
+                    'data-html': true,
+                    'title': $('#possible_data_types').html()
+                });
+                $('.col_attrs_col').attr({
+                    'data-toggle': 'tooltip',
+                    'data-placement': 'bottom',
+                    'data-html': true,
+                    'title': $('#possible_col_attrs').html()
+                });
+                $('[data-toggle="tooltip"]').tooltip();
             });
         } else {
             tools.show_modal({
