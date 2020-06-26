@@ -10,9 +10,10 @@ const fs = require('fs');
 const file_url = require('file-url');     // converts file path to file:// protocol,
                                           // use fileToPath() function for the opposite
 const {dialog} = require('electron');
+const {app} = require('electron');
 const db = require('mime-db');
 const mime = require('mime-type')(db);
-const { URL } = require('url');           // constructor > fs recognise the file:// url built with this
+const {URL} = require('url');             // constructor > fs recognise the file:// url built with this
 const zip = require('cross-zip');         // it does not work on Windows 7 by default
 const rmdir = require('rimraf')
 
@@ -99,8 +100,28 @@ module.exports = {
         var self = this;
         if (JSON.stringify(file_paths) == '[]') return;
         self.web_contents.send('show-wait-cursor');
-        var file_path = file_paths[0];
+        fs.access(loc.proj_files, fs.constants.F_OK, (err) => {
+            if (err) {  // if the folder does not exist
+                self.open_by_mime_type(file_paths[0]);
+            } else {
+                rmdir(loc.proj_files, function(err) {  // if there was some folder from the previous execution
+                    if (err) {
+                        self.web_contents.send('show-modal', {
+                            type: 'ERROR',
+                            msg: 'The project file temp folder could not be removed:',
+                            code: err.stack
+                        });
+                    } else {
+                        self.open_by_mime_type(file_paths[0]);
+                    }
+                });
+            }
+        });
 
+    },
+
+    open_by_mime_type: function(file_path) {
+        var self = this;
         mime.define(                        // adding new extension to node mime-types
             'application/aqc', {
                 source: 'atlantos',
@@ -108,33 +129,12 @@ module.exports = {
                 extensions: ['aqc' ]
             }, mime.dupAppend
         );
-
         var mime_type = mime.lookup(file_path);
         lg.info('>> MIME TYPE: ' + mime_type);
+        lg.info('>> FILE PATH: ' + file_path);
 
         if (mime_type == 'application/aqc') {
-            //var outPath = path.join(__dirname, '../tmp')    // It will extract the content to the "files" folder
-            var outPath = path.join(loc.proj_files,'..');
-            if (process.platform === 'win32') { // check if it is only in windows
-                outPath = loc.proj_files;
-                if (!fs.existsSync(loc.proj_files)) {
-                    fs.mkdirSync(loc.proj_files);
-                }
-            }
-            lg.info('>> outPath: ' + outPath);
-            try {
-                zip.unzipSync(file_path, outPath)         // TODO: dangerous if the content is other, how to check it?
-                                                          //       check file names and file types (sha1 algorithm?)
-                var project_file = file_url(file_path)
-                data.set({'project_file': project_file, }, loc.proj_settings);
-            } catch(err) {                               // we must trust the user
-                self.web_contents.send('show-modal', {
-                    'type': 'ERROR',
-                    'msg': 'The file could not be opened!<br />Make sure that is a correct AQC file'+err
-                });
-                return false;
-            }
-            self.web_contents.send('go-to-bokeh');
+            self.init_aqc(file_path);
         } else if (mime_type == 'text/csv') {  // how to check if it is a CSV file??
             self.web_contents.send('tab-project', {
                 'file_path': file_path,
@@ -155,6 +155,79 @@ module.exports = {
                 'type': 'ERROR',
                 'msg': 'Wrong filetype!! It must be an AQC, CSV, ODS or XLSX file'
             });
+        }
+    },
+
+    init_aqc: function(file_path) {
+        var self = this;
+        fs.mkdir(loc.proj_files, { recursive: true }, (err) => {  // only if
+            if (err) {
+                self.web_contents.send('show-modal', {
+                    type: 'ERROR',
+                    msg: 'The project file temp folder could not be created',
+                    code: err.stack
+                });
+            } else {
+                self.open_aqc(file_path);
+            }
+        });
+    },
+
+    open_aqc: function(file_path) {
+        var self = this;
+        var output_path = path.join(loc.proj_files, '..');
+        if (process.platform === 'win32') { // check if it is only in windows
+            output_path = loc.proj_files;
+        }
+        lg.info('>> OUTPUT PATH: ' + output_path);
+        try {
+            zip.unzipSync(file_path, output_path)     // TODO: dangerous if the content is other, how to check it?
+                                                      //       check file names and file types (sha1 algorithm?)
+            var project_file = file_url(file_path)
+            data.set({'project_file': project_file, }, loc.proj_settings);
+        } catch(err) {                                // we must trust the user
+            self.web_contents.send('show-modal', {
+                type: 'ERROR',
+                msg: 'The file could not be opened!<br />Make sure that is a correct AQC file',
+                code: err.stack
+            });
+            return false;
+        }
+
+        // check aqc file version
+        var json_version = data.get('json_version', loc.proj_settings);
+        var wrong_version = false;
+        lg.warn('>> JSON VERSION: ' + json_version)
+        if (json_version === false) {
+            wrong_version = true;
+        } else {
+            var comp_res = tools.compare_versions(json_version, app.getVersion())
+            lg.warn('>> COMPARISON: ' + comp_res)
+            if (comp_res !== false && comp_res < 0) {
+                wrong_version = true;
+            }
+        }
+        if (wrong_version) {
+            var msg = '<p>The AQC file was created by an older app version or the version has a wrong format' +
+                      ' and it is not compatible.</p>' +
+                      '<p>You can rename the file extension <b>aqc</b> to <b>zip</b> and extract the <b>data.csv</b> and ' +
+                      '<b>meta</b> files in order to recreate the project again.</p>' +
+                      '<p>Alternatively you can downgrade the application and export the project as CSV or WHP files.</p>'
+            if (json_version !== false) {
+                msg += '<p>The file version is: <b>' + json_version + '</b>';
+            }
+            rmdir(loc.proj_files, function(err) {  // remove garbage
+                if (err) {
+                    msg += 'The project file temp folder could not be removed'
+                }
+                self.web_contents.send('show-modal', {
+                    type: 'ERROR',
+                    msg_type: 'html',
+                    msg: msg
+                });
+            });
+        } else {
+            self.web_contents.send('go-to-bokeh');
         }
     },
 
@@ -320,8 +393,9 @@ module.exports = {
             rmdir(loc.proj_files, function(err) {
                 if (err) {
                     self.web_contents.send('show-modal', {
-                        'type': 'ERROR',
-                        'msg': 'The file could not be saved:<br />' + err
+                        type: 'ERROR',
+                        msg: 'The temporal folder could not be removed:',
+                        code: err
                     });
                     return false;
                 }

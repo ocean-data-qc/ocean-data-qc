@@ -483,5 +483,52 @@ module.exports = {
         })
 
         tr.find('.bootstrap-tagsinput input, input[name="txt_external_name"]').removeAttr('disabled');
+    },
+
+    /**
+     * Compare two software version numbers (e.g. 1.7.1). Returns:
+     *
+     *  - 0 if they're identical
+     *  - negative if v1 < v2
+     *  - positive if v1 > v2
+     *  - false if they in the wrong format
+     *
+     *  Taken from http://stackoverflow.com/a/6832721/11236
+     */
+    compare_versions: function(v1, v2){
+        var v1parts = v1.split('.');
+        var v2parts = v2.split('.');
+
+        function validate_parts(parts) {
+            for (var i = 0; i < parts.length; ++i) {
+                if (!/^\d+$/.test(parts[i])) {  // check if positive integer
+                    return false;
+                }
+            }
+            return true;
+        }
+        if (!validate_parts(v1parts) || !validate_parts(v2parts)) {
+            return false;
+        }
+
+        for (var i = 0; i < v1parts.length; ++i) {
+            if (v2parts.length === i) {
+                return 1;
+            }
+
+            if (v1parts[i] === v2parts[i]) {
+                continue;
+            }
+            if (v1parts[i] > v2parts[i]) {
+                return 1;
+            }
+            return -1;
+        }
+
+        if (v1parts.length != v2parts.length) {
+            return -1;
+        }
+
+        return 0;
     }
 }

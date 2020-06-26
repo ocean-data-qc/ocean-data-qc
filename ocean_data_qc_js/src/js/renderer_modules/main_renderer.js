@@ -174,7 +174,7 @@ $('#modify_app_settings').on('click', function() {
 // ---------------------------------  LISTENERS ---------------------------------------------- //
 
 ipcRenderer.on('show-modal', (event, arg) => {
-    tools.showModal(arg.type, arg.msg);
+    tools.show_modal(arg);
 });
 
 ipcRenderer.on('show-snackbar', (event, arg) => {

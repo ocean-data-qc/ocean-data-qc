@@ -38,6 +38,10 @@ module.exports = {
 
     uncaught_exception_dialog: function(error) {
         var self = this;
+
+        // TODO: if some error happens before the renderer process is created,
+        //       then this is not going to work
+
         if (self.dom_ready) {
             self.web_contents.send('uncaught-exception', {error: error });
         } else {
