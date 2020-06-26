@@ -1,5 +1,5 @@
 {
-    "json_version": "1.3.0",
+    "json_version": "1.4.0",
     "bokeh_port": 5006,
     "bokeh_url": "http://localhost",
     "dev_mode": false,
