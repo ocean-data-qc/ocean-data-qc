@@ -35,11 +35,29 @@
                             </label>
                             <pre>dist(lat, lon, units='km'), f(lat), satAr(s, t), satN2(s, t), satO2(s, t), swvel(length, depth)</pre>
 
+                            <label class="control-label">Some custom functions created specially for this app:</label>
+                            <pre>
+<b>@nitrate_combined</b>
+NO2_NO3 is the sum of NITRAT and NITRIT, sometimes both are reported separately.
+Some other times we need to get the NITRATE from the difference NO2_NO3 - NITRIT.
+NO2_NO3 exists because there are some devices that take the measures together.
+The values of NITRIT are always tiny, if the column NITRATE does not exist
+the app the column NO2_NO3 will be used.
+
+<b>@salinity_combined</b>
+This works for SALNTY and CTDSAL, if some of them do not exist the other one is used instead.
+If both exist, the number of NaN and deviation will be taken into account to chose one or another.
+The selected one will be written in the "actions history"
+
+<b>@oxygen_combined</b>
+The same functionality as salinity_combined, but with the columns OXYGEN and CTDOXY
+                            </pre>
+
                             <label class="control-label">How to add functions to the equation?</label>
-                            <pre><strong>@function_name</strong></pre>
+                            <pre><bg>@function_name</bg></pre>
 
                             <label class="control-label">How to add available computed parameters to the equation? By double click on the list or:</label>
-                            <pre><strong>${param_name}</strong></pre>
+                            <pre><bg>${param_name}</bg></pre>
 
                             <label class="control-label">Operators:</label>
                             <pre>/ * ** + -</pre>
