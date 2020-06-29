@@ -111,7 +111,7 @@ module.exports = {
             placement: 'bottom',
             trigger: 'manual',
             template: '<div class="tooltip tooltip-error" role="tooltip"><div class="arrow"></div><div class="tooltip-inner">Jamon</div></div>',
-        })
+        });
 
         self.current_column_params_list.dblclick(() => {
             var value = ' ' + self.current_column_params_list.find('option:selected').val() + ' ';
@@ -402,7 +402,6 @@ module.exports = {
     },
 
     get_default_class: function(cps, column) {
-        lg.info('-- GET DEFAULT CLASS');
         var self = this;
         var is_default = false;
         cps.every(function (elem, index){
@@ -412,7 +411,6 @@ module.exports = {
             }
             return true;                // continue every statement
         });
-        lg.info('>> PARAM NAME TO CHECK: ' + column.param_name);
         if (is_default == true && !self.current_columns.includes(column.param_name)) {
             return 'default_param';
         } else if(self.current_columns.includes(column.param_name)) {

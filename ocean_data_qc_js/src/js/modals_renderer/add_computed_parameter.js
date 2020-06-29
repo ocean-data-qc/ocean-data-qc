@@ -52,14 +52,10 @@ module.exports = {
                 var columns = result['columns'];
                 var cp = [];
                 Object.keys(dep).forEach(function(elem) {
-                    logger.info('>> ELEM: ' + elem);
                     if (dep[elem] == true) {
                         cp.push(elem);
                     }
                 });
-                logger.info('>> RESULT: ' + JSON.stringify(dep, null, 4));
-                logger.info('>> CP TO SHOW: ' + cp);
-
                 cp.forEach(function (c) {
                     // TODO: there is a problem here when some computed parameter has the same name as a column name
                     if (cp_cols.includes(c)) {
