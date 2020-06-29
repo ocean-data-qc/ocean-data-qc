@@ -624,8 +624,24 @@ class CruiseData(CruiseDataExport):
         lg.info('>> COLUMN: %s | VALUE: %s | ROWS: %s' % (column, new_flag_value, row_indices))
         # lg.info('\n\nData previous changed: \n\n%s' % self.df[[ column ]].iloc[row_indices])
 
+        empty_column = False
+        if 'empty' in self.cols[column]['attrs'] and self.df[self.df[column] == 9][column].index.size == self.df.index.size:
+            empty_column = True
+
         hash_index_list = self.df.index[row_indices]
         self.df.loc[hash_index_list,(column)] = new_flag_value
+
+        if new_flag_value != 9 and empty_column:
+            lg.warn(f'>> REMOVING EMPTY ATTR FROM COLUMNS {column}')
+            self.cols[column]['attrs'].remove('empty')
+            self.cols[column]['export'] = True
+            self.env.f_handler.set('columns', self.cols, path.join(TMP,'settings.json'))
+        elif new_flag_value == 9:
+            if 'empty' not in self.cols[column]['attrs'] and self.df[self.df[column] == 9][column].index.size == self.df.index.size:
+                lg.warning(f'>> ADDING EMPTY ATTR TO COLUMN {column}')
+                self.cols[column]['attrs'].append('empty')
+                self.cols[column]['export'] = False
+                self.env.f_handler.set('columns', self.cols, path.join(TMP,'settings.json'))
 
         # lg.info('\n\nData after changed: \n\n%s' % self.df[[ column ]].iloc[row_indices])
 
