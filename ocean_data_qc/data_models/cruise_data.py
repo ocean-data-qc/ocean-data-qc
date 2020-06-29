@@ -323,6 +323,9 @@ class CruiseData(CruiseDataExport):
         return final_list
 
     def _discard_nan_columns(self, col_list):
+        ''' Most of NaN columns should be removed in "manage_empty_cols"
+            This is just for the 'required' columns which are empty
+        '''
         final_cols = list(col_list)
         for c in col_list:
             if self.df[c].isnull().all():
@@ -588,16 +591,12 @@ class CruiseData(CruiseDataExport):
             else:  # empty column
                 self.cols[c]['precision'] = False
                 self.cols[c]['data_type'] = 'none'
-                self.cols[c]['attrs'].append('empty')
 
         for c in self.df.select_dtypes(include=['int8', 'int16', 'int32', 'int64']):
             self.cols[c]['precision'] = 0
-            if c == 'NITRIT_FLAG_W':
-                lg.warning(f'DF["NITRIT_FLAG_W"]: {self.df["NITRIT_FLAG_W"]}')
             if self.df[self.df[c] == 9][c].index.size == self.df.index.size:
-                self.cols[c]['data_type'] = 'none'
+                self.cols[c]['data_type'] = 'integer'
                 self.cols[c]['export'] = False
-                self.cols[c]['attrs'].append('empty')
             else:
                 self.cols[c]['data_type'] = 'integer'
 
@@ -686,4 +685,35 @@ class CruiseData(CruiseDataExport):
                         cps_to_rmv.append(c['param_name'])
         if cps_to_rmv != []:
             self.env.f_handler.remove_cols_from_qc_plot_tabs(cps_to_rmv)
+        self._manage_empty_cols()
         self.env.cruise_data.save_col_attribs()
+
+    def _manage_empty_cols(self):
+        lg.warning('-- SET EMPTY COLS')
+        cols = self.get_cols_by_attrs(['param', 'non_qc', 'computed'])
+        for c in cols:
+            if self.df[c].isnull().all():
+                attrs = ','.join(self.cols[c]['attrs'])
+                del self.cols[c]
+                del self.df[c]
+                lg.warning(f'>> COLUMN: {c} REMOVED BECAUSE IT WAS EMPTY | {attrs}')
+
+                fc = f'{c}{FLAG_END}'
+                if fc in self.df:
+                    del self.cols[fc]
+                    del self.df[fc]
+                    lg.warning(f'>> FLAG COLUMN: {c} REMOVED BECAUSE THE RELATED PARAM WAS EMPTY')
+
+        for c in self.get_cols_by_attrs('flag'):
+            if self.df[self.df[c] == 9][c].index.size == self.df.index.size:
+                self.cols[c]['attrs'].append('empty')
+                lg.warning(f'>> FLAG: {c} IS MARKED AS EMPTY')
+
+                # NOTE: if the flag has 9 in all the rows means that the param has NaN in all the rows
+                #       so, the param should be removed before. This should be fixed in a more appropriate way
+
+        # required columns can be nan in order to create the hash_id ??
+        for c in self.get_cols_by_attrs(['required']):
+            if self.df[c].isnull().all():
+                self.df[c]['attrs'].append('empty')
+                lg.warning(f'>> COLUMN: {c} MARKED AS EMPTY')

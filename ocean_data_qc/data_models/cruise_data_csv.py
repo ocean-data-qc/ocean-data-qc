@@ -95,6 +95,7 @@ class CruiseDataCSV(CruiseData):
         self._validate_flag_values()
         self._set_hash_ids()
         self._set_cps()
+        self._manage_empty_cols()
         if not self.cd_aux:
             self.save_tmp_data()
 
