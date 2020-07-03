@@ -161,7 +161,7 @@ module.exports = {
                         type: 'html',
                         render: function (data, type, row, meta) {
                             if (type == 'display') {
-                                return self.get_prec($(row[2]).val(), data);
+                                return self.get_prec(data, $(row[2]).val());
                             } else {
                                 return data;
                             }
@@ -204,6 +204,7 @@ module.exports = {
                     const api = this.api()
                     self.populate_rows(api);
                     self.set_events();
+                    self.disable_prec();
 
                     $('#div_column_app').animate({ opacity: 1, }, { duration: 100, });
                     tools.set_tags_input();
@@ -337,15 +338,6 @@ module.exports = {
             value: col_name === false ? '' : col_name,
             disabled: true
         });
-
-        input.on('change', function() {
-            // Update the current value of the field and reload the table "data"
-            // to make work the search again
-            $(this).val($(this).val().toUpperCase());  // does it work?
-            $(this).attr('value', $(this).val());
-            var td = $(this).parent('td');
-            $('#table_column_app').DataTable().cell(td).data(td.html());
-        });
         return input.prop('outerHTML');
     },
 
@@ -386,7 +378,6 @@ module.exports = {
             }
             sel_cur_data_type.append(opt);
         });
-        self.sel_data_type_change(sel_cur_data_type);
         return sel_cur_data_type.prop('outerHTML');
     },
 
@@ -414,32 +405,7 @@ module.exports = {
         }
     },
 
-    sel_data_type_change: function(sel_cur_data_type) {
-        var self = this;
-        sel_cur_data_type.on('change', function() {
-            // none > precision 'none' disabled
-            // integer > precision 0 disabled
-            // string > precision 'none' disabled
-            // float > precision 1 enabled
-            var sel_val = $(this).val();
-
-            // TODO: update the cell value instead of manipulating the html object
-
-            var prec_obj = $(this).parent().parent().find('select[name="sel_cur_prec"]');
-            if (sel_val === 'none' || sel_val === 'string') {
-                prec_obj.val('none');
-                prec_obj.attr('disabled', true);
-            } else if (sel_val == 'integer') {
-                prec_obj.val('0');
-                prec_obj.attr('disabled', true);
-            } else if (sel_val == 'float') {
-                prec_obj.val('1')
-                prec_obj.attr('disabled', false);
-            }
-        });
-    },
-
-    get_prec: function(data_type=false, prec=false) {
+    get_prec: function(prec, data_type) {
         var self = this;
         var sel_cur_prec = $('<select>', {
             class: 'form-control form-control-sm',
@@ -461,17 +427,15 @@ module.exports = {
             }
             sel_cur_prec.append(opt);
         }
-        if ((prec === false || prec == 0) && data_type !== false) {
-            if (data_type.val() == 'integer') {
-                sel_cur_prec.attr('disabled', true);
-                sel_cur_prec.val('0');
-            }
-            if (['string', 'none'].includes(data_type.val())) {
-                sel_cur_prec.attr('disabled', true);
-                sel_cur_prec.val('none');
-            }
-        }
         return sel_cur_prec.prop('outerHTML');
+    },
+
+    /** Disable all the elements in the datatable
+     *  This should be used just after all the rows are populated
+    */
+    disable_prec: function() {
+        var self = this;
+        $('#table_column_app select[name="sel_cur_prec"]').attr('disabled', true);
     },
 
     get_unit: function(unit=false) {
@@ -575,9 +539,6 @@ module.exports = {
 
             var scroll_body = $(data_table.table().node()).parent();
             scroll_body.animate({ scrollTop: 0 }, 500);
-
-            // scroll to bottom:
-            // scroll_body.animate({ scrollTop: scroll_body.get(0).scrollHeight }, 500);
 
             data_table.row.add([
                 '', [], 'none',
@@ -718,7 +679,6 @@ module.exports = {
         var tbody = $('#div_column_app tbody');
 
         tbody.on('click', 'button.valid_col', function() {
-            lg.warn('>> VALID COL')
             var tr = $(this).parents('tr');
             var table = $(this).parents('table');
             self.update_col_lists();
@@ -815,12 +775,51 @@ module.exports = {
             tr.find('input, select').removeAttr('disabled');
 
             tr.addClass('edit_row');
-
-            // TODO: enable precision only if data type = float
-
             tools.enable_tags_input(tr);
             $('#div_column_app tr').find('button.edit_col, button.rmv_col').attr('disabled', true);
+            self.set_prec_state(
+                tr.find('select[name="sel_cur_prec"]'),
+                tr.find('select[name="sel_cur_data_type"]').val()
+            )
         });
+
+        tbody.on('change', 'select[name="sel_cur_data_type"]',function() {
+            // none > precision 'none' disabled
+            // integer > precision 0 disabled
+            // string > precision 'none' disabled
+            // float > precision 1 enabled
+            var sel_val = $(this).val();
+
+            // TODO: update the cell value instead of manipulating the html object
+
+            var prec_obj = $(this).parent().parent().find('select[name="sel_cur_prec"]');
+            self.set_prec_state(prec_obj, sel_val);
+        });
+
+        tbody.on('change', 'input[name="txt_col_name"]', function() {
+            var td = $(this).parent('td');
+            $('#table_column_app').DataTable().cell(td).data($(this).val().toUpperCase());
+        });
+    },
+
+    /* Possible data type values:
+     *   none > precision 'none' disabled
+     *   integer > precision 0 disabled
+     *   string, time, date > precision 'none' disabled
+     *   float > precision 1 enabled
+    */
+    set_prec_state: function(prec_obj, data_type) {
+        var self = this;
+        if (['none', 'string', 'time', 'date'].includes(data_type)) {
+            prec_obj.val('none');
+            prec_obj.attr('disabled', true);
+        } else if (data_type == 'integer') {
+            prec_obj.val('0');
+            prec_obj.attr('disabled', true);
+        } else if (data_type == 'float') {
+            prec_obj.val('1')
+            prec_obj.attr('disabled', false);
+        }
     },
 
     create_row: function(tr=false) {
@@ -938,7 +937,8 @@ module.exports = {
         tr.find('input[name="cb_basic"]').removeAttr('disabled');
         tr.find('input[name="cb_required"]').removeAttr('disabled');
         tr.find('input[name="cb_non_qc"]').removeAttr('disabled');
-        tr.find('select[name="sel_cur_prec"]').removeAttr('disabled');
+        var prec_obj = tr.find('select[name="sel_cur_prec"]');
+        self.set_prec_state(prec_obj, tr.find('select[name="sel_cur_data_type"]').val());
         tr.find('input[name="txt_cur_unit"]').removeAttr('disabled');
 
         tr.find('.discard_col, .valid_col').css('display', 'inline-block');
