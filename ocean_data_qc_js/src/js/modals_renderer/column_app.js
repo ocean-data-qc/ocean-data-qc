@@ -36,6 +36,7 @@ module.exports = {
             tools.load_modal(url, function() {
                 self.parse_data();
                 self.set_add_col_bt();
+                $('[data-toggle="tooltip"]').tooltip();
             });
         } else {
             tools.show_modal({
@@ -57,103 +58,249 @@ module.exports = {
 
     parse_data: function() {
         var self = this;
-        var cols = Object.keys(self.cs_cols);  // are they sorted?
-
-        for (var i = 0; i < cols.length; i++) {
-            var col_name = cols[i];
-            var txt_col_name = self.get_txt_col_name(col_name);
-            var txt_external_name = self.get_txt_external_name(col_name);
-            var data_type = self.get_data_type(col_name);
-
-            var basic_field = self.get_cb_field(i, col_name, 'basic');
-            var required_field = self.get_cb_field(i, col_name, 'required');
-            var non_qc_field = self.get_cb_field(i, col_name, 'non_qc');
-
-            var sel_cur_prec = self.get_cur_prec(col_name, data_type);
-            var txt_cur_unit = self.get_txt_cur_unit(col_name);
-            var bt_edit = self.get_edit_bt();
-            var bt_rmv = self.get_rmv_bt();
-            var bt_valid = self.get_valid_bt();
-            var bt_discard = self.get_discard_bt();
-
-            var tr = $('<tr>');
-            tr.append(
-                $('<td>', {html: txt_col_name }),
-                $('<td>', {html: txt_external_name }),
-                $('<td>', {html: data_type }),
-
-                $('<td>', {html: basic_field }),
-                $('<td>', {html: required_field }),
-                $('<td>', {html: non_qc_field }),
-
-                $('<td>', {html: sel_cur_prec }),
-                $('<td>', {html: txt_cur_unit }),
-                $('<td>', {html: [bt_edit, bt_rmv, bt_valid, bt_discard] }),
-            );
-
-            $('#table_column_app tbody').append(tr);
-
-        }
-        $('[data-toggle="tooltip"]').tooltip();
-
         $('#column_app_win').on('shown.bs.modal', function (e) {
-            setTimeout(function() {
-                self.data_table = $('#table_column_app').DataTable({  // TODO: show only when rendered
-                    scrollY: 400,
-                    scrollCollapse: true,
-                    paging: false,
-                    searching: true,
-                    ordering: true,
-                    order: [[ 0, 'asc' ]],  // this is the value by default
-                    info: false,
-                    columnDefs: [
-                        { targets: '_all', visible: true, },
-                        { targets: [8], orderable: false, searchable: false, },
-                        { targets: [3, 4, 5], orderable: false, },
-                    ],
-                    initComplete: function () {
-                        $('#div_column_app').animate({ opacity: 1, }, { duration: 100, });
-                        tools.set_tags_input();
-                        tools.disable_tags_input();
+            self.data_table = $('#table_column_app').DataTable({  // TODO: show only when rendered
+                scrollY: 400,
+                scrollCollapse: true,
+                paging: false,
+                searching: true,
+                ordering: true,
+                order: [[ 0, 'asc' ]],  // this is the value by default
+                info: false,
+                columnDefs: [
+                    { targets: '_all', visible: true, },
+                    {
+                        targets: 0,
+                        type: 'html',
+                        render: function (data, type, row, meta) {
+                            if (type == 'display') {
+                                return self.get_txt_col_name(data);
+                            } else {
+                                return data;
+                            }
+                        },
+                        width: '6rem',
                     },
-
-                    // to keep the scroll position after draw() method
-                    preDrawCallback: function (settings) {
-                        self.scroll_pos = $('#div_column_app div.dataTables_scrollBody').scrollTop();
+                    {
+                        targets: 1,
+                        type: 'html',
+                        render: function (data, type, row, meta) {
+                            if (type == 'display') {
+                                return self.get_txt_external_name(data);
+                            } else {
+                                return data;
+                            }
+                        },
+                        width: '6rem',
                     },
-                    drawCallback: function (settings) {
-                        $('#div_column_app div.dataTables_scrollBody').scrollTop(self.scroll_pos);
-                    }
-                });
-
-                $('#table_column_app_filter input[type="search"]').off().on('keyup', function() {
-                    // This disables the Datatables event handler for the default search input and creates its own below.
-                    // It uses draw() to draw the table which will invoke the search plugins.
-                    $('#table_column_app').DataTable().draw();
-                });
-
-                $.fn.dataTable.ext.search.push(
-                    function(settings, searchData, index, rowData, rowIndex ) {
-                        if ( settings.nTable.id === 'table_column_app' ) {
-                            // there has to be a better way to get the current search value
-                            var s = $('#table_column_app_filter input[type="search"]').val().toUpperCase();
-
-                            // var res = self.search_in_tags(index, s);
-
-                            // rowData is an array with the original cell contents as strings
-                            var col_name = $(rowData[0]).val();  // column 0
-
-                            if (col_name.includes(s)) {
-                                return true;
+                    {
+                        targets: 2,
+                        type: 'html',
+                        render: function (data, type, row, meta) {
+                            if (type == 'display') {
+                                return self.get_data_type(data);
+                            } else {
+                                return data;
+                            }
+                        },
+                        width: '3rem',
+                    },
+                    {
+                        targets: 3,
+                        type: 'html-num',
+                        render: function (data, type, row, meta) {
+                            if (type == 'display') {
+                                return self.get_cb_field(
+                                    meta.row,   // meta => col, row
+                                    data,
+                                    'basic'
+                                );
+                            } else {
+                                return data;
+                            }
+                        },
+                        width: '0.3rem',
+                        searchable: false
+                    },
+                    {
+                        targets: 4,
+                        type: 'html-num',
+                        render: function (data, type, row, meta) {
+                            if (type == 'display') {
+                                return self.get_cb_field(
+                                    meta.row,   // meta => col, row
+                                    data,
+                                    'required'
+                                );
+                            } else {
+                                return data;
+                            }
+                        },
+                        width: '0.3rem',
+                        searchable: false
+                    },
+                    {
+                        targets: 5,
+                        type: 'html-num',
+                        render: function (data, type, row, meta) {
+                            if (type == 'display') {
+                                return self.get_cb_field(
+                                    meta.row,   // meta => col, row
+                                    data,
+                                    'non_qc'
+                                );
+                            } else {
+                                return data;
+                            }
+                        },
+                        width: '0.3rem',
+                        searchable: false
+                    },
+                    {
+                        targets: 6,
+                        type: 'html',
+                        render: function (data, type, row, meta) {
+                            if (type == 'display') {
+                                return self.get_prec($(row[2]).val(), data);
+                            } else {
+                                return data;
+                            }
+                        },
+                        width: '3rem',
+                    },
+                    {
+                        targets: 7,
+                        type: 'html',
+                        render: function (data, type, row, meta) {
+                            if (type == 'display') {
+                                return self.get_unit(data);
+                            } else {
+                                return data;
+                            }
+                        },
+                        width: '3rem',
+                    },
+                    {
+                        targets: 8,
+                        type: 'html',
+                        render: function (data, type, row, meta) {
+                            if (type == 'display') {
+                                return [
+                                    self.get_edit_bt(),
+                                    self.get_rmv_bt(),
+                                    self.get_valid_bt(),
+                                    self.get_discard_bt()
+                                ].join('');
                             } else {
                                 return false;
                             }
+                        },
+                        width: '3rem',
+                        searchable: false,
+                        orderable: false
+                    },
+                ],
+                initComplete: function () {
+                    const api = this.api()
+                    self.populate_rows(api);
+                    self.set_events();
+
+                    $('#div_column_app').animate({ opacity: 1, }, { duration: 100, });
+                    tools.set_tags_input();
+                    tools.disable_tags_input();
+                },
+
+                // to keep the scroll position after draw() method
+                preDrawCallback: function (settings) {
+                    self.scroll_pos = $('#div_column_app div.dataTables_scrollBody').scrollTop();
+                },
+                drawCallback: function (settings) {
+                    $('#div_column_app div.dataTables_scrollBody').scrollTop(self.scroll_pos);
+                }
+            });
+
+            $('#table_column_app_filter input[type="search"]').off().on('keyup', function() {
+                // This disables the Datatables event handler for the default search input and creates its own below.
+                // It uses draw() to draw the table which will invoke the search plugins.
+                $('#table_column_app').DataTable().draw();
+            });
+
+            $.fn.dataTable.ext.search.push(
+                function(settings, searchData, index, rowData, rowIndex ) {
+                    if ( settings.nTable.id === 'table_column_app' ) {
+                        // there has to be a better way to get the current search value
+                        var s = $('#table_column_app_filter input[type="search"]').val().toUpperCase();
+
+                        // var res = self.search_in_tags(index, s);
+
+                        // rowData is an array with the original cell contents as strings
+                        var col_name = rowData[0];  // column 0
+
+                        if (col_name.includes(s)) {
+                            return true;
+                        } else {
+                            return false;
                         }
                     }
-                );
-            }, 500);
+                }
+            );
         });
         $('#modal_column_app').click();
+    },
+
+    populate_rows: function(api) {
+        var self = this;
+
+        var self = this;
+        var cols = Object.keys(self.cs_cols);
+        cols.sort();
+        for (var i = 0; i < cols.length; i++) {
+            var col_name = cols[i];
+
+            var external_name = [];
+            if (col_name !== false) {
+                external_name = self.cs_cols[col_name]['external_name'];
+            }
+            var tags_input = external_name.join(',');
+
+            var data_type = '';
+            if (col_name !== false) {
+                var data_type = self.cs_cols[col_name]['data_type'];
+            }
+
+            var attrs = self.cs_cols[col_name]['attrs'];
+            var basic = false;
+            if (attrs.includes('basic')) {
+                basic = true;
+            }
+            var required = false;
+            if (attrs.includes('required')) {
+                required = true;
+            }
+            var non_qc = false;
+            if (attrs.includes('non_qc')) {
+                non_qc = true;
+            }
+
+            var prec = 'none';
+            if (col_name !== false) {
+                prec = self.cs_cols[col_name]['precision'];
+            }
+
+            var unit = '';
+            if (col_name !== false) {
+                if (self.cs_cols[col_name]['unit'] !== false) {
+                    unit = self.cs_cols[col_name]['unit'];
+                }
+            }
+
+            api.row.add([
+                col_name, tags_input, data_type,
+                basic, required, non_qc,
+                prec, unit
+            ])
+        }
+        api.draw();
     },
 
     search_in_tags: function(index, s) {
@@ -199,32 +346,23 @@ module.exports = {
             var td = $(this).parent('td');
             $('#table_column_app').DataTable().cell(td).data(td.html());
         });
-        return input;
+        return input.prop('outerHTML');
     },
 
-    get_txt_external_name: function(col_name=false) {
+    get_txt_external_name: function(data=false) {
         var self = this;
-        var external_name = [];
-        if (col_name !== false) {
-            external_name = self.cs_cols[col_name]['external_name'];
-        }
-        var tags_input = external_name.join(',');
         return $('<input>', {
             'name': 'txt_external_name',
             'class': 'form-control form-control-sm',
             'type': 'text',
             'data-role': 'tagsinput',
-            'value': tags_input,
+            'value': data,
             'disabled': true
-        });
+        }).prop('outerHTML');
     },
 
-    get_data_type: function(col_name=false) {
+    get_data_type: function(data_type=false) {
         var self = this;
-        var tmp_data_type = '';
-        if (col_name !== false) {
-            var tmp_data_type = self.cs_cols[col_name]['data_type'];
-        }
         var sel_cur_data_type = $('<select>', {
             class: 'form-control form-control-sm',
             name: 'sel_cur_data_type',
@@ -240,29 +378,21 @@ module.exports = {
                 value: o,
                 text: o
             });
-            if (o === 'none' && (tmp_data_type === '' || tmp_data_type === false)) {
+            if (o === 'none' && (data_type === '' || data_type === false)) {
                 opt.attr("selected","selected");
             }
-            if (tmp_data_type === o) {
+            if (data_type === o) {
                 opt.attr("selected","selected");
             }
             sel_cur_data_type.append(opt);
         });
         self.sel_data_type_change(sel_cur_data_type);
-        return sel_cur_data_type;
+        return sel_cur_data_type.prop('outerHTML');
     },
 
-    get_cb_field: function(row=false, col_name=false, type=false) {  // if col_name = fals >> new row
+    get_cb_field: function(row=false, checked=false, type=false) {  // if col_name = fals >> new row
         var self = this;
         if (type !== false) {
-            var attrs = [];
-            if (col_name !== false) {
-                var attrs = self.cs_cols[col_name]['attrs'];
-            }
-            var checked = false;
-            if (attrs.length > 0 && attrs.includes(type)) {
-                checked = true;
-            }
             var cb_export = $('<div>', {
                 class: 'form-check abc-checkbox abc-checkbox-primary'
             }).append(
@@ -280,7 +410,7 @@ module.exports = {
                     class: 'form-check-label'
                 })
             );
-            return cb_export
+            return cb_export.prop('outerHTML');
         }
     },
 
@@ -292,6 +422,9 @@ module.exports = {
             // string > precision 'none' disabled
             // float > precision 1 enabled
             var sel_val = $(this).val();
+
+            // TODO: update the cell value instead of manipulating the html object
+
             var prec_obj = $(this).parent().parent().find('select[name="sel_cur_prec"]');
             if (sel_val === 'none' || sel_val === 'string') {
                 prec_obj.val('none');
@@ -306,12 +439,8 @@ module.exports = {
         });
     },
 
-    get_cur_prec: function(col_name=false, sel_cur_data_type=false) {
+    get_prec: function(data_type=false, prec=false) {
         var self = this;
-        var tmp_prec = 'none';
-        if (col_name !== false) {
-            tmp_prec = self.cs_cols[col_name]['precision'];
-        }
         var sel_cur_prec = $('<select>', {
             class: 'form-control form-control-sm',
             name: 'sel_cur_prec',
@@ -326,45 +455,39 @@ module.exports = {
                 value: j,
                 text: j
             });
-            if (tmp_prec === j) {
+            if (prec === j) {
                 opt.attr("selected","selected");
                 sel_cur_prec.attr('disabled', false);
             }
             sel_cur_prec.append(opt);
         }
-        if ((tmp_prec === false || tmp_prec == 0) && sel_cur_data_type !== false) {
-            if (sel_cur_data_type.val() == 'integer') {
+        if ((prec === false || prec == 0) && data_type !== false) {
+            if (data_type.val() == 'integer') {
                 sel_cur_prec.attr('disabled', true);
                 sel_cur_prec.val('0');
             }
-            if (['string', 'none'].includes(sel_cur_data_type.val())) {
+            if (['string', 'none'].includes(data_type.val())) {
                 sel_cur_prec.attr('disabled', true);
                 sel_cur_prec.val('none');
             }
         }
-        return sel_cur_prec
+        return sel_cur_prec.prop('outerHTML');
     },
 
-    get_txt_cur_unit: function(col_name=false) {
+    get_unit: function(unit=false) {
         var self = this;
-        var cur_unit = '';
-        if (col_name !== false) {
-            if (self.cs_cols[col_name]['unit'] !== false) {
-                cur_unit = self.cs_cols[col_name]['unit'];
-            }
-        }
-        var txt_cur_unit = $('<input>', {
+        var txt_unit = $('<input>', {
             name: 'txt_cur_unit',
             class: 'form-control form-control-sm',
             type: 'text',
-            value: cur_unit,
+            value: unit,
             disabled: true,
         });
         // TODO: ask if string fields can have units
         // if (self.cs_cols[col_name]['data_type'] === 'string') {
-        //     txt_cur_unit.attr('disabled', true);
+        //     txt_unit.attr('disabled', true);
         // }
-        return txt_cur_unit;
+        return txt_unit.prop('outerHTML');
     },
 
     get_edit_bt: function() {
@@ -373,31 +496,7 @@ module.exports = {
             class: 'edit_col btn btn-warning fa fa-pencil',
             type: 'button'
         });
-        bt.on('click', function() {
-            var tr = $(this).parents('tr');
-            self.tmp_record = {
-                bgcolor: tr.css('background-color'),  // move to some class
-                col_name: tr.find('input[name="txt_col_name"]').val().toUpperCase(),
-                external_name: tr.find('input[name="txt_external_name"]').tagsinput('items').slice(),  // slice() to make a copy by value
-                data_type: tr.find('select[name="sel_cur_data_type"]').val(),
-                basic: tr.find('input[name="cb_basic"]').prop('checked'),
-                required: tr.find('input[name="cb_required"]').prop('checked'),
-                non_qc: tr.find('input[name="cb_non_qc"]').prop('checked'),
-                cur_prec: tr.find('select[name="sel_cur_prec"]').val(),
-                cur_unit: tr.find('input[name="txt_cur_unit"]').val(),
-            }
-            tr.find('.discard_col, .valid_col').css('display', 'inline-block');
-            tr.find('.rmv_col, .edit_col').css('display', 'none');
-            tr.find('input, select').removeAttr('disabled');
-
-            tr.addClass('edit_row');
-
-            // TODO: enable precision only if data type = float
-
-            tools.enable_tags_input(tr);
-            $('#div_column_app tr').find('button.edit_col, button.rmv_col').attr('disabled', true);
-        });
-        return bt;
+        return bt.prop('outerHTML');
     },
 
     get_rmv_bt: function() {
@@ -406,26 +505,7 @@ module.exports = {
             class: 'rmv_col btn btn-danger fa fa-trash',
             type: 'button'
         });
-        bt.on('click', function() {
-            var tr = $(this).parents('tr');
-            var col = tr.find('input[name="txt_col_name"]').val();
-
-            if (self.check_col_in_cps(col) && self.check_col_in_tabs(col)) {
-                tools.modal_question({
-                    'title': 'Remove row?',
-                    'msg': 'Are you sure you want to remove this row?',
-                    'callback_yes': function() {
-                        var data_table = $('#table_column_app').DataTable();  // get the obj reference if it is already crated
-                        data_table.row(tr).remove().draw();
-                        delete self.cs_cols[col];
-                        data.set({'columns': self.cs_cols }, loc.custom_settings);
-                        tools.show_snackbar('Column ' + col + ' removed');
-                    },
-                    'self': self
-                });
-            }
-        });
-        return bt;
+        return bt.prop('outerHTML');
     },
 
     check_col_in_cps: function(col=false) {
@@ -484,86 +564,31 @@ module.exports = {
             type: 'button',
             style: 'display: none;'
         });
-        bt.on('click', function() {
-            var tr = $(this).parents('tr');
-            if ($.isEmptyObject(self.tmp_record)) {
-                // discard new_row
-                var data_table = $('#table_column_app').DataTable();
-                data_table.row(tr).remove().draw();
-                return;
-            }
-            tr.find('input[name="txt_col_name"]').val(self.tmp_record.col_name);
-            var ti = tr.find('input[name="txt_external_name"]');
-            ti.tagsinput('removeAll');
-            self.tmp_record.external_name.forEach(function(value) {
-                ti.tagsinput('add', value);
-            })
-
-            tr.find('select[name="sel_cur_data_type"]').val(self.tmp_record.data_type);
-            tr.find('input[name="cb_basic"]').prop('checked', self.tmp_record.basic);
-            tr.find('input[name="cb_required"]').prop('checked', self.tmp_record.required);
-            tr.find('input[name="cb_non_qc"]').prop('checked', self.tmp_record.non_qc);
-            tr.find('select[name="sel_cur_prec"]').val(self.tmp_record.cur_prec);
-            tr.find('input[name="txt_cur_unit"]').val(self.tmp_record.cur_unit);
-
-            tr.find('.discard_col, .valid_col').css('display', 'none');
-            tr.find('.rmv_col, .edit_col').css('display', 'inline-block');
-            tr.find('input, select').attr('disabled', true);
-
-            // tr.css('background-color', self.tmp_record.bgcolor);
-            tr.removeClass('edit_row');
-
-            tools.disable_tags_input();
-            self.tmp_record = {};
-            $('#div_column_app tr').find('button.edit_col, button.rmv_col').removeAttr('disabled');
-        });
-        return bt;
+        return bt.prop('outerHTML');
     },
 
     set_add_col_bt: function() {
         var self = this;
         $('#add_column').on('click', function() {
+            $('#add_column').attr('disabled', true);
             var data_table = $('#table_column_app').DataTable();
 
             var scroll_body = $(data_table.table().node()).parent();
-            scroll_body.animate({ scrollTop: scroll_body.get(0).scrollHeight }, 500);
+            scroll_body.animate({ scrollTop: 0 }, 500);
 
-            var new_row_i = data_table.data().length;
+            // scroll to bottom:
+            // scroll_body.animate({ scrollTop: scroll_body.get(0).scrollHeight }, 500);
 
-            var txt_col_name = self.get_txt_col_name();
-            var txt_external_name = self.get_txt_external_name();
-            var data_type = self.get_data_type();
+            data_table.row.add([
+                '', [], 'none',
+                false, false, false,
+                'none', '', ''
+            ]).draw();
 
-            var basic_field = self.get_cb_field(new_row_i, false, 'basic');
-            var required_field = self.get_cb_field(new_row_i, false, 'required');
-            var non_qc_field = self.get_cb_field(new_row_i, false, 'non_qc');
-
-            var sel_cur_prec = self.get_cur_prec();
-            var txt_cur_unit = self.get_txt_cur_unit();
-            var bt_edit = self.get_edit_bt();
-            var bt_rmv = self.get_rmv_bt();
-            var bt_valid = self.get_valid_bt();
-            var bt_discard = self.get_discard_bt();
-
-            var tr = $('<tr>', {
-                class: 'new_row'
-            });
-            tr.append(
-                $('<td>', {html: txt_col_name }),
-                $('<td>', {html: txt_external_name }),
-                $('<td>', {html: data_type }),
-
-                $('<td>', {html: basic_field }),
-                $('<td>', {html: required_field }),
-                $('<td>', {html: non_qc_field }),
-
-                $('<td>', {html: sel_cur_prec }),
-                $('<td>', {html: txt_cur_unit }),
-                $('<td>', {html: [bt_edit, bt_rmv, bt_valid, bt_discard] }),
-            );
-            data_table.row.add(tr).draw();
+            var tr = $('#table_column_app tbody tr').eq(0);
+            tr.addClass('new_row');
             tools.set_tags_input(tr);
-            self.enable_row(tr)
+            self.enable_row(tr);
             $(tr).find('input[name="txt_col_name"]').focus();
             $('#div_column_app tr').find('button.edit_col, button.rmv_col').attr('disabled', true);
         });
@@ -578,30 +603,7 @@ module.exports = {
             'style': 'display: none;',
         });
         bt.tooltip();
-
-        bt.on('click', function() {
-            var tr = $(this).parents('tr');
-            var table = $(this).parents('table');
-            self.update_col_lists();
-
-            if (self.check_valid_col_name(tr) === false) {
-                return;
-            }
-
-            if (self.check_tagsinput(table, tr) === false) {
-                return;
-            }
-            if (tr.hasClass('new_row')) {
-                self.create_row(tr);
-            } else {
-                self.update_row(tr);
-            }
-            self.disable_row(tr);  // back to the new normal >> everything disabled
-
-            $('#table_column_app').DataTable().draw();
-            $('#div_column_app tr').find('button.edit_col, button.rmv_col').removeAttr('disabled');
-        });
-        return bt
+        return bt.prop('outerHTML');
     },
 
     check_valid_col_name: function(tr=false) {
@@ -711,6 +713,116 @@ module.exports = {
         return res;
     },
 
+    set_events: function() {
+        var self = this;
+        var tbody = $('#div_column_app tbody');
+
+        tbody.on('click', 'button.valid_col', function() {
+            lg.warn('>> VALID COL')
+            var tr = $(this).parents('tr');
+            var table = $(this).parents('table');
+            self.update_col_lists();
+
+            if (self.check_valid_col_name(tr) === false) {
+                return;
+            }
+
+            if (self.check_tagsinput(table, tr) === false) {
+                return;
+            }
+            if (tr.hasClass('new_row')) {
+                self.create_row(tr);
+            } else {
+                self.update_row(tr);
+            }
+            self.disable_row(tr);  // back to the new normal >> everything disabled
+
+            $('#table_column_app').DataTable().draw();
+            $('#div_column_app tr').find('button.edit_col, button.rmv_col').removeAttr('disabled');
+            $('#add_column').removeAttr('disabled');
+        });
+
+        tbody.on('click', 'button.discard_col', function() {
+            $('#add_column').removeAttr('disabled');
+            var tr = $(this).parents('tr');
+            if ($.isEmptyObject(self.tmp_record)) {
+                // discard new_row
+                var data_table = $('#table_column_app').DataTable();
+                data_table.row(tr).remove().draw();
+                return;
+            }
+            tr.find('input[name="txt_col_name"]').val(self.tmp_record.col_name);
+            var ti = tr.find('input[name="txt_external_name"]');
+            ti.tagsinput('removeAll');
+            self.tmp_record.external_name.forEach(function(value) {
+                ti.tagsinput('add', value);
+            })
+
+            tr.find('select[name="sel_cur_data_type"]').val(self.tmp_record.data_type);
+            tr.find('input[name="cb_basic"]').prop('checked', self.tmp_record.basic);
+            tr.find('input[name="cb_required"]').prop('checked', self.tmp_record.required);
+            tr.find('input[name="cb_non_qc"]').prop('checked', self.tmp_record.non_qc);
+            tr.find('select[name="sel_cur_prec"]').val(self.tmp_record.cur_prec);
+            tr.find('input[name="txt_cur_unit"]').val(self.tmp_record.cur_unit);
+
+            tr.find('.discard_col, .valid_col').css('display', 'none');
+            tr.find('.rmv_col, .edit_col').css('display', 'inline-block');
+            tr.find('input, select').attr('disabled', true);
+
+            // tr.css('background-color', self.tmp_record.bgcolor);
+            tr.removeClass('edit_row');
+
+            tools.disable_tags_input();
+            self.tmp_record = {};
+            $('#div_column_app tr').find('button.edit_col, button.rmv_col').removeAttr('disabled');
+        });
+
+        tbody.on('click', 'button.rmv_col', function() {
+            var tr = $(this).parents('tr');
+            var col = tr.find('input[name="txt_col_name"]').val();
+
+            if (self.check_col_in_cps(col) && self.check_col_in_tabs(col)) {
+                tools.modal_question({
+                    'title': 'Remove row?',
+                    'msg': 'Are you sure you want to remove this row?',
+                    'callback_yes': function() {
+                        var data_table = $('#table_column_app').DataTable();  // get the obj reference if it is already crated
+                        data_table.row(tr).remove().draw();
+                        delete self.cs_cols[col];
+                        data.set({'columns': self.cs_cols }, loc.custom_settings);
+                        tools.show_snackbar('Column ' + col + ' removed');
+                    },
+                    'self': self
+                });
+            }
+        });
+
+        tbody.on('click', 'button.edit_col', function() {
+            var tr = $(this).parents('tr');
+            self.tmp_record = {
+                bgcolor: tr.css('background-color'),  // move to some class
+                col_name: tr.find('input[name="txt_col_name"]').val().toUpperCase(),
+                external_name: tr.find('input[name="txt_external_name"]').tagsinput('items').slice(),  // slice() to make a copy by value
+                data_type: tr.find('select[name="sel_cur_data_type"]').val(),
+                basic: tr.find('input[name="cb_basic"]').prop('checked'),
+                required: tr.find('input[name="cb_required"]').prop('checked'),
+                non_qc: tr.find('input[name="cb_non_qc"]').prop('checked'),
+                cur_prec: tr.find('select[name="sel_cur_prec"]').val(),
+                cur_unit: tr.find('input[name="txt_cur_unit"]').val(),
+            }
+            tr.find('.discard_col, .valid_col').css('display', 'inline-block');
+            tr.find('.rmv_col, .edit_col').css('display', 'none');
+            tr.find('input, select').removeAttr('disabled');
+
+            tr.addClass('edit_row');
+
+            // TODO: enable precision only if data type = float
+
+            tools.enable_tags_input(tr);
+            $('#div_column_app tr').find('button.edit_col, button.rmv_col').attr('disabled', true);
+        });
+    },
+
     create_row: function(tr=false) {
         lg.info('-- CREATE ROW');
         var self = this;
@@ -745,13 +857,16 @@ module.exports = {
         var new_col_name = tr.find('input[name="txt_col_name"]').val().toUpperCase();
 
         var attrs = [];
-        if (tr.find('input[name="cb_basic"]').prop('checked')) {
+        var basic = tr.find('input[name="cb_basic"]').prop('checked')
+        if (basic) {
             attrs.push('basic');
         }
-        if (tr.find('input[name="cb_required"]').prop('checked')) {
+        var required = tr.find('input[name="cb_required"]').prop('checked');
+        if (required) {
             attrs.push('required');
         }
-        if (tr.find('input[name="cb_non_qc"]').prop('checked')) {
+        var non_qc = tr.find('input[name="cb_non_qc"]').prop('checked');
+        if (non_qc) {
             attrs.push('non_qc');
         }
 
@@ -773,11 +888,30 @@ module.exports = {
 
         self.cs_cols[new_col_name] = {
             external_name: external_name,
-            data_type: tr.find('select[name="sel_cur_data_type"]').val(),
+            data_type: data_type,
             attrs: attrs,
             unit: unit,
             precision: precision,
         }
+
+        if (precision == false) {
+            precision = 'none';
+        }
+        if (unit === false) {
+            unit = '';
+        }
+
+        var dt = $('#table_column_app').DataTable()
+        var dt_row = dt.row(tr);
+        dt_row.data([
+            new_col_name, external_name.join(','), data_type,
+            basic, required, non_qc,
+            precision, unit
+        ]);
+        dt.draw();
+
+        tools.set_tags_input(tr);
+        // tools.disable_tags_input();
     },
 
     disable_row: function(tr=false) {
