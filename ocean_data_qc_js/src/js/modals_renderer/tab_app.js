@@ -27,6 +27,9 @@ module.exports = {
         ipcRenderer.on('tab-app', (event, args) => {
             self.init_form();
         });
+        ipcRenderer.on('update-tab-app', (event, args) => {
+            self.reset_tabs();
+        });
     },
 
     init_form: function() {
@@ -130,7 +133,7 @@ module.exports = {
 
     },
 
-    load_save_button() {
+    load_save_button: function() {
         $('.save_settings').on('click', function() {
             // validations
             if ($('#qc_tabs_table-0').length == 0) {
@@ -195,7 +198,8 @@ module.exports = {
         });
     },
 
-    load_column_app_button() {  // TODO: migrate to tab_app
+    load_column_app_button: function() {
+        var self = this;
         $('.column_app').on('click', function() {
             column_app.load();
         });
@@ -310,5 +314,15 @@ module.exports = {
             'data-content': $('#performance_help').html()
         });
         tools.load_popover();
+    },
+
+    reset_tabs: function() {
+        lg.warn('>> RESET TABS');
+        var self = this;
+        $('#qc_tabs_container fieldset').not(
+            $('#qc_tabs_container fieldset').eq(0)
+        ).remove();
+        self.load_columns();
+        self.load_tabs();
     }
 }

@@ -15,6 +15,8 @@ require('datatables.net-bs4')(window, $);
 require('datatables.net-colreorder-bs4')(window, $);
 require('datatables.net-fixedheader-bs4')(window, $);
 
+const { ipcRenderer } = require('electron');
+
 const loc = require('locations');
 const lg = require('logging');
 const data = require('data');
@@ -25,7 +27,6 @@ module.exports = {
     load: function() {
         lg.info('-- LOAD DATA COL SETTINGS')
         var self = this;
-
         self.tmp_record = {}
         self.cs_cols = data.get('columns', loc.custom_settings);
         self.cps = data.get('computed_params', loc.custom_settings);
@@ -447,10 +448,6 @@ module.exports = {
             value: unit,
             disabled: true,
         });
-        // TODO: ask if string fields can have units
-        // if (self.cs_cols[col_name]['data_type'] === 'string') {
-        //     txt_unit.attr('disabled', true);
-        // }
         return txt_unit.prop('outerHTML');
     },
 
@@ -697,6 +694,7 @@ module.exports = {
             }
             self.disable_row(tr);  // back to the new normal >> everything disabled
 
+            ipcRenderer.send('update-tab-app');
             $('#table_column_app').DataTable().draw();
             $('#div_column_app tr').find('button.edit_col, button.rmv_col').removeAttr('disabled');
             $('#add_column').removeAttr('disabled');
@@ -750,6 +748,7 @@ module.exports = {
                         data_table.row(tr).remove().draw();
                         delete self.cs_cols[col];
                         data.set({'columns': self.cs_cols }, loc.custom_settings);
+                        ipcRenderer.send('update-tab-app');
                         tools.show_snackbar('Column ' + col + ' removed');
                     },
                     'self': self
@@ -838,6 +837,23 @@ module.exports = {
         var new_col_name = tr.find('input[name="txt_col_name"]').val().toUpperCase();
         if (self.tmp_record.col_name != new_col_name) {
             delete self.cs_cols[self.tmp_record.col_name];
+
+            // update plot and key tab names
+            var tabs = data.get('qc_plot_tabs', loc.custom_settings);
+            tabs[new_col_name] = tabs[self.tmp_record.col_name].slice();
+            delete tabs[self.tmp_record.col_name];
+            Object.keys(tabs).sort().forEach(function(t) {
+                tabs[t].forEach(function(p) {
+                    if (p.x == self.tmp_record.col_name) {
+                        p.x = new_col_name;
+                    }
+                    if (p.y == self.tmp_record.col_name) {
+                        p.y = new_col_name;
+                    }
+                });
+            });
+            data.set({'qc_plot_tabs': tabs }, loc.custom_settings);  // order tabs before?
+                                                                     // if a tab is modified it will appear always at the bottom
         }
 
         self.cps.forEach(function(elem) {
@@ -845,9 +861,12 @@ module.exports = {
             elem.equation = elem.equation.split(re).join(new_col_name);  // this updates self.cps
         });
 
-        // TODO: order columns and params by key?
+        var ord_cols = {}
+        Object.keys(self.cs_cols).sort().forEach(function(c) {
+            ord_cols[c] = self.cs_cols[c];
+        });
 
-        data.set({'columns': self.cs_cols}, loc.custom_settings);
+        data.set({'columns': ord_cols}, loc.custom_settings);
         data.set({'computed_params': self.cps}, loc.custom_settings);
     },
 
@@ -945,5 +964,16 @@ module.exports = {
         tr.find('.rmv_col, .edit_col').css('display', 'none');
 
         tools.enable_tags_input(tr);
+    },
+
+    reset_tab_app: function() {
+        var self = this;
+        // tab_app.reset_tabs();
+
+        // $('#qc_tabs_container fieldset').not(
+        //     $('#qc_tabs_container fieldset').eq(0)
+        // ).remove();
+        // tab_app.load_columns();   // we can have the refences to the objects (columns)
+        // tab_app.load_tabs();
     }
 }
