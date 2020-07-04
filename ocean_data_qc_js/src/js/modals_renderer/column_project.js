@@ -113,7 +113,8 @@ module.exports = {
                             if (type == 'display') {
                                 return self.get_unit(
                                     $(row[1]).text(),
-                                    data
+                                    data,
+                                    row[3]
                                 );
                             } else {
                                 return data;
@@ -154,7 +155,7 @@ module.exports = {
             var name = self.get_col_name(col_name);
             var data_type = self.get_data_type(col_name)
             var attrs = self.pj_cols[col_name]['attrs'].join(', ');  // TODO: translate to icons or extract just some of them?
-            var set_bt = self.get_set_bt(col_name, i);
+            var set_bt = self.get_set_bt(col_name, self.pj_cols[col_name]['attrs']);
             api.row.add([
                 self.pj_cols[col_name]['export'],
                 name.prop('outerHTML'),
@@ -349,8 +350,10 @@ module.exports = {
         return sel_cur_prec.prop('outerHTML');
     },
 
-    get_unit: function(col_name=false, unit=false) {
+    get_unit: function(col_name=false, unit=false, attrs=false) {
         var self = this;
+        lg.warn('>> ATTRS: ' + JSON.stringify(attrs, null, 4));
+        var attrs = attrs.split(', ');
         var u = unit;
         if (unit === false) {
             u = ''
@@ -362,13 +365,13 @@ module.exports = {
             value: u
         });
         var t = ['empty', 'string'];
-        if (t.includes(self.pj_cols[col_name]['data_type'])) {
+        if (t.includes(self.pj_cols[col_name]['data_type']) || attrs.includes('flag')) {
             txt_cur_unit.attr('disabled', true);
         }
         return txt_cur_unit.prop('outerHTML');
     },
 
-    get_set_bt: function(col_name=false) {
+    get_set_bt: function(col_name=false, attrs=false) {
         var self = this;
         var whp_df_unit = false;
         if (col_name in self.cs_cols && self.cs_cols[col_name]['unit'] !== false) {
@@ -392,6 +395,11 @@ module.exports = {
             }
         }
         var set_bt_title_str = set_bt_title.join('<br />')
+
+        if (attrs.includes('flag')) {
+            set_bt_disabled = true;
+            set_bt_title_str = '';
+        }
 
         var set_bt = $('<button>', {
             'type': 'button',
