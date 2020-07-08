@@ -439,7 +439,7 @@ class CruiseData(CruiseDataExport):
                 )
 
         if 'TIME' in self.df:  # fill with zeros on the left: 132 >> 0132
-            self.df['TIME'] = self.df['TIME'].astype(float).apply(lambda x: f'{x:04.0f}')
+            self.df['TIME'] = self.df[self.df['TIME'].notnull()]['TIME'].astype(float).apply(lambda x: f'{x:04.0f}')
 
     def _set_moves(self):
         """ create the self.moves dataframe object
