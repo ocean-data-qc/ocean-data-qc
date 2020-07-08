@@ -55,16 +55,32 @@ class CruiseDataExport(Environment):
             f_out.write(columns_row + '\n')
 
             units = self.get_units(cols)
-            units = [x if x is not False else '' for x in units]
-            units_row = ','.join(units)
-            f_out.write(units_row + '\n')
+            units_vals = []
+            some_unit = False
+            for u in units:
+                if u is not False:
+                    units_vals.append(u)
+                    some_unit = True
+                else:
+                    units_vals.append('')
+            if some_unit:
+                units_str = ','.join(units_vals)
+                f_out.write(units_str + '\n')
 
             aux_df = self.df.copy(deep=True)
-            aux_df = aux_df.replace(np.nan, -999.0)  # float64 fields value will be -999.0
+            aux_df = aux_df.replace(np.nan, -999)  # float64 fields value will be -999.0
             aux_df = self.round_cols(aux_df)
 
             for index, row in aux_df[cols].iterrows():
-                str_row =  ','.join([str(x) for x in row])   # TODO: take values with commas into account
+                str_values = []
+                for v in row:
+                    if isinstance(v, int):
+                        str_values.append(str(v))
+                    elif isinstance(v, float):
+                        str_values.append(str(v).rstrip('0').rstrip('.'))  # remove zeroes and commas
+                    else:  # str
+                        str_values.append(v)
+                str_row =  ','.join(str_values)   # TODO: take values with commas into account
                 f_out.write(str_row + '\n')
 
             f_out.write('END_DATA')
@@ -78,7 +94,7 @@ class CruiseDataExport(Environment):
         if path.isfile(path.join(TMP, 'export_data.csv')):
             os.remove(path.join(TMP, 'export_data.csv'))
         aux_df = self.df.copy(deep=True)
-        aux_df = aux_df.replace(np.nan, -999.0)  # float64 fields value will be -999.0
+        aux_df = aux_df.replace(np.nan, -999)  # float64 fields value will be -999.0
         cols = self.get_cols_to_export()
         aux_df = aux_df.filter(cols)
         aux_df = self.round_cols(aux_df)
@@ -106,7 +122,14 @@ class CruiseDataExport(Environment):
             for c in all_cols.keys():
                 if all_cols[c]['export'] is True and 'computed' not in all_cols[c]['attrs']:
                     cols.append(c)
-        return cols
+
+        # set the order in the current df which should be the order in the original file
+        l = self.df.columns.tolist()
+        ord_cols = []
+        for c in l:
+            if c in cols:
+                ord_cols.append(c)
+        return ord_cols
 
     def round_cols(self, df):
         lg.warning('-- ROUND COLS')
