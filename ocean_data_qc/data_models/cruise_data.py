@@ -37,11 +37,13 @@ class CruiseData(CruiseDataExport):
         self.moves = None
         self.cols = {}
         self.col_mappings = {}                   # to set in external_name
+        self.unit_list = []
 
         self._validate_original_data()
         self._set_moves()                         # TODO: this is not needed for cd_update
         self._set_df()
         self._rmv_empty_columns()
+        self._set_units()
         self._prep_df_columns()
         self.cp_param = ComputedParameter(self)
 
@@ -94,17 +96,19 @@ class CruiseData(CruiseDataExport):
                 }
         """
         lg.info('-- SET COLS ATTRIBUTES FROM SCRATCH')
-        pos = 0
-        column_list = self.df.columns.tolist()
-        units_list = self._check_unit_row()
+        column_list = self.df.columns.tolist() # it may have columns created at the end without unit
 
-        if len(units_list) > 0:
+        if len(self.unit_list) > 0:
+            # refill with 'nan' as we don't have units for those created columns (SAMPNO for instance)
+            while len(self.unit_list) != len(column_list):
+                self.unit_list.append('nan')
+            pos = 0
             for column in column_list:
                 self._add_column(column=column)
-                if str(units_list[pos]) == 'nan':
+                if str(self.unit_list[pos]) == 'nan':
                     self.cols[column]['unit'] = False
                 else:
-                    self.cols[column]['unit'] = units_list[pos]
+                    self.cols[column]['unit'] = self.unit_list[pos]
                 pos += 1
         else:
             for column in column_list:
@@ -116,10 +120,11 @@ class CruiseData(CruiseDataExport):
             # }
             self.cols[value]['external_name'] = [key]
 
+        del self.unit_list
         # lg.info(json.dumps(self.cols, sort_keys=True, indent=4))
 
-    def _check_unit_row(self):
-        ''' Checks if the file has an units row or not.
+    def _set_units(self):
+        ''' Checks if the file has an unit row or not.
             The df should have all strings and nan values
                 * if there is at least one nan in the row               > unit row
                 * if all the cells are strings                          > unit row
@@ -135,9 +140,9 @@ class CruiseData(CruiseDataExport):
                 return s.isdigit()  # to check if all are digits
             return True
 
-        units = self.df.iloc[0].values.tolist()
+        units_raw = self.df.iloc[0].values.tolist()
         no_unit_row = False
-        for u in units:  # the loop continues only if it is a string and not number
+        for u in units_raw:  # the loop continues only if it is a string and not number
             if not isinstance(u, str) and np.isnan(u):
                 break
             if is_number(u):
@@ -145,9 +150,11 @@ class CruiseData(CruiseDataExport):
                 break
         if no_unit_row is False:
             self.df = self.df[1:-1].reset_index(drop=True)  # rewrite index column and remove the units row
-            return units
-        else:
-            return []
+            for u in units_raw:
+                if isinstance(u, str):
+                    self.unit_list.append(u.strip())
+                else:
+                    self.unit_list.append('nan')
 
     def _validate_flag_values(self):
         ''' Assign 9 to the rows where the param has an NaN
@@ -705,7 +712,7 @@ class CruiseData(CruiseDataExport):
         self.env.cruise_data.save_col_attribs()
 
     def _manage_empty_cols(self):
-        lg.warning('-- SET EMPTY COLS')
+        lg.info('-- SET EMPTY COLS')
         cols = self.get_cols_by_attrs(['param', 'non_qc', 'computed'])
         for c in cols:
             if self.df[c].isnull().all():
