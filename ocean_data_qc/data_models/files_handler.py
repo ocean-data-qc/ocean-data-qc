@@ -229,7 +229,7 @@ class FilesHandler(Environment):
               TODO: this is called many times, try to access to disk less by storing the
                     content of columns somewhere (it just has to be updated when the user modify it)
         '''
-        cols = self.get('columns', CUSTOM_SETTINGS)
+        cols = self.get('columns', CUSTOM_SETTINGS) or {}
         l = []
         for c in cols:
             if attr in cols[c]['attrs']:

@@ -508,7 +508,7 @@ class CruiseData(CruiseDataExport):
     def _map_col_names(self, sanitized, non_sanitized):
         lg.info('-- MAP COL NAMES')
         # map column names from custom settings
-        custom_cols = self.env.f_handler.get('columns', CUSTOM_SETTINGS)
+        custom_cols = self.env.f_handler.get('columns', CUSTOM_SETTINGS) or {}
         for c in custom_cols.keys():
             if len(custom_cols[c]['external_name']) > 0:
                 for n in custom_cols[c]['external_name']:
