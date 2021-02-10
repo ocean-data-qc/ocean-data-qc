@@ -43,7 +43,7 @@ def get_package_data():
     }
 
 requires = [
-    'bokeh ==2.1.1',
+    'bokeh ==2.2.3',
     'pandas >=1.0.3',
     'seawater >=3.3.4',
     'more_itertools >=8.2.0',
@@ -72,8 +72,8 @@ setup(
     long_description_content_type="text/markdown",      #       Python Package Index https://pypi.org/
     keywords="ocean data quality control seawater csv whp",
     url='https://www.atlantos-h2020.eu/',
-    author='Jesus Cacabelos',
-    author_email='jcacabelos@iim.csic.es',
+    author='Anton Velo / Jesus Cacabelos',
+    author_email='avelo@iim.csic.es',
     license='MIT',
     install_requires=requires,
     dependency_links=dependency_links,
