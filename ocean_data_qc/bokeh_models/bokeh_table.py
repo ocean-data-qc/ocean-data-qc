@@ -119,7 +119,7 @@ class BokehDataTable(Environment):
             source=table_cds,
             columns=columns,
             editable=True,                  # TODO: check if there is a better way than https://stackoverflow.com/a/49424647/4891717
-            fit_columns=False,              # avoids horizontal scrolls bar
+            autosize_mode='fit_columns',              # avoids horizontal scrolls bar
             index_position=None,            # hides index column
             selectable=True,                # this is needed to edit cells
 

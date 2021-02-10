@@ -196,7 +196,7 @@ module.exports = {
                                 return false;
                             }
                         },
-                        width: '3rem',
+                        width: '3.5rem',
                         searchable: false,
                         orderable: false
                     },
