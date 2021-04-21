@@ -1,8 +1,17 @@
-# AtlantOS Ocean Data QC [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2603121.svg)](https://doi.org/10.5281/zenodo.2603121)
+# GLODAP QC1 Tool [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2603121.svg)](https://doi.org/10.5281/zenodo.2603121)
 
 This software is an interactive tool for making the first Quality Control (1st QC, QC1) on Hydrographic Cruise Data. It is basically built in Python, Node, JavaScript, HTML5 and related technologies, and can run on multiple platforms.
 
 ![demo](https://github.com/ocean-data-qc/ocean-data-qc/blob/master/ocean_data_qc_js/src/img/demo.gif?raw=true)
+
+## About
+
+The development of this tool was initially funded by [**H2020-AtlantOS**](https://www.atlantos-h2020.eu/) project for _Optimising and Enhancing the Integrated
+Atlantic Ocean Observing Systems_, being this funded by the European Union's Horizon 2020 research and innovation programme under grant agreement No 633211.
+
+Version 1.0 was released under [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2603122.svg)](https://doi.org/10.5281/zenodo.2603122) as Deliberable _**D2.6 GO-SHIP Software and Manuals**: Software packages and best practice manuals and knowledge transfer for sustained quality control of hydrographic sections in the Atlantic_ of [**H2020-AtlantOS**](https://www.atlantos-h2020.eu/) [Work package 2.1](https://www.atlantos-h2020.eu/project-information/work-packages/wp2/task-2-1/), being a Global Ocean Ship-Based Hydrographic Investigations Programme ([GO-SHIP](https://www.go-ship.org/)) task for support the quality assurance of on-going surveys and perform Quality Control (QC) procedures
+
+Since version 1.0 has no specific funding for its development, having some authors received partial support from [H2020-COMFORT](https://comfort.w.uib.no/) project and being also a contribution to WATER:iOS Interdisciplinary Thematic Platform [@WATER_IOS_CSIC](https://twitter.com/water_ios_csic)
 
 ## Installation
 
@@ -77,7 +86,6 @@ This project is licensed under the GPLv3 License - see the LICENSE file for deta
 * @GEOMAR: Nico Lange <nlange@geomar.de>
 * @CSIC: Fiz F. Pérez <fiz.perez@iim.csic.es>
 * @GEOMAR: Toste Tanhua <ttanhua@geomar.de>
-
 
 ## References
 
