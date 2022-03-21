@@ -11,7 +11,7 @@ Atlantic Ocean Observing Systems_, being this funded by the European Union's Hor
 
 Version 1.0 was released under [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2603122.svg)](https://doi.org/10.5281/zenodo.2603122) as Deliberable _**D2.6 GO-SHIP Software and Manuals**: Software packages and best practice manuals and knowledge transfer for sustained quality control of hydrographic sections in the Atlantic_ of [**H2020-AtlantOS**](https://www.atlantos-h2020.eu/) [Work package 2.1](https://www.atlantos-h2020.eu/project-information/work-packages/wp2/task-2-1/), being a Global Ocean Ship-Based Hydrographic Investigations Programme ([GO-SHIP](https://www.go-ship.org/)) task for support the quality assurance of on-going surveys and perform Quality Control (QC) procedures
 
-Since version 1.0 has no specific funding for its development, having some authors received partial support from [H2020-COMFORT](https://comfort.w.uib.no/) project and being also a contribution to WATER:iOS Interdisciplinary Thematic Platform [@WATER_IOS_CSIC](https://twitter.com/water_ios_csic)
+Since version 1.0, the application has no specific nor continuous funding for its development, having some authors received partial support from [H2020-COMFORT](https://comfort.w.uib.no/) project and being also a contribution to WATER:iOS Interdisciplinary Thematic Platform [@WATER_IOS_CSIC](https://twitter.com/water_ios_csic)
 
 ## Installation
 
