@@ -1,6 +1,6 @@
 # AtlantOS QC (GLODAP QC1 tool) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2603121.svg)](https://doi.org/10.5281/zenodo.2603121)
 
-This software is an interactive tool for making the first Quality Control (1st QC, QC1) on Hydrographic Cruise Data. It is basically built in Python, Node, JavaScript, HTML5 and related technologies, and can run on multiple platforms.
+This software is an interactive tool for making the first Quality Control (1st QC, QC1) on Hydrographic Cruise Data. Built mainly in Python but using Node, JavaScript, HTML5 and related technologies. Can be run on multiple platforms.
 
 ![demo](https://github.com/ocean-data-qc/ocean-data-qc/blob/master/ocean_data_qc_js/src/img/demo.gif?raw=true)
 
@@ -38,7 +38,7 @@ Source code:
 ### Manual Installation
 
 1. Download and install base dependencies:
-    1. Download and install [Python](https://www.python.org/download/releases/3.0/) >=3.7. Recommended downloader and instructions: [https://conda.io/miniconda.html](https://conda.io/miniconda.html)
+    1. Download and install [Python](https://www.python.org/download/releases/3.0/) >=3.8. Recommended downloader and instructions: [https://conda.io/miniconda.html](https://conda.io/miniconda.html)
 
     2. Download and install [yarn](https://yarnpkg.com/). Follow instructions from: https://yarnpkg.com/ (Alternatively  you can use [npm](https://www.npmjs.com/))
 
