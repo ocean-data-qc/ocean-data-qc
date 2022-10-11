@@ -13,7 +13,7 @@ Version 1.0 was released under [![DOI](https://zenodo.org/badge/DOI/10.5281/zeno
 
 Since version 1.0 to 1.4.0, the application had no specific nor continuous funding for its development, having received partial support from [H2020-COMFORT](https://comfort.w.uib.no/) project and being also a contribution to WATER:iOS Interdisciplinary Thematic Platform [@WATER_IOS_CSIC](https://twitter.com/water_ios_csic)
 
-From 1.4.0 onwards is supported by **EURO GO-SHIP** (Grant #101094690), a EU-HORIZON project for __Developing a research infraestructure concept to support european hydrography__
+From 1.4.0 onwards is supported by **EURO GO-SHIP** (Grant #101094690), a EU-HORIZON project for _Developing a research infraestructure concept to support european hydrography_
 
 ## Installation
 
