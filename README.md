@@ -1,6 +1,6 @@
 # AtlantOS QC (GLODAP QC1 tool) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2603121.svg)](https://doi.org/10.5281/zenodo.2603121)
 
-This software is an interactive tool for making the first Quality Control (1st QC, QC1) on Hydrographic Cruise Data. Built mainly in Python but using Node, JavaScript, HTML5 and related technologies. Can be run on multiple platforms.
+This software is an interactive tool for making the first Quality Control (1st QC, QC1) on Hydrographic Cruise Data. Built mainly in Python but using Node, JavaScript, HTML5 and related technologies. Can be run on most platforms.
 
 ![demo](https://github.com/ocean-data-qc/ocean-data-qc/blob/master/ocean_data_qc_js/src/img/demo.gif?raw=true)
 
@@ -13,11 +13,11 @@ Version 1.0 was released under [![DOI](https://zenodo.org/badge/DOI/10.5281/zeno
 
 Since version 1.0 to 1.4.0, the application had no specific nor continuous funding for its development, having received partial support from [H2020-COMFORT](https://comfort.w.uib.no/) project and being also a contribution to WATER:iOS Interdisciplinary Thematic Platform [@WATER_IOS_CSIC](https://twitter.com/water_ios_csic)
 
-From 1.4.0 onwards is supported by **EURO GO-SHIP** (Grant #101094690), a EU-HORIZON project for _Developing a research infraestructure concept to support european hydrography_
+From 1.4.0 onwards is supported by **EURO GO-SHIP** (Grant #101094690), a EU-HORIZON project for _Developing a research infraestructure concept to support european hydrography_. Current development code is so hosted in https://github.com/EuroGO-SHIP/AtlantOS_QC, but installers will be provided here
 
 ## Installation
 
-It's not essential for this software to run, but in order to take advantage of the main functionalities of this software program it is absolutly recommended to have [GNU Octave](https://www.gnu.org/software/octave/) installed, as most parameter calculations relies on Octave/Matlab code. Installers can be found [here](https://www.gnu.org/software/octave/download.html)
+It's not essential for this software to run, but in order to take advantage of the main functionalities of this software program it is absolutly recommended to have [GNU Octave](https://www.gnu.org/software/octave/) installed, as most parameter calculations relies on Octave/Matlab code. Installers can be found [here](https://www.gnu.org/software/octave/download.html). Latest version proven to work was 5.2, it can be downloaded from here: https://ftp.gnu.org/gnu/octave/
 
 ### Using built-in installers
 
@@ -44,7 +44,8 @@ Source code:
 
     3. Optional but very recommended for functionality: GNU Octave
 
-        * Download and install GNU Octave. Follow instructions from: [https://www.gnu.org/software/octave/#install](https://www.gnu.org/software/octave/#install)
+        * Download and install GNU Octave. Follow instructions from: [https://www.gnu.org/software/octave/#install](https://www.gnu.org/software/octave/#install). Latest version proven to work was 5.2, it can be downloaded from here: https://ftp.gnu.org/gnu/octave/
+
 
 1. Download this project
 
@@ -64,6 +65,25 @@ Source code:
         cd ocean_data_qc_js
         yarn start               # or npm start
         (first time launching delays some time, please wait)
+
+#### Short recipe for development version:
+0. Install OCTAVE (5.2, no GUI needed)
+   - https://ftp.gnu.org/gnu/octave/
+1. Install minconda
+   - https://docs.conda.io/en/latest/miniconda.html
+2. Install git
+   - `conda install git`
+3. Install yarn
+   - `conda install yarn`
+4. Download code:
+   - `git clone https://github.com/EuroGO-SHIP/AtlantOS_QC`
+5. Go to dir:
+   - `cd AtlantOS_QC`
+6. Install tool
+   - `python setup.py develop`
+   - `yarn --cwd ocean_data_qc_js install`
+7. Launch tool
+   - `yarn --cwd ocean_data_qc_js start`
 
 ## Libraries and languages Used
 
@@ -87,6 +107,7 @@ This project is licensed under the GPLv3 License - see the LICENSE file for deta
 * @CSIC: Jesús Cacabelos <jcacabelos@iim.csic.es>
 * @GEOMAR: Nico Lange <nlange@geomar.de>
 * @CSIC: Fiz F. Pérez <fiz.perez@iim.csic.es>
+* @NORCE: Are Olsen are.olsen@uib.no
 * @GEOMAR: Toste Tanhua <ttanhua@geomar.de>
 
 ## References
