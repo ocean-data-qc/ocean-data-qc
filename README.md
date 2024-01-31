@@ -1,3 +1,17 @@
+# Repository Moved
+
+**Important Notice:** This project has moved to a new GitHub repository. For the latest version, contributions, and issue tracking, please visit our new repository at [AtlantOS QC](https://github.com/EuroGO-SHIP/AtlantOS_QC).
+
+This repository will be maintained as a historical record to highlight the origins of the project and to acknowledge [H2020 AtlantOS](https://atlantos-h2020.eu/index.html), now [AtlantOS Program]((https://atlantos-h2020.eu/index.html)) for the initial support for the app's development.
+
+
+## Archiving This Repository
+
+This repository will be archived soon, making it read-only. Active development and discussions will continue in the new repository.
+
+
+
+
 # AtlantOS QC (GLODAP QC1 tool) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2603121.svg)](https://doi.org/10.5281/zenodo.2603121)
 
 This software is an interactive tool for making the first Quality Control (1st QC, QC1) on Hydrographic Cruise Data. Built mainly in Python but using Node, JavaScript, HTML5 and related technologies. Can be run on most platforms.
